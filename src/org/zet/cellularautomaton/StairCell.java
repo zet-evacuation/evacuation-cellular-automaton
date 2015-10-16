@@ -168,6 +168,7 @@ public class StairCell extends EvacCell implements Cloneable {
 
     /**
      * Returns a copy of itself as a new Object.
+     * @return 
      */
     @Override
     public StairCell clone() {

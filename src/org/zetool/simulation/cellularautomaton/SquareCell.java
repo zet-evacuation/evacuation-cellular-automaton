@@ -23,29 +23,29 @@ import java.util.Objects;
  * @author Jan-Philipp Kappmeier
  */
 public abstract class SquareCell<E extends SquareCell<E,S>,S> implements Cell<E,S> {
-	/** x-coordinate of the cell in the room. */
-	protected int x;
-	/** y-coordinate of the cell in the room. */
-	protected int y;
-	/** The square matrix to which this cell belongs. */
-	CellMatrix<E, S> matrix;
-	/** The Status object for the cell. */
-	private S status;
+    /** x-coordinate of the cell in the room. */
+    protected int x;
+    /** y-coordinate of the cell in the room. */
+    protected int y;
+    /** The square matrix to which this cell belongs. */
+    CellMatrix<E, S> matrix;
+    /** The Status object for the cell. */
+    private S status;
 
-	public SquareCell( S state, int x, int y, CellMatrix<E, S> matrix ) {
-		this.x = x;
-		this.y = y;
-		this.matrix = matrix;
-		this.status = Objects.requireNonNull( state, "Cell status must not be null!" );
-	}
+    public SquareCell( S state, int x, int y, CellMatrix<E, S> matrix ) {
+        this.x = x;
+        this.y = y;
+        this.matrix = matrix;
+        this.status = Objects.requireNonNull( state, "Cell status must not be null!" );
+    }
 
-	public S getStatus() {
-		return status;
-	}
+    public S getStatus() {
+        return status;
+    }
 
-	@Override
-	public int getSides() {
-		return 4;
-	}
+    @Override
+    public int getSides() {
+        return 4;
+    }
 
 }

@@ -31,7 +31,8 @@ import java.util.Iterator;
  * door cells, stair cells and exit cells.
  * Generally each cell can be occupied by an individual and can be crossed with a
  * certain speed.
- * @author Marcel Preuß, Jan-Philipp Kappmeier
+ * @author Marcel Preuß
+ * @author Jan-Philipp Kappmeier
  *
  */
 public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> implements Comparable<EvacCell> {
@@ -87,8 +88,6 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
         return getStatus().getIndividual();
     }
 
-    //     * Sets a new individual onto the cell and calls the Individual.setCell()-Method
-//     * to register itself as the current cell of the individual.
     /**
      * Sets an individual on the cell. It is <b>not</b> automatically removed from its source cell nor are rooms or any
      * lists updated.
@@ -102,7 +101,6 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
         }
         if (i == null) {
             throw new java.lang.NullPointerException("Individual is null.");
-            //Cell old = individual.getCell();
         }
         getStatus().setIndividual(i);
     }
@@ -475,7 +473,6 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
             aClone.getStatus().setIndividual(this.getIndividual().clone());
             aClone.getStatus().getIndividual().setCell(aClone);
         } else {
-            //aClone.setIndividual( this.getIndividual() );
             aClone.getStatus().setIndividual(this.getIndividual());
         }
 

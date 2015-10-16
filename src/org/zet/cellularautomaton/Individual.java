@@ -495,11 +495,10 @@ public class Individual implements Identifiable {
     /**
      * Returns a copy of itself as a new Object.
      * @return 
-     * @throws java.lang.CloneNotSupportedException
      */
     @Override
-    public Individual clone() throws CloneNotSupportedException {
-        Individual aClone = (Individual)super.clone();
+    public Individual clone() {
+        Individual aClone = new Individual();
         aClone.absoluteMaxSpeed = this.absoluteMaxSpeed;
         aClone.age = this.age;
         aClone.cell = this.cell;
