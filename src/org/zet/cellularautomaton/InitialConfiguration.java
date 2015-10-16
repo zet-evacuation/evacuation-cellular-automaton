@@ -1,4 +1,4 @@
-/* zet evacuation tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuation tool copyright (c) 2007-15 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
  * as published by the Free Software Foundation; either version 2
@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.zet.cellularautomaton;
 
@@ -38,6 +38,7 @@ public class InitialConfiguration {
     /**
      * Constructs a new initial configuration of a cellular automaton.
      *
+     * @param floors floors
      * @param rooms The automaton's rooms, including cells and the initial placing of individuals
      * @param potentialManager the potential manager
      * @param absoluteMaxSpeed the maximal speed that any individual can have at maximum

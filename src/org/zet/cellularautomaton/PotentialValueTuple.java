@@ -1,4 +1,4 @@
-/* zet evacuation tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuation tool copyright (c) 2007-15 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
  * as published by the Free Software Foundation; either version 2
@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.zet.cellularautomaton;
 
@@ -24,51 +24,45 @@ package org.zet.cellularautomaton;
  * @author Marcel Preuß
  *
  */
-public class PotentialValueTuple implements Comparable<PotentialValueTuple>
-{
-	/**
-	 * the Individuals distance from that ExitCell, 
-	 * to which the StaticPotentials refers.
-	 */
-	private int lengthOfWay;
-	
-	/**
-	 * The StaticPotential of the tuple.
-	 */
-	private StaticPotential staticPotential;
-	
-	public PotentialValueTuple(int loW, StaticPotential sp)
-	{
-		this.lengthOfWay = loW;
-		this.staticPotential = sp;
-	}
-	
-	/**
-	 * Returns the lenthOfWay attribute.
-	 * @return The lenthOfWay attribute
-	 */
-	public int getLengthOfWay()
-	{
-		return this.lengthOfWay;
-	}
-	
-	/**
-	 * Returns the StaticPotential attribute.
-	 * @return The StaticPotential attribute
-	 */
-	public StaticPotential getStaticPotential()
-	{
-		return this.staticPotential;
-	}
-	
-	@Override
-	public int compareTo(PotentialValueTuple t)
-	{
-		if (t.getLengthOfWay() == this.getLengthOfWay())
-			return 0;
-		else if (t.getLengthOfWay() < this.getLengthOfWay())
-			return 1;
-		else
-			return -1;
-	}
+public class PotentialValueTuple implements Comparable<PotentialValueTuple> {
+
+    /** the Individuals distance from that ExitCell, to which the StaticPotentials refers. */
+    private final int lengthOfWay;
+
+    /** The StaticPotential of the tuple. */
+    private final StaticPotential staticPotential;
+
+    public PotentialValueTuple(int loW, StaticPotential sp) {
+        this.lengthOfWay = loW;
+        this.staticPotential = sp;
+    }
+
+    /**
+     * Returns the lenthOfWay attribute.
+     *
+     * @return The lenthOfWay attribute
+     */
+    public int getLengthOfWay() {
+        return this.lengthOfWay;
+    }
+
+    /**
+     * Returns the StaticPotential attribute.
+     *
+     * @return The StaticPotential attribute
+     */
+    public StaticPotential getStaticPotential() {
+        return this.staticPotential;
+    }
+
+    @Override
+    public int compareTo(PotentialValueTuple t) {
+        if (t.getLengthOfWay() == this.getLengthOfWay()) {
+            return 0;
+        } else if (t.getLengthOfWay() < this.getLengthOfWay()) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 }

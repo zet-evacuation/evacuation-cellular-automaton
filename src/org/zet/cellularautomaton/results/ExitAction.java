@@ -1,4 +1,4 @@
-/* zet evacuation tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuation tool copyright (c) 2007-15 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
  * as published by the Free Software Foundation; either version 2
@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.zet.cellularautomaton.results;
 
@@ -29,37 +29,38 @@ import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
  */
 public class ExitAction extends Action {
 
-	/** The cell where an individual leaves the simulation */
-	protected ExitCell exit;
+    /** The cell where an individual leaves the simulation. */
+    protected ExitCell exit;
 
-	/**
-	 * Creates a new Exit action.
-	 * @param exit The cell from where the individual leaves
-	 * the system.
-	 */
-	public ExitAction( ExitCell exit ) {
-		this.exit = exit;
-	}
+    /**
+     * Creates a new Exit action.
+     *
+     * @param exit The cell from where the individual leaves the system.
+     */
+    public ExitAction(ExitCell exit) {
+        this.exit = exit;
+    }
 
-	@Override
-	public void execute( org.zet.cellularautomaton.EvacuationCellularAutomaton onCA ) throws InconsistentPlaybackStateException {
-		if( exit.getIndividual() == null )
-			throw new InconsistentPlaybackStateException( "Could not evacuate an individual from cell " + exit + "(" + exit.hashCode() + ") because there was none." );
-		onCA.setIndividualEvacuated( exit.getIndividual() );
-	}
+    @Override
+    public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+        if (exit.getIndividual() == null) {
+            throw new InconsistentPlaybackStateException("Could not evacuate an individual from cell " + exit + "(" + exit.hashCode() + ") because there was none.");
+        }
+        onCA.setIndividualEvacuated(exit.getIndividual());
+    }
 
-	@Override
-	public String toString() {
-		String representation = "An individual leaves the simulation from cell " + exit;
-		return representation;
-	}
+    @Override
+    public String toString() {
+        String representation = "An individual leaves the simulation from cell " + exit;
+        return representation;
+    }
 
-	@Override
-	Action adoptToCA(  EvacuationCellularAutomaton targetCA ) throws CADoesNotMatchException {
-		EvacCell newExit = adoptCell( exit, targetCA );
-		if( newExit == null )
-			throw new CADoesNotMatchException( this, "Could not find the exit " + exit + " that this action uses in the new CA." );
-		return new ExitAction( (ExitCell) newExit );
-	}
+    @Override
+    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+        EvacCell newExit = adoptCell(exit, targetCA);
+        if (newExit == null) {
+            throw new CADoesNotMatchException(this, "Could not find the exit " + exit + " that this action uses in the new CA.");
+        }
+        return new ExitAction((ExitCell) newExit);
+    }
 }
-

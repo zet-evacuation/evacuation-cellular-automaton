@@ -1,4 +1,4 @@
-/* zet evacuation tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuation tool copyright (c) 2007-15 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
  * as published by the Free Software Foundation; either version 2
@@ -11,9 +11,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
@@ -28,43 +27,46 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
  */
 public abstract class Action implements Cloneable {
 
-  protected class CADoesNotMatchException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+    protected class CADoesNotMatchException extends RuntimeException {
 
-    public CADoesNotMatchException() {
-      super( "The action could not be adopted to the new CA because the new CA is incompatible with the old one." );
+        private static final long serialVersionUID = 1L;
+
+        public CADoesNotMatchException() {
+            super("The action could not be adopted to the new CA because the new CA is incompatible with the old one.");
+        }
+
+        public CADoesNotMatchException(Action action, String message) {
+            super("The action \""
+                    + action
+                    + "could not be converted: "
+                    + message
+            );
+        }
     }
 
-    public CADoesNotMatchException( Action action, String message ) {
-      super( "The action \""
-              + action
-              + "could not be converted: "
-              + message
-      );
+    /**
+     * Updates all references in this action in a way that allows it to be replayed based on the given cellular
+     * automaton.
+     *
+     * @param targetCa The cellular automaton to which this action should be adopted.
+     * @return The adopted action
+     */
+    abstract Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException;
+
+    /**
+     * Executes the action with respect to the starting and ending cell of the action.
+     */
+    public abstract void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException;
+
+    /**
+     * Every subclass of this class should override the {@code toString()}.
+     */
+    @Override
+    public abstract String toString();
+
+    protected EvacCell adoptCell(EvacCell cell, EvacuationCellularAutomaton targetCA) {
+        org.zet.cellularautomaton.Room newRoom = targetCA.getRoom(cell.getRoom().getID());
+        org.zet.cellularautomaton.EvacCell newCell = newRoom.getCell(cell.getX(), cell.getY());
+        return newCell;
     }
-  }
-
-  /**
-   * Updates all references in this action in a way that allows it to be replayed based on the given cellular automaton.
-   * @param targetCa The cellular automaton to which this action should be adopted.
-   * @return The adopted action
-   */
-  abstract Action adoptToCA( EvacuationCellularAutomaton targetCA ) throws CADoesNotMatchException;
-
-  /**
-   * Executes the action with respect to the starting and ending cell of the action.
-   */
-  public abstract void execute( EvacuationCellularAutomaton onCA ) throws InconsistentPlaybackStateException;
-
-  /**
-   * Every subclass of this class should override the {@code toString()}.
-   */
-  @Override
-  public abstract String toString();
-
-  protected EvacCell adoptCell( EvacCell cell, EvacuationCellularAutomaton targetCA ) {
-        org.zet.cellularautomaton.Room newRoom = targetCA.getRoom( cell.getRoom().getID() );
-        org.zet.cellularautomaton.EvacCell newCell = newRoom.getCell( cell.getX(), cell.getY() );
-    return newCell;
-  }
 }

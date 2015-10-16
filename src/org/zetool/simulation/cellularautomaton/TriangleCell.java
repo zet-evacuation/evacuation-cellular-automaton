@@ -15,12 +15,37 @@
  */
 package org.zetool.simulation.cellularautomaton;
 
-import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @param <E> the cell type
+ * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
-public interface Neighborhood<E extends Cell<E,?>> {
-	Collection<E> getNeighbors( E cell );
+public abstract class TriangleCell<E extends TriangleCell<E, S>, S> implements Cell<E, S> {
+
+    /** x-coordinate of the cell in the room. */
+    protected int x;
+    /** y-coordinate of the cell in the room. */
+    protected int y;
+    /** The square matrix to which this cell belongs. */
+    CellMatrix<E, S> matrix;
+    /** The Status object for the cell. */
+    private S state;
+
+    public TriangleCell(S state, int x, int y, CellMatrix<E, S> matrix) {
+        this.x = x;
+        this.y = y;
+        this.matrix = matrix;
+        this.state = Objects.requireNonNull(state, "Cell status must not be null!");
+    }
+
+    public S getStatus() {
+        return state;
+    }
+
+    @Override
+    public int getSides() {
+        return 3;
+    }
 }

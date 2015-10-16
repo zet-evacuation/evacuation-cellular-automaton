@@ -1,4 +1,4 @@
-/* zet evacuation tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuation tool copyright (c) 2007-15 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
  * as published by the Free Software Foundation; either version 2
@@ -11,11 +11,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
-/*
- * Created on 01.05.2008
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.zet.cellularautomaton.results;
 
@@ -30,12 +26,12 @@ public class DynamicPotentialChangeAction extends Action {
 
     protected double newPotential;
     protected EvacCell affectedCell;
-    
-    public DynamicPotentialChangeAction(EvacCell affectedCell, double newPotential){
+
+    public DynamicPotentialChangeAction(EvacCell affectedCell, double newPotential) {
         this.affectedCell = affectedCell;
-        this.newPotential = newPotential;        
+        this.newPotential = newPotential;
     }
-    
+
     @Override
     Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         EvacCell newAffectedCell = adoptCell(affectedCell, targetCA);
@@ -45,19 +41,19 @@ public class DynamicPotentialChangeAction extends Action {
     @Override
     public void execute(EvacuationCellularAutomaton onCA)
             throws InconsistentPlaybackStateException {
-        onCA.setDynamicPotential(affectedCell, newPotential);        
+        onCA.setDynamicPotential(affectedCell, newPotential);
     }
 
     @Override
     public String toString() {
-        return "The dynamic potential of cell " 
-            + affectedCell 
-            + " ist set to "
-            + newPotential
-            + ".";
+        return "The dynamic potential of cell "
+                + affectedCell
+                + " ist set to "
+                + newPotential
+                + ".";
     }
-    
-    public long getNewPotentialValue(){
-        return Math.round( newPotential );
+
+    public long getNewPotentialValue() {
+        return Math.round(newPotential);
     }
 }

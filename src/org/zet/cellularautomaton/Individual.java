@@ -1,7 +1,7 @@
-/* zet evacuation tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuation tool copyright (c) 2007-15 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
- * as published by the Freswe Software Foundation; either version 2
+ * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.zet.cellularautomaton;
 
@@ -20,517 +20,567 @@ import org.zetool.container.mapping.Identifiable;
 import java.util.UUID;
 
 /**
- * A Individual represets a Person in the evacuationtool with the following
- characteristics: familiarity, panic,
- * slackness, relativeMaxSpeed. Also an * exhaustion factor exists, which simulates exhaustion after walking a long
- * way. An Individual is located in a {@link EvacCell} of the building and each
- * {@code Individual} has a {@link StaticPotential}, which guides the
- * person to an exit.
+ * A Individual represets a Person in the evacuationtool with the following characteristics: familiarity, panic,
+ * slackness, relativeMaxSpeed. Also an * exhaustion factor exists, which simulates exhaustion after walking a long way.
+ * An Individual is located in a {@link EvacCell} of the building and each {@code Individual} has a
+ * {@link StaticPotential}, which guides the person to an exit.
  */
 public class Individual implements Identifiable {
-	private int age;
-	private double familiarity;
-	private double panic = 0.0001;
-	private double panicFactor;
-	private double slackness;
-	private double exhaustion = 0;
-	private double exhaustionFactor;
-  private double relativeSpeed;
-  private double relativeMaxSpeed;
-	private double absoluteMaxSpeed;
-	private boolean alarmed;
-	private double reactionTime;
-	private EvacCell cell;
-	private StaticPotential staticPotential;
-	private DynamicPotential dynamicPotential;
-	private DeathCause deathCause;
-	/** The number of the individual. Each Individual of an CA should have a unique identifier. */
-	private int individualNumber = 0;
-	/** The (accurate) time when the moving of the individual is over. Initializes with 0 as step 0 is the first cellular automaton step. */
-	private double stepEndTime = 0;
-	/** The (accurate) time when the first moving of the individual starts. Initializes invalid. */
-	private double stepStartTime = -1;
-	/** Unique ID of the assignment type this individual is in */
-	private UUID uid;
-	/**
-	 * The time, when the individual has last entered an area, where it is safe
-	 * ( = area of save- and exitcells)
-	 */
-	private int safetyTime;
-	/** Indicates, if the individual is already safe; that means: on save- oder exitcells */
-	private boolean safe;
-	private boolean isEvacuated = false;
-	private boolean isDead = false;
-	private PotentialValueTuple potentialMemoryStart;
-	private PotentialValueTuple potentialMemoryEnd;
-	private int memoryIndex;
-	int cellCountToChange;
-	Direction8 dir;
 
-	public Individual() {
-	}
+    private int age;
+    private double familiarity;
+    private double panic = 0.0001;
+    private double panicFactor;
+    private double slackness;
+    private double exhaustion = 0;
+    private double exhaustionFactor;
+    private double relativeSpeed;
+    private double relativeMaxSpeed;
+    private double absoluteMaxSpeed;
+    private boolean alarmed;
+    private double reactionTime;
+    private EvacCell cell;
+    private StaticPotential staticPotential;
+    private DynamicPotential dynamicPotential;
+    private DeathCause deathCause;
+    /**
+     * The number of the individual. Each Individual of an CA should have a unique identifier.
+     */
+    private int individualNumber = 0;
+    /**
+     * The (accurate) time when the moving of the individual is over. Initializes with 0 as step 0 is the first cellular
+     * automaton step.
+     */
+    private double stepEndTime = 0;
+    /**
+     * The (accurate) time when the first moving of the individual starts. Initializes invalid.
+     */
+    private double stepStartTime = -1;
+    /**
+     * Unique ID of the assignment type this individual is in
+     */
+    private UUID uid;
+    /**
+     * The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells)
+     */
+    private int safetyTime;
+    /**
+     * Indicates, if the individual is already safe; that means: on save- oder exitcells
+     */
+    private boolean safe;
+    private boolean isEvacuated = false;
+    private boolean isDead = false;
+    private PotentialValueTuple potentialMemoryStart;
+    private PotentialValueTuple potentialMemoryEnd;
+    private int memoryIndex;
+    int cellCountToChange;
+    Direction8 dir;
 
-  public Individual( int age, double familiarity, double panicFactor, double slackness, double exhaustionFactor, double relativeMaxSpeed, double reactiontime, UUID uid ) {
-		this.age = age;
-		this.familiarity = familiarity;
-		this.panicFactor = panicFactor;
-		this.slackness = slackness;
-		this.exhaustionFactor = exhaustionFactor;
-    this.relativeMaxSpeed = relativeMaxSpeed;
-    this.relativeSpeed = relativeMaxSpeed;
-		this.alarmed = false;
-		this.cell = null;
-		this.staticPotential = null;
-		this.dynamicPotential = null;
-		this.reactionTime = reactiontime;
-		this.uid = uid;
-		safe = false;
-		safetyTime = -1;
-		this.dir = Direction8.Top; // Just use an arbitrary direction
+    public Individual() {
+    }
 
-		/**
-		 * Calibratingfactor -
-		 * The bigger {@code cellCountToChange}, the longer an individual moves before a possible potential change
-		 */
-    cellCountToChange = (int)Math.round( relativeSpeed * 15 / 0.4 );
-		potentialMemoryStart = new PotentialValueTuple( -1, null );
-		potentialMemoryEnd = new PotentialValueTuple( -1, null );
-		memoryIndex = 0;
-	}
+    public Individual(int age, double familiarity, double panicFactor, double slackness, double exhaustionFactor, double relativeMaxSpeed, double reactiontime, UUID uid) {
+        this.age = age;
+        this.familiarity = familiarity;
+        this.panicFactor = panicFactor;
+        this.slackness = slackness;
+        this.exhaustionFactor = exhaustionFactor;
+        this.relativeMaxSpeed = relativeMaxSpeed;
+        this.relativeSpeed = relativeMaxSpeed;
+        this.alarmed = false;
+        this.cell = null;
+        this.staticPotential = null;
+        this.dynamicPotential = null;
+        this.reactionTime = reactiontime;
+        this.uid = uid;
+        safe = false;
+        safetyTime = -1;
+        this.dir = Direction8.Top; // Just use an arbitrary direction
 
-	public PotentialValueTuple getPotentialMemoryStart() {
-		return potentialMemoryStart;
-	}
+        /**
+         * Calibratingfactor - The bigger {@code cellCountToChange}, the longer an individual moves before a possible
+         * potential change
+         */
+        cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
+        potentialMemoryStart = new PotentialValueTuple(-1, null);
+        potentialMemoryEnd = new PotentialValueTuple(-1, null);
+        memoryIndex = 0;
+    }
 
-	public PotentialValueTuple getPotentialMemoryEnd() {
-		return potentialMemoryEnd;
-	}
+    public PotentialValueTuple getPotentialMemoryStart() {
+        return potentialMemoryStart;
+    }
 
-	public void setPotentialMemoryStart( PotentialValueTuple start ) {
-		potentialMemoryStart = start;
-	}
+    public PotentialValueTuple getPotentialMemoryEnd() {
+        return potentialMemoryEnd;
+    }
 
-	public void setPotentialMemoryEnd( PotentialValueTuple end ) {
-		potentialMemoryEnd = end;
-	}
+    public void setPotentialMemoryStart(PotentialValueTuple start) {
+        potentialMemoryStart = start;
+    }
 
-	public int getCellCountToChange() {
-		return cellCountToChange;
-	}
+    public void setPotentialMemoryEnd(PotentialValueTuple end) {
+        potentialMemoryEnd = end;
+    }
 
-	/**
-	 * Used for some potential change rule...
-	 * @return
-	 */
-	public int getMemoryIndex() {
-		return memoryIndex;
-	}
+    public int getCellCountToChange() {
+        return cellCountToChange;
+    }
 
-	/**
-	 * Used for some potential change rule...
-	 * @param index
-	 */
-	public void setMemoryIndex( int index ) {
-		memoryIndex = index;
-	}
+    /**
+     * Used for some potential change rule...
+     *
+     * @return
+     */
+    public int getMemoryIndex() {
+        return memoryIndex;
+    }
 
-	public double getStepEndTime() {
-		return stepEndTime;
-	}
+    /**
+     * Used for some potential change rule...
+     *
+     * @param index
+     */
+    public void setMemoryIndex(int index) {
+        memoryIndex = index;
+    }
 
-	public void setStepEndTime( double stepEndTime ) {
-		this.stepEndTime = stepEndTime;
-	}
+    public double getStepEndTime() {
+        return stepEndTime;
+    }
 
-	public double getStepStartTime() {
-		return stepStartTime;
-	}
+    public void setStepEndTime(double stepEndTime) {
+        this.stepEndTime = stepEndTime;
+    }
 
-	public void setStepStartTime( double stepStartTime ) {
-		this.stepStartTime = stepStartTime;
-	}
+    public double getStepStartTime() {
+        return stepStartTime;
+    }
 
-	/**
-	 * Returns true, if the person is evacuated, false elsewise.
- 	 * @return the evacuation status
-	 */
-	public boolean isEvacuated() {
-		return this.isEvacuated;
-	}
+    public void setStepStartTime(double stepStartTime) {
+        this.stepStartTime = stepStartTime;
+    }
 
-	/**
-	 * Sets this {@code Individual} evacuated.
- 	 */
-	public void setEvacuated() {
-		isEvacuated = true;
-	}
+    /**
+     * Returns true, if the person is evacuated, false elsewise.
+     *
+     * @return the evacuation status
+     */
+    public boolean isEvacuated() {
+        return this.isEvacuated;
+    }
 
-	/**
-	 * Returns the {@link DeathCause} of an individual.
-	 * @return the cause
-	 */
-	public DeathCause getDeathCause() {
-		return deathCause;
-	}
+    /**
+     * Sets this {@code Individual} evacuated.
+     */
+    public void setEvacuated() {
+        isEvacuated = true;
+    }
 
-	/**
-	 * Returns the time when the individual is safe.
-	 * @return The time when the individual is safe.
-	 */
-	public int getSafetyTime() {
-		return safetyTime;
-	}
+    /**
+     * Returns the {@link DeathCause} of an individual.
+     *
+     * @return the cause
+     */
+    public DeathCause getDeathCause() {
+        return deathCause;
+    }
 
-	/**
-	 * Sets the time when the individual is evacuated.
-	 * @param time The time when the individual is evacuated.
-	 */
-	public void setSafetyTime( int time ) {
-		safetyTime = time;
-	}
+    /**
+     * Returns the time when the individual is safe.
+     *
+     * @return The time when the individual is safe.
+     */
+    public int getSafetyTime() {
+        return safetyTime;
+    }
 
-	/**
-	 * Get the age of the individual.
- 	 * @return The age
-	 */
-	public int getAge() {
-		return age;
-	}
+    /**
+     * Sets the time when the individual is evacuated.
+     *
+     * @param time The time when the individual is evacuated.
+     */
+    public void setSafetyTime(int time) {
+        safetyTime = time;
+    }
 
-	/**
-	 * Returns, if the individual is already safe; that means: on save- oder exit cells.
- 	 * @return if the individual is already safe
-	 */
-	public boolean isSafe() {
-		return safe;
-	}
+    /**
+     * Get the age of the individual.
+     *
+     * @return The age
+     */
+    public int getAge() {
+        return age;
+    }
 
-	/**
-	 * Sets the safe-status of the individual.
- 	 * @param saveStatus indicates wheather the individual is save or not
-	 */
-	public void setSafe( boolean saveStatus ) {
-		safe = saveStatus;
-	}
+    /**
+     * Returns, if the individual is already safe; that means: on save- oder exit cells.
+     *
+     * @return if the individual is already safe
+     */
+    public boolean isSafe() {
+        return safe;
+    }
 
-	/**
-	 * Get the left reaction time of the individual.
- 	 * @return the left reaction time
-	 */
-	public double getReactionTime() {
-		return reactionTime;
-	}
+    /**
+     * Sets the safe-status of the individual.
+     *
+     * @param saveStatus indicates wheather the individual is save or not
+     */
+    public void setSafe(boolean saveStatus) {
+        safe = saveStatus;
+    }
 
-	/**
-	 * Alarms the Individual and also alarms the room of the cell of the individual.
-	 * @param alarmed decides wheather the individual is alarmed, or if it is stopped being alarmed
-	 */
-	public void setAlarmed( boolean alarmed ) {
-		this.alarmed = alarmed;
-	}
+    /**
+     * Get the left reaction time of the individual.
+     *
+     * @return the left reaction time
+     */
+    public double getReactionTime() {
+        return reactionTime;
+    }
 
-	/**
-	 * Get the setAlarmed status of the individual.
- 	 * @return true if the individual is alarmed, false otherwise
-	 */
-	public boolean isAlarmed() {
-		return alarmed;
-	}
+    /**
+     * Alarms the Individual and also alarms the room of the cell of the individual.
+     *
+     * @param alarmed decides wheather the individual is alarmed, or if it is stopped being alarmed
+     */
+    public void setAlarmed(boolean alarmed) {
+        this.alarmed = alarmed;
+    }
 
-	/**
-	 * Get the exhaustion of the individual.
- 	 * @return The exhaustion
-	 */
-	public double getExhaustion() {
-		return exhaustion;
-	}
+    /**
+     * Get the setAlarmed status of the individual.
+     *
+     * @return true if the individual is alarmed, false otherwise
+     */
+    public boolean isAlarmed() {
+        return alarmed;
+    }
 
-	/**
-	 * Set the exhaustion of the Individual to a specified value.
- 	 * @param val the exhaustion
-	 */
-	public void setExhaustion( double val ) {
-		this.exhaustion = val;
-	}
+    /**
+     * Get the exhaustion of the individual.
+     *
+     * @return The exhaustion
+     */
+    public double getExhaustion() {
+        return exhaustion;
+    }
 
-	/**
-	 * Returns the exchaustion factor of the {@code Individual}.
- 	 * @return the exhaustion factor
-	 */
-	public double getExhaustionFactor() {
-		return this.exhaustionFactor;
-	}
+    /**
+     * Set the exhaustion of the Individual to a specified value.
+     *
+     * @param val the exhaustion
+     */
+    public void setExhaustion(double val) {
+        this.exhaustion = val;
+    }
 
-	/**
-	 * Sets the exhaustion factor of the {@code Individual} to a specified value.
- 	 * @param val the exhaustion factor
-	 */
-	public void setExhaustionFactor( double val ) {
-		this.exhaustionFactor = val;
-	}
+    /**
+     * Returns the exchaustion factor of the {@code Individual}.
+     *
+     * @return the exhaustion factor
+     */
+    public double getExhaustionFactor() {
+        return this.exhaustionFactor;
+    }
 
-	/**
-	 * Get the familiarity of the individual.
- 	 * @return The familiarity
-	 */
-	public double getFamiliarity() {
-		return familiarity;
-	}
+    /**
+     * Sets the exhaustion factor of the {@code Individual} to a specified value.
+     *
+     * @param val the exhaustion factor
+     */
+    public void setExhaustionFactor(double val) {
+        this.exhaustionFactor = val;
+    }
 
-	/**
-	 * Set the familiarity of the individual.
- 	 * @param val the familiarity value
- 	 */
-	public void setFamiliarity( double val ) {
-		this.familiarity = val;
-	}
+    /**
+     * Get the familiarity of the individual.
+     *
+     * @return The familiarity
+     */
+    public double getFamiliarity() {
+        return familiarity;
+    }
 
-	/**
-	 * Returns the identifier of this individual.
-	 * @return the number
-	 */
-	public int getNumber() {
-		return individualNumber;
-	}
+    /**
+     * Set the familiarity of the individual.
+     *
+     * @param val the familiarity value
+     */
+    public void setFamiliarity(double val) {
+        this.familiarity = val;
+    }
 
-	/**
-	 * Sets the identification Number of the {@code Individual}.
-	 * @param i the number
-	 */
-	public void setNumber( int i ) {
-		individualNumber = i;
-	}
+    /**
+     * Returns the identifier of this individual.
+     *
+     * @return the number
+     */
+    public int getNumber() {
+        return individualNumber;
+    }
 
-	/**
-	 * Returns the identifier of this individual.
-	 * @return the number
-	 */
-	@Override
-	public int id() {
-		return individualNumber;
-	}
+    /**
+     * Sets the identification Number of the {@code Individual}.
+     *
+     * @param i the number
+     */
+    public void setNumber(int i) {
+        individualNumber = i;
+    }
 
-	public Direction8 getDirection() {
-		return dir;
-	}
+    /**
+     * Returns the identifier of this individual.
+     *
+     * @return the number
+     */
+    @Override
+    public int id() {
+        return individualNumber;
+    }
 
-	public void setDirection( Direction8 dir ) {
-		this.dir = dir;
-	}
+    public Direction8 getDirection() {
+        return dir;
+    }
 
-	/**
-	 * Get the panic of the individual.
- 	 * @return The panic
-	 */
-	public double getPanic() {
-		return panic;
-	}
+    public void setDirection(Direction8 dir) {
+        this.dir = dir;
+    }
 
-	public void setPanic( double val ) {
-		this.panic = val;
-	}
+    /**
+     * Get the panic of the individual.
+     *
+     * @return The panic
+     */
+    public double getPanic() {
+        return panic;
+    }
 
-	public double getPanicFactor() {
-		return panicFactor;
-	}
+    public void setPanic(double val) {
+        this.panic = val;
+    }
 
-	/**
-	 * Set the panic-factor of the individual.
- 	 * @param val
-	 */
-	public void setPanicFactor( double val ) {
-		this.panicFactor = val;
-	}
+    public double getPanicFactor() {
+        return panicFactor;
+    }
 
-	/**
-	 * Get the slackness of the individual.
- 	 * @return The slackness
-	 */
-	public double getSlackness() {
-		return slackness;
-	}
+    /**
+     * Set the panic-factor of the individual.
+     *
+     * @param val
+     */
+    public void setPanicFactor(double val) {
+        this.panicFactor = val;
+    }
 
-	/**
-	 * Set the slackness of the individual.
- 	 * @param val
-	 */
-	public void setSlackness( double val ) {
-		this.slackness = val;
-	}
+    /**
+     * Get the slackness of the individual.
+     *
+     * @return The slackness
+     */
+    public double getSlackness() {
+        return slackness;
+    }
 
-	/**
-	 * Set the relativeMaxSpeed of the individual.
- 	 * @param maxSpeed the maximal speed
-	 */
-	public void setMaxSpeed( double maxSpeed ) {
-    this.relativeMaxSpeed = maxSpeed;
-	}
+    /**
+     * Set the slackness of the individual.
+     *
+     * @param val
+     */
+    public void setSlackness(double val) {
+        this.slackness = val;
+    }
 
-	/**
-	 * Returns the relativeMaxSpeed of the individual.
-   * @return The relativeMaxSpeed
- 	 */
-	public double getMaxSpeed() {
-    return relativeMaxSpeed;
-	}
+    /**
+     * Set the relativeMaxSpeed of the individual.
+     *
+     * @param maxSpeed the maximal speed
+     */
+    public void setMaxSpeed(double maxSpeed) {
+        this.relativeMaxSpeed = maxSpeed;
+    }
 
-	/**
-	 * Set the current relative speed of the individual. The relative speed is a percentage of the maximum speed .
-   * @param relativeSpeed the new speed
- 	 */
-  public void setRelativeSpeed( double relativeSpeed ) {
-    this.relativeSpeed = relativeSpeed;
-	}
+    /**
+     * Returns the relativeMaxSpeed of the individual.
+     *
+     * @return The relativeMaxSpeed
+     */
+    public double getMaxSpeed() {
+        return relativeMaxSpeed;
+    }
 
-	/**
-	 * Returns the current relative speed of the individual. The relativity is with respect to the individuals max speed.
- 	 * @return the current speed
- 	 */
-  public double getRelativeSpeed() {
-    return relativeSpeed;
-	}
+    /**
+     * Set the current relative speed of the individual. The relative speed is a percentage of the maximum speed .
+     *
+     * @param relativeSpeed the new speed
+     */
+    public void setRelativeSpeed(double relativeSpeed) {
+        this.relativeSpeed = relativeSpeed;
+    }
 
-	/**
-	 * Set the {@link ds.ca.EvacCell} on which the {@code Individual} stands.
-	 * @param c the cell
-	 */
-	public void setCell( EvacCell c ) {
-		this.cell = c;
-	}
+    /**
+     * Returns the current relative speed of the individual. The relativity is with respect to the individuals max
+     * speed.
+     *
+     * @return the current speed
+     */
+    public double getRelativeSpeed() {
+        return relativeSpeed;
+    }
 
-	/**
-	 * Returns the {@link ds.ca.EvacCell} on which the {@code Individual} stands.
-	 * @return The EvacCell
-	 */
-	public EvacCell getCell() {
-		return cell;
-	}
+    /**
+     * Set the {@link ds.ca.EvacCell} on which the {@code Individual} stands.
+     *
+     * @param c the cell
+     */
+    public void setCell(EvacCell c) {
+        this.cell = c;
+    }
 
-	/**
-	 * Set the dynamicPotential of the individual.
- 	 * @param dp
-	 */
-	public void setDynamicPotential( DynamicPotential dp ) {
-		this.dynamicPotential = dp;
-	}
+    /**
+     * Returns the {@link ds.ca.EvacCell} on which the {@code Individual} stands.
+     *
+     * @return The EvacCell
+     */
+    public EvacCell getCell() {
+        return cell;
+    }
 
-	/**
-	 * Get the dynamicPotential of the individual.
- 	 * @return The dynamicPotential
-	 */
-	public DynamicPotential getDynamicPotential() {
-		return dynamicPotential;
-	}
+    /**
+     * Set the dynamicPotential of the individual.
+     *
+     * @param dp
+     */
+    public void setDynamicPotential(DynamicPotential dp) {
+        this.dynamicPotential = dp;
+    }
 
-	/**
-	 * Set the staticPotential of the individual.
- 	 * @param sp
-	 */
-	public void setStaticPotential( StaticPotential sp ) {
-		this.staticPotential = sp;
-	}
+    /**
+     * Get the dynamicPotential of the individual.
+     *
+     * @return The dynamicPotential
+     */
+    public DynamicPotential getDynamicPotential() {
+        return dynamicPotential;
+    }
 
-	/**
-	 * Get the staticPotential of the individual.
- 	 * @return The staticPotential
-	 */
-	public StaticPotential getStaticPotential() {
-		return staticPotential;
-	}
+    /**
+     * Set the staticPotential of the individual.
+     *
+     * @param sp
+     */
+    public void setStaticPotential(StaticPotential sp) {
+        this.staticPotential = sp;
+    }
 
-	public void die( DeathCause cause ) {
-		this.deathCause = cause;
-		isDead = true;
-	}
+    /**
+     * Get the staticPotential of the individual.
+     *
+     * @return The staticPotential
+     */
+    public StaticPotential getStaticPotential() {
+        return staticPotential;
+    }
 
-	public boolean isDead() {
-		return isDead;
-	}
+    public void die(DeathCause cause) {
+        this.deathCause = cause;
+        isDead = true;
+    }
 
-	/**
-	 * Returns a copy of itself as a new Object.
-	 */
-	@Override
-	public Individual clone() {
-		Individual aClone = new Individual();
-		aClone.absoluteMaxSpeed = this.absoluteMaxSpeed;
-		aClone.age = this.age;
-		aClone.cell = this.cell;
-    aClone.relativeSpeed = this.relativeSpeed;
-		aClone.deathCause = this.deathCause;
-		aClone.dynamicPotential = this.dynamicPotential;
-		aClone.exhaustion = this.exhaustion;
-		aClone.exhaustionFactor = this.exhaustionFactor;
-		aClone.familiarity = this.familiarity;
-		aClone.individualNumber = this.individualNumber;
-		aClone.alarmed = this.alarmed;
-		aClone.isEvacuated = this.isEvacuated;
-		aClone.safe = this.safe;
-    aClone.relativeMaxSpeed = this.relativeMaxSpeed;
-		aClone.panic = this.panic;
-		aClone.panicFactor = this.panicFactor;
-		aClone.reactionTime = this.reactionTime;
-		aClone.safetyTime = this.safetyTime;
-		aClone.slackness = this.slackness;
-		aClone.staticPotential = this.staticPotential;
-		aClone.stepEndTime = this.stepEndTime;
-		aClone.stepStartTime = this.stepStartTime;
-		aClone.uid = this.uid;
-		return aClone;
-	}
+    public boolean isDead() {
+        return isDead;
+    }
 
-	/**
-	 * Returns a string "Individual" and the id number of the individual.
-	 * @return the string representation
-	 */
-	@Override
-	public String toString() {
-		return "Individual " + id();
-	}
+    /**
+     * Returns a copy of itself as a new Object.
+     * @return 
+     * @throws java.lang.CloneNotSupportedException
+     */
+    @Override
+    public Individual clone() throws CloneNotSupportedException {
+        Individual aClone = (Individual)super.clone();
+        aClone.absoluteMaxSpeed = this.absoluteMaxSpeed;
+        aClone.age = this.age;
+        aClone.cell = this.cell;
+        aClone.relativeSpeed = this.relativeSpeed;
+        aClone.deathCause = this.deathCause;
+        aClone.dynamicPotential = this.dynamicPotential;
+        aClone.exhaustion = this.exhaustion;
+        aClone.exhaustionFactor = this.exhaustionFactor;
+        aClone.familiarity = this.familiarity;
+        aClone.individualNumber = this.individualNumber;
+        aClone.alarmed = this.alarmed;
+        aClone.isEvacuated = this.isEvacuated;
+        aClone.safe = this.safe;
+        aClone.relativeMaxSpeed = this.relativeMaxSpeed;
+        aClone.panic = this.panic;
+        aClone.panicFactor = this.panicFactor;
+        aClone.reactionTime = this.reactionTime;
+        aClone.safetyTime = this.safetyTime;
+        aClone.slackness = this.slackness;
+        aClone.staticPotential = this.staticPotential;
+        aClone.stepEndTime = this.stepEndTime;
+        aClone.stepStartTime = this.stepStartTime;
+        aClone.uid = this.uid;
+        return aClone;
+    }
 
-	/**
-	 * Returns a string containing all parameters of the individueal, such as
-	 * familiarity, exhaustion etc.
-	 * @return the property string
-	 */
-	public String toStringProperties() {
-		return "Familiarity: " + familiarity + "\n" +
-						"Panic: " + panic + "\n" +
-						"Panic factor: " + panicFactor + "\n" +
-						"Slackness: " + slackness + "\n" +
-						"Exhaustion: " + exhaustion + "\n" +
-						"Exhaustion factor: " + exhaustionFactor + "\n" +
- "MaxSpeed: " + relativeMaxSpeed + "\n"
-            +						"Absolute max speed: " + absoluteMaxSpeed;
-	}
+    /**
+     * Returns a string "Individual" and the id number of the individual.
+     *
+     * @return the string representation
+     */
+    @Override
+    public String toString() {
+        return "Individual " + id();
+    }
 
-	/**
-	 * The hashcode of individuals is their id numer.
-	 * @return the hashcode of the individual
-	 */
-	@Override
-	public int hashCode() {
-		return getNumber();
-	}
+    /**
+     * Returns a string containing all parameters of the individueal, such as familiarity, exhaustion etc.
+     *
+     * @return the property string
+     */
+    public String toStringProperties() {
+        return "Familiarity: " + familiarity + "\n"
+                + "Panic: " + panic + "\n"
+                + "Panic factor: " + panicFactor + "\n"
+                + "Slackness: " + slackness + "\n"
+                + "Exhaustion: " + exhaustion + "\n"
+                + "Exhaustion factor: " + exhaustionFactor + "\n"
+                + "MaxSpeed: " + relativeMaxSpeed + "\n"
+                + "Absolute max speed: " + absoluteMaxSpeed;
+    }
 
-	/**
-	 * <p>Two individuals are equal, if they have both the same id.</p>
-	 * @param o the reference object with which to compare.
-	 * @return {@code true} if this object is the same as {@code o}; {@code false} otherwise.
-	 * @see     #hashCode()
-	 */
-	@Override
-	public boolean equals( Object o ) {
-		return o instanceof Individual ? ((Individual) o).id() == id() : false;
-	}
+    /**
+     * The hashcode of individuals is their id numer.
+     *
+     * @return the hashcode of the individual
+     */
+    @Override
+    public int hashCode() {
+        return getNumber();
+    }
 
-	//////////////////////////////////////////////////////////////////////////////
-	// alter stuff. todo ändern
-	public UUID getUid() {
-		return uid;
-	}
+    /**
+     * Two individuals are equal, if they have both the same id.
+     *
+     * @param o the reference object with which to compare.
+     * @return {@code true} if this object is the same as {@code o}; {@code false} otherwise.
+     * @see #hashCode()
+     */
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Individual ? ((Individual) o).id() == id() : false;
+    }
 
-	public void setUid( UUID uid ) {
-		this.uid = uid;
-	}
+    /////////////////////////////////////////////////////////////////////////////
+    // alter stuff. todo ändern
+    public UUID getUid() {
+        return uid;
+    }
+
+    public void setUid(UUID uid) {
+        this.uid = uid;
+    }
 }
