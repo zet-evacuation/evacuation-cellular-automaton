@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-  <info organisation="org.zetool" module="zet-model"/>
+  <info organisation="org.zetool" module="zet-evacuation-cellular-automaton"/>
 
   <configurations>
     <conf name="dist" description="Required to set up the build environment." extends="core" />
