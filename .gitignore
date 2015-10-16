@@ -10,3 +10,16 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# IDE files
+/nbproject/private/
+
+# build artifacts
+build/
+dist/
+
+# build process
+.sonar/
+
+# libraries
+lib/
