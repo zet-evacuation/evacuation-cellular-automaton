@@ -20,8 +20,10 @@
     <dependency org="junit" name="junit" rev="4.12" conf="test"/>
     <dependency org="org.hamcrest" name="hamcrest-library" rev="1.3" conf="test"/>
     <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.4.201502262128" conf="test"/>
+    <dependency org="org.jmock" name="jmock" rev="2.8.1" conf="test"/>
+    <dependency org="org.jmock" name="jmock-junit4" rev="2.8.1" conf="test"/>
     <dependency org="org.spockframework" name="spock-core" rev="1.0-groovy-2.4" conf="test"/>
-    
+
     <!-- core dependencies -->
     <dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.8" conf="core"/>
 

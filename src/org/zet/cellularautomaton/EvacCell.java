@@ -85,7 +85,7 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
      * @return The individual that occupies the cell.
      */
     public Individual getIndividual() {
-        return getStatus().getIndividual();
+        return getState().getIndividual();
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
         if (i == null) {
             throw new java.lang.NullPointerException("Individual is null.");
         }
-        getStatus().setIndividual(i);
+        getState().setIndividual(i);
     }
 
     /**
@@ -122,14 +122,14 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
         if (c2i == null) {
             throw new java.lang.NullPointerException("Individual on cell " + c2 + " is null.");
         }
-        c1.getStatus().setIndividual(c2i);
-        c2.getStatus().setIndividual(c1i);
+        c1.getState().setIndividual(c2i);
+        c2.getState().setIndividual(c1i);
         c1i.setCell(c2);
         c2i.setCell(c1);
     }
 
     void removeIndividual() {
-        getStatus().setIndividual(null);
+        getState().setIndividual(null);
     }
 
     /**
@@ -364,7 +364,7 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
     @Override
     public String toString() {
         return "(" + x + "," + y + "),speedfactor=" + speedFactor + ";is occupied="
-                + (getStatus().getIndividual() == null ? "false;" : "true;") + "id=" + hashCode() + " R: " + room + ";";
+                + (getState().getIndividual() == null ? "false;" : "true;") + "id=" + hashCode() + " R: " + room + ";";
     }
 
     /**
@@ -384,7 +384,7 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
             int cellx = this.getX() + direction.xOffset();
             int celly = this.getY() + direction.yOffset();
             if (cellRoom.existsCellAt(cellx, celly) && (!passableOnly || !bounds.contains(direction))
-                    && (!freeOnly || cellRoom.getCell(cellx, celly).getStatus().getIndividual() == null)) {
+                    && (!freeOnly || cellRoom.getCell(cellx, celly).getState().getIndividual() == null)) {
                 // Test again for the diagonal directions. if next to the position an individual stands. than this direction is removed!
                 boolean add = true;
                 switch (direction) {
@@ -396,11 +396,11 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
                         boolean f2 = false;
                         if (cellRoom.existsCellAt(this.getX() + direction.xOffset(),
                                 this.getY()) && cellRoom.getCell(this.getX() + direction.xOffset(),
-                                        this.getY()).getStatus().getIndividual() != null) {
+                                        this.getY()).getState().getIndividual() != null) {
                             f1 = true;
                         } else if (cellRoom.existsCellAt(this.getX() + direction.xOffset(),
                                 this.getY()) && cellRoom.getCell(this.getX() + direction.xOffset(),
-                                        this.getY()).getStatus().getIndividual() != null) {
+                                        this.getY()).getState().getIndividual() != null) {
                             f2 = true;
                         }
                         if (f1 && f2) {
@@ -437,11 +437,11 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
     }
 
     public boolean isOccupied() {
-        return getStatus().getIndividual() != null;
+        return getState().getIndividual() != null;
     }
 
     public boolean isOccupied(double time) {
-        return getStatus().getIndividual() != null || time < occupiedUntil;
+        return getState().getIndividual() != null || time < occupiedUntil;
     }
 
     public double getOccupiedUntil() {
@@ -458,7 +458,7 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
      * @return a string representing this room.
      */
     public String graphicalToString() {
-        return getStatus().getIndividual() == null ? graphicalRepresentation + " " + graphicalRepresentation
+        return getState().getIndividual() == null ? graphicalRepresentation + " " + graphicalRepresentation
                 : graphicalRepresentation + "I" + graphicalRepresentation;
     }
 
@@ -470,10 +470,10 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
         aClone.setSpeedFactor(this.getSpeedFactor());
 
         if (cloneIndividual && this.getIndividual() != null) {
-            aClone.getStatus().setIndividual(this.getIndividual().clone());
-            aClone.getStatus().getIndividual().setCell(aClone);
+            aClone.getState().setIndividual(this.getIndividual().clone());
+            aClone.getState().getIndividual().setCell(aClone);
         } else {
-            aClone.getStatus().setIndividual(this.getIndividual());
+            aClone.getState().setIndividual(this.getIndividual());
         }
 
         aClone.room = this.room;

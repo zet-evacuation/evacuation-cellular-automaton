@@ -22,10 +22,10 @@ package org.zetool.simulation.cellularautomaton;
  */
 public abstract class SquareCellularAutomaton<E extends SquareCell<E, S>, S> implements CellularAutomaton<E, S> {
 
-    protected MooreNeighborhoodSquare<E> neighborhood;
+    protected MooreNeighborhood<E> neighborhood;
 
     public SquareCellularAutomaton() {
-        neighborhood = new MooreNeighborhoodSquare<>();
+        neighborhood = new MooreNeighborhood<>();
     }
 
     @Override

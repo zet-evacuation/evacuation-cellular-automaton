@@ -24,28 +24,36 @@ import java.util.Objects;
  */
 public abstract class SquareCell<E extends SquareCell<E,S>,S> implements Cell<E,S> {
     /** x-coordinate of the cell in the room. */
-    protected int x;
+    protected final int x;
     /** y-coordinate of the cell in the room. */
-    protected int y;
+    protected final int y;
     /** The square matrix to which this cell belongs. */
     CellMatrix<E, S> matrix;
     /** The Status object for the cell. */
-    private S status;
+    private S state;
 
     public SquareCell( S state, int x, int y, CellMatrix<E, S> matrix ) {
         this.x = x;
         this.y = y;
         this.matrix = matrix;
-        this.status = Objects.requireNonNull( state, "Cell status must not be null!" );
+        this.state = Objects.requireNonNull( state, "Cell status must not be null!" );
     }
 
-    public S getStatus() {
-        return status;
+    public S getState() {
+        return state;
+    }
+    
+    public void setState(S state) {
+        this.state = state;
     }
 
     @Override
     public int getSides() {
         return 4;
+    }
+    
+    public CellMatrix<E,S> getMatrix() {
+        return matrix;
     }
 
 }

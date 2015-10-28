@@ -32,4 +32,12 @@ public interface CellMatrix<E extends Cell<E, S>, S> {
 
     public E getCell(int x, int y);
 
+    /**
+     * Checks whether the cell at position (x,y) of the room exists or not
+     *
+     * @param x x-coordinate of the cell to be checked
+     * @param y y-coordinate of the cell to be checked
+     * @return "true", if the cell at position (x,y) exists, "false", if not
+     */
+    public boolean existsCellAt(int x, int y);
 }

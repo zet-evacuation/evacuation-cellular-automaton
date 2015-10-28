@@ -140,7 +140,7 @@ public class DoorCell extends BaseTeleportCell<DoorCell> {
     protected ArrayList<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
         ArrayList<EvacCell> neighbours = super.getNeighbours(passableOnly, freeOnly);
         for (DoorCell door : this.teleportTargets) {
-            if (!freeOnly || door.getStatus().getIndividual() == null) {
+            if (!freeOnly || door.getState().getIndividual() == null) {
                 neighbours.add(door);
             }
         }

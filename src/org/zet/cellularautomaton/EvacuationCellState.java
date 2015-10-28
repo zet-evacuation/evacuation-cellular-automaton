@@ -16,7 +16,9 @@
 package org.zet.cellularautomaton;
 
 /**
- *
+ * Stores the state of a cell in an {@link EvacuationCellularAutomaton}. The state is defined by the individual
+ * standing on the cell (or not) and its properties.
+ * 
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationCellState {

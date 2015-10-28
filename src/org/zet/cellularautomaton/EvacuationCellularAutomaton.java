@@ -661,11 +661,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public String graphicalToString() {
-        String result = "";
-        for (Room room : rooms.values()) {
-            result += room.graphicalToString() + "\n\n";
-        }
-        return result;
+        return rooms.values().stream().map(room -> room.graphicalToString() + "\n\n").reduce("", String::concat);
     }
 
     public double getStaticPotential(EvacCell cell, int id) {
