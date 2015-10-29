@@ -29,7 +29,7 @@ public class TestEvacuationCellularAutomaton {
         assertThat(ca.getIndividuals(), is(empty()));
         assertThat(ca.getInitialIndividualCount(), is(equalTo(0)));
         assertThat(ca.getRooms(), is(empty()));
-        assertThat(ca.getState(), is(equalTo(EvacuationCellularAutomaton.State.ready)));
+        assertThat(ca.getState(), is(equalTo(EvacuationCellularAutomaton.State.READY)));
         assertThat(ca.getTimeStep(), is(equalTo(0)));
         assertThat(ca.graphicalToString(), is(equalTo("")));
     }

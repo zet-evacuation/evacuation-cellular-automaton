@@ -25,7 +25,7 @@ import org.zetool.common.localization.LocalizationManager;
  */
 public final class CellularAutomatonLocalization {
   /** Localization access for collection classes. */
-  public final static Localization LOC = LocalizationManager.getManager().getLocalization(
+  public static final Localization LOC = LocalizationManager.getManager().getLocalization(
           "org.zet.cellularautomaton.localization.localization" );
 
   /** Utility class constructor. */

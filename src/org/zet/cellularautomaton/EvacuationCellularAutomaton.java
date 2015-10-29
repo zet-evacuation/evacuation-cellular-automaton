@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -52,55 +54,56 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         /**
          * if all values and individuals are set, the simulation can be executed.
          */
-        ready,
+        READY,
         /**
-         * if a simulation is running.
+         * if a simulation is RUNNING.
          */
-        running,
+        RUNNING,
         /**
-         * if a simulation is finished. in this case all individuals are removed or in save areas.
+         * if a simulation is FINISHED. in this case all individuals are removed or in save areas.
          */
-        finished
+        FINISHED
     }
     /** an ArrayList of all Individual objects in the cellular automaton. */
-    private ArrayList<Individual> individuals;
+    private List<Individual> individuals;
     /** an ArrayList of all Individual objects, which are already out of the simulation because they are evacuated. */
-    private ArrayList<Individual> evacuatedIndividuals;
+    private List<Individual> evacuatedIndividuals;
     /** an ArrayList of all Individual objects, which are marked as "dead". */
-    private ArrayList<Individual> deadIndividuals;
+    private List<Individual> deadIndividuals;
     /** An {@code ArrayList} marked to be removed. */
-    private ArrayList<Individual> markedForRemoval;
+    private List<Individual> markedForRemoval;
     /** an ArrayList of all ExitCell objects (i.e. all exits) of the building. */
-    private ArrayList<ExitCell> exits;
+    private List<ExitCell> exits;
     /** an HashMap used to map rooms to identification numbers. */
-    private HashMap<Integer, Room> rooms;
+    private Map<Integer, Room> rooms;
     /** A mapping floor-id <-> floor-name. */
-    private LinkedList<String> floorNames;
+    private List<String> floorNames;
     /** A mapping floor <-> rooms. */
-    private LinkedList<ArrayList<Room>> roomsByFloor;
+    private List<ArrayList<Room>> roomsByFloor;
     /** HashMap mapping UUIDs of AssignmentTypes to Individuals. */
-    private HashMap<UUID, HashSet<Individual>> typeIndividualMap;
+    private Map<UUID, HashSet<Individual>> typeIndividualMap;
     /** Maps name of an assignment types to its unique id. */
-    private HashMap<String, UUID> assignmentTypes;
+    private Map<String, UUID> assignmentTypes;
     /** Maps Unique IDs to individuals. */
-    private HashMap<Integer, Individual> individualsByID;
+    private Map<Integer, Individual> individualsByID;
     /** A mapping that maps individuals to exits. */
     private IndividualToExitMapping individualToExitMapping;
     /** A mapping that maps exits to their capacity. */
-    private HashMap<StaticPotential, Double> exitToCapacityMapping;
+    private Map<StaticPotential, Double> exitToCapacityMapping;
     /** Reference to all Floor Fields. */
     private PotentialManager potentialManager;
     /** The current time step. */
     private int timeStep;
-    /** The minimal number of steps that is needed until all movements are finished. */
+    /** The minimal number of steps that is needed until all movements are FINISHED. */
     private int neededTime;
-    /** The current state of the cellular automaton, e.g. running, stopped, ... */
+    /** The current state of the cellular automaton, e.g. RUNNING, stopped, ... */
     private State state;
     private double absoluteMaxSpeed;
     private double secondsPerStep;
     private double stepsPerSecond;
     private int notSaveIndividualsCount = 0;
     private int initialIndividualCount;
+    private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
 
     /**
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
@@ -121,7 +124,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         absoluteMaxSpeed = 1;
         secondsPerStep = 1;
         stepsPerSecond = 1;
-        state = State.ready;
+        state = State.READY;
         floorNames = new LinkedList<>();
         recordingStarted = false;
     }
@@ -170,7 +173,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public int getCellCount() {
         int count = 0;
-        count = getRooms().stream().map((room) -> room.getCellCount(false)).reduce(count, Integer::sum);
+        count = getRooms().stream().map(room -> room.getCellCount(false)).reduce(count, Integer::sum);
         return count;
     }
 
@@ -180,7 +183,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         VisualResultsRecorder.getInstance().startRecording();
     }
 
-    final public void stopRecording() {
+    public final void stopRecording() {
         recordingStarted = false;
         VisualResultsRecorder.getInstance().stopRecording();
     }
@@ -209,7 +212,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return absoluteMaxSpeed;
     }
 
-    public HashMap<String, UUID> getAssignmentTypes() {
+    public Map<String, UUID> getAssignmentTypes() {
         return assignmentTypes;
     }
 
@@ -220,7 +223,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param absoluteMaxSpeed
      * @throws java.lang.IllegalArgumentException if absoluteMaxSpeed is less or equal to zero
      */
-    final public void setAbsoluteMaxSpeed(double absoluteMaxSpeed) throws java.lang.IllegalArgumentException {
+    public final void setAbsoluteMaxSpeed(double absoluteMaxSpeed) {
         if (absoluteMaxSpeed <= 0) {
             throw new java.lang.IllegalArgumentException("Maximal speed must be greater than zero!");
         }
@@ -301,9 +304,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * Returns all Individuals in the given AssignmentType
      *
      * @param id UUID of AssignmentType
-     * @return HashSet of Individuals
+     * @return a set of of Individuals
      */
-    public HashSet<Individual> getIndividualsInAssignmentType(UUID id) {
+    public Set<Individual> getIndividualsInAssignmentType(UUID id) {
         return typeIndividualMap.get(id);
     }
 
@@ -334,11 +337,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         this.individualToExitMapping = individualToExitMapping;
     }
 
-    public HashMap<StaticPotential, Double> getExitToCapacityMapping() {
+    public Map<StaticPotential, Double> getExitToCapacityMapping() {
         return exitToCapacityMapping;
     }
 
-    public void setExitToCapacityMapping(HashMap<StaticPotential, Double> exitToCapacityMapping) {
+    public void setExitToCapacityMapping(Map<StaticPotential, Double> exitToCapacityMapping) {
         this.exitToCapacityMapping = exitToCapacityMapping;
     }
 
@@ -352,7 +355,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws IllegalStateException if an individual is added after the simulation has been startet.
      */
     public final void addIndividual(EvacCell c, Individual i) throws IllegalArgumentException {
-        if (this.state != State.ready) {
+        if (this.state != State.READY) {
             throw new IllegalStateException("Individual added after simulation has started.");
         }
         if (individuals.contains(i)) {
@@ -388,10 +391,10 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param i specifies the Individual object which has to be removed from the list
      * @throws IllegalArgumentException if the the specific individual does not exist in the list individuals
      */
-    private void removeIndividual(Individual i) throws IllegalArgumentException {
+    private void removeIndividual(Individual i) {
         i.getCell().removeIndividual();
         if (!individuals.remove(i)) {
-            throw new IllegalArgumentException("Specified individual is not in list individuals.");
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
     }
 
@@ -403,7 +406,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws java.lang.IllegalArgumentException if the individual should be moved from an empty EvacCell, which is not
      * occupied by an Individual, or if the ''to''-EvacCell is already occupied by another individual.
      */
-    public void moveIndividual(EvacCell from, EvacCell to) throws java.lang.IllegalArgumentException {
+    public void moveIndividual(EvacCell from, EvacCell to) {
         if (from.getIndividual() == null) {
             throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
         }
@@ -461,9 +464,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws java.lang.IllegalArgumentException if the the specific individual does not exist in the list individuals
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      */
-    public void setIndividualEvacuated(Individual i) throws IllegalArgumentException {
+    public void setIndividualEvacuated(Individual i) {
         if (!individuals.remove(i)) {
-            throw new IllegalArgumentException("Specified individual is not in list individuals.");
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
         if (getTimeStep() == 0) {
             throw new IllegalStateException();
@@ -482,10 +485,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public void removeMarkedIndividuals() {
-        for (Individual i : markedForRemoval) //if( i.getStepEndTime() <= getTimeStep() ) {
-        {
-            setIndividualEvacuated(i);
-        }
+        markedForRemoval.stream().forEach(individual -> setIndividualEvacuated(individual));
         markedForRemoval.clear();
     }
 
@@ -518,9 +518,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      * @param cause the dead cause of the individual
      */
-    public void setIndividualDead(Individual i, DeathCause cause) throws IllegalArgumentException {
+    public void setIndividualDead(Individual i, DeathCause cause) {
         if (!individuals.remove(i)) {
-            throw new IllegalArgumentException("Specified individual is not in list individuals.");
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
         VisualResultsRecorder.getInstance().recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
         EvacCell c = i.getCell();
@@ -583,7 +583,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param room the Room object to be added
      * @throws IllegalArgumentException Is thrown if the the specific room exists already in the list rooms
      */
-    final public void addRoom(Room room) throws IllegalArgumentException {
+    final public void addRoom(Room room) {
         if (rooms.containsKey(room.getID())) {
             throw new IllegalArgumentException("Specified room exists already in list rooms.");
         } else {
@@ -592,21 +592,25 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             if (roomsByFloor.size() < floorID + 1) {
                 throw new IllegalStateException("No Floor with id " + floorID + " has been added before.");
             }
-
             roomsByFloor.get(floorID).add(room);
-
-            // try to add exits
-            for (EvacCell cell : room.getAllCells()) {
-                if (cell instanceof ExitCell) {
-
-                    if (exits.contains((ExitCell)cell)) {
-                        throw new IllegalArgumentException("Specified exit exists already in list exits.");
-                    } else {
-                        exits.add((ExitCell) cell);
-                    }
+            addExits(room);
+        }
+    }
+    
+    /**
+     * Adds the in the given room into the list of exits. Throws an exception if any of the exits is already known,
+     * as any exit can only be in one room.
+     * @param room 
+     */
+    private void addExits(Room room) {
+        for (EvacCell cell : room.getAllCells()) {
+            if (cell instanceof ExitCell) {
+                if (exits.contains((ExitCell)cell)) {
+                    throw new IllegalArgumentException("Specified exit exists already in list exits.");
+                } else {
+                    exits.add((ExitCell) cell);
                 }
             }
-
         }
     }
 
@@ -616,7 +620,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param room specifies the Room object which has to be removed from the list
      * @throws IllegalArgumentException Is thrown if the the specific room does not exist in the list rooms
      */
-    public void removeRoom(Room room) throws IllegalArgumentException {
+    public void removeRoom(Room room) {
         if (rooms.remove(room.getID()) == null) {
             throw new IllegalArgumentException("Specified room is not in list rooms.");
         }
@@ -629,13 +633,13 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return An ArrayList, which contains one ArrayList of ExitCells for each Cluster of ExitCells.
      */
-    public ArrayList<ArrayList<ExitCell>> clusterExitCells() {
-        HashSet<ExitCell> alreadySeen = new HashSet<>();
-        ArrayList<ArrayList<ExitCell>> allClusters = new ArrayList<>();
+    public List<List<ExitCell>> clusterExitCells() {
+        Set<ExitCell> alreadySeen = new HashSet<>();
+        List<List<ExitCell>> allClusters = new ArrayList<>();
         List<ExitCell> allExitCells = this.getExits();
         for (ExitCell e : allExitCells) {
             if (!alreadySeen.contains(e)) {
-                ArrayList<ExitCell> singleCluster = new ArrayList<>();
+                List<ExitCell> singleCluster = new ArrayList<>();
                 singleCluster = this.findExitCellCluster(e, singleCluster, alreadySeen);
                 allClusters.add(singleCluster);
             }
@@ -652,12 +656,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * time.
      * @return Returns one Cluster of neighboring ExitCells as an ArrayList.
      */
-    private ArrayList<ExitCell> findExitCellCluster(ExitCell currentCell, ArrayList<ExitCell> cluster, HashSet<ExitCell> alreadySeen) {
+    private List<ExitCell> findExitCellCluster(ExitCell currentCell, List<ExitCell> cluster, Set<ExitCell> alreadySeen) {
         if (!alreadySeen.contains(currentCell)) {
             cluster.add(currentCell);
             alreadySeen.add(currentCell);
             Collection<EvacCell> cellNeighbours = currentCell.getDirectNeighbors();
-            ArrayList<ExitCell> neighbours = new ArrayList<>();
+            List<ExitCell> neighbours = new ArrayList<>();
             for (EvacCell c : cellNeighbours) {
                 if (c instanceof ExitCell) {
                     neighbours.add((ExitCell) c);
@@ -706,18 +710,18 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public void start() {
-        setState(State.running);
+        setState(State.RUNNING);
         notSaveIndividualsCount = individuals.size();
         initialIndividualCount = individuals.size();
     }
 
     public void stop() {
-        setState(State.finished);
+        setState(State.FINISHED);
     }
 
     /**
      * Resets the cellular automaton in order to let it run again. All individuals are deleted, timestamp and lists are
-     * reseted and the status is set to ready. The recording of actions is stopped; Call {@code startRecording()} after
+ reseted and the status is set to READY. The recording of actions is stopped; Call {@code startRecording()} after
      * you placed individuals in the cellular automaton to start recording again.
      */
     public void reset() {
@@ -734,7 +738,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         typeIndividualMap.clear();
 
         timeStep = 0;
-        state = State.ready;
+        state = State.READY;
     }
 
     /**
@@ -747,17 +751,17 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public List<Individual> getRemainingIndividuals() {
-        ArrayList<Individual> remaining = new ArrayList<>(individuals.size() - evacuatedIndividuals.size());
+        List<Individual> remaining = new ArrayList<>(individuals.size() - evacuatedIndividuals.size());
 
-        individuals.stream().filter((i) -> (!i.isEvacuated() || i.isDead())).forEach((i) -> remaining.add(i));
+        individuals.stream().filter(i -> (!i.isEvacuated() || i.isDead())).forEach(i -> remaining.add(i));
 
         return Collections.unmodifiableList(remaining);
     }
 
     public List<Individual> getNotDeadIndividuals() {
-        List<Individual> NotDeadIndividuals = Collections.unmodifiableList(individuals);
-        evacuatedIndividuals.stream().forEach((i) -> NotDeadIndividuals.add(i));
-        return NotDeadIndividuals;
+        List<Individual> notDeadIndividuals = Collections.unmodifiableList(individuals);
+        evacuatedIndividuals.stream().forEach(individual -> notDeadIndividuals.add(individual));
+        return notDeadIndividuals;
     }
 
     /**
@@ -822,19 +826,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public Collection<Room> getRoomsOnFloor(Integer floorID) {
         return roomsByFloor.get(floorID);
-    }
-
-    /**
-     * Removes an exit from the list of all exists of the building
-     *
-     * @param exit specifies the ExitCell which has to be removed from the list
-     * @throws IllegalArgumentException if the the specific exit cell does not exist in the list exits
-     */
-    // THIS method is only package wide known. it is not used and makes imho no sense ;)
-    void removeExit(ExitCell exit) throws IllegalArgumentException {
-        if (!exits.remove(exit)) {
-            throw new IllegalArgumentException("Specified exit is not in the list of known exits.");
-        }
     }
 
     /**

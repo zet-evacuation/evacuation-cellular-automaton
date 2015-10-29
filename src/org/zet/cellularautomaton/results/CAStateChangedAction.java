@@ -62,11 +62,11 @@ public class CAStateChangedAction extends Action {
     @Override
     public String toString() {
         switch (this.newState) {
-            case finished:
+            case FINISHED:
                 return "finished";
-            case ready:
+            case READY:
                 return "ready";
-            case running:
+            case RUNNING:
                 return "running";
             default:
                 return "unknown state";
