@@ -18,7 +18,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TextEvacuateIndividualsRule {
+public class TestEvacuateIndividualsRule {
 
     private final Mockery context = new Mockery();
 

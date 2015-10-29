@@ -2,7 +2,9 @@ package org.zet.cellularautomaton;
 
 import java.util.Collections;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.jmock.AbstractExpectations.returnValue;
 import org.jmock.Expectations;
@@ -61,5 +63,39 @@ public class TestEvacuationCellularAutomaton {
                 allowing(room).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));
         }});
+    }
+    
+    @Test
+    public void testRemoveIndividuals() {
+        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        Individual toEvacuate = new Individual();
+        Individual notToEvacuate = new Individual();
+        notToEvacuate.setNumber(1);
+        
+        eca.addFloor("floor1");
+        Room room = context.mock(Room.class, "room1");
+        roomExpectations(room, 1, 3);
+        eca.addRoom(room);
+
+        ExitCell cell = new ExitCell(0, 0);
+        cell.setRoom(room);
+        ExitCell cell2 = new ExitCell(1,1);
+        cell2.setRoom(room);
+        context.checking(new Expectations() {{
+            allowing(room).addIndividual(cell, toEvacuate);
+            allowing(room).addIndividual(cell2, notToEvacuate);
+            allowing(room).removeIndividual(toEvacuate);
+        }});
+        
+        eca.addIndividual(cell, toEvacuate);
+        toEvacuate.setCell(cell);
+
+        eca.addIndividual(cell2, notToEvacuate);
+
+        eca.nextTimeStep();
+        eca.markIndividualForRemoval(toEvacuate);
+        eca.removeMarkedIndividuals();
+        assertThat(eca.getIndividuals(), not(hasItem(toEvacuate)));
+        assertThat(eca.getIndividuals(), hasItem(notToEvacuate));
     }
 }
