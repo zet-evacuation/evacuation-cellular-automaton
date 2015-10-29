@@ -16,43 +16,44 @@
 package org.zet.cellularautomaton.algorithm;
 
 import java.util.Iterator;
-import org.zet.cellularautomaton.algorithm.rule.Rule;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
+import org.zetool.algorithm.simulation.cellularautomaton.RuleSet;
 
 /**
- * The abstract base class for rule sets. A {@code RuleSet} basically is a container for {@link Rule} objects. The rules
+ * The abstract base class for rule sets. A {@code EvacuationRuleSet} basically is a container for {@link EvacuationRule} objects. The rules
  * fall into two different types: the initialization rules and the loop rules.
  *
  * When a new instance is created, it should load the rules itself, so all child classes need to implement the method
  * {@code selfInit()}. It is intended to load the rules out of the {@link ds.PropertyContainer}, but this can easyly be
  * omitted. Nevertheless {@code selfInit()} needs to be overwritten at least with an empty method.
  *
- * As the objects are divided in two parts, a {@code RuleSet} provides three different iterators: one that iterates
+ * As the objects are divided in two parts, a {@code EvacuationRuleSet} provides three different iterators: one that iterates
  * through all known rules, one iterating the initialization rules and a third one iterating the loop rules.
  *
  * @author Jan-Philipp Kappmeier
  */
-public abstract class RuleSet implements Iterable<Rule> {
+public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
 
     /**
      * The {@code ArrayList} containing all rules in only one instance.
      */
-    private final ArrayList<Rule> allRules;
+    private final ArrayList<EvacuationRule> allRules;
     /**
      * The {@code ArrayList} containing all initialization rules, maybe twice or more often.
      */
-    private final ArrayList<Rule> primaryRules;
+    private final ArrayList<EvacuationRule> primaryRules;
     /**
      * The {@code ArrayList} containing all loop rules, maybe twice or more often.
      */
-    private final ArrayList<Rule> loopRules;
+    private final ArrayList<EvacuationRule> loopRules;
 
     /**
      * Creates a new instance of {@code RuleSet} and initializes the container. The abstract method {@link #selfInit()}
      * is called, that should load all neccessary rules.
      */
-    public RuleSet() {
+    public EvacuationRuleSet() {
         allRules = new ArrayList<>();
         primaryRules = new ArrayList<>();
         loopRules = new ArrayList<>();
@@ -65,16 +66,16 @@ public abstract class RuleSet implements Iterable<Rule> {
      * @return the iterator
      */
     @Override
-    public Iterator<Rule> iterator() {
+    public Iterator<EvacuationRule> iterator() {
         return allRules.iterator();
     }
 
     /**
-     * Adds a new {@link Rule} to both, the initialization list and the loop list.
+     * Adds a new {@link EvacuationRule} to both, the initialization list and the loop list.
      *
      * @param rule the rule
      */
-    public void add(Rule rule) {
+    public void add(EvacuationRule rule) {
         if (!allRules.add(rule)) {
             allRules.add(rule);
         }
@@ -83,14 +84,14 @@ public abstract class RuleSet implements Iterable<Rule> {
     }
 
     /**
-     * Adds a new {@link Rule} only to the specified lists. In any case the rule is added to the list of all used rules.
+     * Adds a new {@link EvacuationRule} only to the specified lists. In any case the rule is added to the list of all used rules.
      *
      * @param rule the rule that is to be inserted
      * @param useInPrimarySet true if the rule should be added to the primary set
      * @param useInLoopSet true if the rule should be added to the loop set
      * @throws java.lang.IllegalArgumentException if two movement rules are inserted
      */
-    public void add(Rule rule, boolean useInPrimarySet, boolean useInLoopSet) throws IllegalArgumentException {
+    public void add(EvacuationRule rule, boolean useInPrimarySet, boolean useInLoopSet) throws IllegalArgumentException {
         if (!allRules.add(rule)) {
             allRules.add(rule);
         }
@@ -103,18 +104,18 @@ public abstract class RuleSet implements Iterable<Rule> {
     }
 
     /**
-     * Creates a new instance of the {@link Rule} interface. The object has the specified type and is created using the
-     * default constructor, thus the {@code Rule} shall have at least this public constructor.
+     * Creates a new instance of the {@link EvacuationRule} interface. The object has the specified type and is created using the
+     * default constructor, thus the {@code EvacuationRule} shall have at least this public constructor.
      *
      * @param ruleName the classname of the rule without the classpath "algo.ca.rule"
      * @return the new instace
      */
-    public static Rule createRule(String ruleName) {
+    public static EvacuationRule createRule(String ruleName) {
         Class<?> ruleClass = null;
-        Rule rule = null;
+        EvacuationRule rule = null;
         try {
             ruleClass = Class.forName("org.zet.cellularautomaton.algorithm.rule." + ruleName);
-            rule = (Rule) ruleClass.getConstructor().newInstance();
+            rule = (EvacuationRule) ruleClass.getConstructor().newInstance();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -132,18 +133,18 @@ public abstract class RuleSet implements Iterable<Rule> {
     }
 
     /**
-     * Creates a new instance of {@code RuleSet} of a specified class. The default constructor is called, thus the rule
+     * Creates a new instance of {@code EvacuationRuleSet} of a specified class. The default constructor is called, thus the rule
      * set shall have at least this public constructor.
      *
      * @param ruleSetName the classname of the rule set without the classpath "algo.ca"
      * @return the new instance
      */
-    public static RuleSet createRuleSet(String ruleSetName) {
+    public static EvacuationRuleSet createRuleSet(String ruleSetName) {
         Class<?> ruleSetClass = null;
-        RuleSet ruleSet = null;
+        EvacuationRuleSet ruleSet = null;
         try {
             ruleSetClass = Class.forName("org.zet.cellularautomaton.algorithm." + ruleSetName);
-            ruleSet = (RuleSet) ruleSetClass.getConstructor().newInstance();
+            ruleSet = (EvacuationRuleSet) ruleSetClass.getConstructor().newInstance();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -166,7 +167,7 @@ public abstract class RuleSet implements Iterable<Rule> {
      *
      * @return the iterator
      */
-    public Iterator<Rule> loopIterator() {
+    public Iterator<EvacuationRule> loopIterator() {
         return loopRules.iterator();
     }
 
@@ -175,13 +176,13 @@ public abstract class RuleSet implements Iterable<Rule> {
      *
      * @return the iterator
      */
-    public Iterator<Rule> primaryIterator() {
+    public Iterator<EvacuationRule> primaryIterator() {
         return primaryRules.iterator();
     }
 
     /**
      * Performs the initialization. This method is called by the constructor and is supposed to load the rules contained
-     * in the {@code RuleSet}
+     * in the {@code EvacuationRuleSet}
      */
     protected abstract void selfInit();
 }

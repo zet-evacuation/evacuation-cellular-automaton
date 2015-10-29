@@ -17,7 +17,7 @@
 package org.zet.cellularautomaton.algorithm;
 
 import org.zet.cellularautomaton.algorithm.rule.EvacuationPlanMovementRule;
-import org.zet.cellularautomaton.algorithm.rule.Rule;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.CellularAutomatonDirectionChecker;
 
 /**
@@ -34,7 +34,7 @@ public class EvacuationPlanCellularAutomatonRandomOrder extends EvacuationCellul
 	@Override
 	public void initialize() {
 		super.initialize();
-		for( Rule rule : getProblem().ruleSet ) {
+		for( EvacuationRule rule : getProblem().getRuleSet() ) {
 			if( rule instanceof EvacuationPlanMovementRule ) {
 				((EvacuationPlanMovementRule)rule).setChecker( checker );
 			}

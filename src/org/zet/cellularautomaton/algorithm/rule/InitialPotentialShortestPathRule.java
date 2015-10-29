@@ -49,7 +49,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 	public static void assignShortestPathPotential( EvacCell cell, EvacuationSimulationProblem esp ) {
 		Individual individual = cell.getIndividual();
 		ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
-		staticPotentials.addAll( esp.eca.getPotentialManager().getStaticPotentials() );
+		staticPotentials.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
 		StaticPotential initialPotential = new StaticPotential();
 		double minDistanceToEvacArea = Double.MAX_VALUE;
 		double distanceToEvacArea;
@@ -63,13 +63,13 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
 		// Check whether the individual is caged and cannot leave the building -> it has to die
 		if( minDistanceToEvacArea == Double.MAX_VALUE )
-			esp.eca.setIndividualDead( individual, DeathCause.ExitUnreachable );
+			esp.getCa().setIndividualDead( individual, DeathCause.ExitUnreachable );
 
 		individual.setStaticPotential( initialPotential );
-		esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic( individual, minDistanceToEvacArea, initialPotential.getDistance( cell ) );
-		esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( individual, 0 );
-		esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic( individual, 0, individual.getExhaustion() );
-		esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic( individual, 0, individual.getPanic() );
+		esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic( individual, minDistanceToEvacArea, initialPotential.getDistance( cell ) );
+		esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( individual, 0 );
+		esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic( individual, 0, individual.getExhaustion() );
+		esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic( individual, 0, individual.getPanic() );
 		// ToDo: Potential des Individuums im VisualResultsRecorder speichern	}
 	}
 }

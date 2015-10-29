@@ -38,7 +38,7 @@ public class EvacuationCellularAutomatonBackToFront extends EvacuationCellularAu
 	 */
 	@Override
 	public List<Individual> getIndividuals() {
-		List<Individual> copy = new ArrayList<>( getProblem().eca.getIndividuals() );
+		List<Individual> copy = new ArrayList<>( getProblem().getCa().getIndividuals() );
 		IndividualDistanceComparator<Individual> idc = new IndividualDistanceComparator<>();
 		Collections.sort( copy, idc );
 		Collections.reverse( copy );

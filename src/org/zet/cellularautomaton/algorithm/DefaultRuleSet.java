@@ -16,13 +16,13 @@
 package org.zet.cellularautomaton.algorithm;
 
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
-import org.zet.cellularautomaton.algorithm.rule.Rule;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import ds.PropertyContainer;
 import java.util.ArrayList;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 
 /**
- * The {@code DefaultRuleSet} is a {@link RuleSet} consisting of two sets, the <b>primary rules</b> and the <b>loop
+ * The {@code DefaultRuleSet} is a {@link EvacuationRuleSet} consisting of two sets, the <b>primary rules</b> and the <b>loop
  * rules</b>. The primary rules are supposed to be only executed once to initialize the {@link ds.ca.CellularAutomaton}
  * while the loop rules are supposed to be executed in every step.
  * 
@@ -31,12 +31,12 @@ import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class DefaultRuleSet extends RuleSet {
+public class DefaultRuleSet extends EvacuationRuleSet {
 
     private AbstractMovementRule movementRule = null;
 
     public DefaultRuleSet() {
-        // Build RuleSet
+        // Build EvacuationRuleSet
         super();
     }
 
@@ -47,7 +47,7 @@ public class DefaultRuleSet extends RuleSet {
      * @throws java.lang.IllegalArgumentException if two movement rules are inserted
      */
     @Override
-    public void add(Rule rule) throws IllegalArgumentException {
+    public void add(EvacuationRule rule) throws IllegalArgumentException {
         if (rule instanceof AbstractMovementRule) {
             if (movementRule == null) {
                 movementRule = (AbstractMovementRule) rule;
@@ -66,7 +66,7 @@ public class DefaultRuleSet extends RuleSet {
      * @throws java.lang.IllegalArgumentException if two movement rules are inserted
      */
     @Override
-    public void add(Rule rule, boolean useInPrimarySet, boolean useInLoopSet) throws IllegalArgumentException {
+    public void add(EvacuationRule rule, boolean useInPrimarySet, boolean useInLoopSet) throws IllegalArgumentException {
         if (rule instanceof AbstractMovementRule) {
             if (movementRule == null) {
                 movementRule = (AbstractMovementRule) rule;

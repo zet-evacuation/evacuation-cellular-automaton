@@ -20,6 +20,6 @@ package org.zet.cellularautomaton.algorithm.rule;
  *
  * @author Jan-Philipp Kappmeier
  */
-public abstract class AbstractInitialRule extends AbstractRule {
+public abstract class AbstractInitialRule extends AbstractEvacuationRule {
 
 }

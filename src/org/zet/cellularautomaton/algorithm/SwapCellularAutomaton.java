@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.algorithm;
 
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
-import org.zet.cellularautomaton.algorithm.rule.Rule;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zetool.common.util.Direction8;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
@@ -44,7 +44,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         //if( !isInitialized() ) {
         //	throw new IllegalArgumentException( DefaultLoc.getSingleton().getString( "algo.ca.NotInitializedException" ) );
         //}
-        getProblem().eca.nextTimeStep();
+        getProblem().getCa().nextTimeStep();
 
         // Suche movement rule und setze auf not direct action
         setDirectExecute(false);
@@ -56,14 +56,14 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         HashSet<Individual> individualSwapped = new HashSet<>();
 
         for (Individual i : getIndividuals()) {
-            Iterator<Rule> loop = getProblem().ruleSet.loopIterator();
+            Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
 
             if (i.id() == 114 && i.getCell().getAbsoluteX() == 2) {
                 System.out.println("114");
             }
 
             while (loop.hasNext()) {
-                Rule r = loop.next();
+                EvacuationRule r = loop.next();
                 r.execute(i.getCell());
                 if (r instanceof AbstractMovementRule) {
                     movement = (AbstractMovementRule) r;
@@ -96,7 +96,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
             } else {
                 // perform the other rules because this individual has finished its movement for this round
                 while (loop.hasNext()) {
-                    Rule r = loop.next();
+                    EvacuationRule r = loop.next();
                     r.execute(i.getCell());
                 }
             }
@@ -153,10 +153,10 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
                                 if (unfinished2.contains(i2)) {
                                     unfinished2.remove(i2); // perform last rules for them
                                 }
-                                Iterator<Rule> loop = getProblem().ruleSet.loopIterator();
+                                Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
                                 boolean movementFound = false;
                                 while (loop.hasNext()) {
-                                    Rule r = loop.next();
+                                    EvacuationRule r = loop.next();
                                     if (r instanceof AbstractMovementRule) {
                                         movementFound = true;
                                     } else if (movementFound) {
@@ -164,10 +164,10 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
                                     }
                                 }
                                 // perform last rules for them
-                                loop = getProblem().ruleSet.loopIterator();
+                                loop = getProblem().getRuleSet().loopIterator();
                                 movementFound = false;
                                 while (loop.hasNext()) {
-                                    Rule r = loop.next();
+                                    EvacuationRule r = loop.next();
                                     if (r instanceof AbstractMovementRule) {
                                         movementFound = true;
                                     } else if (movementFound) {
@@ -186,10 +186,10 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
 
         // Führe alle übrigen Individuals aus (Individuen, die nicht geswappt haben
         for (Individual i : unfinished2) {
-            Iterator<Rule> loop = getProblem().ruleSet.loopIterator();
+            Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
             boolean movementFound = false;
             while (loop.hasNext()) {
-                Rule r = loop.next();
+                EvacuationRule r = loop.next();
                 if (r instanceof AbstractMovementRule) {
                     r.execute(i.getCell());
                     movementFound = true;
@@ -200,15 +200,15 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         }
 
 		//setDirectExecute( true );
-        getProblem().eca.removeMarkedIndividuals();
-        getProblem().potentialController.updateDynamicPotential(getProblem().parameterSet.probabilityDynamicIncrease(),
-                getProblem().parameterSet.probabilityDynamicDecrease());
+        getProblem().getCa().removeMarkedIndividuals();
+        getProblem().getPotentialController().updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
+                getProblem().getParameterSet().probabilityDynamicDecrease());
     }
 
     private void setDirectExecute(boolean val) {
-        Iterator<Rule> loop = getProblem().ruleSet.loopIterator();
+        Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
         while (loop.hasNext()) {
-            Rule r = loop.next();
+            EvacuationRule r = loop.next();
             if (r instanceof AbstractMovementRule) {
                 ((AbstractMovementRule) r).setDirectExecute(val);
             }

@@ -76,7 +76,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 
 				// Calculate the second best Potential and the associated potential value on the {@code cell}
 				ArrayList<StaticPotential> staticPotentials = new ArrayList<StaticPotential>();
-				staticPotentials.addAll( esp.eca.getPotentialManager().getStaticPotentials() );
+				staticPotentials.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
 				StaticPotential minWayLengthPotential = sp;
 				int lengthOfWayValue = Integer.MAX_VALUE;
 				for( StaticPotential statPot : staticPotentials )
@@ -102,7 +102,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 
 				if( promisingNeighbours > CHANGE_THRESHOLD ) {
 					individual.setStaticPotential( minWayLengthPotential );
-					esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( individual, esp.eca.getTimeStep() );
+					esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( individual, esp.getCa().getTimeStep() );
 				}
 			}
 		}

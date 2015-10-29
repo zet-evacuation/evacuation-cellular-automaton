@@ -15,40 +15,44 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.StaticPotential;
 
 /**
  * A rule that evacuates the individuals.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuateIndividualsRule extends AbstractEvacuationRule {
 
-	public EvacuateIndividualsRule() {}
+    public EvacuateIndividualsRule() {
+    }
 
-	@Override
-	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-		esp.eca.markIndividualForRemoval( cell.getIndividual() );
-		// Potential needed for statistics:
-		org.zet.cellularautomaton.StaticPotential exit = esp.potentialController.getNearestExitStaticPotential( cell );
-		esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getIndividual(), exit );
-		// safetyTime etc will be set in the SaveIndividualsRule
-	}
+    /**
+     * Marks individuals standing on an exit to be removed. All actions on the state are executed after all rules are
+     * evaluated.
+     * @param cell the cell
+     */
+    @Override
+    protected void onExecute(EvacCell cell) {
+        esp.getCa().markIndividualForRemoval(cell.getIndividual());
+        // Potential needed for statistics:
+        StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential(cell);
+        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(cell.getIndividual(), exit);
+        // safetyTime etc will be set in the SaveIndividualsRule
+    }
 
-	@Override
-	public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
-		// Regel NUR anwendbar, wenn auf der Zelle ein Individuum steht
-		// und die Zelle eine Exitcell ist
-		
-		Individual i = cell.getIndividual();
-		//return (i != null) && (cell instanceof ds.ca.ExitCell) && ( i.getStepEndTime() <= esp.eca.getTimeStep() );
-		boolean testval = false;
-		if( (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell)) {
-			if( i.getStepEndTime() >= esp.eca.getTimeStep()+1 )
-				testval = false;
-			else
-				testval = true;
-		}
-		return testval;
-	}
+    /**
+     * Evacuation rule is applicable if the cell it is standing on is an exit cell. Additionally, as for all evacuation
+     * rules the cell must be occupied by an individual.
+     * @param cell the cell the rule is applied on
+     * @return {@true if the cell is an exit cell and an individual stands on it}
+     */
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell instanceof ExitCell &&
+                cell.isOccupied() &&
+                cell.getIndividual().getStepEndTime() < esp.getCa().getTimeStep() + 1;
+    }
 }
-

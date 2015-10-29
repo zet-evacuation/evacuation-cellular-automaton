@@ -17,15 +17,17 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zetool.algorithm.simulation.cellularautomaton.Rule;
 
 /**
  * @author Daniel R. Schmidt
- *
  */
-public interface Rule {
+public interface EvacuationRule extends Rule<EvacCell> {
 
+    @Override
     public void execute(EvacCell cell);
 
+    @Override
     public boolean executableOn(EvacCell cell);
 
     public void setEvacuationSimulationProblem(EvacuationSimulationProblem esp);

@@ -23,6 +23,6 @@ import org.zet.cellularautomaton.Individual;
  * @author Marcel Preuß
  *
  */
-public abstract class AbstractPotentialChangeRule extends AbstractRule {
+public abstract class AbstractPotentialChangeRule extends AbstractEvacuationRule {
 
 }

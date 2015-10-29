@@ -28,7 +28,7 @@ public class TeleportMovementRule extends WaitingMovementRule {
         List<EvacCell> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
 
         ArrayList<EvacCell> returned = new ArrayList<>(); // create new list to avoid concurrent modification
-        double time = esp.eca.getTimeStep();
+        double time = esp.getCa().getTimeStep();
         for (EvacCell cell : targets) {
             if (!cell.isOccupied(time)) {
                 returned.add(cell);

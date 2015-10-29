@@ -18,6 +18,7 @@ package org.zetool.algorithm.simulation.cellularautomaton;
 import org.zetool.algorithm.simulation.SimulationAlgorithm;
 import org.zetool.simulation.cellularautomaton.Cell;
 import java.util.Iterator;
+import org.zetool.simulation.cellularautomaton.CellularAutomaton;
 
 /**
  * A general cellular automaton simulation algorithm that is specified by generic types for simulation problem,
@@ -27,13 +28,15 @@ import java.util.Iterator;
  * Implementing classes must implement this method to provide the actual simulation process. The iterator may be altered
  * if simulation is only necessary for, e.g. cells that are populated.
  *
- * @param <S> the simulation problem class
- * @param <Ce> the cell type
- * @param <T> the simulation result
+ * @param <A> the automaton class
+ * @param <P> the simulation problem class
+ * @param <C> the cell type
+ * @param <S> the sikztuib
  * @author Jan-Philipp Kappmeier
  */
-public abstract class AbstractCellularAutomatonSimulationAlgorithm<Ce extends Cell<Ce, ?>, S extends CellularAutomatonSimulationProblem<Ce>, T>
-        extends SimulationAlgorithm<S, T> implements Iterable<Ce> {
+public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends CellularAutomaton<C, ?>,
+        C extends Cell<C, ?>, P extends CellularAutomatonSimulationProblem<A, C>, S>
+        extends SimulationAlgorithm<P, S> implements Iterable<C> {
 
     private int maxSteps;
 
@@ -58,7 +61,7 @@ public abstract class AbstractCellularAutomatonSimulationAlgorithm<Ce extends Ce
      */
     @Override
     protected void performStep() {
-        for (Ce c : this) {
+        for (C c : this) {
             execute(c);
         }
     }
@@ -68,7 +71,7 @@ public abstract class AbstractCellularAutomatonSimulationAlgorithm<Ce extends Ce
      *
      * @param cell the cell
      */
-    protected abstract void execute(Ce cell);
+    protected abstract void execute(C cell);
 
     /**
      * Performs the simulation until a break-condition is reached. The break condition can be a time limit (by means of
@@ -93,8 +96,8 @@ public abstract class AbstractCellularAutomatonSimulationAlgorithm<Ce extends Ce
     }
 
     @Override
-    protected abstract T terminate();
+    protected abstract S terminate();
 
     @Override
-    public abstract Iterator<Ce> iterator();
+    public abstract Iterator<C> iterator();
 }

@@ -27,7 +27,7 @@ public class EvacuationCellularAutomatonInOrder extends EvacuationCellularAutoma
 
     @Override
     public List<Individual> getIndividuals() {
-        return getProblem().eca.getIndividuals();
+        return getProblem().getCa().getIndividuals();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EvacuationCellularAutomatonInOrder extends EvacuationCellularAutoma
 //
 //			// Execute loop rules
 //			if( problem.eca.getIndividualCount() > 0 )
-//				fireProgressEvent( 0, String.format( "0 von %1$s Personen evakuiert.", getProblem().eca.getInitialIndividualCount() ) );
+//				fireProgressEvent( 0, String.format( "0 von %1$s Personen evakuiert.", getProblem().getCa().getInitialIndividualCount() ) );
 //				while( (problem.eca.getNotSafeIndividualsCount() > 0 || problem.eca.getTimeStep() < problem.eca.getNeededTime()) && problem.eca.getTimeStep() < getMaxTimeInSteps() && !isCancelled() ) {
 //					if( isPaused() ) {
 //						try {

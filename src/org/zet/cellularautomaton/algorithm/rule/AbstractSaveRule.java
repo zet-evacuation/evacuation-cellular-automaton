@@ -19,6 +19,6 @@ package org.zet.cellularautomaton.algorithm.rule;
  * @author Daniel R. Schmidt
  *
  */
-public abstract class AbstractSaveRule extends AbstractRule {
+public abstract class AbstractSaveRule extends AbstractEvacuationRule {
 
 }

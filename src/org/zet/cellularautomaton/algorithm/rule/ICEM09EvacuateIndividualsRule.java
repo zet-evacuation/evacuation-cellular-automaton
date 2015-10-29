@@ -25,10 +25,10 @@ public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
 
 	@Override
 	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-		esp.eca.markIndividualForRemoval( cell.getIndividual() );
+		esp.getCa().markIndividualForRemoval( cell.getIndividual() );
 		// Potential needed for statistics:
-		org.zet.cellularautomaton.StaticPotential exit = esp.potentialController.getNearestExitStaticPotential( cell );
-		esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getIndividual(), exit );
+		org.zet.cellularautomaton.StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential( cell );
+		esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getIndividual(), exit );
 		// safetyTime etc will be set in the SaveIndividualsRule
 	}
 
@@ -38,10 +38,10 @@ public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
 		// und die Zelle eine Exitcell ist
 		
 		Individual i = cell.getIndividual();
-		//return (i != null) && (cell instanceof ds.ca.ExitCell) && ( i.getStepEndTime() <= esp.eca.getTimeStep() );
+		//return (i != null) && (cell instanceof ds.ca.ExitCell) && ( i.getStepEndTime() <= esp.getCa().getTimeStep() );
 		boolean testval = false;
 		if( (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell)) {
-			if( i.getStepEndTime() >= esp.eca.getTimeStep()+1)
+			if( i.getStepEndTime() >= esp.getCa().getTimeStep()+1)
 				testval = false;
 			else
 				testval = true;

@@ -53,7 +53,7 @@ public class ChangePotentialFamiliarityOrAttractivityOfExitRule extends Abstract
 	 */
 	@Override
 	protected void onExecute( EvacCell cell ) {
-		double prob = esp.parameterSet.probabilityChangePotentialFamiliarityOrAttractivityOfExitRule();
+		double prob = esp.getParameterSet().probabilityChangePotentialFamiliarityOrAttractivityOfExitRule();
 		if( RandomUtils.getInstance().binaryDecision( prob ) ) {
 			ChangePotentialFamiliarityRule rule = new ChangePotentialFamiliarityRule();
 			rule.setEvacuationSimulationProblem( esp );

@@ -35,7 +35,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
    */
 	private void init() {
 		potentialMapping = new HashMap<>();
-		for( StaticPotential potential : esp.eca.getPotentialManager().getStaticPotentials() ) {
+		for( StaticPotential potential : esp.getCa().getPotentialManager().getStaticPotentials() ) {
 			for( TargetCell target : potential.getAssociatedExitCells() ) {
 				if( potentialMapping.put( target, potential ) != null ) {
           throw new UnsupportedOperationException( "There were two potentials leading to the same exit. "
@@ -68,15 +68,15 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
     }
 
 		Individual individual = cell.getIndividual();
-		TargetCell target = esp.eca.getIndividualToExitMapping().getExit( individual );
+		TargetCell target = esp.getCa().getIndividualToExitMapping().getExit( individual );
     if( target == null ) {
       //Logger.getGlobal().warning( "No target for Individual specified. Probably wrong rule selection for setting?" );
 			InitialPotentialShortestPathRule.assignShortestPathPotential( cell, this.esp );
       
       // If only one exit, assign it
       // TODO: throw warning message
-      if( esp.eca.getPotentialManager().getStaticPotentials().size() == 1 ) {
-        individual.setStaticPotential( esp.eca.getPotentialManager().getStaticPotentials().iterator().next() );
+      if( esp.getCa().getPotentialManager().getStaticPotentials().size() == 1 ) {
+        individual.setStaticPotential( esp.getCa().getPotentialManager().getStaticPotentials().iterator().next() );
       } else {
         //throw new IllegalStateException( "Mäh!" );
       }

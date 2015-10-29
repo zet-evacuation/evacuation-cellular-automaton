@@ -490,6 +490,16 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     /**
+     * Checks whether an individual is marked for removal by the next call to {@link #removeMarkedIndividuals() }.
+     * @param toEvacuate the individual
+     * @return  {@code true} if the individual is removed 
+     */
+    public boolean isIndividualMarked(Individual toEvacuate) {
+        return markedForRemoval.contains(toEvacuate);
+    }
+
+
+    /**
      * Sets the specified individual to the status safe and sets the correct safety time.
      *
      * @param i

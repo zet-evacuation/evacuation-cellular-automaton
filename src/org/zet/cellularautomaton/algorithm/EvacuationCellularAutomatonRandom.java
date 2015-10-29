@@ -29,7 +29,7 @@ public class EvacuationCellularAutomatonRandom extends EvacuationCellularAutomat
 
     @Override
     public List<Individual> getIndividuals() {
-        Individual[] indArray = getProblem().eca.getIndividuals().toArray(new Individual[0]);
+        Individual[] indArray = getProblem().getCa().getIndividuals().toArray(new Individual[0]);
         // permute
         for (int i = indArray.length - 1; i >= 0; i--) {
             int randomNumber = (RandomUtils.getInstance()).getRandomGenerator().nextInt(i + 1);

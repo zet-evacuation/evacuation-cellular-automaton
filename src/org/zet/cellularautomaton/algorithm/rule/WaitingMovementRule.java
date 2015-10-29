@@ -74,14 +74,14 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
     protected void updatePanic(Individual i, EvacCell targetCell) {
         double oldPanic = i.getPanic();
-        esp.parameterSet.updatePanic(i, targetCell, this.neighboursByPriority(i.getCell()));
+        esp.getParameterSet().updatePanic(i, targetCell, this.neighboursByPriority(i.getCell()));
         if (oldPanic != i.getPanic()) {
-            esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(i, esp.eca.getTimeStep(), i.getPanic());
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(i, esp.getCa().getTimeStep(), i.getPanic());
         }
     }
 
     protected void updateSpeed(Individual i) {
-        esp.parameterSet.updatePreferredSpeed(i);
+        esp.getParameterSet().updatePreferredSpeed(i);
     }
 
     /**
@@ -103,8 +103,8 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
             @Override
             public int compare(EvacCell cell1, EvacCell cell2) {
-                final double potential1 = esp.parameterSet.effectivePotential(referenceCell, cell1);
-                final double potential2 = esp.parameterSet.effectivePotential(referenceCell, cell2);
+                final double potential1 = esp.getParameterSet().effectivePotential(referenceCell, cell1);
+                final double potential2 = esp.getParameterSet().effectivePotential(referenceCell, cell2);
                 if (potential1 < potential2) {
                     return -1;
                 } else if (potential1 == potential2) {
@@ -139,7 +139,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         int max_index = 0;
 
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(esp.parameterSet.effectivePotential(cell, targets.get(i)));
+            p[i] = Math.exp(esp.getParameterSet().effectivePotential(cell, targets.get(i)));
             if (p[i] > max) {
                 max = p[i];
                 max_index = i;
@@ -263,9 +263,9 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
      */
     protected void updateExhaustion(Individual i, EvacCell targetCell) {
         double oldExhaustion = i.getExhaustion();
-        esp.parameterSet.updateExhaustion(i, targetCell);
+        esp.getParameterSet().updateExhaustion(i, targetCell);
         if (oldExhaustion != i.getExhaustion()) {
-            esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(i, esp.eca.getTimeStep(), i.getExhaustion());
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(i, esp.getCa().getTimeStep(), i.getExhaustion());
         }
     }
 
@@ -277,6 +277,6 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
      */
     protected boolean slack(Individual i) {
         double randomNumber = RandomUtils.getInstance().getRandomGenerator().nextDouble();
-        return (esp.parameterSet.idleThreshold(i) > randomNumber);
+        return (esp.getParameterSet().idleThreshold(i) > randomNumber);
     }
 }

@@ -15,10 +15,49 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Objects;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
+
 /**
  * @author Daniel R. Schmidt
- *
  */
-public abstract class AbstractEvacuationRule extends AbstractRule{
+public abstract class AbstractEvacuationRule implements EvacuationRule {
 
+    protected EvacuationSimulationProblem esp;
+
+    /**
+     * Returns if the rule is executable on the cell. The default behavior is, that a rule is executable if an
+     * {@link Individual} is standing on it.
+     *
+     * @param cell the cell that is checked
+     * @return {@code true} if an individual is standing on the cell, {@code false} otherwise
+     */
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell.getIndividual() != null;
+    }
+
+    @Override
+    final public void execute(EvacCell cell) {
+        if (!executableOn(cell)) {
+            return;
+        }
+
+        onExecute(cell);
+    }
+
+    abstract protected void onExecute(EvacCell cell);
+
+    @Override
+    public void setEvacuationSimulationProblem(EvacuationSimulationProblem esp) {
+        if (this.esp != null) {
+            throw new RuntimeException(CellularAutomatonLocalization.LOC.getString(
+                    "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
+        }
+        this.esp = Objects.requireNonNull(esp, CellularAutomatonLocalization.LOC.getString(
+                "algo.ca.rule.CAControllerIsNullException"));
+    }
 }

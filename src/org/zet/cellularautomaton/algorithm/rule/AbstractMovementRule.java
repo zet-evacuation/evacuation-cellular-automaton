@@ -28,7 +28,7 @@ import java.util.List;
  * @author Jan-Philipp Kappmeier
  *
  */
-public abstract class AbstractMovementRule extends AbstractRule {
+public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 	protected double speed;
 	protected double dist;
 	protected Individual ind;
@@ -162,7 +162,7 @@ public abstract class AbstractMovementRule extends AbstractRule {
 	 */
 	protected void setStepEndTime( Individual i, double d ) {
 		i.setStepEndTime( d );
-		esp.eca.setNeededTime( (int) Math.ceil( d ) );
+		esp.getCa().setNeededTime( (int) Math.ceil( d ) );
 	}
 
   public final void move( EvacCell target ) {

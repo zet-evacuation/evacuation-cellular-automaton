@@ -31,7 +31,7 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
 	@Override
 	protected void onExecute( EvacCell cell ) {
 		ArrayList<StaticPotential> exits = new ArrayList<StaticPotential>();
-		exits.addAll( esp.eca.getPotentialManager().getStaticPotentials() );
+		exits.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
 		int numberOfExits = exits.size();
 		RandomUtils random = RandomUtils.getInstance();
 		int randomExitNumber = random.getRandomGenerator().nextInt( numberOfExits );
@@ -45,7 +45,7 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
 					break;
 				}
 			if( !exitFound )
-				esp.eca.setIndividualDead( cell.getIndividual(), DeathCause.ExitUnreachable );
+				esp.getCa().setIndividualDead( cell.getIndividual(), DeathCause.ExitUnreachable );
 		} else
 			cell.getIndividual().setStaticPotential( exits.get( randomExitNumber ) );
 	}

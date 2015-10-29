@@ -38,7 +38,7 @@ public class ReactionRuleOnePerson extends AbstractReactionRule {
 	@Override
 	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
     Individual i = cell.getIndividual();
-    if( !i.isAlarmed() && esp.eca.getTimeStep() >= i.getReactionTime() * esp.eca.getStepsPerSecond() ) {
+    if( !i.isAlarmed() && esp.getCa().getTimeStep() >= i.getReactionTime() * esp.getCa().getStepsPerSecond() ) {
       i.setAlarmed( true );
     }
 	}

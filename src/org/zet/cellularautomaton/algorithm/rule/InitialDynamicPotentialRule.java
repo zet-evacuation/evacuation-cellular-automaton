@@ -31,6 +31,6 @@ public class InitialDynamicPotentialRule extends AbstractInitialRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        cell.getIndividual().setDynamicPotential(this.esp.potentialController.getPm().getDynamicPotential());
+        cell.getIndividual().setDynamicPotential(this.esp.getPotentialController().getPm().getDynamicPotential());
     }
 }

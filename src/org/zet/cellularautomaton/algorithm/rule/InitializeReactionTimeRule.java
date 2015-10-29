@@ -30,6 +30,6 @@ public class InitializeReactionTimeRule extends AbstractInitialRule {
       throw new IllegalStateException( "Übeflüssige Regel!" );
     }
     //Individual i = cell.getIndividual();
-    //i.setReactionTime( (int) esp.parameterSet.getReactionTime());
+    //i.setReactionTime( (int) esp.getParameterSet().getReactionTime());
 	}
 }

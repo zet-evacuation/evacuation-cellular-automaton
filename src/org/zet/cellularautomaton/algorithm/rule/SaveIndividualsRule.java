@@ -37,35 +37,35 @@ public class SaveIndividualsRule extends AbstractSaveRule {
 ////			else
 ////				f = new File( "./" + south + ".txt" );
 ////			FileWriter w = new FileWriter( f, true );
-////			Double d = savedIndividual.getStepEndTime() * esp.eca.getSecondsPerStep();
-////			Double d2 = esp.eca.getTimeStep() * esp.eca.getSecondsPerStep();
+////			Double d = savedIndividual.getStepEndTime() * esp.getCa().getSecondsPerStep();
+////			Double d2 = esp.getCa().getTimeStep() * esp.getCa().getSecondsPerStep();
 ////			w.append( Double.toString(  d  ) + '\n' );
 ////			w.close();
 //		} catch( IOException ex ) {
 //
 //		}
 
-			//esp.eca.decreaseNrOfLivingAndNotSafeIndividuals();
+			//esp.getCa().decreaseNrOfLivingAndNotSafeIndividuals();
 			//savedIndividual.setSafe();
-			esp.eca.setIndividualSave( savedIndividual );
+			esp.getCa().setIndividualSave( savedIndividual );
 			savedIndividual.setPanic( 0 );
-			//savedIndividual.setSafetyTime(esp.eca.getTimeStep());
+			//savedIndividual.setSafetyTime(esp.getCa().getTimeStep());
 
 			if( cell instanceof org.zet.cellularautomaton.SaveCell ) {
 				org.zet.cellularautomaton.StaticPotential correspondingExitPotential = ((org.zet.cellularautomaton.SaveCell) cell).getExitPotential();
 				if( correspondingExitPotential == null ) {
-					savedIndividual.setStaticPotential( esp.eca.getPotentialManager().getSafePotential() );
+					savedIndividual.setStaticPotential( esp.getCa().getPotentialManager().getSafePotential() );
 				//throw new IllegalStateException("An individual is in a save area with no exit");
 				} else {
 					if( savedIndividual.getStaticPotential() != correspondingExitPotential ) {
-						esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( savedIndividual, esp.eca.getTimeStep() );
+						esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( savedIndividual, esp.getCa().getTimeStep() );
 						savedIndividual.setStaticPotential( correspondingExitPotential );
 					}
-					esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( savedIndividual, correspondingExitPotential );
+					esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( savedIndividual, correspondingExitPotential );
 				}
 			}
 
-			esp.caStatisticWriter.getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic( savedIndividual );
+			esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic( savedIndividual );
 
 		}
 	// else: nothing!

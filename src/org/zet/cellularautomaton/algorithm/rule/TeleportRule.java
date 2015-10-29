@@ -8,7 +8,7 @@ import org.zet.cellularautomaton.TeleportCell;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TeleportRule extends AbstractRule {
+public class TeleportRule extends AbstractEvacuationRule {
 
     @Override
     public boolean executableOn(EvacCell cell) {
@@ -30,16 +30,16 @@ public class TeleportRule extends AbstractRule {
 //						double beginTime = Math.max( i.getCell().getOccupiedUntil(), i.getStepEndTime() );
             double targetFreeAt = tc.getTarget(0).getOccupiedUntil();
 
-            if (tc.getTarget(0).getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < esp.eca.getTimeStep()) {
+            if (tc.getTarget(0).getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < esp.getCa().getTimeStep()) {
                 double moveTime = Math.max(targetFreeAt, cell.getIndividual().getStepEndTime());
                 //cell.getIndividual().setStepStartTime( cell.getIndividual().getStepEndTime() );
                 cell.getIndividual().setStepStartTime(moveTime);
-                esp.eca.moveIndividual(cell, tc.getTarget(0));
+                esp.getCa().moveIndividual(cell, tc.getTarget(0));
                 tc.setTeleportFailed(false);
                 counter++;
                 //System.out.println( "Teleportiert: " + counter );
-                if (esp.eca.getTimeStep() > tc.getTarget(0).getUsedInTimeStep()) {
-                    tc.getTarget(0).setUsedInTimeStep(esp.eca.getTimeStep());
+                if (esp.getCa().getTimeStep() > tc.getTarget(0).getUsedInTimeStep()) {
+                    tc.getTarget(0).setUsedInTimeStep(esp.getCa().getTimeStep());
                 }
             } else {
                 tc.setTeleportFailed(true);
@@ -55,10 +55,7 @@ public class TeleportRule extends AbstractRule {
      */
     //gibt true wieder, wenn geschwindigkeit von zelle und individuel (wkeit darueber) bewegung bedeuten
     protected boolean canMove(Individual i) {
-        if (esp.eca.getTimeStep() > i.getStepEndTime()) {
-            return true;
-        }
-        return false;
+        return esp.getCa().getTimeStep() > i.getStepEndTime();
     }
 
 }

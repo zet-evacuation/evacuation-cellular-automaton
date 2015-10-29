@@ -1,8 +1,6 @@
 package org.zet.cellularautomaton.algorithm;
 
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationResult;
-import org.zet.cellularautomaton.algorithm.rule.Rule;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
@@ -11,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
@@ -21,7 +20,7 @@ import java.util.logging.Level;
  * @author Jan-Philipp Kappmeier
  */
 public abstract class EvacuationCellularAutomatonAlgorithm
-        extends AbstractCellularAutomatonSimulationAlgorithm<EvacCell,
+        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomaton, EvacCell,
         EvacuationSimulationProblem, EvacuationSimulationResult> {
 
   public EvacuationCellularAutomatonAlgorithm() {
@@ -38,27 +37,27 @@ public abstract class EvacuationCellularAutomatonAlgorithm
    * @param time the time limit
    */
   public final void setMaxTimeInSeconds( double time ) {
-    int maxTimeInSteps = (int)Math.ceil( time * getProblem().eca.getStepsPerSecond() );
+    int maxTimeInSteps = (int)Math.ceil( time * getProblem().getCa().getStepsPerSecond() );
     setMaxSteps( maxTimeInSteps );
   }
 
   @Override
   protected void initialize() {
-    log.log( Level.INFO, "{0} wird ausgef\u00fchrt. ", toString() );
+    log.log( Level.INFO, "{0} wird ausgeführt. ", toString() );
     evacuationSimulationResult = new EvacuationSimulationResult();
 
-    getProblem().eca.start();
-    Individual[] individualsCopy = getProblem().eca.getIndividuals().toArray(
-            new Individual[getProblem().eca.getIndividuals().size()] );
+    getProblem().getCa().start();
+    Individual[] individualsCopy = getProblem().getCa().getIndividuals().toArray(
+            new Individual[getProblem().getCa().getIndividuals().size()] );
     for( Individual i : individualsCopy ) {
-      Iterator<Rule> primary = getProblem().ruleSet.primaryIterator();
+      Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
       EvacCell c = i.getCell();
       while( primary.hasNext() ) {
-        Rule r = primary.next();
+        EvacuationRule r = primary.next();
         r.execute( c );
       }
     }
-    getProblem().eca.removeMarkedIndividuals();
+    getProblem().getCa().removeMarkedIndividuals();
   }
 
   @Override
@@ -67,18 +66,18 @@ public abstract class EvacuationCellularAutomatonAlgorithm
 
     super.increaseStep();
 
-    getProblem().eca.removeMarkedIndividuals();
-    getProblem().potentialController.updateDynamicPotential(
-            getProblem().parameterSet.probabilityDynamicIncrease(),
-            getProblem().parameterSet.probabilityDynamicDecrease() );
+    getProblem().getCa().removeMarkedIndividuals();
+    getProblem().getPotentialController().updateDynamicPotential(
+            getProblem().getParameterSet().probabilityDynamicIncrease(),
+            getProblem().getParameterSet().probabilityDynamicDecrease() );
 //		caController.getPotentialController().updateDynamicPotential(
 //            caController.parameterSet.probabilityDynamicIncrease(),
 //            caController.parameterSet.probabilityDynamicDecrease() );
-    getProblem().eca.nextTimeStep();
+    getProblem().getCa().nextTimeStep();
 
     fireProgressEvent( getProgress(), String.format( "%1$s von %2$s Personen evakuiert.",
-            getProblem().eca.getInitialIndividualCount() - getProblem().eca.getIndividualCount(),
-            getProblem().eca.getInitialIndividualCount() ) );
+            getProblem().getCa().getInitialIndividualCount() - getProblem().getCa().getIndividualCount(),
+            getProblem().getCa().getInitialIndividualCount() ) );
   }
 
   @Override
@@ -87,9 +86,9 @@ public abstract class EvacuationCellularAutomatonAlgorithm
     Individual i = Objects.requireNonNull( cell.getIndividual(),
             "Execute called on EvacCell that does not contain an individual!" );
     //System.out.println( "Executing rules for individual " + i );
-    Iterator<Rule> loop = getProblem().ruleSet.loopIterator();
+    Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
     while( loop.hasNext() ) { // Execute all rules
-      Rule r = loop.next();
+      EvacuationRule r = loop.next();
       r.execute( i.getCell() );
     }
   }
@@ -97,26 +96,26 @@ public abstract class EvacuationCellularAutomatonAlgorithm
   @Override
   protected EvacuationSimulationResult terminate() {
     // let die all individuals which are not already dead and not safe
-    if( getProblem().eca.getNotSafeIndividualsCount() != 0 ) {
-      Individual[] individualsCopy = getProblem().eca.getIndividuals().toArray(
-              new Individual[getProblem().eca.getIndividuals().size()] );
+    if( getProblem().getCa().getNotSafeIndividualsCount() != 0 ) {
+      Individual[] individualsCopy = getProblem().getCa().getIndividuals().toArray(
+              new Individual[getProblem().getCa().getIndividuals().size()] );
       for( Individual i : individualsCopy ) {
         if( !i.getCell().getIndividual().isSafe() ) {
-          getProblem().eca.setIndividualDead( i, DeathCause.NotEnoughTime );
+          getProblem().getCa().setIndividualDead( i, DeathCause.NotEnoughTime );
         }
       }
     }
     fireProgressEvent( 1, "Simulation abgeschlossen" );
 
-    getProblem().eca.stop();
-    System.out.println( "Time steps: " + getProblem().eca.getTimeStep() );
+    getProblem().getCa().stop();
+    System.out.println( "Time steps: " + getProblem().getCa().getTimeStep() );
     return evacuationSimulationResult;
   }
 
   @Override
   protected boolean isFinished() {
-    boolean continueCondition = ((getProblem().eca.getNotSafeIndividualsCount() > 0
-            || getProblem().eca.getTimeStep() <= getProblem().eca.getNeededTime()) /*&& !isCancelled()*/);
+    boolean continueCondition = ((getProblem().getCa().getNotSafeIndividualsCount() > 0
+            || getProblem().getCa().getTimeStep() <= getProblem().getCa().getNeededTime()) /*&& !isCancelled()*/);
     return super.isFinished() || !continueCondition;
   }
 
@@ -128,8 +127,8 @@ public abstract class EvacuationCellularAutomatonAlgorithm
   @Override
   protected final double getProgress() {
     double timeProgress = super.getProgress();
-    double individualProgress = 1.0 - ((double)getProblem().eca.getIndividualCount()
-            / getProblem().eca.getInitialIndividualCount());
+    double individualProgress = 1.0 - ((double)getProblem().getCa().getIndividualCount()
+            / getProblem().getCa().getInitialIndividualCount());
     double progress = Math.max( individualProgress, timeProgress );
     return progress;
   }
