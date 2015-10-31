@@ -41,7 +41,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     }
 
     @Override
-    final public void execute(EvacCell cell) {
+    public final void execute(EvacCell cell) {
         if (!executableOn(cell)) {
             return;
         }

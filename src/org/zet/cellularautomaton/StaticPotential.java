@@ -17,6 +17,7 @@ package org.zet.cellularautomaton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,7 +39,7 @@ public class StaticPotential extends PotentialMap {
     protected int id;
 
     /** contains the associated ExitCells. */
-    protected ArrayList<ExitCell> associatedExitCells;
+    protected List<ExitCell> associatedExitCells;
 
     /** A HashMap that assign each EvacCell a Int value which represents the real distance). */
     protected HashMap<EvacCell, Double> cellToDistance;
@@ -147,11 +148,11 @@ public class StaticPotential extends PotentialMap {
         return cellToDistance.keySet();
     }
 
-    public ArrayList<ExitCell> getAssociatedExitCells() {
+    public List<ExitCell> getAssociatedExitCells() {
         return associatedExitCells;
     }
 
-    public void setAssociatedExitCells(ArrayList<ExitCell> associatedExitCells) {
+    public void setAssociatedExitCells(List<ExitCell> associatedExitCells) {
         this.associatedExitCells = associatedExitCells;
         setName(associatedExitCells.get(0).getName());
     }

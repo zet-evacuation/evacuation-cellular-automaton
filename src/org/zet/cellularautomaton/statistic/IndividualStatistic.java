@@ -18,6 +18,8 @@ package org.zet.cellularautomaton.statistic;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResultsForIndividuals;
@@ -40,7 +42,7 @@ public class IndividualStatistic {
 
   HashMap<Individual, Integer> safetyTimes;
   HashMap<Individual, ArrayList<Integer>> changePotentialTimes;
-  private HashMap<Individual, ArrayList<ArrayList<ExitCell>>> potentials;
+  private Map<Individual, List<List<ExitCell>>> potentials;
   HashMap<Individual, ArrayList<Integer>> coveredDistanceTimes;
   private HashMap<Individual, ArrayList<Double>> coveredDistance;
   HashMap<Individual, ArrayList<Integer>> waitedTimeTimes;
@@ -2492,7 +2494,7 @@ public class IndividualStatistic {
    * @throws java.lang.IllegalArgumentException
    */
   //eventuell auf StaticPotential umstellen?
-  public ArrayList<ExitCell> getPlannedExit( Individual ind, int t ) throws OneIndNoPotentialException, IllegalArgumentException {
+  public List<ExitCell> getPlannedExit( Individual ind, int t ) throws OneIndNoPotentialException, IllegalArgumentException {
     if( changePotentialTimes.containsKey( ind ) ) {
       int index = (Collections.binarySearch( changePotentialTimes.get( ind ), t ));
       if( index < 0 ) {

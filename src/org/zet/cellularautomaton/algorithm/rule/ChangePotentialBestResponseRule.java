@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
@@ -56,12 +57,12 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
                 distance = pot.getDistance(cell);
             }
             double movingTime = distance / speed;            
-            ArrayList<ExitCell> exitCells = pot.getAssociatedExitCells();
+            List<ExitCell> exitCells = pot.getAssociatedExitCells();
             int exitCapacity = exitCells.size();                              
             
             // calculate number of individuals that are heading to the same exit and closer to it            
-            ArrayList<Individual> otherInds = new ArrayList<Individual>();            
-            ArrayList<Room> rooms = new ArrayList<Room>();
+            ArrayList<Individual> otherInds = new ArrayList<>();            
+            ArrayList<Room> rooms = new ArrayList<>();
             rooms.addAll(esp.getCa().getRooms());
             for (Room room : rooms){
                 for (Individual i : room.getIndividuals()){

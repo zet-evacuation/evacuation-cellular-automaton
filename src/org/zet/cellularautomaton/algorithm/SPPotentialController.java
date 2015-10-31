@@ -167,7 +167,7 @@ public class SPPotentialController implements PotentialController {
      * @return the new potential
      */
     @Override
-    public StaticPotential mergePotentials(ArrayList<StaticPotential> potentialsToMerge) {
+    public StaticPotential mergePotentials(List<StaticPotential> potentialsToMerge) {
         return PotentialUtils.mergePotentials(potentialsToMerge);
     }
 
@@ -232,11 +232,11 @@ public class SPPotentialController implements PotentialController {
      * @return the calculated StaticPotential
      */
     @Override
-    public StaticPotential createStaticPotential(ArrayList<ExitCell> exitBlock) {
+    public StaticPotential createStaticPotential(List<ExitCell> exitBlock) {
         StaticPotential newSP = new StaticPotential();
         newSP.setAssociatedExitCells(exitBlock);
         newSP.setAttractivity(exitBlock.get(0).getAttractivity());
-        ArrayList<? extends EvacCell> parentList;
+        List<? extends EvacCell> parentList;
         ArrayList<EvacCell> childList;
         HashMap<EvacCell, SmoothingTuple> childTuple;
 

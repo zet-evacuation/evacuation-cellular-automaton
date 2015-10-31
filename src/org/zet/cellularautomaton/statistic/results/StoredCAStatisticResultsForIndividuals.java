@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.statistic.results;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.List;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.StaticPotential;
@@ -29,7 +30,7 @@ public class StoredCAStatisticResultsForIndividuals {
 
     HashMap<Individual, Integer> safetyTimes;
     HashMap<Individual, ArrayList<Integer>> changePotentialTimes;
-    private final HashMap<Individual, ArrayList<ArrayList<ExitCell>>> potentials;
+    private final HashMap<Individual, List<List<ExitCell>>> potentials;
     HashMap<Individual, ArrayList<Integer>> coveredDistanceTimes;
     private final HashMap<Individual, ArrayList<Double>> coveredDistance;
     HashMap<Individual, ArrayList<Integer>> waitedTimeTimes;
@@ -164,7 +165,7 @@ public class StoredCAStatisticResultsForIndividuals {
         return minDistanceToPlannedExit;
     }
 
-    public HashMap<Individual, ArrayList<ArrayList<ExitCell>>> getHashMapPotentials() {
+    public HashMap<Individual, List<List<ExitCell>>> getHashMapPotentials() {
         return potentials;
     }
 
