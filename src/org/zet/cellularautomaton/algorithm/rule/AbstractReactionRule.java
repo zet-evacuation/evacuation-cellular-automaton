@@ -15,13 +15,16 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCell;
+
 /**
  * @author Daniel R. Schmidt
  *
  */
 public abstract class AbstractReactionRule extends AbstractEvacuationRule {
-	@Override
-	public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
-		return cell.getIndividual() == null ? false : !cell.getIndividual().isAlarmed();
-	}
+
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell.getIndividual() == null ? false : !cell.getIndividual().isAlarmed();
+    }
 }

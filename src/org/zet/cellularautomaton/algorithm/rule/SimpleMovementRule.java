@@ -20,56 +20,60 @@ import org.zet.cellularautomaton.EvacCell;
 import java.util.List;
 
 /**
- * A simple movement rule that does not care about anything like slack, speed,
- * panic or anything else. Steps are always performed, there is no special
- * behaviour on {@link #isDirectExecute()}.
+ * A simple movement rule that does not care about anything like slack, speed, panic or anything else. Steps are always
+ * performed, there is no special behaviour on {@link #isDirectExecute()}.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class SimpleMovementRule extends AbstractMovementRule {
-	/**
-	 * Returns {@code true} if the rule can be executed. That is the case if an
-	 * {@link ds.ca.Individual} stands on the specified {@link EvacCell}.
-	 * @param cell the cell
-	 * @return {@code true} if an individual stands on the cell, {@code false} otherwise
-	 */
-	@Override
-	public boolean executableOn( EvacCell cell ) {
-		return cell.getIndividual() != null;
-	}
 
-	/**
-	 *
-	 * @param cell
-	 */
-	@Override
-	protected void onExecute( EvacCell cell ) {
-		EvacCell targetCell = selectTargetCell( cell, computePossibleTargets( cell, true ) );
-		ind = cell.getIndividual();
-		if( cell.equals( targetCell) )
-			return;
-		this.move( targetCell );
-	}
+    /**
+     * Returns {@code true} if the rule can be executed. That is the case if an {@link ds.ca.Individual} stands on the
+     * specified {@link EvacCell}.
+     *
+     * @param cell the cell
+     * @return {@code true} if an individual stands on the cell, {@code false} otherwise
+     */
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell.getIndividual() != null;
+    }
 
-	@Override
-  public void move( EvacCell from, EvacCell targetCell ) {
-//	public void move( EvacCell targetCell ) {
-    esp.getCa().moveIndividual( from, targetCell );
-	}
+    /**
+     *
+     * @param cell
+     */
+    @Override
+    protected void onExecute(EvacCell cell) {
+        EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
+        ind = cell.getIndividual();
+        if (cell.equals(targetCell)) {
+            return;
+        }
+        this.move(targetCell);
+    }
 
-	@Override
-	public EvacCell selectTargetCell( EvacCell cell, List<EvacCell> targets ) {
-		if( targets.isEmpty() )
-			return cell;
+    @Override
+    public void move(EvacCell from, EvacCell targetCell) {
+        esp.getCa().moveIndividual(from, targetCell);
+    }
 
-		double p[] = new double[targets.size()];
-		for( int i = 0; i < targets.size(); i++ )
-			p[i] = Math.exp( esp.getParameterSet().effectivePotential( cell, targets.get( i ) ) );
+    @Override
+    public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+        if (targets.isEmpty()) {
+            return cell;
+        }
 
-		return targets.get( RandomUtils.getInstance().chooseRandomlyAbsolute( p ) );
-	}
+        double p[] = new double[targets.size()];
+        for (int i = 0; i < targets.size(); i++) {
+            p[i] = Math.exp(esp.getParameterSet().effectivePotential(cell, targets.get(i)));
+        }
 
-	@Override
-	public void swap( EvacCell cell1, EvacCell cell2 ) {
-		throw new UnsupportedOperationException( "Not supported." );
-	}
+        return targets.get(RandomUtils.getInstance().chooseRandomlyAbsolute(p));
+    }
+
+    @Override
+    public void swap(EvacCell cell1, EvacCell cell2) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 }
