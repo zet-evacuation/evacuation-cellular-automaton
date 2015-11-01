@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Objects;
 import java.util.UUID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jmock.AbstractExpectations.returnValue;
@@ -23,59 +24,38 @@ public class TestReactionRuleCompleteRoom {
 
     @Test
     public void roomAlerted() {
-        ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
-        rule.setEvacuationSimulationProblem(getEvacuationProblem());
-
         Individual i = new Individual();
         Room room = roomExpectations(i, false, 1);
-
-        RoomCell cell = new RoomCell(1, 0, 0, room);
-        cell.getState().setIndividual(i);
-
-        i.setCell(cell);
+        RoomCell cell = setUpCell(room, i);
         
-        assertThat(i.isAlarmed(), is(false));
+        ReactionRuleCompleteRoom rule = getEvacuationProblem();
         rule.execute(cell);
         assertThat(i.isAlarmed(), is(true));
     }
     
     @Test
     public void roomNotAlerted() {
-        ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
-        rule.setEvacuationSimulationProblem(getEvacuationProblem());
-
         Individual i = new Individual(0, 0, 0, 0, 0, 1, 7, new UUID(0, 0));
         Room room = roomExpectations(i, false, 0);
-
-        RoomCell cell = new RoomCell(1, 0, 0, room);
-        cell.getState().setIndividual(i);
-
-        i.setCell(cell);
+        RoomCell cell = setUpCell(room, i);
         
-        assertThat(i.isAlarmed(), is(false));
+        ReactionRuleCompleteRoom rule = getEvacuationProblem();
         rule.execute(cell);
         assertThat(i.isAlarmed(), is(false));
     }
     
     @Test
     public void alertedByRoom() {
-        ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
-        rule.setEvacuationSimulationProblem(getEvacuationProblem());
-
         Individual i = new Individual(0, 0, 0, 0, 0, 1, 7, new UUID(0, 0));
         Room room = roomExpectations(i, true, 0);
-
-        RoomCell cell = new RoomCell(1, 0, 0, room);
-        cell.getState().setIndividual(i);
-
-        i.setCell(cell);
+        RoomCell cell = setUpCell(room, i);
         
-        assertThat(i.isAlarmed(), is(false));
+        ReactionRuleCompleteRoom rule = getEvacuationProblem();
         rule.execute(cell);
         assertThat(i.isAlarmed(), is(true));
     }
 
-    private EvacuationSimulationProblem getEvacuationProblem() {
+    private ReactionRuleCompleteRoom getEvacuationProblem() {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
@@ -84,7 +64,9 @@ public class TestReactionRuleCompleteRoom {
                 will(returnValue(eca));
             }
         });
-        return p;
+        ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
+        rule.setEvacuationSimulationProblem(p);
+        return rule;
     }
     
     private Room roomExpectations(Individual i, boolean beforeAlarm, int setAlarmExpectations) {
@@ -98,6 +80,13 @@ public class TestReactionRuleCompleteRoom {
                 exactly(setAlarmExpectations).of(room).setAlarmstatus(with(true));
         }});
         return room;
+    }
+    
+    private RoomCell setUpCell(Room room, Individual i) {
+        RoomCell cell = new RoomCell(1, 0, 0, Objects.requireNonNull(room));
+        cell.getState().setIndividual(Objects.requireNonNull(i));
+        i.setCell(cell);
+        return cell;
     }
     
 }
