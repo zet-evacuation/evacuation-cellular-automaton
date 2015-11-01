@@ -37,8 +37,6 @@ public interface Room extends CellMatrix<EvacCell, EvacuationCellState>, Cloneab
 
     public void clear();
 
-    public String graphicalToString();
-
     public void addIndividual(EvacCell c, Individual i);
 
     public void moveIndividual(EvacCell from, EvacCell to);

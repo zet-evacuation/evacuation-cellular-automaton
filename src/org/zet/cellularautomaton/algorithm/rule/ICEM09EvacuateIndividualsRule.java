@@ -17,36 +17,28 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.Individual;
 
-// dieselbe wie die normale EvacuateIndividualsRule!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
 
-	public ICEM09EvacuateIndividualsRule() {
-	}
+    public ICEM09EvacuateIndividualsRule() {
+    }
 
-	@Override
-	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-		esp.getCa().markIndividualForRemoval( cell.getIndividual() );
-		// Potential needed for statistics:
-		org.zet.cellularautomaton.StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential( cell );
-		esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getIndividual(), exit );
-		// safetyTime etc will be set in the SaveIndividualsRule
-	}
+    @Override
+    protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
+        esp.getCa().markIndividualForRemoval( cell.getIndividual() );
+        // Potential needed for statistics:
+        org.zet.cellularautomaton.StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential( cell );
+        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getIndividual(), exit );
+        // safetyTime etc will be set in the SaveIndividualsRule
+    }
 
-	@Override
-	public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
-		// Regel NUR anwendbar, wenn auf der Zelle ein Individuum steht
-		// und die Zelle eine Exitcell ist
-		
-		Individual i = cell.getIndividual();
-		//return (i != null) && (cell instanceof ds.ca.ExitCell) && ( i.getStepEndTime() <= esp.getCa().getTimeStep() );
-		boolean testval = false;
-		if( (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell)) {
-			if( i.getStepEndTime() >= esp.getCa().getTimeStep()+1)
-				testval = false;
-			else
-				testval = true;
-		}
-		return (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell) && testval;
-	}
+    @Override
+    public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
+        Individual i = cell.getIndividual();
+        boolean testval = false;
+        if( (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell)) {
+            testval = i.getStepEndTime() < esp.getCa().getTimeStep() + 1;
+        }
+        return (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell) && testval;
+    }
 }
 

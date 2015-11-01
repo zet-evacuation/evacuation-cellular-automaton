@@ -102,33 +102,4 @@ public class Universe implements CellMatrix<SimpleCell, CellState> {
             return true;
         }
     }
-
-    public String graphicalToString() {
-        String graphic = "+---";
-        for (int i = 1; i < width; i++) {
-            graphic += "+---";
-        }
-        graphic += "+\n";
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (getCell(x, y) != null) {
-                    graphic += "|";
-                    graphic += getCell(x, y).graphicalToString();
-                } else {
-                    graphic += "| X ";
-                }
-            }
-            graphic += "|\n";
-            graphic += "+---";
-            for (int i = 1; i < width; i++) {
-                graphic += "+---";
-            }
-            graphic += "+\n";
-        }
-
-        graphic += "\n\n";
-
-        return graphic;
-    }
 }

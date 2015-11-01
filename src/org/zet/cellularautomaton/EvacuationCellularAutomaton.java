@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.zetool.simulation.cellularautomaton.CellMatrixFormatter;
 
 /**
  * This class represents the structure of the cellular automaton. It holds the individuals, the rooms and the floor
@@ -675,7 +676,14 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public String graphicalToString() {
-        return rooms.values().stream().map(room -> room.graphicalToString() + "\n\n").reduce("", String::concat);
+        StringBuilder representation = new StringBuilder();
+
+        CellMatrixFormatter formatter = new CellMatrixFormatter();
+        formatter.registerFormatter(EvacCell.class, new EvacuationCellularAutomatonCellFormatter() );
+        for (Room aRoom : rooms.values()) {
+            representation.append(formatter.graphicalToString(aRoom)).append("\n\n");
+        }
+        return representation.toString();
     }
 
     public double getStaticPotential(EvacCell cell, int id) {

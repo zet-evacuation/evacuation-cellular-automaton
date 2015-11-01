@@ -129,7 +129,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         return d;
     }
 
-			// Calculate a factor that is later multiplied with the speed,
+    // Calculate a factor that is later multiplied with the speed,
     // this factor is only != 1 for stair cells to
     // give different velocities for going a stair up or down.
     protected double getStairSpeedFactor(Direction8 direction, StairCell stairCell) {

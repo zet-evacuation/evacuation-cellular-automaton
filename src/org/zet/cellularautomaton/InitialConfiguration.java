@@ -16,6 +16,8 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collection;
+import org.zetool.simulation.cellularautomaton.CellFormatter;
+import org.zetool.simulation.cellularautomaton.CellMatrixFormatter;
 
 /**
  * This class is a container for an initial configuration of the cellular automaton. The configuration is given by all
@@ -89,9 +91,11 @@ public class InitialConfiguration {
     public String toString() {
         String representation = "";
 
+        CellMatrixFormatter formatter = new CellMatrixFormatter();
+        formatter.registerFormatter(EvacCell.class, new EvacuationCellularAutomatonCellFormatter());
         for (Room aRoom : rooms) {
             representation += "\n Room (" + aRoom + "):\n";
-            representation += aRoom.graphicalToString();
+            representation += formatter.graphicalToString(aRoom);
         }
 
         return representation;

@@ -22,73 +22,77 @@ import org.zet.cellularautomaton.TargetCell;
 import java.util.HashMap;
 
 /**
- * This rule applies the exit mapping to the cellular automaton. It is explicitly
- * allowed to have individuals with no mapped exit.
+ * This rule applies the exit mapping to the cellular automaton. It is explicitly allowed to have individuals with no
+ * mapped exit.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class InitialPotentialExitMappingRule extends AbstractInitialRule {
-  /** Mapping of exit cells to their respective potentials. */
-	HashMap<TargetCell, StaticPotential> potentialMapping;
 
-  /**
-   * Initializes the {@code potentialMapping}.
-   */
-	private void init() {
-		potentialMapping = new HashMap<>();
-		for( StaticPotential potential : esp.getCa().getPotentialManager().getStaticPotentials() ) {
-			for( TargetCell target : potential.getAssociatedExitCells() ) {
-				if( potentialMapping.put( target, potential ) != null ) {
-          throw new UnsupportedOperationException( "There were two potentials leading to the same exit. "
-                  + "This method can currently not deal with this." );
-				}
-			}
-		}
-	}
+    /**
+     * Mapping of exit cells to their respective potentials.
+     */
+    HashMap<TargetCell, StaticPotential> potentialMapping;
 
-	/**
-	 * Checks, whether the rule is executable or not.
-	 * @param cell the cell on which the rule should be executed
-	 * @return Returns true, if an Individual is standing
-	 * on this cell, and moreover this Individual does
-	 * not already have a StaticPotential.
-	 */
-	@Override
-	public boolean executableOn( EvacCell cell ) {
-		return cell.getIndividual() != null;
-	}
-
-	/**
-	 * Assignes an exit (more precisely: the potential) for an individual.
-	 * @param cell the cell on which the individual stands
-	 */
-	@Override
-	protected void onExecute( EvacCell cell ) {
-    if( potentialMapping == null ) {
-      init();
+    /**
+     * Initializes the {@code potentialMapping}.
+     */
+    private void init() {
+        potentialMapping = new HashMap<>();
+        for (StaticPotential potential : esp.getCa().getPotentialManager().getStaticPotentials()) {
+            for (TargetCell target : potential.getAssociatedExitCells()) {
+                if (potentialMapping.put(target, potential) != null) {
+                    throw new UnsupportedOperationException("There were two potentials leading to the same exit. "
+                            + "This method can currently not deal with this.");
+                }
+            }
+        }
     }
 
-		Individual individual = cell.getIndividual();
-		TargetCell target = esp.getCa().getIndividualToExitMapping().getExit( individual );
-    if( target == null ) {
-      //Logger.getGlobal().warning( "No target for Individual specified. Probably wrong rule selection for setting?" );
-			InitialPotentialShortestPathRule.assignShortestPathPotential( cell, this.esp );
-      
-      // If only one exit, assign it
-      // TODO: throw warning message
-      if( esp.getCa().getPotentialManager().getStaticPotentials().size() == 1 ) {
-        individual.setStaticPotential( esp.getCa().getPotentialManager().getStaticPotentials().iterator().next() );
-      } else {
-        //throw new IllegalStateException( "Mäh!" );
-      }
-    } else {
-			StaticPotential potential = potentialMapping.get( target );
-      if( potential == null ) {
-        throw new IllegalArgumentException( "The target cell (room id, x, y) " + target.getRoom().getID() + ", "
-                + target.getX() + ", " + target.getY() + " does not correspond to a static potential." );
+    /**
+     * Checks, whether the rule is executable or not.
+     *
+     * @param cell the cell on which the rule should be executed
+     * @return Returns true, if an Individual is standing on this cell, and moreover this Individual does not already
+     * have a StaticPotential.
+     */
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell.getIndividual() != null;
+    }
 
-      }
-			individual.setStaticPotential( potential );
-		}
-		// TODO statistic for this rule
-	}
+    /**
+     * Assignes an exit (more precisely: the potential) for an individual.
+     *
+     * @param cell the cell on which the individual stands
+     */
+    @Override
+    protected void onExecute(EvacCell cell) {
+        if (potentialMapping == null) {
+            init();
+        }
+
+        Individual individual = cell.getIndividual();
+        TargetCell target = esp.getCa().getIndividualToExitMapping().getExit(individual);
+        if (target == null) {
+            //Logger.getGlobal().warning( "No target for Individual specified. Probably wrong rule selection for setting?" );
+            InitialPotentialShortestPathRule.assignShortestPathPotential(cell, this.esp);
+
+      // If only one exit, assign it
+            // TODO: throw warning message
+            if (esp.getCa().getPotentialManager().getStaticPotentials().size() == 1) {
+                individual.setStaticPotential(esp.getCa().getPotentialManager().getStaticPotentials().iterator().next());
+            } else {
+                //throw new IllegalStateException( "Mäh!" );
+            }
+        } else {
+            StaticPotential potential = potentialMapping.get(target);
+            if (potential == null) {
+                throw new IllegalArgumentException("The target cell (room id, x, y) " + target.getRoom().getID() + ", "
+                        + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
+
+            }
+            individual.setStaticPotential(potential);
+        }
+    }
 }

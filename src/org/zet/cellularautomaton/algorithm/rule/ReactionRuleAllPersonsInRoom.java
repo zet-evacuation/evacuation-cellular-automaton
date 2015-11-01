@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -25,11 +24,6 @@ import org.zet.cellularautomaton.Individual;
  * @author Jan-Philipp Kappmeier
  */
 public class ReactionRuleAllPersonsInRoom extends AbstractReactionRule {
-
-    @Override
-    public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() == null ? false : !cell.getIndividual().isAlarmed();
-    }
 
     /**
      * Executes the rule. The alarm time for the individual on the cell is reduced by one, if it will remai positive
