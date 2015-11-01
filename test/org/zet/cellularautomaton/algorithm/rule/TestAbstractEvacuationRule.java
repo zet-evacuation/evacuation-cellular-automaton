@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 
@@ -24,6 +25,22 @@ public class TestAbstractEvacuationRule {
 
     private final Mockery context = new Mockery();
 
+    @Test
+    public void testExecutableIfOccupied() {
+        AbstractEvacuationRule rule = new AbstractEvacuationRule() {
+
+            @Override
+            protected void onExecute(EvacCell cell) {
+            }
+        };
+        RoomCell cell = new RoomCell(0, 0);
+        assertThat(rule.executableOn(cell), is(false));
+
+        Individual i = new Individual();
+        cell.getState().setIndividual(i);
+        assertThat(rule.executableOn(cell), is(true));
+    }
+    
     @Test
     public void executesIfApplicable() {
         final LinkedList<EvacCell> executedOn = new LinkedList<>();
