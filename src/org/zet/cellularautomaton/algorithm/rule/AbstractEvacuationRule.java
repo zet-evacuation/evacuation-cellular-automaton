@@ -49,12 +49,12 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         onExecute(cell);
     }
 
-    abstract protected void onExecute(EvacCell cell);
+    protected abstract void onExecute(EvacCell cell);
 
     @Override
     public void setEvacuationSimulationProblem(EvacuationSimulationProblem esp) {
         if (this.esp != null) {
-            throw new RuntimeException(CellularAutomatonLocalization.LOC.getString(
+            throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
                     "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
         }
         this.esp = Objects.requireNonNull(esp, CellularAutomatonLocalization.LOC.getString(
