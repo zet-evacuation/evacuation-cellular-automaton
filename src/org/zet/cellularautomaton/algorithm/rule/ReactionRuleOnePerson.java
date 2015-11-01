@@ -15,31 +15,27 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 
 /**
- * A rule that alarms an individual if its reaction time is over. No other
- * individuals nor the room will be alarmed.
+ * A rule that alarms an individual if its reaction time is over. No other individuals nor the room will be alarmed.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class ReactionRuleOnePerson extends AbstractReactionRule {
 
-	/**
-	 * Creates the instance of this rule.
-	 */
-	public ReactionRuleOnePerson() { }
-
-	/**
-	 * Executes the rule. The individual is alarmed if the time is over
-	 * otherwise the remaining time is reduced by one. No other individuals are
-	 * infected from the alerting of the individual.
-	 * @param cell the cell on which the rule is executed
-	 */
-	@Override
-	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-    Individual i = cell.getIndividual();
-    if( !i.isAlarmed() && esp.getCa().getTimeStep() >= i.getReactionTime() * esp.getCa().getStepsPerSecond() ) {
-      i.setAlarmed( true );
+    /**
+     * Executes the rule. The individual is alarmed if the time is over otherwise the remaining time is reduced by one.
+     * No other individuals are infected from the alerting of the individual.
+     *
+     * @param cell the cell on which the rule is executed
+     */
+    @Override
+    protected void onExecute(EvacCell cell) {
+        Individual i = cell.getIndividual();
+        if (!i.isAlarmed() && esp.getCa().getTimeStep() >= i.getReactionTime() * esp.getCa().getStepsPerSecond()) {
+            i.setAlarmed(true);
+        }
     }
-	}
 }
