@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -33,7 +34,7 @@ public class ReactionRuleCompleteRoom extends AbstractReactionRule {
      * @param cell the cell the rule is executed on
      */
     @Override
-    protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
+    protected void onExecute(EvacCell cell) {
         final Individual individual = cell.getIndividual();
         if (!individual.isAlarmed()) {
             if (individual.getCell().getRoom().isAlarmed()) {
