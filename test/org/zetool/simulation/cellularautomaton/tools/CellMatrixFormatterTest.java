@@ -9,8 +9,14 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.jmock.AbstractExpectations.returnValue;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
+import org.zetool.common.util.Bounds;
+import org.zetool.common.util.Direction8;
+import org.zetool.common.util.Orientation;
 import org.zetool.simulation.cellularautomaton.Cell;
 import org.zetool.simulation.cellularautomaton.CellMatrix;
 
@@ -19,6 +25,7 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
  * @author Jan-Philipp Kappmeier
  */
 public class CellMatrixFormatterTest {
+    private final Mockery context = new Mockery();
 
     private static class MyCell implements Cell<MyCell, Void> {
 
@@ -42,6 +49,8 @@ public class CellMatrixFormatterTest {
 
         private final int width;
         private final int height;
+        private int undefinedX = -1;
+        private int undefinedY = -1;
 
         public MyMatrix(int width, int height) {
             this.width = width;
@@ -65,7 +74,7 @@ public class CellMatrixFormatterTest {
 
         @Override
         public MyCell getCell(int x, int y) {
-            return cell;
+            return x == undefinedX && y == undefinedY ? null : cell;
         }
 
         @Override
@@ -82,6 +91,17 @@ public class CellMatrixFormatterTest {
 
         CellMatrixFormatter formatter = new CellMatrixFormatter();
         String result = formatter.graphicalToString(matrix);
+        List<String> lines = Arrays.asList(result.split("\n"));
+        assertThat(lines.size(), is(equalTo(3)));
+        assertThat(lines, hasItem("┌───┐"));
+        assertThat(lines, hasItem("│   │"));
+        assertThat(lines, hasItem("└───┘"));
+    }
+    
+    @Test
+    public void testStatic() {
+        MyMatrix matrix = new MyMatrix(1, 1);
+        String result = CellMatrixFormatter.format(matrix);
         List<String> lines = Arrays.asList(result.split("\n"));
         assertThat(lines.size(), is(equalTo(3)));
         assertThat(lines, hasItem("┌───┐"));
@@ -120,6 +140,8 @@ public class CellMatrixFormatterTest {
     @Test
     public void testFormatterAllCases() {
         MyMatrix matrix = new MyMatrix(2, 2);
+        matrix.undefinedX = 1;
+        matrix.undefinedY = 1;
 
         CellMatrixFormatter formatter = new CellMatrixFormatter();
         String result = formatter.graphicalToString(matrix);
@@ -128,8 +150,51 @@ public class CellMatrixFormatterTest {
         assertThat(lines, hasItem("┌───┬───┐"));
         assertThat(lines, hasItem("│   │   │"));
         assertThat(lines, hasItem("├───┼───┤"));
-        assertThat(lines, hasItem("│   │   │"));
+        assertThat(lines, hasItem("│   │ X │"));
         assertThat(lines, hasItem("└───┴───┘"));
     }
+    
+    @Test
+    public void testStyleUsedComplete() {
+        CellMatrixFormatterStyle s = context.mock(CellMatrixFormatterStyle.class);
+        context.checking(new Expectations() {
+            {
+                atLeast(1).of(s).getCenter();
+                will(returnValue('ö'));
+                atLeast(1).of(s).getDelimiterBound(with(any(Direction8.class)));
+                will(returnValue('ä'));
+                atLeast(1).of(s).getBound(with(any(Bounds.class)));
+                will(returnValue('ä'));
+                atLeast(1).of(s).getGrid(with(any(Orientation.class)));
+                will(returnValue('ä'));
+                never(s).getUndefined();
+                atLeast(1).of(s).getUndefined();
+                will(returnValue('ä'));
+            }
+        });
+        MyMatrix matrix = new MyMatrix(2, 2);
+        matrix.undefinedX = 1;
+        matrix.undefinedY = 1;
 
+        CellMatrixFormatter formatter = new CellMatrixFormatter(s);
+        formatter.graphicalToString(matrix);
+        context.assertIsSatisfied();
+    }
+    @Test
+    public void testBasicStyle() {
+        MyMatrix matrix = new MyMatrix(2, 2);
+        matrix.undefinedX = 1;
+        matrix.undefinedY = 1;
+
+        CellMatrixFormatter formatter = new CellMatrixFormatter(new BasicCellMatrixFormatterStyle());
+        String result = formatter.graphicalToString(matrix);
+        List<String> lines = new LinkedList<>(Arrays.asList(result.split("\n")));
+        assertThat(lines.size(), is(equalTo(5)));
+        assertThat(lines, hasItem("+---+---+"));
+        assertThat(lines, hasItem("|   |   |"));
+        assertThat(lines, hasItem("+---+---+"));
+        assertThat(lines, hasItem("|   | X |"));
+        assertThat(lines, hasItem("+---+---+"));
+    }
+    
 }

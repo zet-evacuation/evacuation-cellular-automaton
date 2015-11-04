@@ -3,7 +3,7 @@ package org.zetool.simulation.cellularautomaton.tools;
 import org.zetool.simulation.cellularautomaton.Cell;
 
 /**
- *
+ * 
  * @author Jan-Philipp Kappmeier
  */
 public class DefaultCellFormatter implements CellFormatter {
