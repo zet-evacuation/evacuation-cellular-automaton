@@ -16,8 +16,8 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collection;
-import org.zetool.simulation.cellularautomaton.CellFormatter;
-import org.zetool.simulation.cellularautomaton.CellMatrixFormatter;
+import org.zetool.simulation.cellularautomaton.tools.CellFormatter;
+import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
  * This class is a container for an initial configuration of the cellular automaton. The configuration is given by all

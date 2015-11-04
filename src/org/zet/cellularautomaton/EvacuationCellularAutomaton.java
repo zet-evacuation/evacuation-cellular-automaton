@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.zetool.simulation.cellularautomaton.CellMatrixFormatter;
+import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
  * This class represents the structure of the cellular automaton. It holds the individuals, the rooms and the floor

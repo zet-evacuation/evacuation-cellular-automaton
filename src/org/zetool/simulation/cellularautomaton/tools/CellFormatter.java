@@ -1,4 +1,6 @@
-package org.zetool.simulation.cellularautomaton;
+package org.zetool.simulation.cellularautomaton.tools;
+
+import org.zetool.simulation.cellularautomaton.Cell;
 
 /**
  *

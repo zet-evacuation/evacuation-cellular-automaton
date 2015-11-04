@@ -1,6 +1,6 @@
 package org.zet.cellularautomaton;
 
-import org.zetool.simulation.cellularautomaton.CellFormatter;
+import org.zetool.simulation.cellularautomaton.tools.CellFormatter;
 
 /**
  *
