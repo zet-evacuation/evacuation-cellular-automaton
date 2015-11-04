@@ -180,6 +180,7 @@ public class CellMatrixFormatterTest {
         formatter.graphicalToString(matrix);
         context.assertIsSatisfied();
     }
+    
     @Test
     public void testBasicStyle() {
         MyMatrix matrix = new MyMatrix(2, 2);
@@ -195,6 +196,26 @@ public class CellMatrixFormatterTest {
         assertThat(lines, hasItem("+---+---+"));
         assertThat(lines, hasItem("|   | X |"));
         assertThat(lines, hasItem("+---+---+"));
+    }
+    
+    @Test
+    public void testCustomCellFormatter() {
+        MyMatrix matrix = new MyMatrix(1, 1);
+        CellFormatter customFormatter = context.mock(CellFormatter.class);
+        context.checking(new Expectations() {
+            {
+                allowing(customFormatter).format(with(any(Cell.class)));
+                will(returnValue("#0#"));
+            }
+        });
+        CellMatrixFormatter formatter = new CellMatrixFormatter();
+        formatter.registerFormatter(MyCell.class, customFormatter);
+        String result = formatter.graphicalToString(matrix);
+        List<String> lines = Arrays.asList(result.split("\n"));
+        assertThat(lines.size(), is(equalTo(3)));
+        assertThat(lines, hasItem("┌───┐"));
+        assertThat(lines, hasItem("│#0#│"));
+        assertThat(lines, hasItem("└───┘"));
     }
     
 }

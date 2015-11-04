@@ -13,7 +13,7 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
  * @author Jan-Philipp Kappmeier
  */
 public class CellMatrixFormatter {
-    private final static CellMatrixFormatter DEFAULT = new CellMatrixFormatter();
+    private static final CellMatrixFormatter DEFAULT = new CellMatrixFormatter();
     private final CellFormatter fallback = new DefaultCellFormatter();
     private final Map<Class<? extends Cell>, CellFormatter> formatterMap = new HashMap<>();
     private final CellMatrixFormatterStyle style;

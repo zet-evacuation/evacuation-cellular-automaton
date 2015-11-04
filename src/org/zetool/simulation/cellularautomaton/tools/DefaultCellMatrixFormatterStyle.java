@@ -15,41 +15,39 @@ import org.zetool.common.util.Orientation;
  */
 class DefaultCellMatrixFormatterStyle implements CellMatrixFormatterStyle {
     
-    private final Map<Direction8, Character> delimiterBounds = new EnumMap<>(Direction8.class);
-    {
-        delimiterBounds.put(Direction8.Left, '├');
-        delimiterBounds.put(Direction8.Right, '┤');
-        delimiterBounds.put(Direction8.Top, '┬');
-        delimiterBounds.put(Direction8.Down, '┴');
-        delimiterBounds.put(Direction8.TopLeft, '┌');
-        delimiterBounds.put(Direction8.TopRight, '┐');
-        delimiterBounds.put(Direction8.DownLeft, '└');
-        delimiterBounds.put(Direction8.DownRight, '┘');
+    private static final Map<Direction8, Character> DELIMITER_BOUNDS = new EnumMap<>(Direction8.class);
+    static {
+        DELIMITER_BOUNDS.put(Direction8.Left, '├');
+        DELIMITER_BOUNDS.put(Direction8.Right, '┤');
+        DELIMITER_BOUNDS.put(Direction8.Top, '┬');
+        DELIMITER_BOUNDS.put(Direction8.Down, '┴');
+        DELIMITER_BOUNDS.put(Direction8.TopLeft, '┌');
+        DELIMITER_BOUNDS.put(Direction8.TopRight, '┐');
+        DELIMITER_BOUNDS.put(Direction8.DownLeft, '└');
+        DELIMITER_BOUNDS.put(Direction8.DownRight, '┘');
     }
-    char delimiterCenter = '┼';
-    
-    char vertical = '│';
-    char horizontal = '─';
-    char nullSignature = 'X';
-    char empty = ' ';
+    private static final char DELIMITER_CENTER = '┼';
+    private static final char VERTICAL = '│';
+    private static final char HORIZONTAL = '─';
+    private static final char NULL_SIGNATURE = 'X';
     
     @Override
     public char getDelimiterBound(Direction8 dir) {
-        return delimiterBounds.get(dir);
+        return DELIMITER_BOUNDS.get(dir);
     }
 
     @Override
     public char getCenter() {
-        return delimiterCenter;
+        return DELIMITER_CENTER;
     }
 
     @Override
     public char getGrid(Orientation c) {
-        return c == Orientation.HORIZONTAL ? horizontal : vertical;
+        return c == Orientation.HORIZONTAL ? HORIZONTAL : VERTICAL;
     }
 
     @Override
     public char getUndefined() {
-        return nullSignature;
+        return NULL_SIGNATURE;
     }
 }

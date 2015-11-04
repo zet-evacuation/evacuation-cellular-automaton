@@ -10,10 +10,10 @@ import org.zetool.common.util.Orientation;
  */
 public class BasicCellMatrixFormatterStyle implements CellMatrixFormatterStyle {
 
-    private final static char VERTICAL = '|';
-    private final static char HORIZONTAL = '-';
-    private final static char CROSS = '+';
-    private final static char NULL_SIGNATURE = 'X';
+    private static final char VERTICAL = '|';
+    private static final char HORIZONTAL = '-';
+    private static final char CROSS = '+';
+    private static final char NULL_SIGNATURE = 'X';
 
     @Override
     public char getDelimiterBound(Direction8 dir) {
