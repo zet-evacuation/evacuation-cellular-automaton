@@ -18,12 +18,12 @@ package org.zet.cellularautomaton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
- * A StaticPotential is special type of PotentialMap, of that exists several in one PotentialManager. Therefore it has a
- * unique ID. The StaticPotential consists of two Potentials. Both describe the distance to an ExitCell. But the first
- * one represents this distance with an smoothly calculated value while the other on does it by the exact distance.
+ * A StaticPotential is special type of {@link PotentialMap}, of which exist several in one {@link PotentialManager}.
+ * Therefore it has a unique ID. The {@code StaticPotential} consists of two potentials. Both describe the distance to
+ * an {@link ExitCell}. But the first one represents this distance with an smoothly calculated value while the other
+ * one contains the exact distance.
  */
 public class StaticPotential extends PotentialMap {
 
@@ -33,16 +33,16 @@ public class StaticPotential extends PotentialMap {
     protected static int idCount = 0;
 
     /** Attractivity for this cell. */
-    protected int attractivity;
+    private int attractivity;
 
     /** Id of the StaticPotential. */
     protected int id;
 
     /** contains the associated ExitCells. */
-    protected List<ExitCell> associatedExitCells;
+    private List<ExitCell> associatedExitCells;
 
     /** A HashMap that assign each EvacCell a Int value which represents the real distance). */
-    protected HashMap<EvacCell, Double> cellToDistance;
+    private final HashMap<EvacCell, Double> cellToDistance;
 
     /**
      * Creates a StaticPotential with a automatic generated unique ID, that can not be changed.
@@ -53,6 +53,10 @@ public class StaticPotential extends PotentialMap {
         idCount++;
         cellToDistance = new HashMap<>();
         associatedExitCells = new ArrayList<>();
+    }
+    
+    protected StaticPotential(HashMap<EvacCell, Double> initialDistance) {
+        cellToDistance = initialDistance;
     }
 
     /**
@@ -73,20 +77,14 @@ public class StaticPotential extends PotentialMap {
     }
 
     /**
-     * Associates the specified distance with the specified EvacCell in this StaticPotential. If a EvacCell is specified
-     * that exists already in this StaticPotential the value will be overwritten. Otherwise a new mapping is created.
+     * Stores the specified distance for an {@link EvacCell} in this {@code StaticPotential}. If an {@link EvacCell}
+     * is specified that already exists, the value will be overwritten.
      *
      * @param cell cell which has to be updated or mapped
      * @param i distance of the cell
      */
-    public void setDistance(EvacCell cell, double i) throws IllegalArgumentException {
-        Double distance = i;
-        if (!cellToDistance.containsKey(cell)) {
-            cellToDistance.put(cell, distance);
-        } else {
-            cellToDistance.remove(cell);
-            cellToDistance.put(cell, distance);
-        }
+    public void setDistance(EvacCell cell, double i) {
+        cellToDistance.put(cell, i);
     }
 
     /**
@@ -98,17 +96,12 @@ public class StaticPotential extends PotentialMap {
      */
     public double getDistance(EvacCell cell) throws IllegalArgumentException {
         Double distance = cellToDistance.get(cell);
-        if (distance == null) {
-            return -1.0;
-        } else {
-            return distance;
-        }
+        return distance == null ? -1.0 : distance;
     }
 
     public double getMaxDistance() {
         double max = 0;
-        Set<EvacCell> cells = getMappedDistanceCells();
-        for (EvacCell cell : cells) {
+        for (EvacCell cell : cellToDistance.keySet()) {
             if (getDistance(cell) > max) {
                 max = getDistance(cell);
             }
@@ -120,9 +113,10 @@ public class StaticPotential extends PotentialMap {
      * Removes the mapping for the specified EvacCell. The method throws {@code IllegalArgumentExceptions} if you try to
      * remove the mapping of a EvacCell that does not exists.
      *
-     * @param cell A EvacCell that mapping you want to remove.
+     * @param cell an {@link EvacCell} that mapping you want to remove.
+     * @throws IllegalArgumentException if no distance was stored for cell
      */
-    public void deleteDistanceCell(EvacCell cell) throws IllegalArgumentException {
+    public void deleteDistanceCell(EvacCell cell) {
         if (!(cellToDistance.containsKey(cell))) {
             throw new IllegalArgumentException("The Cell must be insert previously!");
         }
@@ -130,22 +124,13 @@ public class StaticPotential extends PotentialMap {
     }
 
     /**
-     * Returns true if the mapping for the specified EvacCell exists.
+     * Returns {@code true} if the mapping for the specified {@link EvacCell} exists.
      *
-     * @param cell A EvacCell of that you want to know if it exists.
-     * @return 
+     * @param cell an {@link EvacCell} of that you want to know if it exists.
+     * @return {@code true} if the distance has been defined, {@code false} otherwise
      */
     public boolean containsDistance(EvacCell cell) {
         return cellToDistance.containsKey(cell);
-    }
-
-    /**
-     * Returns a set of all cell which are mapped by this distance
-     *
-     * @return set of mapped cells
-     */
-    public Set<EvacCell> getMappedDistanceCells() {
-        return cellToDistance.keySet();
     }
 
     public List<ExitCell> getAssociatedExitCells() {
@@ -170,13 +155,12 @@ public class StaticPotential extends PotentialMap {
     }
 
     public EvacPotential getAsEvacPotential(Individual i, CellularAutomatonDirectionChecker checker) {
-        EvacPotential evacPotential = new EvacPotential(i, checker);
-        evacPotential.associatedExitCells = this.associatedExitCells;
-        evacPotential.attractivity = this.attractivity;
-        evacPotential.cellToDistance = this.cellToDistance;
+        EvacPotential evacPotential = new EvacPotential(i, checker, cellToDistance);
+        evacPotential.setAssociatedExitCells(this.associatedExitCells);
+        evacPotential.setAttractivity(this.attractivity);
         evacPotential.cellToPotential = this.cellToPotential;
+        evacPotential.setName(this.name);
         evacPotential.id = this.id;
-        evacPotential.name = this.name;
         return evacPotential;
     }
 
