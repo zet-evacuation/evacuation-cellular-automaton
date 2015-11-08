@@ -1,5 +1,6 @@
 package org.zetool.simulation.cellularautomaton.tools;
 
+import org.zetool.simulation.cellularautomaton.FakeCell;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,25 +28,8 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
 public class CellMatrixFormatterTest {
     private final Mockery context = new Mockery();
 
-    private static class MyCell implements Cell<MyCell, Void> {
 
-        @Override
-        public Collection<MyCell> getDirectNeighbors() {
-            return Collections.EMPTY_LIST;
-        }
-
-        @Override
-        public int getSides() {
-            return 4;
-        }
-
-        @Override
-        public Iterator<MyCell> iterator() {
-            return getDirectNeighbors().iterator();
-        }
-    };
-
-    private static class MyMatrix implements CellMatrix<CellMatrixFormatterTest.MyCell, Void> {
+    private static class MyMatrix implements CellMatrix<FakeCell, Void> {
 
         private final int width;
         private final int height;
@@ -68,12 +52,12 @@ public class CellMatrixFormatterTest {
         }
 
         @Override
-        public Collection<MyCell> getAllCells() {
+        public Collection<FakeCell> getAllCells() {
             throw new AssertionError("Not to be called!");
         }
 
         @Override
-        public MyCell getCell(int x, int y) {
+        public FakeCell getCell(int x, int y) {
             return x == undefinedX && y == undefinedY ? null : cell;
         }
 
@@ -83,7 +67,7 @@ public class CellMatrixFormatterTest {
         }
     };
 
-    static MyCell cell = new MyCell();
+    static FakeCell cell = new FakeCell();
 
     @Test
     public void testFormatterSingle() {
@@ -209,7 +193,7 @@ public class CellMatrixFormatterTest {
             }
         });
         CellMatrixFormatter formatter = new CellMatrixFormatter();
-        formatter.registerFormatter(MyCell.class, customFormatter);
+        formatter.registerFormatter(FakeCell.class, customFormatter);
         String result = formatter.graphicalToString(matrix);
         List<String> lines = Arrays.asList(result.split("\n"));
         assertThat(lines.size(), is(equalTo(3)));

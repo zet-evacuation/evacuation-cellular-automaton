@@ -27,15 +27,12 @@ public abstract class SquareCell<E extends SquareCell<E,S>,S> implements Cell<E,
     protected final int x;
     /** y-coordinate of the cell in the room. */
     protected final int y;
-    /** The square matrix to which this cell belongs. */
-    CellMatrix<E, S> matrix;
     /** The Status object for the cell. */
     private S state;
 
     public SquareCell( S state, int x, int y, CellMatrix<E, S> matrix ) {
         this.x = x;
         this.y = y;
-        this.matrix = matrix;
         this.state = Objects.requireNonNull( state, "Cell status must not be null!" );
     }
 
@@ -52,8 +49,5 @@ public abstract class SquareCell<E extends SquareCell<E,S>,S> implements Cell<E,
         return 4;
     }
     
-    public CellMatrix<E,S> getMatrix() {
-        return matrix;
-    }
 
 }

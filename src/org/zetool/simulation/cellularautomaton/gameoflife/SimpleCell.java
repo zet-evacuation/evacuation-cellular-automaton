@@ -12,6 +12,8 @@ import org.zetool.simulation.cellularautomaton.SquareCell;
  * @author Jan-Philipp Kappmeier
  */
 public class SimpleCell extends SquareCell<SimpleCell, CellState> {
+    /** The square matrix to which this cell belongs. */
+    CellMatrix<SimpleCell, CellState> matrix;
 
     public SimpleCell(CellState state, int x, int y, Universe matrix) {
         super(state, x, y, matrix);
@@ -50,4 +52,7 @@ public class SimpleCell extends SquareCell<SimpleCell, CellState> {
         return getState() == CellState.Alive ? " ■ " : "   ";
     }
 
+    public CellMatrix<SimpleCell,CellState> getMatrix() {
+        return matrix;
+    }
 }
