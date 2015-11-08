@@ -24,7 +24,7 @@ package org.zet.cellularautomaton;
  */
 public class ExitCell extends TargetCell implements Cloneable {
 
-    /** Constant defining the standard Speed-Factor of an Exit-Cell, which may be < 1. */
+    /** Constant defining the standard Speed-Factor of an Exit-Cell, which may be &lt; 1. */
     public static final double STANDARD_EXITCELL_SPEEDFACTOR = 0.8d;
     /** Attractivity for this ExitCell. */
     private int attractivity;
@@ -32,8 +32,8 @@ public class ExitCell extends TargetCell implements Cloneable {
 
     /**
      * This constructor creates an empty Exit-Cell with the standard Speed-Factor.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public ExitCell( int x, int y ) {
         this( ExitCell.STANDARD_EXITCELL_SPEEDFACTOR, x, y, null );
@@ -48,9 +48,9 @@ public class ExitCell extends TargetCell implements Cloneable {
      *
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_EXITCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
      * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * aram y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      * @pa
      * ram room
      */

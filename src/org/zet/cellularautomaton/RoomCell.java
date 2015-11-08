@@ -31,8 +31,8 @@ public class RoomCell extends EvacCell implements Cloneable {
      * Constructor defining an empty (not occupied) Room-EvacCell with the standard Speed-Factor
      * "STANDARD_ROOMCELL_SPEEDFACTOR".
      *
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public RoomCell(int x, int y) {
         this(new EvacuationCellState(null), RoomCell.STANDARD_ROOMCELL_SPEEDFACTOR, x, y);
@@ -43,8 +43,8 @@ public class RoomCell extends EvacCell implements Cloneable {
      *
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_ROOMCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public RoomCell(double speedFactor, int x, int y) {
         this(new EvacuationCellState(null), speedFactor, x, y);
@@ -60,9 +60,9 @@ public class RoomCell extends EvacCell implements Cloneable {
      *
      * @param state Defines the individual that occupies the cell. If the cell is not occupied, the value is set to
      * {@code null}.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
      * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * aram y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public RoomCell(EvacuationCellState state, int x, int y) {
         this(state, RoomCell.STANDARD_ROOMCELL_SPEEDFACTOR, x, y);
@@ -75,9 +75,9 @@ public class RoomCell extends EvacCell implements Cloneable {
      * {@code null}.
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_ROOMCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
      * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * aram y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public RoomCell(EvacuationCellState state, double speedFactor, int x, int y) {
         this(state, speedFactor, x, y, null);

@@ -43,8 +43,8 @@ public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable 
      * "null".
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_DOORCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public BaseTeleportCell(EvacuationCellState individual, double speedFactor, int x, int y) {
         super(individual, speedFactor, x, y);

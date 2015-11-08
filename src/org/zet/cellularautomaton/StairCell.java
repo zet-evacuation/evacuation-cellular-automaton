@@ -25,7 +25,7 @@ package org.zet.cellularautomaton;
  */
 public class StairCell extends EvacCell implements Cloneable {
 
-    /** Constant defining the standard Speed-Factor of a Stair-EvacCell, which is usually < 1. */
+    /** Constant defining the standard Speed-Factor of a Stair-EvacCell, which is usually &lt; 1. */
     public static final double STANDARD_STAIRCELL_UP_SPEEDFACTOR = 0.5d;
     public static final double STANDARD_STAIRCELL_DOWN_SPEEDFACTOR = 0.6d;
 
@@ -35,9 +35,8 @@ public class StairCell extends EvacCell implements Cloneable {
     /**
      * This constructor creates an empty Stair-EvacCell with the standard Speed-Factor used for this special cell-type.
      *
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public StairCell(int x, int y) {
         this(new EvacuationCellState(null), RoomCell.STANDARD_ROOMCELL_SPEEDFACTOR, x, y);
@@ -50,9 +49,8 @@ public class StairCell extends EvacCell implements Cloneable {
      *
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_STAIRCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public StairCell(double speedFactor, int x, int y) {
         this(new EvacuationCellState(null), speedFactor, x, y);
@@ -73,9 +71,8 @@ public class StairCell extends EvacCell implements Cloneable {
      *
      * @param state Defines the individual that occupies the cell. If the cell is not occupied, the value is set to
      * {@code null}.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public StairCell(EvacuationCellState state, int x, int y) {
         this(state, RoomCell.STANDARD_ROOMCELL_SPEEDFACTOR, x, y);
@@ -90,9 +87,8 @@ public class StairCell extends EvacCell implements Cloneable {
      * {@code null}.
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than 0
      * and smaller or equal to 1. Otherwise the standard value "STANDARD_STAIRCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @p
-     * aram y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public StairCell(EvacuationCellState state, double speedFactor, int x, int y) {
         this(state, speedFactor, x, y, null);

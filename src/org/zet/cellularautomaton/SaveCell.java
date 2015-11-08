@@ -25,15 +25,15 @@ package org.zet.cellularautomaton;
  */
 public class SaveCell extends TargetCell implements Cloneable {
 
-    /** Constant defining the standard Speed-Factor of a Save-Cell, which may be < 1. */
+    /** Constant defining the standard Speed-Factor of a Save-Cell, which may be &lt; 1. */
     public static final double STANDARD_SAVECELL_SPEEDFACTOR = 0.8d;
 
     /**
      * This constructor creates an empty Save-Cell with the standard SaveCell-Speed-Factor
      * "STANDARD_SAVECELL_SPEEDFACTOR".
      *
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public SaveCell(int x, int y) {
         this(SaveCell.STANDARD_SAVECELL_SPEEDFACTOR, x, y);
@@ -44,8 +44,8 @@ public class SaveCell extends TargetCell implements Cloneable {
      *
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_SAVECELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public SaveCell(double speedFactor, int x, int y) {
         this(speedFactor, x, y, null);

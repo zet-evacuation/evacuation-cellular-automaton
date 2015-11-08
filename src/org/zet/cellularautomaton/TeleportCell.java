@@ -35,8 +35,8 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
      * Constructs an empty DoorCell which is NOT connected with any other DoorCell and has the standard Speed-Factor
      * "STANDARD_DOORCELL_SPEEDFACTOR".
      *
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public TeleportCell(int x, int y) {
         this(null, DoorCell.STANDARD_DOORCELL_SPEEDFACTOR, x, y);
@@ -47,8 +47,8 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
      * {@code speedfactor}
      *
      * @param speedFactor The speedfactor for this cell
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public TeleportCell(double speedFactor, int x, int y) {
         this(speedFactor, x, y, null);
@@ -66,8 +66,8 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
      * "null".
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_DOORCELL_SPEEDFACTOR" is set.
-     * @param x x-coordinate of the cell in the room, 0 <= x <= width-1
-     * @param y y-coordinate of the cell in the room, 0 <= y <= height-1
+     * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public TeleportCell(EvacuationCellState individual, double speedFactor, int x, int y) {
         super(individual, speedFactor, x, y);
