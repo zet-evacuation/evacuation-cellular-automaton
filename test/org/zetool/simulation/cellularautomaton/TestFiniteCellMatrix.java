@@ -1,6 +1,5 @@
 package org.zetool.simulation.cellularautomaton;
 
-import com.sun.accessibility.internal.resources.accessibility_zh_TW;
 import java.util.HashSet;
 import java.util.Set;
 import static org.hamcrest.CoreMatchers.equalTo;
