@@ -74,9 +74,9 @@ public class FiniteCellMatrix<E extends Cell<E, S>, S> implements CellMatrix<E, 
         List<E> collectedCells = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
-                E t = getCell(i, j);
-                if( t != null) {
-                    collectedCells.add(t);                
+                E cell = getCell(i, j);
+                if( cell != null) {
+                    collectedCells.add(cell);                
                 }
             }
         }
@@ -93,32 +93,32 @@ public class FiniteCellMatrix<E extends Cell<E, S>, S> implements CellMatrix<E, 
      * @throws IllegalArgumentException if the {@code x}- or the {@code y}-parameter is out of bounds.
      */
     @Override
-    public E getCell(int x, int y) throws IllegalArgumentException {
-        if ((x < 0) || (x > cells.getWidth() - 1)) {
-            throw new IllegalArgumentException("Invalid x-value: " + x);
-        }
-        if ((y < 0) || (y > cells.getHeight() - 1)) {
-            throw new IllegalArgumentException("Invalid y-value: " + y);
-        }
+    public E getCell(int x, int y) {
+        checkCoordinates(x, y);
         return cells.get(x, y);
     }
 
     public void setCell(int x, int y, E value) {
-        if ((x < 0) || (x > cells.getWidth() - 1)) {
-            throw new IllegalArgumentException("Invalid x-value: " + x);
-        }
-        if ((y < 0) || (y > cells.getHeight() - 1)) {
-            throw new IllegalArgumentException("Invalid y-value: " + y);
-        }
+        checkCoordinates(x, y);
         setCellInt(x, y, value);
     }
 
     private void setCellInt(int x, int y, E value) {
         cells.set(x, y, value);
     }
+    
+    private void checkCoordinates(int x, int y) {
+        if ((x < 0) || (x > cells.getWidth() - 1)) {
+            throw new IllegalArgumentException("Invalid x-value: " + x);
+        }
+        if ((y < 0) || (y > cells.getHeight() - 1)) {
+            throw new IllegalArgumentException("Invalid y-value: " + y);
+        }
+    }
 
     /**
-     * Checks whether the cell at position (x,y) of the room exists or not
+     * Checks whether the cell at position (x,y) of the matrix exists or not. A cell is considered to exist if it is
+     * inside the bounds of the (rectangular) matrix and the cell at the position is not {@code null}.
      *
      * @param x {@code x}-coordinate of the cell to be checked
      * @param y {@code y}-coordinate of the cell to be checked
@@ -126,9 +126,9 @@ public class FiniteCellMatrix<E extends Cell<E, S>, S> implements CellMatrix<E, 
      */
     @Override
     public boolean existsCellAt(int x, int y) {
-        if ((x < 0) || (x > (cells.getWidth() - 1))) {
+        if ((x < 0) || (x > cells.getWidth() - 1)) {
             return false;
-        } else if ((y < 0) || (y > (cells.getHeight() - 1))) {
+        } else if ((y < 0) || (y > cells.getHeight() - 1)) {
             return false;
         } else {
             return this.getCell(x, y) != null;
