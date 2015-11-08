@@ -44,6 +44,14 @@ public class FiniteCellMatrix<E extends Cell<E, S>, S> implements CellMatrix<E, 
         }
     }
 
+    public void clear() {
+        for (int i = 0; i < cells.getWidth(); i++) {
+            for (int j = 0; j < cells.getHeight(); j++) {
+                cells.set(i, j, null);
+            }
+        }
+    }
+
     /**
      * Returns the number of cells on the x-axis of the room.
      *
@@ -65,7 +73,7 @@ public class FiniteCellMatrix<E extends Cell<E, S>, S> implements CellMatrix<E, 
     }
 
     /**
-     * Returns a list of all cells in the room.
+     * Returns a list of all cells in the cell matrix.
      *
      * @return a list of all cells
      */
@@ -133,5 +141,37 @@ public class FiniteCellMatrix<E extends Cell<E, S>, S> implements CellMatrix<E, 
         } else {
             return this.getCell(x, y) != null;
         }
+    }
+
+    /**
+     * Returns the number of cells contained in this room. The parameter {@code allCells} indicates wheather the number
+     * of all cells is returned or the number of all cells that are not {@code null}. These cells can occur if there are
+     * "holes" in the room.
+     *
+     * @param allCells indicates wheather all cells are counted, or not
+     * @return the number of cells
+     */
+    public int getCellCount(boolean allCells) {
+        int count = 0;
+        if (allCells) {
+            count = cells.getHeight() * cells.getWidth();
+        } else {
+            for (int i = 0; i < cells.getWidth(); i++) {
+                for (int j = 0; j < cells.getHeight(); j++) {
+                    if (cells.get(i, j) != null) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns the width and height
+     */
+    @Override
+    public String toString() {
+        return "width=" + getWidth() + ";height=" + getHeight();
     }
 }

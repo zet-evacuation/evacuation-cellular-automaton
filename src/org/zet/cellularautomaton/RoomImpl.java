@@ -17,6 +17,7 @@ package org.zet.cellularautomaton;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.zetool.simulation.cellularautomaton.FiniteCellMatrix;
 
 /**
  * This class represents a room, which is a collection of Cells. Individuals can stay in a room: Each individual beeing
@@ -24,7 +25,7 @@ import java.util.List;
  *
  * @author Marcel Preuß
  */
-public class RoomImpl implements Room {
+public class RoomImpl extends FiniteCellMatrix<EvacCell, EvacuationCellState> implements Room {
 
     /** The id of the room (to calculate the hashCode). */
     private int id;
@@ -34,14 +35,6 @@ public class RoomImpl implements Room {
     private ArrayList<DoorCell> doors;
     /** Manages the individuals existing in this room. */
     private ArrayList<Individual> individuals;
-    /** Number of Cells on the x-axis. */
-    private final int width;
-    /** Number of Cells on the y-axis. */
-    private final int height;
-    /** Manages the Cells into which the room is divided. */
-    private final EvacCell[][] cells;
-    /** Description of Floor containing this room. */
-    //private String floor;
 
     private int floorID;
 
@@ -52,49 +45,15 @@ public class RoomImpl implements Room {
     public RoomImpl(int width, int height, int floorID) {
         this(width, height, floorID, idCount);
         idCount++;
-
     }
 
     protected RoomImpl(int width, int height, int floorID, int id) {
-        this.width = width;
-        this.height = height;
-        //this.floor = floor;
+        super(width, height);
         this.floorID = floorID;
         doors = new ArrayList<>();
         individuals = new ArrayList<>();
-        cells = new EvacCell[this.width][this.height];
-        for (int i = 0; i < this.width; i++) {
-            for (int j = 0; j < this.height; j++) {
-                cells[i][j] = null;
-            }
-        }
         this.id = id;
         this.isAlarmed = false;
-    }
-
-    /**
-     * Returns the number of cells contained in this room. The parameter {@code allCells} indicates wheather the number
-     * of all cells is returned or the number of all cells that are not {@code null}. These cells can occur if there are
-     * "holes" in the room.
-     *
-     * @param allCells indicates wheather all cells are counted, or not
-     * @return the number of cells
-     */
-    @Override
-    public int getCellCount(boolean allCells) {
-        int count = 0;
-        if (allCells) {
-            count = width * height;
-        } else {
-            for (int i = 0; i < this.width; i++) {
-                for (int j = 0; j < this.height; j++) {
-                    if (cells[i][j] != null) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
     }
 
     /**
@@ -106,18 +65,13 @@ public class RoomImpl implements Room {
      * parameter cell = null.
      * @throws IllegalArgumentException if the x- or the y-value of the parameter "cell" is out of bounds.
      */
+    @Override
     public void setCell(EvacCell cell) {
-        if ((cell.getX() < 0) || (cell.getX() > this.width - 1)) {
-            throw new IllegalArgumentException("Invalid x-value in cell!");
-        }
-        if ((cell.getY() < 0) || (cell.getY() > this.height - 1)) {
-            throw new IllegalArgumentException("Invalid y-value in cell!");
-        }
-        if ((cells[cell.getX()][cell.getY()] != null)
-                && (cells[cell.getX()][cell.getY()] instanceof DoorCell)) {
+        setCell(cell.getX(), cell.getY(), cell);
+        if ((getCell(cell.getX(),cell.getY()) != null)
+                && (getCell(cell.getX(), cell.getY()) instanceof DoorCell)) {
             doors.remove((DoorCell)cell);
         }
-        this.cells[cell.getX()][cell.getY()] = cell;
         if (cell instanceof DoorCell) {
             doors.add((DoorCell) cell);
         }
@@ -129,6 +83,7 @@ public class RoomImpl implements Room {
      *
      * @return true if the setAlarmed status is true.
      */
+    @Override
     public boolean isAlarmed() {
         return isAlarmed;
     }
@@ -139,27 +94,10 @@ public class RoomImpl implements Room {
      *
      * @param status the setAlarmed status
      */
+    @Override
     public void setAlarmstatus(boolean status) {
         this.isAlarmed = status;
     }
-
-    /**
-     * Returns the number of the floor containing this room
-     *
-     * @return Floornumber
-     */
-    //public String getFloor() {
-    //    return floor;
-    //}
-
-    /**
-     * Sets the name of the floor that contains this room.
-     *
-     * @param floorName
-     */
-    //public void setFloor(String floorName) {
-    //    this.floor = floorName;
-    //}
 
     /**
      * Returns an ArrayList containing the doors of the room.
@@ -181,6 +119,7 @@ public class RoomImpl implements Room {
         return individuals;
     }
 
+    @Override
     public int getXOffset() {
         return xOffset;
     }
@@ -189,6 +128,7 @@ public class RoomImpl implements Room {
         this.xOffset = xOffset;
     }
 
+    @Override
     public int getYOffset() {
         return yOffset;
     }
@@ -202,6 +142,7 @@ public class RoomImpl implements Room {
      * @param c
      * @param i
      */
+    @Override
     public void addIndividual(EvacCell c, Individual i) {
         if (!c.getRoom().equals(this)) {
             throw new IllegalStateException("The cell does not belong to this room.");
@@ -217,6 +158,7 @@ public class RoomImpl implements Room {
         }
     }
 
+    @Override
     public void removeIndividual(Individual i) {
         checkIndividual(i);
         if (i.getCell() == null) {
@@ -231,6 +173,7 @@ public class RoomImpl implements Room {
     }
 
     //TODO: make package private?
+    @Override
     public void moveIndividual(EvacCell from, EvacCell to) throws IllegalStateException {
         Individual i = from.getIndividual();
         checkIndividual(i);
@@ -240,90 +183,13 @@ public class RoomImpl implements Room {
     }
 
     //TODO: make package private? was before in interface
+    @Override
     public void swapIndividuals(EvacCell cell1, EvacCell cell2) throws IllegalStateException {
         Individual c1i = cell1.getIndividual();
         Individual c2i = cell2.getIndividual();
         checkIndividual(c1i);
         checkIndividual(c2i);
         cell1.swapIndividuals(cell2);
-    }
-
-    /**
-     * Returns the number of cells on the x-axis of the room.
-     *
-     * @return The number of cells on the x-axis of the room.
-     */
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * Returns the number of cells on the y-axis of the room.
-     *
-     * @return The number of cells on the y-axis of the room.
-     */
-    @Override
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * Returns a list of all cells in the room.
-     *
-     * @return a list of all cells
-     */
-    @Override
-    public List<EvacCell> getAllCells() {
-        ArrayList<EvacCell> cells = new ArrayList<>();
-        for (int i = 0; i < getWidth(); i++) {
-            for (int j = 0; j < getHeight(); j++) {
-                EvacCell t = getCell(i, j);
-                if (t != null) {
-                    cells.add(t);
-                }
-            }
-        }
-        return cells;
-    }
-
-    /**
-     * Returns the cell referenced at position (x,y)
-     *
-     * @param x x-coordinate of the cell. 0 <= x <= width-1
-     * @param y y-coordinate of the cell. 0 <= y <= height-1
-     * @return The cell referenced at position (x,y). If position (x,y) is empty (in other words: does not reference any
-     * cell) null is returned.
-     * @throws IllegalArgumentException if the x- or the y-parameter is out of bounds.
-     */
-    @Override
-    public EvacCell getCell(int x, int y) throws IllegalArgumentException {
-        if ((x < 0) || (x > this.width - 1)) {
-            throw new IllegalArgumentException("Invalid x-value!");
-        }
-        if ((y < 0) || (y > this.height - 1)) {
-            throw new IllegalArgumentException("Invalid y-value!");
-        }
-        return this.cells[x][y];
-    }
-
-    /**
-     * Checks whether the cell at position (x,y) of the room exists or not
-     *
-     * @param x x-coordinate of the cell to be checked
-     * @param y y-coordinate of the cell to be checked
-     * @return "true", if the cell at position (x,y) exists, "false", if not
-     */
-    public boolean existsCellAt(int x, int y) {
-        if ((x < 0) || (x > (this.getWidth() - 1))) {
-            return false;
-        } else if ((y < 0) || (y > (this.getHeight() - 1))) {
-            return false;
-        } else if (this.getCell(x, y) == null) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
 //  HashCode und Equals auskommentiert: Wenn zwei Räume gleich sind,
@@ -346,10 +212,12 @@ public class RoomImpl implements Room {
         return room.getID() == id;
     }
 
+    @Override
     public int getID() {
         return id;
     }
 
+    @Override
     public int getFloorID() {
         return floorID;
     }
@@ -359,27 +227,18 @@ public class RoomImpl implements Room {
      */
     @Override
     public String toString() {
-        return "id=" + id + ";width=" + width + ";height=" + height + ";floor=" + floorID;
+        return "id=" + id + ";" + super.toString() + ";floor=" + floorID;
     }
 
     @Override
     public void clear() {
+        super.clear();
         this.doors.clear();
-        //for( Individual i : individuals ) {
-        //    i.getCell().removeIndividual();
-        //}
-        //this.individuals.clear();
-
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                cells[i][j] = null;
-            }
-        }
     }
 
     @Override
     public Room clone() {
-        RoomImpl clone = new RoomImpl(width, height, floorID, id);
+        RoomImpl clone = new RoomImpl(getWidth(), getHeight(), floorID, id);
 
         clone.isAlarmed = this.isAlarmed;
         for (DoorCell door : this.doors) {
@@ -390,12 +249,8 @@ public class RoomImpl implements Room {
             clone.individuals.add(individual);
         }
 
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[x].length; y++) {
-                clone.cells[x][y] = this.cells[x][y];
-            }
-        }
-
+        clone.populate((x, y) -> this.getCell(x, y));
+        
         return clone;
     }
 

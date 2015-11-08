@@ -32,6 +32,8 @@ public class TestFiniteCellMatrix {
     @Test
     public void testBoundsCheck() {
         FiniteCellMatrix<FakeCell, Void> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> getCellArray()[t][u]);
+        assertThat(matrix.existsCellAt(0, 0), is(true));
+        assertThat(matrix.existsCellAt(WIDTH - 1, HEIGHT - 1), is(true));
         for (int x = 0; x < WIDTH; ++x) {
             assertThat(matrix.existsCellAt(x, -1), is(false));
             assertThat(matrix.existsCellAt(x, HEIGHT), is(false));
