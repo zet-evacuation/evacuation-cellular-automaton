@@ -35,7 +35,7 @@ import java.util.Iterator;
  * @author Jan-Philipp Kappmeier
  *
  */
-public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> implements Comparable<EvacCell> {
+public abstract class EvacCell extends SquareCell<EvacuationCellState> implements Comparable<EvacCell> {
     /** This character is used for graphic-like ASCII-output.  */
     protected char graphicalRepresentation = ' ';
     /** Defines the Speed-Factor of the EvacCell. I.e. a value, how fast this cell can be crossed. */
@@ -68,7 +68,8 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
     }
 
     public EvacCell(EvacuationCellState state, double speedFactor, int x, int y, Room room) {
-        super(state, x, y, room);
+        super(state, x, y);
+        this.room = room;
         //this.individual = individual;
         this.setSpeedFactor(speedFactor); // TODO
 
@@ -165,7 +166,6 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
      *
      * @return ArrayList of direct-neighbour-cells of "cell"
      */
-    @Override
     public Collection<EvacCell> getDirectNeighbors() {
         return getNeighbours(false, false);
     }
@@ -523,10 +523,4 @@ public abstract class EvacCell extends SquareCell<EvacCell,EvacuationCellState> 
 
         return Direction8.getDirection(c.getAbsoluteX() - getAbsoluteX(), c.getAbsoluteY() - getAbsoluteY());
     }
-
-    @Override
-    public Iterator<EvacCell> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

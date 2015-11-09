@@ -1,5 +1,7 @@
 package org.zetool.simulation.cellularautomaton.tools;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.zetool.common.util.Bounds;
@@ -12,11 +14,12 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
  *
  * @author Jan-Philipp Kappmeier
  * @param <E>
- * @param <S>
  */
-public class CellMatrixFormatter<E extends Cell<E, S>, S> {
-    private static final CellMatrixFormatter<? extends Cell,?> DEFAULT = new CellMatrixFormatter<>();
-    private final CellFormatter<E> fallback = new DefaultCellFormatter<>();
+public class CellMatrixFormatter<E extends Cell<?>> {
+    private static final CellMatrixFormatter DEFAULT = new CellMatrixFormatter<>();
+    
+    @SuppressWarnings("rawtypes")
+    private final CellFormatter fallback = new DefaultCellFormatter<>();
     private final Map<Class<E>, CellFormatter<E>> formatterMap = new HashMap<>();
     private final CellMatrixFormatterStyle style;
     private final String horizontalUpper;
@@ -47,7 +50,7 @@ public class CellMatrixFormatter<E extends Cell<E, S>, S> {
         return result == null ? fallback : result;
     }
 
-    public String graphicalToString(CellMatrix<E, S> matrix) {
+    public String graphicalToString(CellMatrix<E, ?> matrix) {
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         StringBuilder graphic = new StringBuilder();
@@ -96,7 +99,7 @@ public class CellMatrixFormatter<E extends Cell<E, S>, S> {
         graphic.append(style.getBound(Bounds.Right)).append("\n");
     }
     
-    private String appendCellContent(CellMatrix<E,S> matrix, int x, int y) {
+    private String appendCellContent(CellMatrix<E,?> matrix, int x, int y) {
         E cell = matrix.getCell(x, y);
         return  cell != null ? getFormatter(cell).format(cell) : " " + style.getUndefined() + " ";
     }
@@ -106,7 +109,7 @@ public class CellMatrixFormatter<E extends Cell<E, S>, S> {
      * @param matrix the cell matrix
      * @return multi-line string representation of the matrix' geometry
      */
-    public static String format(CellMatrix matrix) {
+    public static <E extends Cell<?>> String format(CellMatrix<E,?> matrix) {
         return DEFAULT.graphicalToString(matrix);
     }
 }

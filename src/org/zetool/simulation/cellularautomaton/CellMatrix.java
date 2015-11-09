@@ -22,7 +22,7 @@ import java.util.Collection;
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
-public interface CellMatrix<E extends Cell<E, S>, S> {
+public interface CellMatrix<E extends Cell<S>, S> {
 
     public int getWidth();
 

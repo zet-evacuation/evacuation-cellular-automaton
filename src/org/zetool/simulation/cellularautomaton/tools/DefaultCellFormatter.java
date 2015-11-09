@@ -6,10 +6,10 @@ import org.zetool.simulation.cellularautomaton.Cell;
  * 
  * @author Jan-Philipp Kappmeier
  */
-public class DefaultCellFormatter<E extends Cell<E,S>,S> implements CellFormatter<E> {
+public class DefaultCellFormatter<E extends Cell<?>> implements CellFormatter<E> {
     private static final String DEFAULT_CELL_STRING = "   ";
     @Override
-    public String format(E cell) {
+    public String format(Cell cell) {
         return DEFAULT_CELL_STRING;
     }
     

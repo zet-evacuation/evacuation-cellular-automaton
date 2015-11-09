@@ -35,7 +35,7 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
  * @author Jan-Philipp Kappmeier
  */
 public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends CellularAutomaton<C, ?>,
-        C extends Cell<C, ?>, P extends CellularAutomatonSimulationProblem<A, C>, S>
+        C extends Cell<?>, P extends CellularAutomatonSimulationProblem<A, C>, S>
         extends SimulationAlgorithm<P, S> implements Iterable<C> {
 
     private int maxSteps;

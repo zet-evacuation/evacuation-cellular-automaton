@@ -20,12 +20,12 @@ package org.zetool.simulation.cellularautomaton;
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
-public abstract class SquareCellularAutomaton<E extends SquareCell<E, S>, S> implements CellularAutomaton<E, S> {
+public abstract class SquareCellularAutomaton<E extends SquareCell<S>, S> implements CellularAutomaton<E, S> {
 
-    protected MooreNeighborhood<E> neighborhood;
+    protected MooreNeighborhood<E, S> neighborhood;
 
-    public SquareCellularAutomaton() {
-        neighborhood = new MooreNeighborhood<>();
+    public SquareCellularAutomaton(CellMatrix<E, S> matrix) {
+        neighborhood = new MooreNeighborhood<>(matrix);
     }
 
     @Override

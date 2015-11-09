@@ -18,11 +18,10 @@ package org.zetool.simulation.cellularautomaton;
 import java.util.Objects;
 
 /**
- * @param <E> the cell type
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
-public abstract class SquareCell<E extends SquareCell<E,S>,S> implements Cell<E,S> {
+public abstract class SquareCell<S> implements Cell<S> {
     /** x-coordinate of the cell in the room. */
     protected final int x;
     /** y-coordinate of the cell in the room. */
@@ -30,7 +29,7 @@ public abstract class SquareCell<E extends SquareCell<E,S>,S> implements Cell<E,
     /** The Status object for the cell. */
     private S state;
 
-    public SquareCell( S state, int x, int y, CellMatrix<E, S> matrix ) {
+    public SquareCell( S state, int x, int y) {
         this.x = x;
         this.y = y;
         this.state = Objects.requireNonNull( state, "Cell status must not be null!" );

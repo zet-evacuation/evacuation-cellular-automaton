@@ -22,14 +22,14 @@ import java.util.Collection;
  * @param <S> state of the cell (probably an enum)
  * @author Jan-Philipp Kappmeier
  */
-public interface Cell<E extends Cell<E, S>, S> extends Iterable<E> {
+public interface Cell<S> {
 
     /**
      * Returns the neighbors of the cell.
      *
      * @return the neighbor cells
      */
-    public Collection<E> getDirectNeighbors();
+    //public Collection<E> getDirectNeighbors();
 
     /**
      * Returns the number of sides of the cell. Typically, a two dimensional cell is a triangle, a square or a hexagon.

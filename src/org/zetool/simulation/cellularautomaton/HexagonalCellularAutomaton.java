@@ -21,7 +21,7 @@ package org.zetool.simulation.cellularautomaton;
  * @param <S>
  * @author Jan-Philipp Kappmeier
  */
-public class HexagonalCellularAutomaton<E extends HexagonalCell<E, S>, S> implements CellularAutomaton<E, S> {
+public class HexagonalCellularAutomaton<E extends HexagonalCell<S>, S> implements CellularAutomaton<E, S> {
 
     @Override
     public int getDimension() {

@@ -21,7 +21,7 @@ package org.zetool.simulation.cellularautomaton;
  * @param <S> the state in the cells
  * @author Jan-Philipp Kappmeier
  */
-public interface CellularAutomaton<E extends Cell<E, S>, S> {
+public interface CellularAutomaton<E extends Cell<S>, S> {
 
     /**
      * Retruns the dimension of the cellular automaton. Typically the dimension of a cellular automton is 1 or 2.

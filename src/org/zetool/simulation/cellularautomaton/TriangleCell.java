@@ -22,21 +22,21 @@ import java.util.Objects;
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
-public abstract class TriangleCell<E extends TriangleCell<E, S>, S> implements Cell<E, S> {
+public abstract class TriangleCell<S> implements Cell<S> {
 
     /** x-coordinate of the cell in the room. */
     protected int x;
     /** y-coordinate of the cell in the room. */
     protected int y;
     /** The square matrix to which this cell belongs. */
-    CellMatrix<E, S> matrix;
+    //CellMatrix<E, S> matrix;
     /** The Status object for the cell. */
     private S state;
 
-    public TriangleCell(S state, int x, int y, CellMatrix<E, S> matrix) {
+    public TriangleCell(S state, int x, int y) {
         this.x = x;
         this.y = y;
-        this.matrix = matrix;
+        //this.matrix = matrix;
         this.state = Objects.requireNonNull(state, "Cell status must not be null!");
     }
 

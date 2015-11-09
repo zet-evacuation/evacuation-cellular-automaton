@@ -110,6 +110,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
      */
     public EvacuationCellularAutomaton() {
+        super(null);
         timeStep = 0;
         individuals = new ArrayList<>();
         individualsByID = new HashMap<>();

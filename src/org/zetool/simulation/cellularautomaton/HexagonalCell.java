@@ -22,21 +22,20 @@ import java.util.Objects;
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
-public abstract class HexagonalCell<E extends HexagonalCell<E, S>, S> implements Cell<E, S> {
+public abstract class HexagonalCell<S> implements Cell<S> {
 
     /** x-coordinate of the cell in the room. */
     protected int x;
     /** y-coordinate of the cell in the room. */
     protected int y;
     /** The square matrix to which this cell belongs. */
-    CellMatrix<E, S> matrix;
+    //CellMatrix<E, S> matrix;
     /** The Status object for the cell. */
     private S state;
 
-    public HexagonalCell(S state, int x, int y, CellMatrix<E, S> matrix) {
+    public HexagonalCell(S state, int x, int y) {
         this.x = x;
         this.y = y;
-        this.matrix = matrix;
         this.state = Objects.requireNonNull(state, "Cell status must not be null!");
     }
 

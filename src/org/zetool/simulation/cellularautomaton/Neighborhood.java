@@ -21,6 +21,6 @@ import java.util.Collection;
  * @param <E> the cell type
  * @author Jan-Philipp Kappmeier
  */
-public interface Neighborhood<E extends Cell<E,?>> {
+public interface Neighborhood<E extends Cell<?>> {
 	Collection<E> getNeighbors( E cell );
 }

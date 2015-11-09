@@ -21,7 +21,7 @@ package org.zetool.simulation.cellularautomaton;
  * @param <S> the cell data
  * @author Jan-Philipp Kappmeier
  */
-public class TriangleCellularAutomaton<E extends TriangleCell<E, S>, S> implements CellularAutomaton<E, S> {
+public class TriangleCellularAutomaton<E extends TriangleCell<S>, S> implements CellularAutomaton<E, S> {
 
     @Override
     public int getDimension() {

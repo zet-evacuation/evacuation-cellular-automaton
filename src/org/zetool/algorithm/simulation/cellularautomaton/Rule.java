@@ -7,7 +7,7 @@ import org.zetool.simulation.cellularautomaton.Cell;
  * @param <S> the cell type
  * @author Jan-Philipp Kappmeier
  */
-public interface Rule<S extends Cell<S, ?>> {
+public interface Rule<S extends Cell<?>> {
 
     public void execute(S cell);
 
