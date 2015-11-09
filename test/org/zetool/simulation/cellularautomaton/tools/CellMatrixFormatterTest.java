@@ -3,8 +3,6 @@ package org.zetool.simulation.cellularautomaton.tools;
 import org.zetool.simulation.cellularautomaton.FakeCell;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;

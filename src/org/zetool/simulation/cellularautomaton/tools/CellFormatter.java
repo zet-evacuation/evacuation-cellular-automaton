@@ -5,9 +5,9 @@ import org.zetool.simulation.cellularautomaton.Cell;
 /**
  *
  * @author Jan-Philipp Kappmeier
- * @param <C>
+ * @param <E>
  */
 @FunctionalInterface
-public interface CellFormatter<C extends Cell> {
-    public String format(C cell);
+public interface CellFormatter<E extends Cell<?,?>> {
+    public String format(E cell);
 }

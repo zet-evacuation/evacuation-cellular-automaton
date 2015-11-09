@@ -11,11 +11,13 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
 /**
  *
  * @author Jan-Philipp Kappmeier
+ * @param <E>
+ * @param <S>
  */
-public class CellMatrixFormatter {
-    private static final CellMatrixFormatter DEFAULT = new CellMatrixFormatter();
-    private final CellFormatter fallback = new DefaultCellFormatter();
-    private final Map<Class<? extends Cell>, CellFormatter> formatterMap = new HashMap<>();
+public class CellMatrixFormatter<E extends Cell<E, S>, S> {
+    private static final CellMatrixFormatter<? extends Cell,?> DEFAULT = new CellMatrixFormatter<>();
+    private final CellFormatter<E> fallback = new DefaultCellFormatter<>();
+    private final Map<Class<E>, CellFormatter<E>> formatterMap = new HashMap<>();
     private final CellMatrixFormatterStyle style;
     private final String horizontalUpper;
     private final String horizontal;
@@ -36,16 +38,16 @@ public class CellMatrixFormatter {
         return "" + c + c + c;
     }
     
-    public <C extends Cell> void registerFormatter(Class<C> cellType, CellFormatter<C> formatter) {
+    public void registerFormatter(Class<E> cellType, CellFormatter<E> formatter) {
         formatterMap.put(cellType, formatter);
     }
     
-    private CellFormatter getFormatter(Cell cell) {
-        CellFormatter result = formatterMap.get(cell.getClass());
+    private CellFormatter<E> getFormatter(E cell) {
+        CellFormatter<E> result = formatterMap.get((Class<E>)cell.getClass());
         return result == null ? fallback : result;
     }
 
-    public String graphicalToString(CellMatrix matrix) {
+    public String graphicalToString(CellMatrix<E, S> matrix) {
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         StringBuilder graphic = new StringBuilder();
@@ -94,8 +96,8 @@ public class CellMatrixFormatter {
         graphic.append(style.getBound(Bounds.Right)).append("\n");
     }
     
-    private String appendCellContent(CellMatrix matrix, int x, int y) {
-        Cell cell = matrix.getCell(x, y);
+    private String appendCellContent(CellMatrix<E,S> matrix, int x, int y) {
+        E cell = matrix.getCell(x, y);
         return  cell != null ? getFormatter(cell).format(cell) : " " + style.getUndefined() + " ";
     }
     
