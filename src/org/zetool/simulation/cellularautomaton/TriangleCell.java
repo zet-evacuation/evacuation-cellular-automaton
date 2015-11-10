@@ -18,7 +18,6 @@ package org.zetool.simulation.cellularautomaton;
 import java.util.Objects;
 
 /**
- * @param <E> the cell type
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
@@ -28,16 +27,13 @@ public abstract class TriangleCell<S> implements Cell<S> {
     protected int x;
     /** y-coordinate of the cell in the room. */
     protected int y;
-    /** The square matrix to which this cell belongs. */
-    //CellMatrix<E, S> matrix;
     /** The Status object for the cell. */
-    private S state;
+    private final S state;
 
-    public TriangleCell(S state, int x, int y) {
+    public TriangleCell(S initialState, int x, int y) {
         this.x = x;
         this.y = y;
-        //this.matrix = matrix;
-        this.state = Objects.requireNonNull(state, "Cell status must not be null!");
+        this.state = Objects.requireNonNull(initialState, "Cell status must not be null!");
     }
 
     public S getStatus() {

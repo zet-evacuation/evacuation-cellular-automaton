@@ -7,10 +7,10 @@ import org.zetool.simulation.cellularautomaton.SquareCellularAutomaton;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class GameOfLife extends SquareCellularAutomaton<SimpleCell, CellState> {
-
-    public GameOfLife(CellMatrix<SimpleCell, CellState> matrix) {
+public class GameOfLife extends SquareCellularAutomaton<SimpleCell> {
+    
+    public GameOfLife(CellMatrix<SimpleCell> matrix) {
         super(matrix);
     }
-    
+
 }

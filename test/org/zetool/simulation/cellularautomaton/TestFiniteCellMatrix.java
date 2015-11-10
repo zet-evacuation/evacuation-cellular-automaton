@@ -20,7 +20,7 @@ public class TestFiniteCellMatrix {
 
     @Test
     public void testNull() {
-        FiniteCellMatrix<FakeCell, Void> a = new FiniteCellMatrix<>(WIDTH, HEIGHT);
+        FiniteCellMatrix<FakeCell> a = new FiniteCellMatrix<>(WIDTH, HEIGHT);
         for (int i = 0; i < WIDTH; ++i) {
             for (int j = 0; j < HEIGHT; ++j) {
                 assertThat(a.getCell(i, j), is(nullValue()));
@@ -31,7 +31,7 @@ public class TestFiniteCellMatrix {
 
     @Test
     public void testBoundsCheck() {
-        FiniteCellMatrix<FakeCell, Void> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> getCellArray()[t][u]);
+        FiniteCellMatrix<FakeCell> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> getCellArray()[t][u]);
         assertThat(matrix.existsCellAt(0, 0), is(true));
         assertThat(matrix.existsCellAt(WIDTH - 1, HEIGHT - 1), is(true));
         for (int x = 0; x < WIDTH; ++x) {
@@ -46,14 +46,14 @@ public class TestFiniteCellMatrix {
     
     @Test
     public void testBoundsException() {
-        FiniteCellMatrix<FakeCell, Void> a = new FiniteCellMatrix<>(WIDTH, HEIGHT);
+        FiniteCellMatrix<FakeCell> a = new FiniteCellMatrix<>(WIDTH, HEIGHT);
         writeWithException(a, -1, 0);
         writeWithException(a, 0, -1);
         writeWithException(a, WIDTH, 0);
         writeWithException(a, 0, HEIGHT);
     }
     
-    private void writeWithException(FiniteCellMatrix<FakeCell, Void> matrix, int x, int y) {
+    private void writeWithException(FiniteCellMatrix<FakeCell> matrix, int x, int y) {
         try {
             matrix.setCell(x, y, null);
         } catch (IllegalArgumentException ex) {
@@ -64,14 +64,14 @@ public class TestFiniteCellMatrix {
     
     @Test
     public void testReadBoundsException() {
-        FiniteCellMatrix<FakeCell, Void> a = new FiniteCellMatrix<>(WIDTH, HEIGHT);
+        FiniteCellMatrix<FakeCell> a = new FiniteCellMatrix<>(WIDTH, HEIGHT);
         readWithException(a, -1, 0);
         readWithException(a, 0, -1);
         readWithException(a, WIDTH, 0);
         readWithException(a, 0, HEIGHT);
     }
 
-    private void readWithException(FiniteCellMatrix<FakeCell, Void> matrix, int x, int y) {
+    private void readWithException(FiniteCellMatrix<FakeCell> matrix, int x, int y) {
         try {
             matrix.getCell(x, y);
         } catch (IllegalArgumentException ex) {
@@ -83,7 +83,7 @@ public class TestFiniteCellMatrix {
     @Test
     public void testNotNull() {
         FakeCell[][] cells = getCellArray();
-        FiniteCellMatrix<FakeCell, Void> cellMatrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> cells[t][u]);
+        FiniteCellMatrix<FakeCell> cellMatrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> cells[t][u]);
         assertThat(cellMatrix.getWidth(), is(equalTo(WIDTH)));
         assertThat(cellMatrix.getHeight(), is(equalTo(HEIGHT)));
         assertCellArray(cells, cellMatrix);
@@ -92,7 +92,7 @@ public class TestFiniteCellMatrix {
     @Test
     public void testPopulation() {
         FakeCell[][] cells = getCellArray();
-        FiniteCellMatrix<FakeCell, Void> cellMatrix = new FiniteCellMatrix<>(WIDTH, HEIGHT);
+        FiniteCellMatrix<FakeCell> cellMatrix = new FiniteCellMatrix<>(WIDTH, HEIGHT);
         cellMatrix.populate((t, u) -> cells[t][u]);
         assertCellArray(cells, cellMatrix);
     }
@@ -107,7 +107,7 @@ public class TestFiniteCellMatrix {
         return cells;
     }
 
-    private void assertCellArray(FakeCell[][] cells, FiniteCellMatrix<FakeCell, Void> a) {
+    private void assertCellArray(FakeCell[][] cells, FiniteCellMatrix<FakeCell> a) {
         for (int i = 0; i < WIDTH; ++i) {
             for (int j = 0; j < HEIGHT; ++j) {
                 assertThat(a.getCell(i, j), is(sameInstance(cells[i][j])));
@@ -117,18 +117,18 @@ public class TestFiniteCellMatrix {
 
     @Test
     public void testAllIterator() {
-        FiniteCellMatrix<FakeCell, Void> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> new FakeCell());
+        FiniteCellMatrix<FakeCell> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> new FakeCell());
         assertSeen(matrix, WIDTH * HEIGHT);
     }
     
     @Test
     public void testAllIteratorWithNull() {
-        FiniteCellMatrix<FakeCell, Void> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> new FakeCell());
+        FiniteCellMatrix<FakeCell> matrix = new FiniteCellMatrix<>(WIDTH, HEIGHT, (t, u) -> new FakeCell());
         matrix.setCell(0, 0, null);
         assertSeen(matrix, WIDTH * HEIGHT - 1);
     }
     
-    private void assertSeen(FiniteCellMatrix<FakeCell, Void> cellMatrix, int expected ) {
+    private void assertSeen(FiniteCellMatrix<FakeCell> cellMatrix, int expected ) {
         Set<FakeCell> seen = new HashSet<>(WIDTH * HEIGHT);
         cellMatrix.getAllCells().stream().forEach(c -> seen.add(c));
         assertThat(seen.size(), is(equalTo(expected)));

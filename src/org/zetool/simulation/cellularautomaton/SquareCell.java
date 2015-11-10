@@ -29,12 +29,13 @@ public abstract class SquareCell<S> implements Cell<S> {
     /** The Status object for the cell. */
     private S state;
 
-    public SquareCell( S state, int x, int y) {
+    public SquareCell( S initialState, int x, int y) {
         this.x = x;
         this.y = y;
-        this.state = Objects.requireNonNull( state, "Cell status must not be null!" );
+        this.state = Objects.requireNonNull( initialState, "Cell status must not be null!" );
     }
 
+    @Override
     public S getState() {
         return state;
     }
@@ -47,6 +48,4 @@ public abstract class SquareCell<S> implements Cell<S> {
     public int getSides() {
         return 4;
     }
-    
-
 }

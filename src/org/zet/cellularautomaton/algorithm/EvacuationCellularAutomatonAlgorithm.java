@@ -26,9 +26,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
   public EvacuationCellularAutomatonAlgorithm() {
     System.out.println( "Instance created!" );
   }
-  
-  
-  
+
   /** The simulation result. */
   private EvacuationSimulationResult evacuationSimulationResult;
 

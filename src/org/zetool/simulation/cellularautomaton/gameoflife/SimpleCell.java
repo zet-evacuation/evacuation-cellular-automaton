@@ -6,9 +6,9 @@ import org.zetool.simulation.cellularautomaton.SquareCell;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class SimpleCell extends SquareCell<CellState> {
+public class SimpleCell extends SquareCell<BinaryCellState> {
 
-    public SimpleCell(CellState state, int x, int y) {
+    public SimpleCell(BinaryCellState state, int x, int y) {
         super(state, x, y);
     }
 
@@ -18,6 +18,6 @@ public class SimpleCell extends SquareCell<CellState> {
      * @return a string representing this room.
      */
     public String graphicalToString() {
-        return getState() == CellState.Alive ? " ■ " : "   ";
+        return getState() == BinaryCellState.Alive ? " ■ " : "   ";
     }
 }

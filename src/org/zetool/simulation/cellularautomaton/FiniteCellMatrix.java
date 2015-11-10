@@ -9,9 +9,8 @@ import org.zetool.common.function.IntBiFunction;
  *
  * @author Jan-Philipp Kappmeier
  * @param <E>
- * @param <S>
  */
-public class FiniteCellMatrix<E extends Cell<S>, S> implements CellMatrix<E, S> {
+public class FiniteCellMatrix<E extends Cell> implements CellMatrix<E> {
 
     /** Manages the Cells into which the room is divided. */
     private final ArrayList2D<E> cells;

@@ -15,22 +15,19 @@
  */
 package org.zetool.simulation.cellularautomaton;
 
-import java.util.Collection;
-
 /**
- * @param <E> the cell type
- * @param <S> state of the cell (probably an enum)
+ * @param <S> the state the cell is into
  * @author Jan-Philipp Kappmeier
  */
 public interface Cell<S> {
 
     /**
-     * Returns the neighbors of the cell.
-     *
-     * @return the neighbor cells
+     * Returns the state of the cell. The state is one of finitly many possible states.
+     * 
+     * @return the state of the cell
      */
-    //public Collection<E> getDirectNeighbors();
-
+    public S getState();
+    
     /**
      * Returns the number of sides of the cell. Typically, a two dimensional cell is a triangle, a square or a hexagon.
      *

@@ -22,5 +22,5 @@ import java.util.Collection;
  * @author Jan-Philipp Kappmeier
  */
 public interface Neighborhood<E extends Cell<?>> {
-	Collection<E> getNeighbors( E cell );
+    Collection<E> getNeighbors( E cell );
 }

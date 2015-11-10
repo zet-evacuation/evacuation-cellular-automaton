@@ -22,33 +22,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.Iterator;
 
 /**
- * The Cellular Automaton devides a room into quadratic cells.
- * This abstract class "EvacCell" describes such a cell, which is a part of the room.
- * It is kept abstract, because there are several special kinds of cells, such as
- * door cells, stair cells and exit cells.
- * Generally each cell can be occupied by an individual and can be crossed with a
+ * The Cellular Automaton devides a room into quadratic cells. This abstract class "EvacCell" describes such a cell,
+ * which is a part of the room. It is kept abstract, because there are several special kinds of cells, such as door
+ * cells, stair cells and exit cells. Generally each cell can be occupied by an individual and can be crossed with a
  * certain speed.
+ *
  * @author Marcel Preuß
  * @author Jan-Philipp Kappmeier
  *
  */
 public abstract class EvacCell extends SquareCell<EvacuationCellState> implements Comparable<EvacCell> {
-    /** This character is used for graphic-like ASCII-output.  */
+
+    /** This character is used for graphic-like ASCII-output. */
     protected char graphicalRepresentation = ' ';
     /** Defines the Speed-Factor of the EvacCell. I.e. a value, how fast this cell can be crossed. */
     protected double speedFactor;
-    /** Manages the individual that occupies the cell. */
-    //protected Individual individual;
     /** The room to which the cell belongs. */
     protected Room room;
-    /** The bounds of the  cell. */
+    /** The bounds of the cell. */
     protected EnumSet<Direction8> bounds;
     /** Tells whether the surrounding squares are higher, equal or lower. */
     protected EnumMap<Direction8, Level> levels;
-    /** Stores the hashCode of this cell.  */
+    /** Stores the hashCode of this cell. */
     protected int hash;
     /** The time up to which the cell is blocked by an individuum (even if it is no longer set to the cell). */
     protected double occupiedUntil = 0;
@@ -324,7 +321,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
 //  war fuer mehrere Bugs verantwortlich.
 //
 //
-
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof EvacCell)) {
@@ -486,7 +482,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     }
 
     // TODO ob das so funktioniert?
-
     /**
      * @param c the cell that is compared to
      * @return -1, 0 or 1

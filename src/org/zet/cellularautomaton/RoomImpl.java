@@ -25,7 +25,7 @@ import org.zetool.simulation.cellularautomaton.FiniteCellMatrix;
  *
  * @author Marcel Preuß
  */
-public class RoomImpl extends FiniteCellMatrix<EvacCell, EvacuationCellState> implements Room {
+public class RoomImpl extends FiniteCellMatrix<EvacCell> implements Room {
 
     /** The id of the room (to calculate the hashCode). */
     private int id;

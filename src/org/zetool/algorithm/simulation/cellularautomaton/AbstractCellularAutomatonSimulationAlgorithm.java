@@ -31,12 +31,12 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
  * @param <A> the automaton class
  * @param <P> the simulation problem class
  * @param <C> the cell type
- * @param <S> the sikztuib
+ * @param <R> the result
  * @author Jan-Philipp Kappmeier
  */
-public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends CellularAutomaton<C, ?>,
-        C extends Cell<?>, P extends CellularAutomatonSimulationProblem<A, C>, S>
-        extends SimulationAlgorithm<P, S> implements Iterable<C> {
+public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends CellularAutomaton<C>,
+        C extends Cell<?>, P extends CellularAutomatonSimulationProblem<A, C>, R>
+        extends SimulationAlgorithm<P, R> implements Iterable<C> {
 
     private int maxSteps;
 
@@ -79,7 +79,7 @@ public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends Cel
      */
     @Override
     protected void performSimulation() {
-		// assume, initialization has been performed. simulation consists of continuous
+        // assume, initialization has been performed. simulation consists of continuous
         // calls of perform step, until a break-condition is reached.
         while (!isFinished()) {
             performStep();
@@ -96,7 +96,7 @@ public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends Cel
     }
 
     @Override
-    protected abstract S terminate();
+    protected abstract R terminate();
 
     @Override
     public abstract Iterator<C> iterator();

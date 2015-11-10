@@ -16,17 +16,26 @@
 package org.zetool.simulation.cellularautomaton;
 
 /**
- *
+ * A cellular automaton is a container consisting of a cell grid and a neighborhood function. The cell grid is the
+ * basic underlying datastructure of a cellular automaton. The neighborhood function returns all cells next to a given
+ * cell.
+ * 
  * @param <E> the cell type
- * @param <S> the state in the cells
  * @author Jan-Philipp Kappmeier
  */
-public interface CellularAutomaton<E extends Cell<S>, S> {
+public interface CellularAutomaton<E extends Cell<?>> {
 
     /**
-     * Retruns the dimension of the cellular automaton. Typically the dimension of a cellular automton is 1 or 2.
+     * Returns the dimension of the cellular automaton. Typically the dimension of a cellular automton is 1 or 2.
      *
      * @return the dimension of the cellular automaton
      */
     public int getDimension();
+    
+    /**
+     * The neighborhood function.
+     * 
+     * @return the current neighborhood function.
+     */
+    public Neighborhood<E> getNeighborhood();
 }

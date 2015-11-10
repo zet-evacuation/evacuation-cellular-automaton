@@ -43,7 +43,7 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  * @author Jan-Philipp Kappmeier
  * @author Matthias Woste
  */
-public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell, EvacuationCellState> implements Iterable<Individual> {
+public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements Iterable<Individual> {
 
     private boolean recordingStarted;
 

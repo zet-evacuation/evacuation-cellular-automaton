@@ -27,7 +27,7 @@ public class CellMatrixFormatterTest {
     private final Mockery context = new Mockery();
 
 
-    private static class MyMatrix implements CellMatrix<FakeCell, Void> {
+    private static class MyMatrix implements CellMatrix<FakeCell> {
 
         private final int width;
         private final int height;

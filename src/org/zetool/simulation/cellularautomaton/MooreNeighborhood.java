@@ -17,35 +17,37 @@ package org.zetool.simulation.cellularautomaton;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
 import org.zetool.common.util.Direction8;
-import org.zetool.simulation.cellularautomaton.gameoflife.CellState;
 
 /**
  * @param <E> the cell type
  * @author Jan-Philipp Kappmeier
  */
-public class MooreNeighborhood<E extends SquareCell<S>, S> implements Neighborhood<E> {
+public class MooreNeighborhood<E extends SquareCell<?>> implements Neighborhood<E> {
 
-    private final CellMatrix<E, ?> matrix;
+    private final CellMatrix<E> matrix;
 
-    public MooreNeighborhood(CellMatrix<E, ?> matrix) {
+    public MooreNeighborhood(CellMatrix<E> matrix) {
         this.matrix = matrix;
     }
-
+    
     @Override
     public Collection<E> getNeighbors(E cell) {
-        ArrayList<E> neighbours = new ArrayList<>();
+        List<E> neighbours = new ArrayList<>();
         for (Direction8 direction : Direction8.values()) {
             int cellx = cell.x + direction.xOffset();
             int celly = cell.y + direction.yOffset();
-            if (matrix.existsCellAt(cellx, celly) /*&& ( !bounds.contains(direction)*/) {
-                if (matrix.existsCellAt(cell.x + direction.xOffset(), cell.y + direction.yOffset())
-                        && matrix.getCell(cell.x + direction.xOffset(), cell.y + direction.yOffset()).getState() == CellState.Alive) {
-                    neighbours.add(matrix.getCell(cellx, celly));
-                }
+            if (matrix.existsCellAt(cellx, celly) && accept(matrix.getCell(cellx, celly))) {
+                neighbours.add(matrix.getCell(cellx, celly));
             }
         }
 
         return neighbours;
+    }
+    
+    protected boolean accept(E cell) {
+        return true;
     }
 }

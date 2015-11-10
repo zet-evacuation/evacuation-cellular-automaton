@@ -1,7 +1,5 @@
 package org.zetool.simulation.cellularautomaton.tools;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.zetool.common.util.Bounds;
@@ -16,8 +14,8 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
  * @param <E>
  */
 public class CellMatrixFormatter<E extends Cell<?>> {
+    @SuppressWarnings("rawtypes")
     private static final CellMatrixFormatter DEFAULT = new CellMatrixFormatter<>();
-    
     @SuppressWarnings("rawtypes")
     private final CellFormatter fallback = new DefaultCellFormatter<>();
     private final Map<Class<E>, CellFormatter<E>> formatterMap = new HashMap<>();
@@ -50,7 +48,7 @@ public class CellMatrixFormatter<E extends Cell<?>> {
         return result == null ? fallback : result;
     }
 
-    public String graphicalToString(CellMatrix<E, ?> matrix) {
+    public String graphicalToString(CellMatrix<E> matrix) {
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         StringBuilder graphic = new StringBuilder();
@@ -99,7 +97,7 @@ public class CellMatrixFormatter<E extends Cell<?>> {
         graphic.append(style.getBound(Bounds.Right)).append("\n");
     }
     
-    private String appendCellContent(CellMatrix<E,?> matrix, int x, int y) {
+    private String appendCellContent(CellMatrix<E> matrix, int x, int y) {
         E cell = matrix.getCell(x, y);
         return  cell != null ? getFormatter(cell).format(cell) : " " + style.getUndefined() + " ";
     }
@@ -109,7 +107,7 @@ public class CellMatrixFormatter<E extends Cell<?>> {
      * @param matrix the cell matrix
      * @return multi-line string representation of the matrix' geometry
      */
-    public static <E extends Cell<?>> String format(CellMatrix<E,?> matrix) {
+    public static <E extends Cell<?>> String format(CellMatrix<E> matrix) {
         return DEFAULT.graphicalToString(matrix);
     }
 }

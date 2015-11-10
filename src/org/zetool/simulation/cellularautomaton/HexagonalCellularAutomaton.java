@@ -18,14 +18,18 @@ package org.zetool.simulation.cellularautomaton;
 /**
  *
  * @param <E>
- * @param <S>
  * @author Jan-Philipp Kappmeier
  */
-public class HexagonalCellularAutomaton<E extends HexagonalCell<S>, S> implements CellularAutomaton<E, S> {
+public class HexagonalCellularAutomaton<E extends HexagonalCell<?>> implements CellularAutomaton<E> {
 
     @Override
     public int getDimension() {
-        return 6;
+        return 2;
+    }
+
+    @Override
+    public Neighborhood<E> getNeighborhood() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 	
 }

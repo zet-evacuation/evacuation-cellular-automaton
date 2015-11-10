@@ -7,7 +7,7 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
  *
  * @author Jan-Philipp Kappmeier
  */
-public interface Room extends CellMatrix<EvacCell, EvacuationCellState>, Cloneable {
+public interface Room extends CellMatrix<EvacCell>, Cloneable {
 
     @Override
     public List<EvacCell> getAllCells();

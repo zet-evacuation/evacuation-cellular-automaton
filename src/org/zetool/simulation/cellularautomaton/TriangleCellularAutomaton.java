@@ -21,7 +21,12 @@ package org.zetool.simulation.cellularautomaton;
  * @param <S> the cell data
  * @author Jan-Philipp Kappmeier
  */
-public class TriangleCellularAutomaton<E extends TriangleCell<S>, S> implements CellularAutomaton<E, S> {
+public class TriangleCellularAutomaton<E extends TriangleCell<S>, S> implements CellularAutomaton<E> {
+
+    @Override
+    public Neighborhood<E> getNeighborhood() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public int getDimension() {

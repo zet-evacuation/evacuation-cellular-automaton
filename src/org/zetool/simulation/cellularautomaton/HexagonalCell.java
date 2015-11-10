@@ -18,7 +18,6 @@ package org.zetool.simulation.cellularautomaton;
 import java.util.Objects;
 
 /**
- * @param <E> the cell type
  * @param <S> the cell state
  * @author Jan-Philipp Kappmeier
  */
@@ -28,10 +27,8 @@ public abstract class HexagonalCell<S> implements Cell<S> {
     protected int x;
     /** y-coordinate of the cell in the room. */
     protected int y;
-    /** The square matrix to which this cell belongs. */
-    //CellMatrix<E, S> matrix;
     /** The Status object for the cell. */
-    private S state;
+    private final S state;
 
     public HexagonalCell(S state, int x, int y) {
         this.x = x;

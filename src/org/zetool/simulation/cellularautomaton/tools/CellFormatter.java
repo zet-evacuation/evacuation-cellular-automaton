@@ -8,6 +8,6 @@ import org.zetool.simulation.cellularautomaton.Cell;
  * @param <E>
  */
 @FunctionalInterface
-public interface CellFormatter<E extends Cell<?>> {
+public interface CellFormatter<E extends Cell> {
     public String format(E cell);
 }

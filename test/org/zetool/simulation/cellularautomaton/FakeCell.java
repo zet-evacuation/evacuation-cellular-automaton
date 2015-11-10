@@ -10,4 +10,9 @@ public class FakeCell implements Cell<Void> {
     public int getSides() {
         return 4;
     }
+
+    @Override
+    public Void getState() {
+        return null;
+    }
 }

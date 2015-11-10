@@ -28,25 +28,25 @@ import java.util.List;
  */
 public class EvacuationCellularAutomatonFrontToBack extends EvacuationCellularAutomatonAlgorithm {
 
-	/**
-	 * Sorts the (living and not save) individuals within the cellular automaton
-	 * by increasing distance to the exit and returns a list of this individuals.
-	 * @return the ordered list of individuals
-	 */
-	@Override
-	public List<Individual> getIndividuals() {
-		List<Individual> copy = new ArrayList<>( getProblem().getCa().getIndividuals() );
-		IndividualDistanceComparator<Individual> idc = new IndividualDistanceComparator<>();
-		Collections.sort( copy, idc );
-		return Collections.unmodifiableList( copy );
-	}
+    /**
+     * Sorts the (living and not save) individuals within the cellular automaton
+     * by increasing distance to the exit and returns a list of this individuals.
+     * @return the ordered list of individuals
+     */
+    @Override
+    public List<Individual> getIndividuals() {
+        List<Individual> copy = new ArrayList<>( getProblem().getCa().getIndividuals() );
+        IndividualDistanceComparator<Individual> idc = new IndividualDistanceComparator<>();
+        Collections.sort( copy, idc );
+        return Collections.unmodifiableList( copy );
+    }
 
-	/**
-	 * Returns the name of the class.
-	 * @return the name of the class
-	 */
-	@Override
-	public String toString() {
-		return "EvacuationCellularAutomatonFrontToBack";
-	}
+    /**
+     * Returns the name of the class.
+     * @return the name of the class
+     */
+    @Override
+    public String toString() {
+        return "EvacuationCellularAutomatonFrontToBack";
+    }
 }
