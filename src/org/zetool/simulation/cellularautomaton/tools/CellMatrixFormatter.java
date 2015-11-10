@@ -87,7 +87,7 @@ public class CellMatrixFormatter<E extends Cell<?>> {
         sb.append(right).append('\n');
     }
     
-    private void appendContentRow(StringBuilder graphic, int y, int width, CellMatrix matrix) {
+    private void appendContentRow(StringBuilder graphic, int y, int width, CellMatrix<E> matrix) {
         graphic.append(style.getBound(Bounds.Left));
         for (int x = 0; x < width-1; x++) {
             graphic.append(appendCellContent(matrix, x, y));
