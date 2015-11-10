@@ -21,8 +21,8 @@ import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
-import org.zet.cellularautomaton.PotentialManager;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.PotentialManager;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * @author Daniel R. Schmidt

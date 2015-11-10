@@ -18,7 +18,7 @@ package org.zet.algo.ca.util;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.Collection;
 
 /**

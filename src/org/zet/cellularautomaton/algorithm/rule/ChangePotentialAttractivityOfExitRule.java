@@ -21,7 +21,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.SaveCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.rndutils.RandomUtils;
 
 /**

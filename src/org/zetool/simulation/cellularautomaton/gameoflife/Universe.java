@@ -10,6 +10,6 @@ public class Universe extends FiniteCellMatrix<SimpleCell> {
 
     protected Universe(int width, int height) {
         super(width, height);
-        this.populate((int t, int u) -> new SimpleCell(BinaryCellState.Dead, t, u));
+        this.populate((int t, int u) -> new SimpleCell(BinaryCellState.DEAD, t, u));
     }
 }

@@ -15,6 +15,8 @@
  */
 package org.zet.cellularautomaton;
 
+import org.zet.cellularautomaton.potential.PotentialManager;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.SquareCellularAutomaton;
 import org.zet.cellularautomaton.results.CAStateChangedAction;
 import org.zet.cellularautomaton.results.DieAction;

@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.algorithm;
 
 import org.zet.cellularautomaton.algorithm.rule.EvacuationPlanMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
-import org.zet.cellularautomaton.CellularAutomatonDirectionChecker;
+import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
 
 /**
  *

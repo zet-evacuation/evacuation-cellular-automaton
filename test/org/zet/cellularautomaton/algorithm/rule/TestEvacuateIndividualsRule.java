@@ -9,7 +9,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.PotentialController;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;

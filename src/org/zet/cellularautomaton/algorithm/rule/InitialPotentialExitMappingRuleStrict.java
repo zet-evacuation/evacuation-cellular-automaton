@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.TargetCell;
 import java.util.HashMap;
 import java.util.Map;

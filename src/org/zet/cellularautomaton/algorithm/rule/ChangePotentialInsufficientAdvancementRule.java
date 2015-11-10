@@ -15,11 +15,11 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.PotentialValueTuple;
 import java.util.ArrayList;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  *

@@ -15,6 +15,8 @@
  */
 package org.zet.cellularautomaton;
 
+import org.zet.cellularautomaton.potential.StaticPotential;
+
 /**
  * A Save-Cell is special type of cell and therefore inherits properties and methods from the abstract class Cell. When
  * an individual enters this special cell, it is evacuated. But in contrast to a Room-Cell, individuals do not leave

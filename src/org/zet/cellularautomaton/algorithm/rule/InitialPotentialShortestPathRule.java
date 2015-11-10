@@ -19,7 +19,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.DeathCause;
 import java.util.ArrayList;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.Individual;
 
 /**

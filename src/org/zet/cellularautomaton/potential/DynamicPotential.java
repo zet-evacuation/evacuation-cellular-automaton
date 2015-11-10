@@ -13,15 +13,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton;
+package org.zet.cellularautomaton.potential;
 
+import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.results.DynamicPotentialChangeAction;
 import org.zet.cellularautomaton.results.VisualResultsRecorder;
 
 /**
- * A DynamicPotential is special type of PotentialMap, of that exists only once in the PotentialManager.
+ * A DynamicPotential is special type of AbstractPotential, of that exists only once in the PotentialManager.
  */
-public class DynamicPotential extends PotentialMap {
+public class DynamicPotential extends AbstractPotential {
 
     /**
      * Creates a DynamicPotential.
@@ -58,7 +59,7 @@ public class DynamicPotential extends PotentialMap {
      */
     @Override
     public int getPotential(EvacCell cell) throws IllegalArgumentException {
-        Double potential = cellToPotential.get(cell);
+        Double potential = this.potential.get(cell);
         if (potential == null) {
             return 0;
         } else {
@@ -68,6 +69,6 @@ public class DynamicPotential extends PotentialMap {
     }
 
     public final void clear() {
-        cellToPotential.clear();
+        potential.clear();
     }
 }

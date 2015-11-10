@@ -13,19 +13,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton;
+package org.zet.cellularautomaton.potential;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.Individual;
 
 /**
- * A StaticPotential is special type of {@link PotentialMap}, of which exist several in one {@link PotentialManager}.
+ * A StaticPotential is special type of {@link AbstractPotential}, of which exist several in one {@link PotentialManager}.
  * Therefore it has a unique ID. The {@code StaticPotential} consists of two potentials. Both describe the distance to
  * an {@link ExitCell}. But the first one represents this distance with an smoothly calculated value while the other
  * one contains the exact distance.
  */
-public class StaticPotential extends PotentialMap {
+public class StaticPotential extends AbstractPotential {
 
     protected String name = "DefaultNameForStaticPotential";
 
@@ -42,7 +46,7 @@ public class StaticPotential extends PotentialMap {
     private List<ExitCell> associatedExitCells;
 
     /** A HashMap that assign each EvacCell a Int value which represents the real distance). */
-    private final HashMap<EvacCell, Double> cellToDistance;
+    private final Map<EvacCell, Double> cellToDistance;
 
     /**
      * Creates a StaticPotential with a automatic generated unique ID, that can not be changed.
@@ -55,7 +59,7 @@ public class StaticPotential extends PotentialMap {
         associatedExitCells = new ArrayList<>();
     }
     
-    protected StaticPotential(HashMap<EvacCell, Double> initialDistance) {
+    protected StaticPotential(Map<EvacCell, Double> initialDistance) {
         cellToDistance = initialDistance;
     }
 
@@ -94,7 +98,7 @@ public class StaticPotential extends PotentialMap {
      * @param cell A cell which distance you want to know.
      * @return distance of the specified cell or -1 if the cell is not mapped by this potential
      */
-    public double getDistance(EvacCell cell) throws IllegalArgumentException {
+    public double getDistance(EvacCell cell) {
         Double distance = cellToDistance.get(cell);
         return distance == null ? -1.0 : distance;
     }
@@ -118,7 +122,7 @@ public class StaticPotential extends PotentialMap {
      */
     public void deleteDistanceCell(EvacCell cell) {
         if (!(cellToDistance.containsKey(cell))) {
-            throw new IllegalArgumentException("The Cell must be insert previously!");
+            throw new IllegalArgumentException("The Cell must be inserted previously!");
         }
         cellToDistance.remove(cell);
     }
@@ -158,7 +162,7 @@ public class StaticPotential extends PotentialMap {
         EvacPotential evacPotential = new EvacPotential(i, checker, cellToDistance);
         evacPotential.setAssociatedExitCells(this.associatedExitCells);
         evacPotential.setAttractivity(this.attractivity);
-        evacPotential.cellToPotential = this.cellToPotential;
+        evacPotential.potential = this.potential;
         evacPotential.setName(this.name);
         evacPotential.id = this.id;
         return evacPotential;

@@ -13,79 +13,81 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton;
+package org.zet.cellularautomaton.potential;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.zet.cellularautomaton.EvacCell;
 
 /**
- * This abstract class PotentialMap describes the route that the indiviuals take to the exit.
- * For this a HashMap associates for each EvacCell a potential as int value.
- * It is kept abstract, because there are two special kinds of potentials, such as 
- * StaticPotential and DynamicPotential.
+ * For this a HashMap associates for each EvacCell a potential as int value. It is kept abstract, because there are two
+ * special kinds of potentials, such as StaticPotential and DynamicPotential.
  */
-public abstract class PotentialMap {
-    
-    protected final static int UNKNOWN_POTENTIAL_VALUE = -1;
-    protected final static int INVALID_POTENTIAL_VALUE = Integer.MAX_VALUE;
-
-    /** A {@code HashMap} that assign each EvacCell a Int value (the potential). */
-    protected HashMap<EvacCell, Double> cellToPotential;
+public abstract class AbstractPotential implements Potential {
+    /** A map from cells to their potential value. */
+    protected Map<EvacCell, Double> potential;
     /** Stores the maximal value of this potential map. */
     private double maxPotential = -1;
 
     /**
-     * The constructor creates a PotentialMap with a new empty HashMap.
+     * Create an empty potential.
      */
-    public PotentialMap() {
-        cellToPotential = new HashMap<>();
+    public AbstractPotential() {
+        potential = new HashMap<>();
     }
 
     /**
-     * Associates the specified potential with the specified EvacCell in this PotentialMap. If a EvacCell is specified
-     * that exists already in this PotentialMap the value will be overwritten. Otherwise a new mapping is created.
+     * Associates the specified potential with the specified EvacCell in this AbstractPotential. If a EvacCell is
+     * specified that exists already in this AbstractPotential the value will be overwritten. Otherwise a new mapping is
+     * created.
      *
      * @param cell cell which has to be updated or mapped
      * @param i potential of the cell
      */
     public void setPotential(EvacCell cell, double i) {
-        Double potential = i;
-        if (!cellToPotential.containsKey(cell)) {
-            cellToPotential.put(cell, potential);
-        } else {
-            cellToPotential.remove(cell);
-            cellToPotential.put(cell, potential);
+        if (potential.containsKey(Objects.requireNonNull(cell))) {
+            double value = potential.get(cell);
+            potential.remove(cell);
+            if( maxPotential == value ) {
+                recomputeMaxPotential();
+            }
         }
+        potential.put(cell, i);
         maxPotential = Math.max(maxPotential, i);
     }
+    
+    private void recomputeMaxPotential() {
+        maxPotential = -1;
+        for( Double d : potential.values()) {
+            maxPotential = Math.max(maxPotential, d);
+        }
+    }
 
-    /**
-     * Get the potential of a specified EvacCell. The method returns -1 if the method is called to retrieve the
-     * potential of a cell that does not exist.
-     *
-     * @param cell the cell which potential should be returned
-     * @return potential of the specified cell or -1 if the cell is not mapped by this potential
-     */
+    @Override
     public int getPotential(EvacCell cell) {
-        Double potential = cellToPotential.get(cell);
-        if (potential == null) {
+        Double potentialValue = potential.get(cell);
+        if (potentialValue == null) {
             return -1;
         } else {
-            return (int) Math.round(potential); //potential.intValue();
+            return (int) Math.round(potentialValue);
         }
     }
 
+    @Override
     public double getPotentialDouble(EvacCell cell) {
-        Double potential = cellToPotential.get(cell);
-        if (potential == null) {
+        Double potentialValue = potential.get(cell);
+        if (potentialValue == null) {
             return -1;
         } else {
-            return potential;
+            return potentialValue;
         }
     }
 
+    @Override
     public int getMaxPotential() {
         Double d = maxPotential;
         return d.intValue();
@@ -98,11 +100,15 @@ public abstract class PotentialMap {
      * @param cell A EvacCell that mapping you want to remove.
      * @throws IllegalArgumentException if the cell is not contained in the map
      */
-    public void deleteCell(EvacCell cell) throws IllegalArgumentException {
-        if (!(cellToPotential.containsKey(cell))) {
+    public void deleteCell(EvacCell cell) {
+        if (!potential.containsKey(cell)) {
             throw new IllegalArgumentException("The Cell must be insert previously!");
         }
-        cellToPotential.remove(cell);
+        double value = potential.get(cell);
+        potential.remove(cell);
+        if( value == maxPotential) {
+            recomputeMaxPotential();        
+        }
     }
 
     /**
@@ -112,26 +118,26 @@ public abstract class PotentialMap {
      * @return true if the cell has a potential value in this map
      */
     public boolean contains(EvacCell cell) {
-        return cellToPotential.containsKey(cell);
+        return potential.containsKey(cell);
     }
 
     /**
-     * <p>
-     * Returns a set of all cell which are mapped by this potential.</p>
-     * <p>
+     * Returns a set of all cell which are mapped by this potential.
+     * 
      * It is secured that the elements in the set have the same ordering using a {@code SortedSet}. This is needed due
      * to the fact that the keys can have different order even if the values are inserted using default hashcodes. The
-     * sorting ensures??? deterministic behaviour</p>
+     * sorting ensures??? deterministic behaviour.
      *
      * @return set of mapped cells
      */
     public Set<EvacCell> getMappedCells() {
-        SortedSet<EvacCell> a = new TreeSet<>();
-        cellToPotential.keySet().stream().forEach(cell -> a.add(cell));
-        return a;
+        SortedSet<EvacCell> cells = new TreeSet<>();
+        potential.keySet().stream().forEach(cell -> cells.add(cell));
+        return cells;
     }
 
+    @Override
     public boolean hasValidPotential(EvacCell cell) {
-        return (getPotential(cell) != INVALID_POTENTIAL_VALUE) && (getPotential(cell) != UNKNOWN_POTENTIAL_VALUE);
+        return getPotential(cell) != UNKNOWN_POTENTIAL_VALUE;
     }
 }

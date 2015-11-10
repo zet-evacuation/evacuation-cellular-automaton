@@ -19,7 +19,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.SaveCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * The save rule must be executed before the evacuation rule is executed.

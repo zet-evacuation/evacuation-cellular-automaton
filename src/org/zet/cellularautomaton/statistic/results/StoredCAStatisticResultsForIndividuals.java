@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  *

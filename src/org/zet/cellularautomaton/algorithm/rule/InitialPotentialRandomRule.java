@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.ArrayList;
 import org.zetool.rndutils.RandomUtils;
 

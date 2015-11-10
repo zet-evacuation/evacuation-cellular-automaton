@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton;
 
+import org.zet.cellularautomaton.potential.PotentialManager;
 import java.util.Collection;
 import org.zetool.simulation.cellularautomaton.tools.CellFormatter;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;

@@ -15,6 +15,9 @@
  */
 package org.zet.cellularautomaton;
 
+import org.zet.cellularautomaton.potential.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.DynamicPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 import org.zetool.container.mapping.Identifiable;
 import java.util.UUID;

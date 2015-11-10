@@ -13,16 +13,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton;
+package org.zet.cellularautomaton.potential;
 
-import java.util.HashMap;
+import java.util.Map;
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.Individual;
 
 public class EvacPotential extends StaticPotential {
 
     Individual ind;
     CellularAutomatonDirectionChecker checker;
 
-    public EvacPotential(Individual ind, CellularAutomatonDirectionChecker checker, HashMap<EvacCell, Double> dist) {
+    public EvacPotential(Individual ind, CellularAutomatonDirectionChecker checker, Map<EvacCell, Double> dist) {
         super(dist);
         this.ind = ind;
         this.checker = checker;
@@ -31,7 +33,7 @@ public class EvacPotential extends StaticPotential {
     @Override
     public int getPotential(EvacCell cell) throws IllegalArgumentException {
         if (cell != null) {
-            Double potential = cellToPotential.get(cell);
+            Double potential = this.potential.get(cell);
             if (potential != null) {
                 if (checker.canPass(ind, ind.getCell(), cell)) {
                     // TODO Potential Long

@@ -15,12 +15,12 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.PotentialValueTuple;
 import org.zet.cellularautomaton.DeathCause;
 import java.util.ArrayList;
 import java.util.Collections;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.Individual;
 
 /**

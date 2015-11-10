@@ -18,7 +18,7 @@ package org.zet.cellularautomaton.algorithm.parameter;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.Collection;
 
 /**

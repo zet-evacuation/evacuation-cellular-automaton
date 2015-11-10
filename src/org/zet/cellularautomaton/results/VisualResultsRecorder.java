@@ -22,11 +22,11 @@ import java.util.Vector;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.DoorCell;
-import org.zet.cellularautomaton.DynamicPotential;
-import org.zet.cellularautomaton.PotentialManager;
+import org.zet.cellularautomaton.potential.DynamicPotential;
+import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.InitialConfiguration;
 import org.zet.cellularautomaton.Room;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 import java.util.LinkedList;
 

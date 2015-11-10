@@ -26,7 +26,7 @@ public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
     protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
         esp.getCa().markIndividualForRemoval( cell.getIndividual() );
         // Potential needed for statistics:
-        org.zet.cellularautomaton.StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential( cell );
+        org.zet.cellularautomaton.potential.StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential( cell );
         esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getIndividual(), exit );
         // safetyTime etc will be set in the SaveIndividualsRule
     }

@@ -23,7 +23,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import java.util.Collections;

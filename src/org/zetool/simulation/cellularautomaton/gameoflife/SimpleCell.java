@@ -18,6 +18,6 @@ public class SimpleCell extends SquareCell<BinaryCellState> {
      * @return a string representing this room.
      */
     public String graphicalToString() {
-        return getState() == BinaryCellState.Alive ? " ■ " : "   ";
+        return getState() == BinaryCellState.ALIVE ? " ■ " : "   ";
     }
 }

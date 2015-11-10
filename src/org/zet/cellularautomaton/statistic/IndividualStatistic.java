@@ -23,7 +23,7 @@ import java.util.Map;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResultsForIndividuals;
-import org.zet.cellularautomaton.StaticPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.exception.GroupOfIndividualsException;
 import org.zet.cellularautomaton.statistic.exception.GroupOfIndsNoPotentialException;
 import org.zet.cellularautomaton.statistic.exception.GroupOfIndsNoValueBecauseAlreadySafeException;
