@@ -181,7 +181,7 @@ public class SPPotentialController implements PotentialController {
     public void increaseDynamicPotential(EvacCell cell) {
         int potential;
         DynamicPotential dynPot = pm.getDynamicPotential();
-        if (dynPot.contains(cell)) {
+        if (dynPot.hasValidPotential(cell)) {
             potential = dynPot.getPotential(cell) + 1;
             dynPot.deleteCell(cell);
             dynPot.setPotential(cell, (double) potential);
@@ -202,7 +202,7 @@ public class SPPotentialController implements PotentialController {
     @Override
     public void decreaseDynamicPotential(EvacCell cell) throws IllegalArgumentException {
         DynamicPotential dynPot = pm.getDynamicPotential();
-        if (!(dynPot.contains(cell))) {
+        if (!(dynPot.hasValidPotential(cell))) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.InsertCellPreviouslyException"));
         }
 
@@ -251,7 +251,7 @@ public class SPPotentialController implements PotentialController {
             childTuple = new HashMap<>();
             for (EvacCell p : parentList) {
                 for (EvacCell c : getNeighbours(p)) {
-                    if (!(c instanceof ExitCell) && !(newSP.contains(c))) {
+                    if (!(c instanceof ExitCell) && !(newSP.hasValidPotential(c))) {
                         //check if there already exists a tuple for this cell
                         if (childTuple.containsKey(c)) {
                             childTuple.get(c).addParent(newSP.getPotentialDouble(p), calculateDistance(p, c));

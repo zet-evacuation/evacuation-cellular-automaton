@@ -28,6 +28,7 @@ import org.zet.cellularautomaton.EvacCell;
  * special kinds of potentials, such as StaticPotential and DynamicPotential.
  */
 public abstract class AbstractPotential implements Potential {
+    protected static final int UNKNOWN_POTENTIAL_VALUE = -1;
     /** A map from cells to their potential value. */
     protected Map<EvacCell, Double> potential;
     /** Stores the maximal value of this potential map. */
@@ -50,9 +51,9 @@ public abstract class AbstractPotential implements Potential {
      */
     public void setPotential(EvacCell cell, double i) {
         if (potential.containsKey(Objects.requireNonNull(cell))) {
-            double value = potential.get(cell);
+            Double value = potential.get(cell);
             potential.remove(cell);
-            if( maxPotential == value ) {
+            if (getMaxPotential() == value.intValue()) {
                 recomputeMaxPotential();
             }
         }
@@ -69,22 +70,15 @@ public abstract class AbstractPotential implements Potential {
 
     @Override
     public int getPotential(EvacCell cell) {
-        Double potentialValue = potential.get(cell);
-        if (potentialValue == null) {
-            return -1;
-        } else {
-            return (int) Math.round(potentialValue);
-        }
+        return (int) Math.round(getPotentialDouble(cell));
     }
 
     @Override
     public double getPotentialDouble(EvacCell cell) {
-        Double potentialValue = potential.get(cell);
-        if (potentialValue == null) {
-            return -1;
-        } else {
-            return potentialValue;
+        if (hasValidPotential(cell)) {
+            return potential.get(cell);
         }
+        throw new IllegalArgumentException("Potential for " + cell + " not defined");
     }
 
     @Override
@@ -101,32 +95,21 @@ public abstract class AbstractPotential implements Potential {
      * @throws IllegalArgumentException if the cell is not contained in the map
      */
     public void deleteCell(EvacCell cell) {
-        if (!potential.containsKey(cell)) {
+        if (!potential.containsKey(Objects.requireNonNull(cell))) {
             throw new IllegalArgumentException("The Cell must be insert previously!");
         }
-        double value = potential.get(cell);
+        Double value = potential.get(cell);
         potential.remove(cell);
-        if( value == maxPotential) {
+        if( value.intValue() == getMaxPotential()) {
             recomputeMaxPotential();        
         }
-    }
-
-    /**
-     * Returns true if the mapping for the specified EvacCell exists.
-     *
-     * @param cell A EvacCell of that you want to know if it exists.
-     * @return true if the cell has a potential value in this map
-     */
-    public boolean contains(EvacCell cell) {
-        return potential.containsKey(cell);
     }
 
     /**
      * Returns a set of all cell which are mapped by this potential.
      * 
      * It is secured that the elements in the set have the same ordering using a {@code SortedSet}. This is needed due
-     * to the fact that the keys can have different order even if the values are inserted using default hashcodes. The
-     * sorting ensures??? deterministic behaviour.
+     * to the fact that the keys can have different order even if the values are inserted using default hashcodes.
      *
      * @return set of mapped cells
      */
@@ -138,6 +121,6 @@ public abstract class AbstractPotential implements Potential {
 
     @Override
     public boolean hasValidPotential(EvacCell cell) {
-        return getPotential(cell) != UNKNOWN_POTENTIAL_VALUE;
+        return potential.get(cell) != null;
     }
 }

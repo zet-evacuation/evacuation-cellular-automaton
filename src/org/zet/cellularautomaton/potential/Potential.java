@@ -9,14 +9,12 @@ import org.zet.cellularautomaton.EvacCell;
  * @author Jan-Philipp Kappmeier
  */
 public interface Potential {
-    static final int UNKNOWN_POTENTIAL_VALUE = -1;
 
     /**
-     * Returns the potential of a specified {@link EvacCell}. If the potential of a cell that does not exist should
-     * be retrieved, {@link #UNKNOWN_POTENTIAL_VALUE} is returned.
+     * Returns the potential of a specified {@link EvacCell}.
      *
      * @param cell the cell which potential should be returned
-     * @return potential of the specified cell or {@link #UNKNOWN_POTENTIAL_VALUE} if the cell has no potential
+     * @return potential of the specified cell
      */
     public int getPotential(EvacCell cell);
 

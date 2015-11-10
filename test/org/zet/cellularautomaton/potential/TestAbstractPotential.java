@@ -34,11 +34,23 @@ public class TestAbstractPotential {
     public void initializedPotential() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        
         assertThat(potential.getMaxPotential(), is(equalTo(-1)));
         assertThat(potential.getMappedCells(), is(empty()));
-        assertThat(potential.getPotential(null), is(equalTo(Potential.UNKNOWN_POTENTIAL_VALUE)));
-        assertThat(potential.getPotentialDouble(null), is(closeTo(Potential.UNKNOWN_POTENTIAL_VALUE, 10e-8)));
+        assertThat(potential.hasValidPotential(getCell()), is(false));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void initializedPotentialGetNonexistent() {
+        AbstractPotential potential = new AbstractPotential() {
+        };
+        potential.getPotential(getCell());
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void initializedPotentialGetNonexistentDouble() {
+        AbstractPotential potential = new AbstractPotential() {
+        };
+        potential.getPotentialDouble(getCell());
     }
     
     @Test
@@ -46,8 +58,6 @@ public class TestAbstractPotential {
         AbstractPotential potential = new AbstractPotential() {
         };
         EvacCell c = getCell();
-        assertThat(potential.hasValidPotential(c), is(false));
-        
         potential.setPotential(c, 3);
         assertThat(potential.hasValidPotential(c), is(true));
     }
@@ -68,6 +78,13 @@ public class TestAbstractPotential {
         assertThat(potential.getPotentialDouble(c), is(closeTo(4.9, 10e-8)));
     }
     
+    @Test(expected = NullPointerException.class)
+    public void setPotentialNullFails() {
+        AbstractPotential potential = new AbstractPotential() {
+        };
+        potential.setPotential(null, 3);
+    }
+    
     @Test(expected = IllegalArgumentException.class)
     public void deleteEmptyFails() {
         AbstractPotential potential = new AbstractPotential() {
@@ -82,7 +99,7 @@ public class TestAbstractPotential {
         EvacCell c = getCell();
         potential.setPotential(c, 3);
         potential.deleteCell(c);
-        assertThat(potential.getPotential(c), is(equalTo(Potential.UNKNOWN_POTENTIAL_VALUE)));
+        //assertThat(potential.getPotential(c), is(equalTo(Potential.UNKNOWN_POTENTIAL_VALUE)));
         assertThat(potential.getMappedCells(), is(empty()));
     }
     
@@ -117,7 +134,7 @@ public class TestAbstractPotential {
         potential.deleteCell(c2);
         assertThat(potential.getMaxPotential(), is(equalTo(2)));
         potential.deleteCell(c3);
-        assertThat(potential.getMaxPotential(), is(equalTo(Potential.UNKNOWN_POTENTIAL_VALUE)));
+        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.UNKNOWN_POTENTIAL_VALUE)));
     }
     
     @Test

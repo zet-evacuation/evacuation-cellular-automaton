@@ -269,7 +269,7 @@ public class VisualResultsRecorder {
                         for (int y = 0; y < room.getHeight(); y++) {
                             // For every cell in the room do:
                             EvacCell cell = room.getCell(x, y);
-                            if (cell != null && pot.contains(cell)) {
+                            if (cell != null && pot.hasValidPotential(cell)) {
                                 clone.setPotential(cellMapping.get(cell), pot.getPotentialDouble(cell));
                             }
                         }
@@ -289,7 +289,7 @@ public class VisualResultsRecorder {
                     for (int y = 0; y < room.getHeight(); y++) {
                         // For every cell in the room do:
                         EvacCell cell = room.getCell(x, y);
-                        if (cell != null && dynOrig.contains(cell)) {
+                        if (cell != null && dynOrig.hasValidPotential(cell)) {
                             dynClone.setPotential(cellMapping.get(cell), dynOrig.getPotential(cell));
                         }
                     }
