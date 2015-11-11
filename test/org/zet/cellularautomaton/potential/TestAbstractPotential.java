@@ -25,7 +25,7 @@ public class TestAbstractPotential {
 
             @Override
             public EvacCell clone() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         };        
     }
@@ -34,7 +34,8 @@ public class TestAbstractPotential {
     public void initializedPotential() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        assertThat(potential.getMaxPotential(), is(equalTo(-1)));
+        assertThat(AbstractPotential.INALID, is(equalTo(-1)));
+        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INALID)));
         assertThat(potential.getMappedCells(), is(empty()));
         assertThat(potential.hasValidPotential(getCell()), is(false));
     }
@@ -99,8 +100,8 @@ public class TestAbstractPotential {
         EvacCell c = getCell();
         potential.setPotential(c, 3);
         potential.deleteCell(c);
-        //assertThat(potential.getPotential(c), is(equalTo(Potential.UNKNOWN_POTENTIAL_VALUE)));
         assertThat(potential.getMappedCells(), is(empty()));
+        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INALID)));
     }
     
     @Test
@@ -116,6 +117,11 @@ public class TestAbstractPotential {
         EvacCell c3 = getCell();
         potential.setPotential(c3, 2);
         assertThat(potential.getMaxPotential(), is(equalTo(4)));
+        potential.setPotential(c1, 1);
+        assertThat(potential.getMaxPotential(), is(equalTo(4)));
+        potential.setPotential(c2, 5);
+        assertThat(potential.getMaxPotential(), is(equalTo(5)));
+        
     }
     
     @Test
@@ -134,7 +140,6 @@ public class TestAbstractPotential {
         potential.deleteCell(c2);
         assertThat(potential.getMaxPotential(), is(equalTo(2)));
         potential.deleteCell(c3);
-        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.UNKNOWN_POTENTIAL_VALUE)));
     }
     
     @Test

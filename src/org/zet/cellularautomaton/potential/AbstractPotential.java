@@ -28,11 +28,12 @@ import org.zet.cellularautomaton.EvacCell;
  * special kinds of potentials, such as StaticPotential and DynamicPotential.
  */
 public abstract class AbstractPotential implements Potential {
-    protected static final int UNKNOWN_POTENTIAL_VALUE = -1;
+    /** The maximum potential value returned for an empty potential. */
+    public static final int INALID = -1;
     /** A map from cells to their potential value. */
     protected Map<EvacCell, Double> potential;
     /** Stores the maximal value of this potential map. */
-    private double maxPotential = -1;
+    private double maxPotential = INALID;
 
     /**
      * Create an empty potential.
@@ -62,7 +63,7 @@ public abstract class AbstractPotential implements Potential {
     }
     
     private void recomputeMaxPotential() {
-        maxPotential = -1;
+        maxPotential = INALID;
         for( Double d : potential.values()) {
             maxPotential = Math.max(maxPotential, d);
         }
