@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.potential.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.DeathCause;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
     @Override
     protected void onExecute(EvacCell cell) {
         Individual individual = cell.getIndividual();
-        ArrayList<PotentialValueTuple> potentialToLengthOfWayMapper = new ArrayList<>();
+        ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
         ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
         double minDistanceToEvacArea = Double.MAX_VALUE;
@@ -69,7 +69,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
             }
             int lengthOfWayValue = sp.getPotential(individual.getCell());
             if (lengthOfWayValue >= 0) {// if this StaticPotential can lead the individual to an ExitCell
-                potentialToLengthOfWayMapper.add(new PotentialValueTuple(lengthOfWayValue, sp));
+                potentialToLengthOfWayMapper.add(new PotentialMemory(lengthOfWayValue, sp));
             }
         }
         // Sort the Individual's StaticPotentials according to their familarity value

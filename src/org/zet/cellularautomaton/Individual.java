@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton;
 
-import org.zet.cellularautomaton.potential.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
@@ -73,8 +73,8 @@ public class Individual implements Identifiable {
     private boolean safe;
     private boolean isEvacuated = false;
     private boolean isDead = false;
-    private PotentialValueTuple potentialMemoryStart;
-    private PotentialValueTuple potentialMemoryEnd;
+    private PotentialMemory potentialMemoryStart;
+    private PotentialMemory potentialMemoryEnd;
     private int memoryIndex;
     int cellCountToChange;
     Direction8 dir;
@@ -105,24 +105,24 @@ public class Individual implements Identifiable {
          * potential change
          */
         cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
-        potentialMemoryStart = new PotentialValueTuple(-1, null);
-        potentialMemoryEnd = new PotentialValueTuple(-1, null);
+        potentialMemoryStart = new PotentialMemory(-1, null);
+        potentialMemoryEnd = new PotentialMemory(-1, null);
         memoryIndex = 0;
     }
 
-    public PotentialValueTuple getPotentialMemoryStart() {
+    public PotentialMemory getPotentialMemoryStart() {
         return potentialMemoryStart;
     }
 
-    public PotentialValueTuple getPotentialMemoryEnd() {
+    public PotentialMemory getPotentialMemoryEnd() {
         return potentialMemoryEnd;
     }
 
-    public void setPotentialMemoryStart(PotentialValueTuple start) {
+    public void setPotentialMemoryStart(PotentialMemory start) {
         potentialMemoryStart = start;
     }
 
-    public void setPotentialMemoryEnd(PotentialValueTuple end) {
+    public void setPotentialMemoryEnd(PotentialMemory end) {
         potentialMemoryEnd = end;
     }
 

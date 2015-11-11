@@ -16,25 +16,25 @@
 package org.zet.cellularautomaton.potential;
 
 /**
- * This class defines a tuple
- * of StaticPotentials and the Individuals distance from that ExitCell, 
- * to which the StaticPotentials refers. This class/tuple implements the
- * interface Comparable in order to sort a collection of tuples by their
- * distance to the ExitCell, to which the StaticPotential refers.
+ * A tuple of {@link StaticPotential}s and the Individuals distance from that ExitCell, to which the
+ * StaticPotentials refers. This class/tuple implements the interface Comparable in order to sort a collection of tuples
+ * by their distance to the ExitCell, to which the StaticPotential refers.
+ *
+ * @param <P>
  * @author Marcel Preuß
  *
  */
-public class PotentialValueTuple implements Comparable<PotentialValueTuple> {
+public class PotentialMemory<P extends Potential> implements Comparable<PotentialMemory<P>> {
 
-    /** the Individuals distance from that ExitCell, to which the StaticPotentials refers. */
+    /** The Individual's distance from the ExitCell the StaticPotential refers to. */
     private final int lengthOfWay;
 
     /** The StaticPotential of the tuple. */
-    private final StaticPotential staticPotential;
+    private final P potential;
 
-    public PotentialValueTuple(int loW, StaticPotential sp) {
+    public PotentialMemory(int loW, P potential) {
         this.lengthOfWay = loW;
-        this.staticPotential = sp;
+        this.potential = potential;
     }
 
     /**
@@ -51,12 +51,12 @@ public class PotentialValueTuple implements Comparable<PotentialValueTuple> {
      *
      * @return The StaticPotential attribute
      */
-    public StaticPotential getStaticPotential() {
-        return this.staticPotential;
+    public P getStaticPotential() {
+        return this.potential;
     }
 
     @Override
-    public int compareTo(PotentialValueTuple t) {
+    public int compareTo(PotentialMemory<P> t) {
         if (t.getLengthOfWay() == this.getLengthOfWay()) {
             return 0;
         } else if (t.getLengthOfWay() < this.getLengthOfWay()) {

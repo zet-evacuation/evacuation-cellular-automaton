@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.potential.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.PotentialMemory;
 import java.util.ArrayList;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
@@ -58,7 +58,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 
 		// Update the {@code potentialMemory}
 		if( memoryIndex == 0 )
-			individual.setPotentialMemoryStart( new PotentialValueTuple( cellPotential, sp ) );
+			individual.setPotentialMemoryStart(new PotentialMemory( cellPotential, sp ) );
 
 		// Change potential, if not enough advancement to the designated exit cell has been made
 		if( memoryIndex == cellCountToChange - 1 ) {
@@ -69,7 +69,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 			 */
 			int epsilon = 10;
 
-			individual.setPotentialMemoryEnd( new PotentialValueTuple( cellPotential, sp ) );
+			individual.setPotentialMemoryEnd(new PotentialMemory( cellPotential, sp ) );
 
 			int potentialDifference = individual.getPotentialMemoryStart().getLengthOfWay() - individual.getPotentialMemoryEnd().getLengthOfWay();
 			if( (potentialDifference < epsilon) && (sp == individual.getPotentialMemoryStart().getStaticPotential()) ) {

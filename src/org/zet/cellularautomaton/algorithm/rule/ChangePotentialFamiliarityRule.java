@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.potential.PotentialValueTuple;
+import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 import org.zet.cellularautomaton.EvacCell;
@@ -63,14 +63,14 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 	{
 		Individual individual = cell.getIndividual();
 		if(!individual.isSafe()){
-			ArrayList<PotentialValueTuple> potentialToLengthOfWayMapper = new ArrayList<PotentialValueTuple>();
-			ArrayList<StaticPotential> staticPotentials = new ArrayList<StaticPotential>();
+			ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
+			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
 			staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
 			for (StaticPotential sp : staticPotentials)
 			{
 				int lengthOfWayValue = sp.getPotential(individual.getCell());
 				if (lengthOfWayValue >= 0)  // if this StaticPotential can lead the individual to an ExitCell
-					potentialToLengthOfWayMapper.add(new PotentialValueTuple(lengthOfWayValue, sp));
+					potentialToLengthOfWayMapper.add(new PotentialMemory(lengthOfWayValue, sp));
 			}
 			// Sort the Individual's StaticPotentials according to their familarity value
 			Collections.sort(potentialToLengthOfWayMapper);
