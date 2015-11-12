@@ -68,7 +68,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
                 minDistanceToEvacArea = sp.getDistance(individual.getCell());
             }
             if (sp.getPotential(individual.getCell()) >= 0) {// if this StaticPotential can lead the individual to an ExitCell
-                potentialToLengthOfWayMapper.add(new PotentialMemory(individual.getCell(), sp));
+                potentialToLengthOfWayMapper.add(new PotentialMemory<>(individual.getCell(), sp));
             }
         }
         // Sort the Individual's StaticPotentials according to their familarity value

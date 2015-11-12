@@ -24,8 +24,8 @@ public class EvacPotential extends StaticPotential {
     Individual ind;
     CellularAutomatonDirectionChecker checker;
 
-    public EvacPotential(Individual ind, CellularAutomatonDirectionChecker checker, Map<EvacCell, Double> dist) {
-        super(dist);
+    public EvacPotential(Individual ind, CellularAutomatonDirectionChecker checker) {
+        super();
         this.ind = ind;
         this.checker = checker;
     }

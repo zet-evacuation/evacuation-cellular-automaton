@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.potential;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
@@ -46,7 +45,7 @@ public class StaticPotential extends AbstractPotential {
     private List<ExitCell> associatedExitCells;
 
     /** A HashMap that assign each EvacCell a Int value which represents the real distance). */
-    private final Map<EvacCell, Double> cellToDistance;
+    //private final Map<EvacCell, Double> cellToDistance;
 
     /**
      * Creates a StaticPotential with a automatic generated unique ID, that can not be changed.
@@ -55,14 +54,10 @@ public class StaticPotential extends AbstractPotential {
         super();
         this.id = idCount;
         idCount++;
-        cellToDistance = new HashMap<>();
+        //cellToDistance = new HashMap<>();
         associatedExitCells = new ArrayList<>();
     }
     
-    protected StaticPotential(Map<EvacCell, Double> initialDistance) {
-        cellToDistance = initialDistance;
-    }
-
     /**
      * Get the ID of this StaticPotential.
      *
@@ -88,7 +83,7 @@ public class StaticPotential extends AbstractPotential {
      * @param i distance of the cell
      */
     public void setDistance(EvacCell cell, double i) {
-        cellToDistance.put(cell, i);
+        setPotential(cell, i);
     }
 
     /**
@@ -99,18 +94,11 @@ public class StaticPotential extends AbstractPotential {
      * @return distance of the specified cell or -1 if the cell is not mapped by this potential
      */
     public double getDistance(EvacCell cell) {
-        Double distance = cellToDistance.get(cell);
-        return distance == null ? -1.0 : distance;
+        return hasValidPotential(cell) ? getPotentialDouble(cell) : -1;
     }
 
     public double getMaxDistance() {
-        double max = 0;
-        for (EvacCell cell : cellToDistance.keySet()) {
-            if (getDistance(cell) > max) {
-                max = getDistance(cell);
-            }
-        }
-        return max;
+        return Math.max(0, getMaxPotentialDouble());
     }
 
     /**
@@ -121,10 +109,7 @@ public class StaticPotential extends AbstractPotential {
      * @throws IllegalArgumentException if no distance was stored for cell
      */
     public void deleteDistanceCell(EvacCell cell) {
-        if (!(cellToDistance.containsKey(cell))) {
-            throw new IllegalArgumentException("The Cell must be inserted previously!");
-        }
-        cellToDistance.remove(cell);
+        deleteCell(cell);
     }
 
     /**
@@ -134,7 +119,7 @@ public class StaticPotential extends AbstractPotential {
      * @return {@code true} if the distance has been defined, {@code false} otherwise
      */
     public boolean containsDistance(EvacCell cell) {
-        return cellToDistance.containsKey(cell);
+        return hasValidPotential(cell);
     }
 
     public List<ExitCell> getAssociatedExitCells() {
@@ -159,7 +144,10 @@ public class StaticPotential extends AbstractPotential {
     }
 
     public EvacPotential getAsEvacPotential(Individual i, CellularAutomatonDirectionChecker checker) {
-        EvacPotential evacPotential = new EvacPotential(i, checker, cellToDistance);
+        EvacPotential evacPotential = new EvacPotential(i, checker);
+        for( EvacCell c : getMappedCells()) {
+            evacPotential.setPotential(c, getPotential(c));
+        }
         evacPotential.setAssociatedExitCells(this.associatedExitCells);
         evacPotential.setAttractivity(this.attractivity);
         evacPotential.potential = this.potential;

@@ -88,6 +88,10 @@ public abstract class AbstractPotential implements Potential {
         Double d = maxPotential;
         return d.intValue();
     }
+    
+    public double getMaxPotentialDouble() {
+        return maxPotential;
+    }
 
     /**
      * Removes the mapping for the specified EvacCell. The method throws {@code IllegalArgumentExceptions} if you try to

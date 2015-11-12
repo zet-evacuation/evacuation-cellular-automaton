@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.potential;
 
-import org.zet.cellularautomaton.potential.StaticPotential;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.closeTo;
@@ -22,13 +21,16 @@ public class TestStaticPotential {
     public void storeDistance() {
         StaticPotential potential = new StaticPotential();
         EvacCell c = new RoomCell(0,0);
-        assertThat(potential.getPotential(c), is(equalTo(-1)));
+        assertThat(potential.getDistance(c), is(closeTo(-1, 10e-8)));
         potential.setPotential(c, distance);
         assertThat(potential.getPotential(c), is(equalTo(2)));
+        assertThat(potential.getDistance(c), is(closeTo(2, 10e-8)));
         potential.setPotential(c, minDistance);
         assertThat(potential.getPotential(c), is(equalTo(1)));
+        assertThat(potential.getDistance(c), is(closeTo(1, 10e-8)));
         potential.setPotential(c, maxDistance);
         assertThat(potential.getPotential(c), is(equalTo(4)));
+        assertThat(potential.getDistance(c), is(closeTo(3.5, 10e-8)));
     }
     
     @Test

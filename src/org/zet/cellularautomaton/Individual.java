@@ -106,8 +106,8 @@ public class Individual implements Identifiable {
          * potential change
          */
         cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
-        potentialMemoryStart = new PotentialMemory();
-        potentialMemoryEnd = new PotentialMemory();
+        potentialMemoryStart = new PotentialMemory<>();
+        potentialMemoryEnd = new PotentialMemory<>();
         memoryIndex = 0;
     }
 

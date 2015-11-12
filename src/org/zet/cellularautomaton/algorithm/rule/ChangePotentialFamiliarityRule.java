@@ -65,19 +65,18 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 		Individual individual = cell.getIndividual();
 		if(!individual.isSafe()){
 			ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
-			ArrayList<Potential> staticPotentials = new ArrayList<>();
+			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
 			staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
-			for (Potential sp : staticPotentials) {
+			for (StaticPotential sp : staticPotentials) {
                             // use the StaticPotential if it can lead the individual to an ExitCell
 				if (sp.getPotential(individual.getCell()) >= 0)  {
-					potentialToLengthOfWayMapper.add(new PotentialMemory(individual.getCell(), sp));                                    
+					potentialToLengthOfWayMapper.add(new PotentialMemory<>(individual.getCell(), sp));                                    
                                 }
 			}
 			// Sort the Individual's StaticPotentials according to their familarity value
 			Collections.sort(potentialToLengthOfWayMapper);
-			int nrOfPossiblePotentials = (int)(Math.round(
-					(1 - individual.getFamiliarity()) 
-					* potentialToLengthOfWayMapper.size()
+			int nrOfPossiblePotentials = (int)(Math.round( (1 - individual.getFamiliarity())
+                                * potentialToLengthOfWayMapper.size()
 			));
 
 			if (nrOfPossiblePotentials < 1)
