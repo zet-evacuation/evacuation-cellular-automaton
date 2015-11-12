@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.potential;
 
-import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 
@@ -31,12 +30,11 @@ public class EvacPotential extends StaticPotential {
     }
 
     @Override
-    public int getPotential(EvacCell cell) throws IllegalArgumentException {
+    public int getPotential(EvacCell cell) {
         if (cell != null) {
             Double potential = this.potential.get(cell);
             if (potential != null) {
                 if (checker.canPass(ind, ind.getCell(), cell)) {
-                    // TODO Potential Long
                     return (int) Math.round(potential);
                 } else {
                     return Integer.MAX_VALUE;

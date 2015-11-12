@@ -17,7 +17,6 @@ package org.zet.cellularautomaton.potential;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
@@ -44,9 +43,6 @@ public class StaticPotential extends AbstractPotential {
     /** contains the associated ExitCells. */
     private List<ExitCell> associatedExitCells;
 
-    /** A HashMap that assign each EvacCell a Int value which represents the real distance). */
-    //private final Map<EvacCell, Double> cellToDistance;
-
     /**
      * Creates a StaticPotential with a automatic generated unique ID, that can not be changed.
      */
@@ -54,7 +50,6 @@ public class StaticPotential extends AbstractPotential {
         super();
         this.id = idCount;
         idCount++;
-        //cellToDistance = new HashMap<>();
         associatedExitCells = new ArrayList<>();
     }
     
