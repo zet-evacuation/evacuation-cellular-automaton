@@ -56,6 +56,20 @@ public class PotentialMemory<P extends Potential> implements Comparable<Potentia
     }
 
     @Override
+    public int hashCode() {
+        return 31 * 3 + lengthOfWay;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final PotentialMemory<?> other = (PotentialMemory<?>) obj;
+        return this.lengthOfWay == other.lengthOfWay;
+    }
+
+    @Override
     public int compareTo(PotentialMemory<P> t) {
         if (t.getLengthOfWay() == this.getLengthOfWay()) {
             return 0;

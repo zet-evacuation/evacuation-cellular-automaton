@@ -2,6 +2,7 @@ package org.zet.cellularautomaton.potential;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
@@ -23,6 +24,23 @@ public class TestPotentialMemory {
         
         assertThat(m.getLengthOfWay(), is(equalTo(13)));
         assertThat(m.getStaticPotential(), is(equalTo(p)));
+    }
+    
+    @Test
+    public void testEquals() {
+        Mockery context = new Mockery();
+        Potential p1 = context.mock(Potential.class, "p1");
+        Potential p2 = context.mock(Potential.class, "p2");
+        
+        PotentialMemory<Potential> smaller = new PotentialMemory<>(5, p1);
+        PotentialMemory<Potential> equal1 = new PotentialMemory<>(13, p1);
+        PotentialMemory<Potential> equal2 = new PotentialMemory<>(13, p2);
+        assertThat(equal1, is(equalTo(equal2)));
+        assertThat(equal1, is(not(equalTo(null))));
+        assertThat(equal1, is(not(equalTo(smaller))));
+        assertThat(equal1, is(not(equalTo((double) 1))));
+        assertThat(equal1.hashCode(), is(equalTo(equal2.hashCode())));
+        assertThat(equal1.hashCode(), is(not(equalTo(smaller.hashCode()))));
     }
     
     @Test
