@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.potential.PotentialMemory;
 import java.util.ArrayList;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -52,13 +53,13 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 		// Get the potential of the individual on the {@code cell} as well as some other concerning constants of the individual
 		Individual individual = cell.getIndividual();
 		StaticPotential sp = individual.getStaticPotential();
-		int cellPotential = sp.getPotential( cell );
 		int cellCountToChange = individual.getCellCountToChange();
 		int memoryIndex = individual.getMemoryIndex();
 
 		// Update the {@code potentialMemory}
-		if( memoryIndex == 0 )
-			individual.setPotentialMemoryStart(new PotentialMemory( cellPotential, sp ) );
+		if( memoryIndex == 0 ) {
+			individual.setPotentialMemoryStart(new PotentialMemory<>( cell, sp ) );                    
+                }
 
 		// Change potential, if not enough advancement to the designated exit cell has been made
 		if( memoryIndex == cellCountToChange - 1 ) {
@@ -69,13 +70,13 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 			 */
 			int epsilon = 10;
 
-			individual.setPotentialMemoryEnd(new PotentialMemory( cellPotential, sp ) );
+			individual.setPotentialMemoryEnd(new PotentialMemory<>( cell, sp ) );
 
 			int potentialDifference = individual.getPotentialMemoryStart().getLengthOfWay() - individual.getPotentialMemoryEnd().getLengthOfWay();
 			if( (potentialDifference < epsilon) && (sp == individual.getPotentialMemoryStart().getStaticPotential()) ) {
 
 				// Calculate the second best Potential and the associated potential value on the {@code cell}
-				ArrayList<StaticPotential> staticPotentials = new ArrayList<StaticPotential>();
+				ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
 				staticPotentials.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
 				StaticPotential minWayLengthPotential = sp;
 				int lengthOfWayValue = Integer.MAX_VALUE;

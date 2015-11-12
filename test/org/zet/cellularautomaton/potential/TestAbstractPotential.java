@@ -16,7 +16,7 @@ import org.zet.cellularautomaton.EvacuationCellState;
  * @author Jan-Philipp Kappmeier
  */
 public class TestAbstractPotential {
-    private EvacCell getCell() {
+    public static EvacCell getCell() {
         return new EvacCell(new EvacuationCellState(null), 1, 0, 0) {
 
             @Override

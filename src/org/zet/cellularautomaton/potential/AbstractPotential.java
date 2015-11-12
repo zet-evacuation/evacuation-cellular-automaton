@@ -28,6 +28,29 @@ import org.zet.cellularautomaton.EvacCell;
  * special kinds of potentials, such as StaticPotential and DynamicPotential.
  */
 public abstract class AbstractPotential implements Potential {
+    public static final Potential EMPTY_POTENTIAL = new Potential() {
+
+        @Override
+        public int getPotential(EvacCell cell) {
+            throw new IllegalArgumentException("Potential for " + cell + " not defined");
+        }
+
+        @Override
+        public double getPotentialDouble(EvacCell cell) {
+            throw new IllegalArgumentException("Potential for " + cell + " not defined");
+        }
+
+        @Override
+        public int getMaxPotential() {
+            return AbstractPotential.INALID;
+        }
+
+        @Override
+        public boolean hasValidPotential(EvacCell cell) {
+            return false;
+        }
+    };
+    
     /** The maximum potential value returned for an empty potential. */
     public static final int INALID = -1;
     /** A map from cells to their potential value. */

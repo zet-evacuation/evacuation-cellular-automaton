@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.ArrayList;
 import java.util.Collections;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * This rule changes an Individual's StaticPotential according to the Individual's
@@ -64,13 +65,13 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 		Individual individual = cell.getIndividual();
 		if(!individual.isSafe()){
 			ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
-			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
+			ArrayList<Potential> staticPotentials = new ArrayList<>();
 			staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
-			for (StaticPotential sp : staticPotentials)
-			{
-				int lengthOfWayValue = sp.getPotential(individual.getCell());
-				if (lengthOfWayValue >= 0)  // if this StaticPotential can lead the individual to an ExitCell
-					potentialToLengthOfWayMapper.add(new PotentialMemory(lengthOfWayValue, sp));
+			for (Potential sp : staticPotentials) {
+                            // use the StaticPotential if it can lead the individual to an ExitCell
+				if (sp.getPotential(individual.getCell()) >= 0)  {
+					potentialToLengthOfWayMapper.add(new PotentialMemory(individual.getCell(), sp));                                    
+                                }
 			}
 			// Sort the Individual's StaticPotentials according to their familarity value
 			Collections.sort(potentialToLengthOfWayMapper);

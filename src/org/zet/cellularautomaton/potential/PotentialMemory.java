@@ -15,6 +15,9 @@
  */
 package org.zet.cellularautomaton.potential;
 
+import java.util.Objects;
+import org.zet.cellularautomaton.EvacCell;
+
 /**
  * A tuple of {@link StaticPotential}s and the Individuals distance from that ExitCell, to which the
  * StaticPotentials refers. This class/tuple implements the interface Comparable in order to sort a collection of tuples
@@ -32,8 +35,16 @@ public class PotentialMemory<P extends Potential> implements Comparable<Potentia
     /** The StaticPotential of the tuple. */
     private final P potential;
 
-    public PotentialMemory(int loW, P potential) {
-        this.lengthOfWay = loW;
+    /** Initializes an potential memory that is empty. It is always smaller than all other potentials
+     * 
+     */
+    public PotentialMemory() {
+        lengthOfWay = -1;
+        potential = null;
+    }
+    
+    public PotentialMemory(EvacCell c, P potential) {
+        this.lengthOfWay = potential.getPotential(Objects.requireNonNull(c));
         this.potential = potential;
     }
 

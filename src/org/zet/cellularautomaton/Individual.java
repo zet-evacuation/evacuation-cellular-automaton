@@ -21,6 +21,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 import org.zetool.container.mapping.Identifiable;
 import java.util.UUID;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * A Individual represets a Person in the evacuationtool with the following characteristics: familiarity, panic,
@@ -105,8 +106,8 @@ public class Individual implements Identifiable {
          * potential change
          */
         cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
-        potentialMemoryStart = new PotentialMemory(-1, null);
-        potentialMemoryEnd = new PotentialMemory(-1, null);
+        potentialMemoryStart = new PotentialMemory();
+        potentialMemoryEnd = new PotentialMemory();
         memoryIndex = 0;
     }
 
