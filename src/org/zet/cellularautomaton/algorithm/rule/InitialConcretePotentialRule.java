@@ -29,7 +29,7 @@ import org.zet.cellularautomaton.Individual;
  * Individual standing on a cell is caged (it cannot leave the building, because there is now passable way to an exit),
  * this individual has to die because it cannot be evacuated.
  *
- * @author marcel
+ * @author Marcel Preuß
  *
  */
 public class InitialConcretePotentialRule extends AbstractInitialRule {
@@ -67,11 +67,12 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
             if (distanceToEvacArea >= 0 && distanceToEvacArea <= minDistanceToEvacArea) {
                 minDistanceToEvacArea = sp.getDistance(individual.getCell());
             }
-            if (sp.getPotential(individual.getCell()) >= 0) {// if this StaticPotential can lead the individual to an ExitCell
+            if (sp.getDistance(individual.getCell()) >= 0) {// if this StaticPotential can lead the individual to an ExitCell
                 potentialToLengthOfWayMapper.add(new PotentialMemory<>(individual.getCell(), sp));
             }
         }
-        // Sort the Individual's StaticPotentials according to their familarity value
+        
+        // Sort the Individual's StaticPotentials according to their familiarity value
         Collections.sort(potentialToLengthOfWayMapper);
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (potentialToLengthOfWayMapper.isEmpty()) {
@@ -84,7 +85,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
             }
             int best = 0;
             for (int i = 1; i < nrOfPossiblePotentials; i++) {
-                if (potentialToLengthOfWayMapper.get(best).getStaticPotential().getAttractivity() < potentialToLengthOfWayMapper.get(i).getStaticPotential().getAttractivity()) {
+                if (potentialToLengthOfWayMapper.get(i).getStaticPotential().getAttractivity() > potentialToLengthOfWayMapper.get(best).getStaticPotential().getAttractivity() ) {
                     best = i;
                 }
             }

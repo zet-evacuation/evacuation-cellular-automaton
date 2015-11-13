@@ -34,7 +34,7 @@ public class StaticPotential extends AbstractPotential {
     /** Counts the number of existing StaticPotentials. Every new StaticPotential gets automatically a unique ID. */
     protected static int idCount = 0;
 
-    /** Attractivity for this cell. */
+    /** Attractivity for this potential. */
     private int attractivity;
 
     /** Id of the StaticPotential. */

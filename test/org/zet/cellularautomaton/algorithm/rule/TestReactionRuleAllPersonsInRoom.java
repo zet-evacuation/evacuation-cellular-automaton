@@ -88,7 +88,7 @@ public class TestReactionRuleAllPersonsInRoom {
                 allowing(room).getID();
                 will(returnValue(1));
                 for( Individual i : individuals) {
-                    allowing(room).addIndividual(with(any(EvacCell.class)), with(i));                
+                    allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 }
                 allowing(room).getIndividuals();
                 will(returnValue(Arrays.asList(individuals)));
