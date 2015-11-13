@@ -394,7 +394,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
                                 this.getY()) && cellRoom.getCell(this.getX() + direction.xOffset(),
                                         this.getY()).getState().getIndividual() != null) {
                             f1 = true;
-                        } else if (cellRoom.existsCellAt(this.getX() + direction.xOffset(),
+                 } else if (cellRoom.existsCellAt(this.getX() + direction.xOffset(),
                                 this.getY()) && cellRoom.getCell(this.getX() + direction.xOffset(),
                                         this.getY()).getState().getIndividual() != null) {
                             f2 = true;

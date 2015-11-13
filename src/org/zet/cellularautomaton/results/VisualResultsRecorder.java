@@ -29,6 +29,7 @@ import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 import java.util.LinkedList;
+import org.zet.cellularautomaton.RoomImpl;
 
 /**
  * This class helps you to store all the parts of a simulation that are
@@ -80,6 +81,8 @@ public class VisualResultsRecorder {
      * We need this to convert  the incoming actions (which are based on 
      * the original configuration) to the stored actions (which are based 
      * on the cloned configuration). 
+     * 
+     * This is bad design and must be changed!
      */
     private HashMap<EvacCell, EvacCell> cellMap;
     private HashMap<StaticPotential, StaticPotential> staticPotentialMap;
@@ -329,20 +332,21 @@ public class VisualResultsRecorder {
             cellMapping = new HashMap<>();
         }
 
-        Room rClone = room.clone();
-        rClone.clear();
+        
+        RoomImpl roomClone = new RoomImpl(room);
+        roomClone.clear();
         for (int x = 0; x < room.getWidth(); x++) {
             for (int y = 0; y < room.getHeight(); y++) {
                 EvacCell orig = room.getCell(x, y);
                 if (orig != null) {
                     EvacCell cClone = cloneCell(orig);
-                    rClone.setCell(cClone);
+                    roomClone.setCell(cClone);
                     cellMapping.put(orig, cClone);
                 }
             }
         }
 
-        return rClone;
+        return roomClone;
     }
 
     /**

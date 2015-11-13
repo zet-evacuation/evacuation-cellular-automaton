@@ -17,7 +17,7 @@ package org.zet.cellularautomaton;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.zetool.simulation.cellularautomaton.FiniteCellMatrix;
+import org.zetool.simulation.cellularautomaton.GeometricCellMatrix;
 
 /**
  * This class represents a room, which is a collection of Cells. Individuals can stay in a room: Each individual beeing
@@ -25,7 +25,7 @@ import org.zetool.simulation.cellularautomaton.FiniteCellMatrix;
  *
  * @author Marcel Preuß
  */
-public class RoomImpl extends FiniteCellMatrix<EvacCell> implements Room {
+public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
 
     /** The id of the room (to calculate the hashCode). */
     private int id;
@@ -39,21 +39,38 @@ public class RoomImpl extends FiniteCellMatrix<EvacCell> implements Room {
     private int floorID;
 
     private boolean isAlarmed;
-    private int xOffset;
-    private int yOffset;
 
-    public RoomImpl(int width, int height, int floorID) {
-        this(width, height, floorID, idCount);
+    public RoomImpl(int width, int height, int floorID, int xOffset, int yOffset) {
+        this(width, height, floorID, idCount, xOffset, yOffset);
         idCount++;
     }
 
-    protected RoomImpl(int width, int height, int floorID, int id) {
-        super(width, height);
+    protected RoomImpl(int width, int height, int floorID, int id, int xOffset, int yOffset) {
+        super(width, height, xOffset, yOffset);
         this.floorID = floorID;
         doors = new ArrayList<>();
         individuals = new ArrayList<>();
         this.id = id;
         this.isAlarmed = false;
+    }
+    
+    /**
+     * Creates a copy of a room. Uses the same instances of cell and individuals, e.g. no deep-copy is done.
+     * @param room 
+     */
+    public RoomImpl(Room room) {
+        this(room.getWidth(), room.getHeight(), room.getFloorID(), room.getID(), room.getXOffset(), room.getYOffset());
+
+        isAlarmed = room.isAlarmed();
+        for (DoorCell door : room.getDoors()) {
+            doors.add(door);
+        }
+
+        for (Individual individual : room.getIndividuals()) {
+            individuals.add(individual);
+        }
+
+        populate((x, y) -> room.getCell(x, y));
     }
 
     /**
@@ -65,7 +82,6 @@ public class RoomImpl extends FiniteCellMatrix<EvacCell> implements Room {
      * parameter cell = null.
      * @throws IllegalArgumentException if the x- or the y-value of the parameter "cell" is out of bounds.
      */
-    @Override
     public void setCell(EvacCell cell) {
         setCell(cell.getX(), cell.getY(), cell);
         if ((getCell(cell.getX(),cell.getY()) != null)
@@ -117,24 +133,6 @@ public class RoomImpl extends FiniteCellMatrix<EvacCell> implements Room {
     @Override
     public List<Individual> getIndividuals() {
         return individuals;
-    }
-
-    @Override
-    public int getXOffset() {
-        return xOffset;
-    }
-
-    public void setXOffset(int xOffset) {
-        this.xOffset = xOffset;
-    }
-
-    @Override
-    public int getYOffset() {
-        return yOffset;
-    }
-
-    public void setYOffset(int yOffset) {
-        this.yOffset = yOffset;
     }
 
     /**
@@ -236,22 +234,22 @@ public class RoomImpl extends FiniteCellMatrix<EvacCell> implements Room {
         this.doors.clear();
     }
 
-    @Override
-    public Room clone() {
-        RoomImpl clone = new RoomImpl(getWidth(), getHeight(), floorID, id);
-
-        clone.isAlarmed = this.isAlarmed;
-        for (DoorCell door : this.doors) {
-            clone.doors.add(door);
-        }
-
-        for (Individual individual : this.individuals) {
-            clone.individuals.add(individual);
-        }
-
-        clone.populate((x, y) -> this.getCell(x, y));
-        
-        return clone;
-    }
+//    @Override
+//    public Room clone() {
+//        RoomImpl clone = new RoomImpl(getWidth(), getHeight(), floorID, id);
+//
+//        clone.isAlarmed = this.isAlarmed;
+//        for (DoorCell door : this.doors) {
+//            clone.doors.add(door);
+//        }
+//
+//        for (Individual individual : this.individuals) {
+//            clone.individuals.add(individual);
+//        }
+//
+//        clone.populate((x, y) -> this.getCell(x, y));
+//        
+//        return clone;
+//    }
 
 }

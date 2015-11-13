@@ -12,14 +12,14 @@ import org.junit.Test;
 public class TestRoom {
     @Test
     public void testEmptyRoomCellCount() {
-        Room room = new RoomImpl(3, 1, 0);
+        Room room = new RoomImpl(3, 1, 0, 0, 0);
         assertThat(room.getCellCount(true), is(equalTo(3)));
         assertThat(room.getCellCount(false), is(equalTo(0)));
     }
     
     @Test
     public void testRoomCellCount() {
-        Room room = new RoomImpl(3, 1, 0);
+        RoomImpl room = new RoomImpl(3, 1, 0, 0, 0);
         EvacuationCellState state = new EvacuationCellState(null);
         EvacCell ec = new EvacCell(state, 1, 1, 0) {
             

@@ -58,10 +58,6 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         for (Individual i : getIndividuals()) {
             Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
 
-            if (i.id() == 114 && i.getCell().getAbsoluteX() == 2) {
-                System.out.println("114");
-            }
-
             while (loop.hasNext()) {
                 EvacuationRule r = loop.next();
                 r.execute(i.getCell());
