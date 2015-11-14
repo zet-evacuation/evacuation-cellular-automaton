@@ -25,9 +25,9 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialPotentialShortestPathRule {
+public class TestInitialPotentialRandomRule {
     private final Mockery context = new Mockery();
-    InitialPotentialShortestPathRule rule;
+    InitialPotentialRandomRule rule;
     EvacCell cell;
     Individual i;
     EvacuationCellularAutomaton eca;
@@ -35,7 +35,7 @@ public class TestInitialPotentialShortestPathRule {
     
     @Before
     public void init() {
-        rule = new InitialPotentialShortestPathRule();
+        rule = new InitialPotentialRandomRule();
         Room room = context.mock(Room.class);
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
@@ -111,26 +111,12 @@ public class TestInitialPotentialShortestPathRule {
     }
     
     @Test
-    public void testShortestPotentialTaken() {
-        StaticPotential targetPotential = initPotential( eca.getPotentialManager());
-        
-        rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+    public void testRandomPotentialTaken() {
+        // Need to insert seed into rule to manipulate random decision
+//        rule.execute(cell);
+//        assertThat(i.isDead(), is(false));
+//        assertThat(i.getDeathCause(), is(nullValue()));
+//        assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
-    private StaticPotential initPotential(PotentialManager pm) {
-        StaticPotential shortDistance = new StaticPotential();
-        StaticPotential mediumDistance = new StaticPotential();
-        StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
-
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
-        return shortDistance;
-    }
 }
