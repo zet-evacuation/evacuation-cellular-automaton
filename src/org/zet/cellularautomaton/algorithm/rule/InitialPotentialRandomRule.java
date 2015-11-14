@@ -25,28 +25,32 @@ import org.zetool.rndutils.RandomUtils;
  * Sets a random exit to an individual.
  */
 public class InitialPotentialRandomRule extends AbstractInitialRule {
-	/**
-	 * @param cell the cell
-	 */
-	@Override
-	protected void onExecute( EvacCell cell ) {
-		ArrayList<StaticPotential> exits = new ArrayList<StaticPotential>();
-		exits.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
-		int numberOfExits = exits.size();
-		RandomUtils random = RandomUtils.getInstance();
-		int randomExitNumber = random.getRandomGenerator().nextInt( numberOfExits );
 
-		boolean exitFound = false;
-		if( exits.get( randomExitNumber ).getPotential( cell ) < 0 ) {
-			for( StaticPotential exit : exits )
-				if( exit.getPotential( cell ) >= 0 ) {
-					cell.getIndividual().setStaticPotential( exit );
-					exitFound = true;
-					break;
-				}
-			if( !exitFound )
-				esp.getCa().setIndividualDead( cell.getIndividual(), DeathCause.ExitUnreachable );
-		} else
-			cell.getIndividual().setStaticPotential( exits.get( randomExitNumber ) );
-	}
+    /**
+     * @param cell the cell
+     */
+    @Override
+    protected void onExecute(EvacCell cell) {
+        ArrayList<StaticPotential> exits = new ArrayList<>();
+        exits.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
+        int numberOfExits = exits.size();
+        RandomUtils random = RandomUtils.getInstance();
+        int randomExitNumber = random.getRandomGenerator().nextInt(numberOfExits);
+
+        boolean exitFound = false;
+        if (exits.get(randomExitNumber).getPotential(cell) < 0) {
+            for (StaticPotential exit : exits) {
+                if (exit.getPotential(cell) >= 0) {
+                    cell.getIndividual().setStaticPotential(exit);
+                    exitFound = true;
+                    break;
+                }
+            }
+            if (!exitFound) {
+                esp.getCa().setIndividualDead(cell.getIndividual(), DeathCause.ExitUnreachable);
+            }
+        } else {
+            cell.getIndividual().setStaticPotential(exits.get(randomExitNumber));
+        }
+    }
 }

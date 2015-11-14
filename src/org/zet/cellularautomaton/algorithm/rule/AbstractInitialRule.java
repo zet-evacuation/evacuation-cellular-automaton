@@ -15,11 +15,25 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCell;
+
 /**
  * Abstract class rules only used during initialization.
  *
  * @author Jan-Philipp Kappmeier
  */
 public abstract class AbstractInitialRule extends AbstractEvacuationRule {
+    /**
+     * Checks, whether the rule is executable or not. The rule is applicable if there is an individual standing on the
+     * cell and if the individual has not yet a potential assigned.
+     *
+     * @param cell the cell on which the rule should be executed
+     * @return Returns true, if an Individual is standing on this cell, and moreover this Individual does not already
+     * have a StaticPotential.
+     */
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell.getIndividual() != null && cell.getIndividual().getStaticPotential() == null;
+    }
 
 }

@@ -8,17 +8,10 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
  * @author Jan-Philipp Kappmeier
  */
 public interface Room extends CellMatrix<EvacCell> {
-    
-    // Taken from CellMatrix interface
-    //public int getWidth();
-    //public int getHeight();
-    //public E getCell(int x, int y);
-    //public boolean existsCellAt(int x, int y);
 
     // Overridden from interface and specialized returns
     @Override
     public List<EvacCell> getAllCells();
-    //public Collection<E> getAllCells();
 
     // multi-matrix cellular automata
     public int getXOffset();

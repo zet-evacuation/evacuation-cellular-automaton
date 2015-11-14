@@ -35,18 +35,6 @@ import org.zet.cellularautomaton.Individual;
 public class InitialConcretePotentialRule extends AbstractInitialRule {
 
     /**
-     * Checks, whether the rule is executable or not.
-     *
-     * @param cell the cell on which the rule should be executed
-     * @return Returns true, if an Individual is standing on this cell, and moreover this Individual does not already
-     * have a StaticPotential.
-     */
-    @Override
-    public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() != null && cell.getIndividual().getStaticPotential() == null;
-    }
-
-    /**
      * This rule chooses an Individual's (the one standing on "cell") initial StaticPotential according to the
      * attractivity value of those Exit-Cells, whose distances to the Individual are acceptable according to the
      * Individual's familarity value. If the Individual standing on "cell" is caged (it cannot leave the building,

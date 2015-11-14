@@ -23,6 +23,10 @@ import org.zet.cellularautomaton.EvacCell;
  * @author Jan-Philipp Kappmeier
  */
 public class InitialDynamicPotentialRule extends AbstractInitialRule {
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return cell.getIndividual() != null;
+    }
 
     /**
      * Assigns the dynamic potential to the cell's individual. It is found in the {@link org.zet.cellularautomaton.algorithm.PotentialController}.
