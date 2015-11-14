@@ -2,6 +2,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import org.jmock.Expectations;
@@ -24,7 +25,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialConcretePotentialRule {
+public class TestInitialPotentialShortestPathRule {
     private final Mockery context = new Mockery();
     InitialConcretePotentialRule rule;
     EvacCell cell;
@@ -64,7 +65,7 @@ public class TestInitialConcretePotentialRule {
         cell = new RoomCell(0, 0);
         assertThat(rule.executableOn(cell), is(false));
 
-        Individual i = new Individual();
+        i = new Individual();
         cell.getState().setIndividual(i);
         assertThat(rule.executableOn(cell), is(true));
     }
@@ -110,86 +111,26 @@ public class TestInitialConcretePotentialRule {
     }
     
     @Test
-    public void testHighFamiliarityChoosesBest() {
-        StaticPotential targetPotential =initFamiliarPotential( eca.getPotentialManager());
+    public void testShortestPotentialTaken() {
+        StaticPotential targetPotential = initPotential( eca.getPotentialManager());
         
-        i.setFamiliarity(1);
         rule.execute(cell);
         assertThat(i.isDead(), is(false));
         assertThat(i.getDeathCause(), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
-    @Test
-    public void testLowFamiliarityChoosesAttractive() {
-        StaticPotential targetPotential = initUnfamiliarPotential( eca.getPotentialManager());
-        
-        i.setFamiliarity(0);
-        rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
-    }
-    
-    @Test
-    public void testMediumFamiliarity() {
-        StaticPotential targetPotential = initMediumPotential( eca.getPotentialManager());
-        
-        i.setFamiliarity(0.5);
-        rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
-    }
-    
-    private StaticPotential initFamiliarPotential(PotentialManager pm) {
+    private StaticPotential initPotential(PotentialManager pm) {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
         shortDistance.setDistance(cell, 1);
         mediumDistance.setDistance(cell, 2);
         longDistance.setDistance(cell, 3);
-        shortDistance.setAttractivity(10);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
 
         pm.addStaticPotential(longDistance);
         pm.addStaticPotential(shortDistance);
         pm.addStaticPotential(mediumDistance);
         return shortDistance;
-    }
-
-    private StaticPotential initUnfamiliarPotential(PotentialManager pm) {
-        StaticPotential shortDistance = new StaticPotential();
-        StaticPotential mediumDistance = new StaticPotential();
-        StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
-        shortDistance.setAttractivity(10);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
-
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
-        return longDistance;
-    }
-
-    private StaticPotential initMediumPotential(PotentialManager pm) {
-        StaticPotential shortDistance = new StaticPotential();
-        StaticPotential mediumDistance = new StaticPotential();
-        StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
-        shortDistance.setAttractivity(10);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
-
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
-        return mediumDistance;
     }
 }
