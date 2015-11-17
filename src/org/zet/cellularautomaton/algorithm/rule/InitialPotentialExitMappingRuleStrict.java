@@ -17,66 +17,20 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zet.cellularautomaton.TargetCell;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * This rule applies the exit mapping to the cellular automaton. It is not
- * allowed that one individual in the mapping has no exit assigned.
+ * This rule applies the exit mapping to the cellular automaton. It is not allowed that one individual in the mapping
+ * has no exit assigned.
+ *
  * @author Jan-Philipp Kappmeier
  */
-public class InitialPotentialExitMappingRuleStrict extends AbstractInitialRule {
+public class InitialPotentialExitMappingRuleStrict extends InitialPotentialExitMappingRule {
 
-    boolean initialized = false;
-    Map<TargetCell, StaticPotential> potentialMapping;
-
-    private void init() {
-        //private void applyMapping(CellularAutomaton ca, IndividualToExitMapping mapping){
-        potentialMapping = new HashMap<>();
-        for( StaticPotential potential : esp.getCa().getPotentialManager().getStaticPotentials() ) {
-            for( TargetCell target : potential.getAssociatedExitCells() ) {
-                if( potentialMapping.put( target, potential ) != null ) {
-                    throw new IllegalArgumentException( "There were two potentials leading to the same exit. This method can currently not deal with this." );
-                }
-            }
-        }
-        initialized = true;
-    }
-
-    /**
-     * Checks, whether the rule is executable or not.
-     * @param cell the cell on which the rule should be executed
-     * @return Returns true, if an Individual is standing
-     * on this cell, and moreover this Individual does 
-     * not already have a StaticPotential.
-     */
     @Override
-    public boolean executableOn( EvacCell cell ) {
-        return cell.getIndividual() != null;
-    }
-
-    /**
-     * Assignes an exit (more precisely: the potential) for an individual.
-     * @param cell the cell on which the individual stands
-     * @throws java.lang.IllegalArgumentException if an individual has not been mapped to an exit.
-     */
-    @Override
-    protected void onExecute( EvacCell cell ) throws IllegalArgumentException {
-        if( !initialized )
-            init();
-
-        Individual individual = cell.getIndividual();
-        TargetCell target = esp.getCa().getIndividualToExitMapping().getExit( individual );
-        if( target == null ) {
-            if( !individual.isDead() )
-                throw new IllegalArgumentException( "The individual " + individual.getNumber() + " lives, but has not been mapped to an exit." + " Therefore, I cannot map it to a potential." );
-        } else {
-            StaticPotential potential = potentialMapping.get( target );
-            if( potential == null )
-                throw new IllegalArgumentException( "The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential." );
-            individual.setStaticPotential( potential );
+    protected void handleWithoutTarget(Individual individual, EvacCell unused) {
+        if (!individual.isDead()) {
+            throw new IllegalArgumentException("The individual " + individual.getNumber()
+                    + " lives, but has not been mapped to an exit." + " Therefore, I cannot map it to a potential.");
         }
     }
 }

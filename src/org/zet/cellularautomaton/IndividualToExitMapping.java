@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton;
 
-public abstract class IndividualToExitMapping {
+public interface IndividualToExitMapping {
 
     public abstract TargetCell getExit(Individual individual);
 
