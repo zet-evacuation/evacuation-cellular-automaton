@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.Individual;
 
 /**
  * This rule applies the exit mapping to the cellular automaton. It is not allowed that one individual in the mapping
@@ -27,9 +26,9 @@ import org.zet.cellularautomaton.Individual;
 public class InitialPotentialExitMappingRuleStrict extends InitialPotentialExitMappingRule {
 
     @Override
-    protected void handleWithoutTarget(Individual individual, EvacCell unused) {
-        if (!individual.isDead()) {
-            throw new IllegalArgumentException("The individual " + individual.getNumber()
+    protected void handleWithoutTarget(EvacCell cell) {
+        if (!cell.getIndividual().isDead()) {
+            throw new IllegalArgumentException("The individual " + cell.getIndividual().getNumber()
                     + " lives, but has not been mapped to an exit." + " Therefore, I cannot map it to a potential.");
         }
     }

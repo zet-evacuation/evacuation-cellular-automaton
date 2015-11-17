@@ -52,7 +52,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * @throws java.lang.IllegalArgumentException if an individual has not been mapped to an exit.
      */
     @Override
-    protected void onExecute(EvacCell cell) throws IllegalArgumentException {
+    protected void onExecute(EvacCell cell) {
         if (potentialMapping == null) {
             init();
         }
@@ -60,9 +60,9 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         Individual individual = cell.getIndividual();
         TargetCell target = esp.getCa().getIndividualToExitMapping().getExit(individual);
         if (target != null) {
-            handleWithTarget(individual, target);
+            handleWithTarget(target);
         } else {
-            handleWithoutTarget(individual, cell);
+            handleWithoutTarget(cell);
         }
     }
 
@@ -80,15 +80,15 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         }
     }
     
-    protected void handleWithTarget(Individual individual, TargetCell target) {
+    protected void handleWithTarget(TargetCell target) {
         StaticPotential potential = potentialMapping.get(target);
         if (potential == null) {
             throw new IllegalStateException("The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
         }
-        individual.setStaticPotential(potential);
+        target.getIndividual().setStaticPotential(potential);
     }
 
-    protected void handleWithoutTarget(Individual individual, EvacCell cell) {
+    protected void handleWithoutTarget(EvacCell cell) {
         InitialPotentialShortestPathRule.assignShortestPathPotential(cell, this.esp);
     }
 }
