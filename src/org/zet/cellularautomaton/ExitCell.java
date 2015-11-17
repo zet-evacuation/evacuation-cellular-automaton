@@ -113,4 +113,11 @@ public class ExitCell extends TargetCell implements Cloneable {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
+    
+    
 }

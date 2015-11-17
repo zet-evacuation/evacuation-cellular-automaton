@@ -34,6 +34,7 @@ import java.util.List;
  * @author Jan-Philipp Kappmeier, Sylvie Temme
  */
 public class SimpleMovementRule2 extends AbstractMovementRule {
+        Individual ind;
 
 	/**
 	 * Decides whether the rule can be applied to the current cell.
@@ -60,7 +61,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 				if( isDirectExecute() ) { // we are in a "normal" simulation
 					EvacCell targetCell = selectTargetCell( cell, computePossibleTargets( cell, true ) );
 					setMoveRuleCompleted( true );
-					move( targetCell );
+					move(cell,  targetCell );
 				} else { // only calculate possible movements, used for swap cellular automaton
 					computePossibleTargets( cell, false );
 					setMoveRuleCompleted( true );
@@ -170,7 +171,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 				throw new IllegalStateException( "Individuum has no speed." );
 
 		} else {
-      Direction8 direction = getMovementDirection( from, targetCell );
+      Direction8 direction = from.getRelative(targetCell);
 
 			double stairSpeedFactor = targetCell instanceof StairCell ? getStairSpeedFactor( direction, (StairCell) targetCell )*1.1 : 1;
 			dist = direction.distance() * 0.4; // calculate distance

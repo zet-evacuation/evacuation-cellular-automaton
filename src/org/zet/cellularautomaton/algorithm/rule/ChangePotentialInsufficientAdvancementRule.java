@@ -17,9 +17,9 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.potential.PotentialMemory;
 import java.util.ArrayList;
+import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -76,7 +76,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 			if( (potentialDifference < epsilon) && (sp == individual.getPotentialMemoryStart().getStaticPotential()) ) {
 
 				// Calculate the second best Potential and the associated potential value on the {@code cell}
-				ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
+				List<StaticPotential> staticPotentials = new ArrayList<>();
 				staticPotentials.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
 				StaticPotential minWayLengthPotential = sp;
 				int lengthOfWayValue = Integer.MAX_VALUE;
@@ -91,7 +91,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 				// the free neighbors have a lower potential (with respect
 				// to the new static potential) than the current cell
 
-				ArrayList<EvacCell> freeNeighbours = cell.getFreeNeighbours();
+				List<EvacCell> freeNeighbours = cell.getFreeNeighbours();
 				int i = 0;
 				int promisingNeighbours = 0;
 				int curPotential = minWayLengthPotential.getPotential( cell );

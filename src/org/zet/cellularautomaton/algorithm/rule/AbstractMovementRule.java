@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
 import java.util.ArrayList;
 import java.util.List;
+import org.zetool.common.debug.Debug;
 
 /**
  * @author Jan-Philipp Kappmeier
@@ -32,7 +33,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 
     protected double speed;
     protected double dist;
-    protected Individual ind;
+    
     private boolean directExecute;
     private boolean moveCompleted;
     private ArrayList<EvacCell> possibleTargets;
@@ -68,12 +69,12 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      */
     protected List<EvacCell> computePossibleTargets(EvacCell fromCell, boolean onlyFreeNeighbours) {
         possibleTargets = new ArrayList<>();
-        ArrayList<EvacCell> neighbors = onlyFreeNeighbours ? fromCell.getFreeNeighbours() : fromCell.getNeighbours();
+        List<EvacCell> neighbors = onlyFreeNeighbours ? fromCell.getFreeNeighbours() : fromCell.getNeighbours();
 
         Direction8 dir = fromCell.getIndividual().getDirection();
 
         for (EvacCell c : neighbors) {
-            if (ind.isSafe() && !((c instanceof org.zet.cellularautomaton.SaveCell) || (c instanceof org.zet.cellularautomaton.ExitCell))) {
+            if (fromCell.getIndividual().isSafe() && !c.isSafe()) {
                 continue; // ignore all moves that would mean walking out of safe areas
             }
             if (fromCell instanceof DoorCell && c instanceof DoorCell) {
@@ -95,7 +96,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         }
         return possibleTargets;
     }
-
+    
     protected void setPossibleTargets(ArrayList<EvacCell> possibleTargets) {
         this.possibleTargets = possibleTargets;
     }
@@ -120,13 +121,8 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      * @return the first cell of the possible targets
      */
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
-        System.err.println("WARNUNG nicht überschriebene target cell selection wird ausgeführt");
+        Debug.globalLogger.warning("Not-overriden target cell selection is used.");
         return targets.get(0);
-    }
-
-    protected Direction8 getMovementDirection(EvacCell start, EvacCell target) {
-        Direction8 d = start.getRelative(target);
-        return d;
     }
 
     // Calculate a factor that is later multiplied with the speed,
@@ -146,12 +142,13 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     protected double getSwayDelay(Individual ind, Direction8 direction) {
         if (ind.getDirection() == direction) {
             return 0;
-        } else if (ind.getDirection() == direction.getClockwise() || ind.getDirection() == direction.getCounterClockwise()) {
+        } else if (ind.getDirection() == direction.getClockwise()
+                || ind.getDirection() == direction.getCounterClockwise()) {
             return 0.5;
-        } else if (ind.getDirection() == direction.getClockwise().getClockwise() || ind.getDirection() == direction.getCounterClockwise().getCounterClockwise()) {
+        } else if (ind.getDirection() == direction.getClockwise().getClockwise()
+                || ind.getDirection() == direction.getCounterClockwise().getCounterClockwise()) {
             return 1;
         } else {
-            System.out.println("SWAP: Direction changed by more than 90 degrees!");
             return 2;
         }
     }
@@ -166,10 +163,6 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     protected void setStepEndTime(Individual i, double d) {
         i.setStepEndTime(d);
         esp.getCa().setNeededTime((int) Math.ceil(d));
-    }
-
-    public final void move(EvacCell target) {
-        move(ind.getCell(), target);
     }
 
     public abstract void move(EvacCell from, EvacCell target);

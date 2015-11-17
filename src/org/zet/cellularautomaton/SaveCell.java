@@ -108,4 +108,11 @@ public class SaveCell extends TargetCell implements Cloneable {
     public String getName() {
         return "Save Area";
     }
+
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
+    
+    
 }

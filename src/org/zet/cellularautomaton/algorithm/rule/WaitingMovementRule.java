@@ -45,7 +45,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
                     if (isDirectExecute()) {
                         EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                         setMoveRuleCompleted(true);
-                        move(targetCell);
+                        move(cell, targetCell);
                     } else {
                         computePossibleTargets(cell, false);
                         setMoveRuleCompleted(true);

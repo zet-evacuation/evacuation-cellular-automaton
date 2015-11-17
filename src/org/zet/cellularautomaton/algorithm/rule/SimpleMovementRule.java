@@ -46,11 +46,10 @@ public class SimpleMovementRule extends AbstractMovementRule {
     @Override
     protected void onExecute(EvacCell cell) {
         EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
-        ind = cell.getIndividual();
         if (cell.equals(targetCell)) {
             return;
         }
-        this.move(targetCell);
+        move(cell, targetCell);
     }
 
     @Override

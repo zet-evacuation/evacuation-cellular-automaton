@@ -49,13 +49,13 @@ public class BestResponseMovementRule extends AbstractMovementRule {
 
 	@Override
 	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-		ind = cell.getIndividual();
+            Individual ind = cell.getIndividual();
 
 		if( canMove( ind ) )
 			if( this.isDirectExecute() ) {
 				EvacCell targetCell = this.selectTargetCell( cell, computePossibleTargets( cell, true ) );
 				setMoveRuleCompleted( true );
-				move( targetCell );
+				move(cell, targetCell );
 			} else {
 				computePossibleTargets( cell, false );
 				setMoveRuleCompleted( true );

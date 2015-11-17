@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Door-EvacCell is special type of cell and therefore inherits properties and methods from the abstract class
@@ -137,8 +137,8 @@ public class DoorCell extends BaseTeleportCell<DoorCell> {
     }
 
     @Override
-    protected ArrayList<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
-        ArrayList<EvacCell> neighbours = super.getNeighbours(passableOnly, freeOnly);
+    protected List<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
+        List<EvacCell> neighbours = super.getNeighbours(passableOnly, freeOnly);
         for (DoorCell door : this.teleportTargets) {
             if (!freeOnly || door.getState().getIndividual() == null) {
                 neighbours.add(door);

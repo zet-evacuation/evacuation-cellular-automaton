@@ -390,7 +390,7 @@ public class SPPotentialController implements PotentialController {
      * @param cell A cell in the cellular automaton.
      * @return The neighbor cells of this cell.
      */
-    public ArrayList<EvacCell> getNeighbours(EvacCell cell) {
+    public List<EvacCell> getNeighbours(EvacCell cell) {
         return cell.getNeighbours();
     }
 }

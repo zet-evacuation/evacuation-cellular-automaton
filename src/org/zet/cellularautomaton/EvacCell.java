@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * The Cellular Automaton devides a room into quadratic cells. This abstract class "EvacCell" describes such a cell,
@@ -154,7 +155,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return ArrayList of direct-neighbour-cells of "cell"
      */
-    public ArrayList<EvacCell> getNeighbours() {
+    public List<EvacCell> getNeighbours() {
         return getNeighbours(true, false);
     }
 
@@ -172,7 +173,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return a list of all free neighbour cells
      */
-    public ArrayList<EvacCell> getFreeNeighbours() {
+    public List<EvacCell> getFreeNeighbours() {
         return getNeighbours(true, true);
     }
 
@@ -373,7 +374,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     }
 
     @SuppressWarnings("fallthrough")
-    protected ArrayList<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
+    protected List<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
         ArrayList<EvacCell> neighbours = new ArrayList<>();
         Room cellRoom = this.getRoom();
         for (Direction8 direction : Direction8.values()) {
@@ -509,7 +510,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @param c a neighbor cell
      * @return the direction in which {@code c} lies
      */
-    final public Direction8 getRelative(EvacCell c) {
+    public Direction8 getRelative(EvacCell c) {
         try {
             Direction8.getDirection(c.getAbsoluteX() - getAbsoluteX(), c.getAbsoluteY() - getAbsoluteY());
         } catch (AssertionError e) {
@@ -517,5 +518,13 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         }
 
         return Direction8.getDirection(c.getAbsoluteX() - getAbsoluteX(), c.getAbsoluteY() - getAbsoluteY());
+    }
+    
+    /**
+     * Decides wether it is safe for evacuees to stand on the cell. By default cells are unsafe.
+     * @return {@code true} if it is safe to stand on the cell
+     */
+    public boolean isSafe() {
+        return false;
     }
 }

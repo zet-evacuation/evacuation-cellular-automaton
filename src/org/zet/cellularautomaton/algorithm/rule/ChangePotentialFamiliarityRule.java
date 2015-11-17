@@ -23,7 +23,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.ArrayList;
 import java.util.Collections;
-import org.zet.cellularautomaton.potential.Potential;
+import java.util.List;
 
 /**
  * This rule changes an Individual's StaticPotential according to the Individual's
@@ -91,7 +91,7 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 			// the free neighbors have a lower potential (with respect
 			// to the new static potential) than the current cell
 
-			ArrayList<EvacCell> freeNeighbours = cell.getFreeNeighbours();
+			List<EvacCell> freeNeighbours = cell.getFreeNeighbours();
 			int i = 0; 
 			int promisingNeighbours = 0;
 			int curPotential = newPotential.getPotential(cell);

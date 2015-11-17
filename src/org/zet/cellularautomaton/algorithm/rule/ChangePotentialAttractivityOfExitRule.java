@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
@@ -88,7 +89,7 @@ public class ChangePotentialAttractivityOfExitRule extends AbstractPotentialChan
 			// the free neighbors have a lower potential (with respect
 			// to the new static potential) than the current cell
 
-			ArrayList<EvacCell> freeNeighbours = cell.getFreeNeighbours();
+			List<EvacCell> freeNeighbours = cell.getFreeNeighbours();
 			int i = 0;
 			int promisingNeighbours = 0;
 			int curPotential = mostAttractiveSP.getPotential( cell );
