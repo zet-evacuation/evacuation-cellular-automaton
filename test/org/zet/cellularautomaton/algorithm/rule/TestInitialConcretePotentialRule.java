@@ -142,6 +142,17 @@ public class TestInitialConcretePotentialRule {
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
+    @Test
+    public void testAttractivePotentialShort() {
+        StaticPotential targetPotential = initAttractiveShortPotential( eca.getPotentialManager());
+        
+        i.setFamiliarity(0.5);
+        rule.execute(cell);
+        assertThat(i.isDead(), is(false));
+        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+    }
+    
     private StaticPotential initFamiliarPotential(PotentialManager pm) {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
@@ -149,6 +160,7 @@ public class TestInitialConcretePotentialRule {
         shortDistance.setDistance(cell, 1);
         mediumDistance.setDistance(cell, 2);
         longDistance.setDistance(cell, 3);
+        
         shortDistance.setAttractivity(10);
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
@@ -191,5 +203,22 @@ public class TestInitialConcretePotentialRule {
         pm.addStaticPotential(shortDistance);
         pm.addStaticPotential(mediumDistance);
         return mediumDistance;
+    }
+
+    private StaticPotential initAttractiveShortPotential(PotentialManager pm) {
+        StaticPotential shortDistance = new StaticPotential();
+        StaticPotential mediumDistance = new StaticPotential();
+        StaticPotential longDistance = new StaticPotential();
+        shortDistance.setDistance(cell, 1);
+        mediumDistance.setDistance(cell, 2);
+        longDistance.setDistance(cell, 3);
+        shortDistance.setAttractivity(1000);
+        mediumDistance.setAttractivity(50);
+        longDistance.setAttractivity(100);
+
+        pm.addStaticPotential(longDistance);
+        pm.addStaticPotential(shortDistance);
+        pm.addStaticPotential(mediumDistance);
+        return shortDistance;
     }
 }

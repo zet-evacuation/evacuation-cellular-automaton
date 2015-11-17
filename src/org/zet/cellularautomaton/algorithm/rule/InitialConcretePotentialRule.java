@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.DeathCause;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.Individual;
@@ -45,8 +46,8 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
     @Override
     protected void onExecute(EvacCell cell) {
         Individual individual = cell.getIndividual();
-        ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
-        ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
+        List<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
+        List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
         double minDistanceToEvacArea = Double.MAX_VALUE;
         double distanceToEvacArea;
