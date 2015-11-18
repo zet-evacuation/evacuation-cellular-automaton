@@ -99,7 +99,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
               new Individual[getProblem().getCa().getIndividuals().size()] );
       for( Individual i : individualsCopy ) {
         if( !i.getCell().getIndividual().isSafe() ) {
-          getProblem().getCa().setIndividualDead( i, DeathCause.NotEnoughTime );
+          getProblem().getCa().setIndividualDead(i, DeathCause.NOT_ENOUGH_TIME );
         }
       }
     }

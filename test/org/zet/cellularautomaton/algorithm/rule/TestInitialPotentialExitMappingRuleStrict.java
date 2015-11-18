@@ -146,7 +146,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
     @Test()
     public void deadIndividualWithoutTarget() {
         p.getCa().setIndividualToExitMapping(_unused -> null);
-        i.die(DeathCause.ExitUnreachable);
+        i.die(DeathCause.EXIT_UNREACHABLE);
         rule.execute(cell);
     }
 

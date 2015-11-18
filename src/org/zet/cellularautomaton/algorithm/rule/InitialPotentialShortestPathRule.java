@@ -63,7 +63,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (Double.isInfinite(minDistanceToEvacArea)) {
-            esp.getCa().setIndividualDead(individual, DeathCause.ExitUnreachable);
+            esp.getCa().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
         }
 
         individual.setStaticPotential(initialPotential);

@@ -80,7 +80,7 @@ public class TestInitialConcretePotentialRule {
     public void testDeadIfNoPotentials() {
         rule.execute(cell);
         assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.ExitUnreachable));
+        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test
@@ -92,7 +92,7 @@ public class TestInitialConcretePotentialRule {
         
         rule.execute(cell);
         assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.ExitUnreachable));
+        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test

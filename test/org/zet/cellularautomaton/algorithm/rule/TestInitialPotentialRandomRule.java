@@ -81,7 +81,7 @@ public class TestInitialPotentialRandomRule {
     public void testDeadIfNoPotentials() {
         rule.execute(cell);
         assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.ExitUnreachable));
+        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test
@@ -93,7 +93,7 @@ public class TestInitialPotentialRandomRule {
         
         rule.execute(cell);
         assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.ExitUnreachable));
+        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test

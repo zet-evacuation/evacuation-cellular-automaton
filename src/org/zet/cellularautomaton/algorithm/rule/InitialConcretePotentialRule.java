@@ -65,7 +65,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
         Collections.sort(potentialToLengthOfWayMapper);
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (potentialToLengthOfWayMapper.isEmpty()) {
-            esp.getCa().setIndividualDead(individual, DeathCause.ExitUnreachable);
+            esp.getCa().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
         } else {
             int nrOfPossiblePotentials = (int) (Math.round((1 - individual.getFamiliarity()) * potentialToLengthOfWayMapper.size()));
             if (nrOfPossiblePotentials < 1) {
