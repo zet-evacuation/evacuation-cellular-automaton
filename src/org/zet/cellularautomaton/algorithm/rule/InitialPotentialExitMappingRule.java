@@ -60,7 +60,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         Individual individual = cell.getIndividual();
         TargetCell target = esp.getCa().getIndividualToExitMapping().getExit(individual);
         if (target != null) {
-            handleWithTarget(target);
+            handleWithTarget(cell, target);
         } else {
             handleWithoutTarget(cell);
         }
@@ -80,14 +80,23 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         }
     }
     
-    protected void handleWithTarget(TargetCell target) {
+    /**
+     * Assigns a potential to the individual on {@code cell} which is heading to {@code target}.
+     * @param cell the cell the rule is executed on, containing an individual
+     * @param target a target cell associated with the individual's exit choice
+     */
+    protected void handleWithTarget(EvacCell cell, TargetCell target) {
         StaticPotential potential = potentialMapping.get(target);
         if (potential == null) {
             throw new IllegalStateException("The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
         }
-        target.getIndividual().setStaticPotential(potential);
+        cell.getIndividual().setStaticPotential(potential);
     }
 
+    /**
+     * Assigns a potential to the individual on {@code cell} that has no exit assigned.
+     * @param cell the cell the rule is executed on, containing an individual
+     */
     protected void handleWithoutTarget(EvacCell cell) {
         InitialPotentialShortestPathRule.assignShortestPathPotential(cell, this.esp);
     }
