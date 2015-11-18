@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The Cellular Automaton devides a room into quadratic cells. This abstract class "EvacCell" describes such a cell,
@@ -43,9 +45,9 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     /** The room to which the cell belongs. */
     protected Room room;
     /** The bounds of the cell. */
-    protected EnumSet<Direction8> bounds;
+    protected Set<Direction8> bounds;
     /** Tells whether the surrounding squares are higher, equal or lower. */
-    protected EnumMap<Direction8, Level> levels;
+    protected Map<Direction8, Level> levels;
     /** Stores the hashCode of this cell. */
     protected int hash;
     /** The time up to which the cell is blocked by an individuum (even if it is no longer set to the cell). */
@@ -68,8 +70,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     public EvacCell(EvacuationCellState state, double speedFactor, int x, int y, Room room) {
         super(state, x, y);
         this.room = room;
-        //this.individual = individual;
-        this.setSpeedFactor(speedFactor); // TODO
+        this.setSpeedFactor(speedFactor);
 
         // Must be in this order
         setRoom(room);
@@ -331,18 +332,14 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         EvacCell c = (EvacCell) obj;
 
         if (c.getRoom() == null && this.getRoom() == null) {
-            return (c == this);
+            return c == this;
         }
 
         if (c.getRoom() == null || this.getRoom() == null) {
             return false;
         }
 
-        if (this.room.equals(c.getRoom()) && this.x == c.getX() && this.y == c.getY()) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.room.equals(c.getRoom()) && this.x == c.getX() && this.y == c.getY();
     }
 
     @Override
@@ -375,7 +372,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
 
     @SuppressWarnings("fallthrough")
     protected List<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
-        ArrayList<EvacCell> neighbours = new ArrayList<>();
+        List<EvacCell> neighbours = new ArrayList<>();
         Room cellRoom = this.getRoom();
         for (Direction8 direction : Direction8.values()) {
             int cellx = this.getX() + direction.xOffset();
@@ -395,7 +392,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
                                 this.getY()) && cellRoom.getCell(this.getX() + direction.xOffset(),
                                         this.getY()).getState().getIndividual() != null) {
                             f1 = true;
-                 } else if (cellRoom.existsCellAt(this.getX() + direction.xOffset(),
+                        } else if (cellRoom.existsCellAt(this.getX() + direction.xOffset(),
                                 this.getY()) && cellRoom.getCell(this.getX() + direction.xOffset(),
                                         this.getY()).getState().getIndividual() != null) {
                             f2 = true;
@@ -403,6 +400,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
                         if (f1 && f2) {
                             add = false;
                         }
+                    default:
+                    // nothing
                 }
                 add = true;
                 if (add) {
@@ -422,7 +421,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @param dir the direction.
      * @return the neighbour, if exists. null else.
      */
-    //@Override
     public EvacCell getNeighbor(Direction8 dir) {
         int cellx = getX() + dir.xOffset();
         int celly = getY() + dir.yOffset();
@@ -457,10 +455,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     public String graphicalToString() {
         return getState().getIndividual() == null ? graphicalRepresentation + " " + graphicalRepresentation
                 : graphicalRepresentation + "I" + graphicalRepresentation;
-    }
-
-    public boolean equals(EvacCell c) {
-        return (this.getX() == c.getX() && this.getY() == c.getY() && this.hashCode() == c.hashCode());
     }
 
     protected <T extends EvacCell> T basicClone(T aClone, boolean cloneIndividual) {
@@ -511,12 +505,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @return the direction in which {@code c} lies
      */
     public Direction8 getRelative(EvacCell c) {
-        try {
-            Direction8.getDirection(c.getAbsoluteX() - getAbsoluteX(), c.getAbsoluteY() - getAbsoluteY());
-        } catch (AssertionError e) {
-            System.out.println(e);
-        }
-
         return Direction8.getDirection(c.getAbsoluteX() - getAbsoluteX(), c.getAbsoluteY() - getAbsoluteY());
     }
     
