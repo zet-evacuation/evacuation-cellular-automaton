@@ -20,7 +20,7 @@ import org.zet.cellularautomaton.results.DynamicPotentialChangeAction;
 import org.zet.cellularautomaton.results.VisualResultsRecorder;
 
 /**
- * A DynamicPotential is special type of AbstractPotential, of that exists only once in the PotentialManager.
+ * A DynamicPotential is a potential that additionally to handling a potential sends out messages to store the results.
  */
 public class DynamicPotential extends AbstractPotential {
 
@@ -29,7 +29,6 @@ public class DynamicPotential extends AbstractPotential {
      */
     public DynamicPotential() {
         super();
-        this.clear();
     }
 
     @Override
@@ -45,7 +44,7 @@ public class DynamicPotential extends AbstractPotential {
      * @throws IllegalArgumentException if the cell is not contained in the map
      */
     @Override
-    public void deleteCell(EvacCell cell) throws IllegalArgumentException {
+    public void deleteCell(EvacCell cell) {
         super.deleteCell(cell);
         VisualResultsRecorder.getInstance().recordAction(new DynamicPotentialChangeAction(cell, 0));
     }
@@ -59,16 +58,18 @@ public class DynamicPotential extends AbstractPotential {
      */
     @Override
     public int getPotential(EvacCell cell) throws IllegalArgumentException {
-        Double potential = this.potential.get(cell);
-        if (potential == null) {
-            return 0;
-        } else {
-            // TODO Potential long
-            return (int) Math.round(potential);
-        }
+        return hasValidPotential(cell) ? super.getPotential(cell) : 0;
     }
 
-    public final void clear() {
-        potential.clear();
+    @Override
+    public double getMaxPotentialDouble() {
+        return Math.max(0, super.getMaxPotentialDouble());
     }
+
+    @Override
+    public int getMaxPotential() {
+        return Math.max(0, super.getMaxPotential());
+    }
+    
+    
 }

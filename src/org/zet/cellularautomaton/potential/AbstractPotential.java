@@ -86,7 +86,7 @@ public abstract class AbstractPotential implements Potential {
     @Override
     public int getMaxPotential() {
         Double d = maxPotential;
-        return d.intValue();
+        return (int) Math.round(d);
     }
     
     public double getMaxPotentialDouble() {

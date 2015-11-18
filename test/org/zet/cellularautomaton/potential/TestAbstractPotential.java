@@ -10,14 +10,13 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
-import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class TestAbstractPotential {
-    public static EvacCell getCell() {
+    static EvacCell getCell() {
         return new EvacCell(new EvacuationCellState(null), 1, 0, 0) {
 
             @Override
