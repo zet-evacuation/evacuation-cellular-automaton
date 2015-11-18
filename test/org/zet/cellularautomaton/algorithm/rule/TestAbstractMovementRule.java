@@ -4,15 +4,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.jmock.AbstractExpectations.returnValue;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import static org.junit.Assert.assertThat;
+import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -78,7 +85,11 @@ public class TestAbstractMovementRule {
         
         
     }
-        AbstractMovementRule rule = new AbstractMovementRule() {
+        AbstractMovementRule rule;
+    
+    @Before
+    public void initRule() {
+        rule = new AbstractMovementRule() {
 
             @Override
             public void move(EvacCell from, EvacCell target) {
@@ -92,7 +103,8 @@ public class TestAbstractMovementRule {
             protected void onExecute(EvacCell cell) {
             }
         };
-    
+    }
+        
     @Test
     public void testPossibleTargetsNeighbors() {
         Individual i = new Individual();
@@ -162,6 +174,23 @@ public class TestAbstractMovementRule {
     }
     
     @Test
+    public void testTargetSelection() {
+        List<EvacCell> cells = new LinkedList<>();
+        FakeEvacCell cell1 = new FakeEvacCell();
+        FakeEvacCell cell2 = new FakeEvacCell();
+        cells.add(cell1);
+        cells.add(cell2);
+        
+        EvacCell result = rule.selectTargetCell(new FakeEvacCell(), cells);
+        assertThat(result, is(equalTo(cell1)));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testTargetSelectionRequiresNonEmptyList() {
+        rule.selectTargetCell(new FakeEvacCell(), Collections.EMPTY_LIST);
+    }
+    
+    @Test
     public void testSway() {
         Individual individual = new Individual();
         individual.setDirection(DEFAULT_DIRECTION);
@@ -174,4 +203,40 @@ public class TestAbstractMovementRule {
         assertThat(rule.getSwayDelay(individual, Direction8.DownRight), is(closeTo(2, 10e-8)));
         assertThat(rule.getSwayDelay(individual, Direction8.Down), is(closeTo(2, 10e-8)));
     }
+    
+    @Test
+    public void testStepEndTime() {
+        Mockery context = new Mockery();
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCa();
+                will(returnValue(eca));
+            }
+        });        
+        rule.setEvacuationSimulationProblem(esp);
+        
+        Individual i = new Individual();
+        rule.setStepEndTime(i, 2.68);
+
+        assertThat(i.getStepEndTime(), is(closeTo(2.68, 10e-8)));
+        assertThat(eca.getNeededTime(), is(equalTo(3)));
+    }
+    
+    @Test
+    public void testInitialization() {
+        assertThat(rule.isDirectExecute(), is(true));
+        assertThat(rule.isMoveCompleted(), is(false));
+        
+    }
+    
+    @Test
+    public void testSimpleGetters() {
+        rule.setMoveRuleCompleted(true);
+        rule.setDirectExecute(false);
+        assertThat(rule.isMoveCompleted(), is(true));
+        assertThat(rule.isDirectExecute(), is(false));
+    }
+    
 }

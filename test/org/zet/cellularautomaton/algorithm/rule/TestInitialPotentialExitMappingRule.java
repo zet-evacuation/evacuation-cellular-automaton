@@ -35,7 +35,7 @@ public class TestInitialPotentialExitMappingRule {
     Individual i;
     EvacuationCellularAutomaton eca;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
-    EvacuationSimulationProblem p;
+    EvacuationSimulationProblem esp;
     ExitCell target;
     
     private final IndividualToExitMapping exitMapping = (Individual individual) -> {
@@ -49,25 +49,25 @@ public class TestInitialPotentialExitMappingRule {
     public void init() {
         rule = new InitialPotentialExitMappingRule();
         Room room = context.mock(Room.class);
-        p = context.mock(EvacuationSimulationProblem.class);
+        esp = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(esp).getCa();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
-                allowing(p).getStatisticWriter();
+                allowing(esp).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
         i.setCell(cell);
         cell.getState().setIndividual(i);
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(esp);
         eca.addIndividual(cell, i);
 
         target = new ExitCell(1.0, 0, 0, room);
@@ -93,7 +93,7 @@ public class TestInitialPotentialExitMappingRule {
 
     @Test
     public void assignedExitsAreAssigned() {
-        p.getCa().setIndividualToExitMapping(exitMapping);
+        esp.getCa().setIndividualToExitMapping(exitMapping);
         
         StaticPotential sp = new StaticPotential();
         List<ExitCell> spExits = new LinkedList<>();
@@ -110,13 +110,13 @@ public class TestInitialPotentialExitMappingRule {
 
     @Test(expected = IllegalStateException.class)
     public void noPotentialForTargetFails() {
-        p.getCa().setIndividualToExitMapping(exitMapping);
+        esp.getCa().setIndividualToExitMapping(exitMapping);
         rule.execute(cell);
     }
     
     @Test(expected = UnsupportedOperationException.class)
     public void twoPotentialsForOneCellFails() {
-        p.getCa().setIndividualToExitMapping(exitMapping);
+        esp.getCa().setIndividualToExitMapping(exitMapping);
         
         StaticPotential sp1 = new StaticPotential();
         List<ExitCell> sp1Exits = new LinkedList<>();
@@ -144,7 +144,7 @@ public class TestInitialPotentialExitMappingRule {
         longDistance.setDistance(cell, 2);
         
         IndividualToExitMapping mapping = _unused -> null;
-        p.getCa().setIndividualToExitMapping(mapping);
+        esp.getCa().setIndividualToExitMapping(mapping);
         
         PotentialManager pm = eca.getPotentialManager();
         pm.addStaticPotential(longDistance);

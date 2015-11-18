@@ -16,11 +16,9 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zetool.common.util.Direction8;
-import org.zetool.common.util.Level;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.StairCell;
 import java.util.ArrayList;
 import java.util.List;
 import org.zetool.common.debug.Debug;
@@ -36,29 +34,12 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     
     private boolean directExecute;
     private boolean moveCompleted;
-    private ArrayList<EvacCell> possibleTargets;
+    private List<EvacCell> possibleTargets;
 
     public AbstractMovementRule() {
         directExecute = true;
         moveCompleted = false;
     }
-
-    public boolean isDirectExecute() {
-        return directExecute;
-    }
-
-    public void setDirectExecute(boolean directExecute) {
-        this.directExecute = directExecute;
-    }
-
-    public boolean isMoveCompleted() {
-        return moveCompleted;
-    }
-
-    protected void setMoveRuleCompleted(boolean moveCompleted) {
-        this.moveCompleted = moveCompleted;
-    }
-
     /**
      * Computes and returns possible targets and also sets them, such that they can be retrieved using {@link #getPossibleTargets()
      * }.
@@ -97,10 +78,6 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         return possibleTargets;
     }
     
-    protected void setPossibleTargets(ArrayList<EvacCell> possibleTargets) {
-        this.possibleTargets = possibleTargets;
-    }
-
     /**
      * Returns the possible targets already sorted by priority. The possible targets either have been set before using {@link #setPossibleTargets(java.util.ArrayList)
      * }
@@ -122,21 +99,10 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      */
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
         Debug.globalLogger.warning("Not-overriden target cell selection is used.");
-        return targets.get(0);
-    }
-
-    // Calculate a factor that is later multiplied with the speed,
-    // this factor is only != 1 for stair cells to
-    // give different velocities for going a stair up or down.
-    protected double getStairSpeedFactor(Direction8 direction, StairCell stairCell) {
-        double stairSpeedFactor = 1;
-        Level lvl = stairCell.getLevel(direction);
-        if (lvl == Level.Higher) {
-            stairSpeedFactor = stairCell.getSpeedFactorUp();
-        } else if (lvl == Level.Lower) {
-            stairSpeedFactor = stairCell.getSpeedFactorDown();
+        if( targets.isEmpty()) {
+            throw new IllegalArgumentException("Target list cannot be empty.");
         }
-        return stairSpeedFactor;
+        return targets.get(0);
     }
 
     protected double getSwayDelay(Individual ind, Direction8 direction) {
@@ -155,7 +121,9 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 
     /**
      * Sets the time when the current movement is over for an individual and actualizates the needed time in the
-     * cellular automaton.
+     * cellular automaton. Fractional values are accepted and are rounded up to the next integral value, to be used
+     * in the integral cellular automaton. Updates also the step end time for the given individual (the time is not
+     * rounded).
      *
      * @param i the individual
      * @param d the (real) time when the movement is over
@@ -163,6 +131,22 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     protected void setStepEndTime(Individual i, double d) {
         i.setStepEndTime(d);
         esp.getCa().setNeededTime((int) Math.ceil(d));
+    }
+
+    public boolean isDirectExecute() {
+        return directExecute;
+    }
+
+    public void setDirectExecute(boolean directExecute) {
+        this.directExecute = directExecute;
+    }
+
+    public boolean isMoveCompleted() {
+        return moveCompleted;
+    }
+
+    protected void setMoveRuleCompleted(boolean moveCompleted) {
+        this.moveCompleted = moveCompleted;
     }
 
     public abstract void move(EvacCell from, EvacCell target);

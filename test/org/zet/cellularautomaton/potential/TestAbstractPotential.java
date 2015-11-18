@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
+import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 
 /**
  *

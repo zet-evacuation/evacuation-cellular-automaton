@@ -77,25 +77,24 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 		VisualResultsRecorder.getInstance().recordAction( new IndividualStateChangeAction( ind ) );
 	}
 
-	@Override
-  public void move( EvacCell from, EvacCell targetCell ) {
-//  public void move( EvacCell targetCell ) {
-    if( ind.getCell().equals( targetCell ) ) {
-      esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
-              .addWaitedTimeToStatistic( ind, esp.getCa().getTimeStep() );
-      esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
-              .addCellToWaitingStatistic( targetCell, esp.getCa().getTimeStep() );
-      esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
-              .addCellToUtilizationStatistic( targetCell, esp.getCa().getTimeStep() );
-			noMove();
-		} else {
-      esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
-              .addCellToUtilizationStatistic( targetCell, esp.getCa().getTimeStep() );
-      initializeMove( from, targetCell );
-      performMove( from, targetCell );
-			setMoveRuleCompleted( false );
-		}
-	}
+    @Override
+    public void move(EvacCell from, EvacCell targetCell) {
+        if (ind.getCell().equals(targetCell)) {
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
+                    .addWaitedTimeToStatistic(ind, esp.getCa().getTimeStep());
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
+                    .addCellToWaitingStatistic(targetCell, esp.getCa().getTimeStep());
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
+                    .addCellToUtilizationStatistic(targetCell, esp.getCa().getTimeStep());
+            noMove();
+        } else {
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
+                    .addCellToUtilizationStatistic(targetCell, esp.getCa().getTimeStep());
+            initializeMove(from, targetCell);
+            performMove(from, targetCell);
+            setMoveRuleCompleted(false);
+        }
+    }
 
 	/**
 	 * A function called if the individual is not moving. The individual will stand
@@ -173,7 +172,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 		} else {
       Direction8 direction = from.getRelative(targetCell);
 
-			double stairSpeedFactor = targetCell instanceof StairCell ? getStairSpeedFactor( direction, (StairCell) targetCell )*1.1 : 1;
+			double stairSpeedFactor = targetCell instanceof StairCell ? ((StairCell) targetCell).getStairSpeedFactor( direction)*1.1 : 1;
 			dist = direction.distance() * 0.4; // calculate distance
 			double add = getSwayDelay( ind, direction ); // add a delay if the person is changing direction
 

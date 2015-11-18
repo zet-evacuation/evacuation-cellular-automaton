@@ -15,6 +15,9 @@
  */
 package org.zet.cellularautomaton;
 
+import org.zetool.common.util.Direction8;
+import org.zetool.common.util.Level;
+
 /**
  * A Stair-EvacCell is special type of cell and therefore inherits properties and methods from the abstract class
  * EvacCell. Stair-Cells usually have a lower Speed-Factor than other cells and therefore individuals usually move
@@ -181,6 +184,24 @@ public class StairCell extends EvacCell implements Cloneable {
     @Override
     public String toString() {
         return "T;" + super.toString();
+    }
+
+    /**
+     * Calculate a factor that is later multiplied with the speed, this factor is only != 1 for stair cells to give
+     * different velocities for going a stair up or down.
+     *
+     * @param direction
+     * @return
+     */
+    public double getStairSpeedFactor(Direction8 direction) {
+        double stairSpeedFactor = 1;
+        Level lvl = getLevel(direction);
+        if (lvl == Level.Higher) {
+            stairSpeedFactor = getSpeedFactorUp();
+        } else if (lvl == Level.Lower) {
+            stairSpeedFactor = getSpeedFactorDown();
+        }
+        return stairSpeedFactor;
     }
 
 }
