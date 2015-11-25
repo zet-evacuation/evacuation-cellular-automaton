@@ -50,15 +50,15 @@ public class SwapAction extends Action {
      * @param cell2 The cell from where the other individual starts to move
      */
     public SwapAction(EvacCell cell1, EvacCell cell2) {
-        this(cell1, cell2, cell1.getIndividual().getStepEndTime(), cell1.getIndividual().getStepStartTime(),
-                cell1.getIndividual().getNumber(),
-                cell2.getIndividual().getStepEndTime(),
-                cell2.getIndividual().getStepStartTime(),
-                cell2.getIndividual().getNumber());
-        if (cell1.getIndividual() == null) {
+        this(cell1, cell2, cell1.getState().getIndividual().getStepEndTime(), cell1.getState().getIndividual().getStepStartTime(),
+                cell1.getState().getIndividual().getNumber(),
+                cell2.getState().getIndividual().getStepEndTime(),
+                cell2.getState().getIndividual().getStepStartTime(),
+                cell2.getState().getIndividual().getNumber());
+        if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("The starting cell must not be empty!");
         }
-        if (cell2.getIndividual() == null) {
+        if (cell2.getState().isEmpty()) {
             throw new IllegalArgumentException("The starting cell must not be empty!");
         }
     }
@@ -116,10 +116,10 @@ public class SwapAction extends Action {
 
     @Override
     public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
-        if (cell1.getIndividual() == null) {
+        if (cell1.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(onCA.getTimeStep(), this, "There is no Individual on cell 1.");
         }
-        if (cell2.getIndividual() == null) {
+        if (cell2.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(onCA.getTimeStep(), this, "There is no Individual on cell 2.");
         }
 
@@ -131,10 +131,10 @@ public class SwapAction extends Action {
     public String toString() {
         String representation = "";
 
-        representation += cell1.getIndividual() + " moves from ";
+        representation += cell1.getState().getIndividual() + " moves from ";
         representation += cell1 + " to ";
         representation += cell2 + ". \n";
-        representation += cell2.getIndividual() + " moves from ";
+        representation += cell2.getState().getIndividual() + " moves from ";
         representation += cell2 + " to ";
         representation += cell1 + ". \n";
 

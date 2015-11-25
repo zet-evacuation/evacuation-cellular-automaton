@@ -25,6 +25,6 @@ public abstract class AbstractReactionRule extends AbstractEvacuationRule {
 
     @Override
     public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() == null ? false : !cell.getIndividual().isAlarmed();
+        return cell.getState().isEmpty() ? false : !cell.getState().getIndividual().isAlarmed();
     }
 }

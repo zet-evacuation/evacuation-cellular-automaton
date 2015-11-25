@@ -35,7 +35,7 @@ public class ChangePotentialBestResponseOptimizedRule extends AbstractPotentialC
     @Override
     public boolean executableOn(EvacCell cell) {
         int timeStep = esp.getCa().getTimeStep();
-        return ((timeStep < TIME_STEP_LIMIT_FOR_NASH_EQUILIBRIUM) && (cell.getIndividual() != null));
+        return ((timeStep < TIME_STEP_LIMIT_FOR_NASH_EQUILIBRIUM) && (!cell.getState().isEmpty()));
 
     }
 

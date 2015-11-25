@@ -34,7 +34,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
     @Override
     protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
-        ind = cell.getIndividual();
+        ind = cell.getState().getIndividual();
         if (ind.isAlarmed() == true) {
             if (canMove(ind)) {
                 if (slack(ind)) {
@@ -65,7 +65,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
-        Individual ind = from.getIndividual();
+        Individual ind = from.getState().getIndividual();
         updatePanic(ind, targetCell);
         updateExhaustion(ind, targetCell);
         super.move(from, targetCell);
@@ -161,7 +161,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         if (inSameRoom) {
             EvacCell mostProbableTarget = targets.get(max_index);
 
-            Individual i = cell.getIndividual();
+            Individual i = cell.getState().getIndividual();
             Direction8 oldDir = i.getDirection();
             Direction8 newDir = cell.equals(mostProbableTarget) ? oldDir : cell.getRelative(mostProbableTarget);
 

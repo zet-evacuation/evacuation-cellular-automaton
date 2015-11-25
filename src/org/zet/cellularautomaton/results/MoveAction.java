@@ -52,11 +52,11 @@ public class MoveAction extends Action {
      */
     public MoveAction(EvacCell from, EvacCell to, Individual individual) {
         this(from, to, individual.getStepEndTime(), individual.getStepStartTime(), individual.getNumber());
-        if (from.getIndividual() == null) {
+        if (from.getState().isEmpty()) {
             throw new IllegalArgumentException("The starting cell must not be empty!");
         }
 
-        if (to.getIndividual() != null && !(to == from)) {
+        if (!to.getState().isEmpty() && !(to == from)) {
             throw new IllegalArgumentException("The taget cell is not empty!");
         }
     }
@@ -91,14 +91,14 @@ public class MoveAction extends Action {
 
     @Override
     public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
-        if (from.getIndividual() == null) {
+        if (from.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     onCA.getTimeStep(),
                     this,
                     "Cannot move individual because it is not there.");
         }
 
-        if (!(to == from) && to.getIndividual() != null) {
+        if (!(to == from) && !to.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     onCA.getTimeStep(),
                     this,
@@ -113,7 +113,7 @@ public class MoveAction extends Action {
     public String toString() {
         String representation = "";
 
-        representation += from.getIndividual() + " moves from ";
+        representation += from.getState().getIndividual() + " moves from ";
         representation += from + " to ";
         representation += to + ".";
 

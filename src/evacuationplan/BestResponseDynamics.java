@@ -50,7 +50,7 @@ public class BestResponseDynamics {
     public int computePotential(EvacCell cell, EvacuationCellularAutomaton ca) {
         ArrayList<StaticPotential> exits = new ArrayList<>();
         exits.addAll(ca.getPotentialManager().getStaticPotentials());
-        StaticPotential newPot = cell.getIndividual().getStaticPotential();
+        StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
         double response = Double.MAX_VALUE;
         for (StaticPotential pot : exits) {
             if (getResponse(ca, cell, pot) < response) {
@@ -59,8 +59,8 @@ public class BestResponseDynamics {
             }
         }
 
-        StaticPotential oldPot = cell.getIndividual().getStaticPotential();
-        cell.getIndividual().setStaticPotential(newPot);
+        StaticPotential oldPot = cell.getState().getIndividual().getStaticPotential();
+        cell.getState().getIndividual().setStaticPotential(newPot);
         if (!oldPot.equals(newPot)) {
             return 1;
         } else {
@@ -71,7 +71,7 @@ public class BestResponseDynamics {
     private double getResponse(EvacuationCellularAutomaton ca, EvacCell cell, StaticPotential pot) {
 
         // Constants
-        Individual ind = cell.getIndividual();
+        Individual ind = cell.getState().getIndividual();
         double speed = ind.getRelativeSpeed();
 
         // Exit dependant values

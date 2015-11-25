@@ -151,8 +151,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
 
         for (Room room : initialConfiguration.getRooms()) {
             for (EvacCell cell : room.getAllCells()) {
-                if (cell.getIndividual() != null) {
-                    addIndividual(cell, cell.getIndividual());
+                if (!cell.getState().isEmpty()) {
+                    addIndividual(cell, cell.getState().getIndividual());
                 }
             }
         }
@@ -396,7 +396,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws IllegalArgumentException if the the specific individual does not exist in the list individuals
      */
     private void removeIndividual(Individual i) {
-        i.getCell().removeIndividual();
+        i.getCell().getState().removeIndividual();
         if (!individuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
@@ -411,22 +411,22 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * occupied by an Individual, or if the ''to''-EvacCell is already occupied by another individual.
      */
     public void moveIndividual(EvacCell from, EvacCell to) {
-        if (from.getIndividual() == null) {
+        if (from.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
         }
         if (from.equals(to)) {
-            VisualResultsRecorder.getInstance().recordAction(new MoveAction(from, from, from.getIndividual()));
+            VisualResultsRecorder.getInstance().recordAction(new MoveAction(from, from, from.getState().getIndividual()));
             return;
         }
-        if (to.getIndividual() != null) {
-            throw new IllegalArgumentException("Another Individual already standing on the ''to''-Cell!");
+        if (!to.getState().isEmpty()) {
+            throw new IllegalArgumentException("Individual " + to.getState().getIndividual() + " already standing on the ''to''-Cell!");
         }
 
-        VisualResultsRecorder.getInstance().recordAction(new MoveAction(from, to, from.getIndividual()));
+        VisualResultsRecorder.getInstance().recordAction(new MoveAction(from, to, from.getState().getIndividual()));
         if (from.getRoom().equals(to.getRoom())) {
             from.getRoom().moveIndividual(from, to);
         } else {
-            Individual i = from.getIndividual();
+            Individual i = from.getState().getIndividual();
             from.getRoom().removeIndividual(i);
             to.getRoom().addIndividual(to, i);
         }
@@ -435,10 +435,10 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
-        if (cell1.getIndividual() == null) {
+        if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell #1!");
         }
-        if (cell2.getIndividual() == null) {
+        if (cell2.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell #2!");
         }
         if (cell1.equals(cell2)) {
@@ -448,8 +448,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (cell1.getRoom().equals(cell2.getRoom())) {
             cell1.getRoom().swapIndividuals(cell1, cell2);
         } else {
-            Individual c1i = cell1.getIndividual();
-            Individual c2i = cell2.getIndividual();
+            Individual c1i = cell1.getState().getIndividual();
+            Individual c2i = cell2.getState().getIndividual();
             cell1.getRoom().removeIndividual(c1i);
             cell2.getRoom().removeIndividual(c2i);
             cell1.getRoom().addIndividual(cell1, c2i);

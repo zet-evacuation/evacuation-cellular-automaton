@@ -40,15 +40,13 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
 	 */
 	@Override
 	public boolean executableOn(EvacCell cell) {
-            
-            return (cell.getIndividual() != null) ? true : false;
-            
+            return !cell.getState().isEmpty();
 	}
         
         private double getResponse(EvacCell cell, StaticPotential pot){
             
             // Constants
-            Individual ind = cell.getIndividual();
+            Individual ind = cell.getState().getIndividual();
             double speed = ind.getRelativeSpeed();            
 
             // Exit dependant values                                    
@@ -84,8 +82,8 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
             
             int wrongDirectedNeighbours = 0;            
             for (EvacCell neighbour : cell.getDirectNeighbors()){
-                if (neighbour.getIndividual() != null){
-                    if (neighbour.getIndividual().getStaticPotential() != pot){
+                if (!neighbour.getState().isEmpty()){
+                    if (neighbour.getState().getIndividual().getStaticPotential() != pot){
                         wrongDirectedNeighbours++;
                     }
                 }
@@ -119,7 +117,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
                         
             ArrayList<StaticPotential> exits = new ArrayList<StaticPotential>();
             exits.addAll(esp.getCa().getPotentialManager().getStaticPotentials());            
-            StaticPotential newPot = cell.getIndividual().getStaticPotential();
+            StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
             double response = Double.MAX_VALUE;
             for (StaticPotential pot : exits){                
                 if (getResponse(cell,pot) < response){
@@ -127,7 +125,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
                     newPot = pot;
                 }
             }
-            cell.getIndividual().setStaticPotential(newPot);            
+            cell.getState().getIndividual().setStaticPotential(newPot);            
             
 	}
 }

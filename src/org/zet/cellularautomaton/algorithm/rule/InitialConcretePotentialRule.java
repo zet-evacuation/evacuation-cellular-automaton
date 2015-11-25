@@ -45,7 +45,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        Individual individual = cell.getIndividual();
+        Individual individual = cell.getState().getIndividual();
         List<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
         List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());

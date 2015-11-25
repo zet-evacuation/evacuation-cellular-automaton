@@ -36,7 +36,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
      */
     @Override
     public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() != null;
+        return !cell.getState().isEmpty();
     }
 
     /**

@@ -33,7 +33,7 @@ public abstract class AbstractInitialRule extends AbstractEvacuationRule {
      */
     @Override
     public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() != null && cell.getIndividual().getStaticPotential() == null;
+        return !cell.getState().isEmpty() && cell.getState().getIndividual().getStaticPotential() == null;
     }
 
 }

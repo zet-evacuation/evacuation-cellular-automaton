@@ -62,7 +62,7 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 	@Override
 	protected void onExecute(EvacCell cell) 
 	{
-		Individual individual = cell.getIndividual();
+		Individual individual = cell.getState().getIndividual();
 		if(!individual.isSafe()){
 			ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
 			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();

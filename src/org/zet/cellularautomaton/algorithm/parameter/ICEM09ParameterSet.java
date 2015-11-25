@@ -120,9 +120,9 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
 
 	@Override
 	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell ) {
-		if( referenceCell.getIndividual() == null )
+		if( referenceCell.getState().isEmpty())
 			throw new IllegalArgumentException( CellularAutomatonLocalization.LOC.getString( "algo.ca.parameter.NoIndividualOnReferenceCellException" ) );
-		StaticPotential staticPotential = referenceCell.getIndividual().getStaticPotential();
+		StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
 		final double statPotlDiff = staticPotential.getPotential( referenceCell ) - staticPotential.getPotential( targetCell );
 		return statPotlDiff;
 	}

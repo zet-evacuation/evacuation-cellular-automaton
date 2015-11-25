@@ -35,7 +35,7 @@ public class ReactionRuleCompleteRoom extends AbstractReactionRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        final Individual individual = cell.getIndividual();
+        final Individual individual = cell.getState().getIndividual();
         if (!individual.isAlarmed()) {
             if (individual.getCell().getRoom().isAlarmed()) {
                 individual.setAlarmed(true);

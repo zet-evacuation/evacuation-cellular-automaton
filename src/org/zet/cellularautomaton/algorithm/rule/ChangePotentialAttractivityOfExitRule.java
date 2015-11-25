@@ -46,13 +46,13 @@ public class ChangePotentialAttractivityOfExitRule extends AbstractPotentialChan
 	 */
 	@Override
 	public boolean executableOn( EvacCell cell ) {
-		if( cell.getIndividual() == null )
+		if( cell.getState().isEmpty())
 			return false;
 		else if( (cell instanceof ExitCell) || (cell instanceof SaveCell) )
 			return false;
 		else {
 			RandomUtils rnd = RandomUtils.getInstance();
-			double changePotentialThreshold = esp.getParameterSet().changePotentialThreshold( cell.getIndividual() );
+			double changePotentialThreshold = esp.getParameterSet().changePotentialThreshold( cell.getState().getIndividual() );
                     return rnd.binaryDecision( changePotentialThreshold );
 		}
 	}
@@ -65,7 +65,7 @@ public class ChangePotentialAttractivityOfExitRule extends AbstractPotentialChan
 	 */
 	@Override
 	protected void onExecute( EvacCell cell ) {
-		Individual individual = cell.getIndividual();
+		Individual individual = cell.getState().getIndividual();
 		if( !individual.isSafe() ) {
 			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
 			staticPotentials.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );

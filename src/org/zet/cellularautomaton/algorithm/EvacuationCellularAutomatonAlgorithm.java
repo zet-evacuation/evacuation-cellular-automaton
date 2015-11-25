@@ -81,7 +81,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
   @Override
   protected final void execute( EvacCell cell ) {
 
-    Individual i = Objects.requireNonNull( cell.getIndividual(),
+    Individual i = Objects.requireNonNull( cell.getState().getIndividual(),
             "Execute called on EvacCell that does not contain an individual!" );
     //System.out.println( "Executing rules for individual " + i );
     Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
@@ -98,7 +98,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
       Individual[] individualsCopy = getProblem().getCa().getIndividuals().toArray(
               new Individual[getProblem().getCa().getIndividuals().size()] );
       for( Individual i : individualsCopy ) {
-        if( !i.getCell().getIndividual().isSafe() ) {
+        if( !i.getCell().getState().getIndividual().isSafe() ) {
           getProblem().getCa().setIndividualDead(i, DeathCause.NOT_ENOUGH_TIME );
         }
       }

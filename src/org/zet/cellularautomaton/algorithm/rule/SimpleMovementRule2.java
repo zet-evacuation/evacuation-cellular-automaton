@@ -50,12 +50,12 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 	 */
 	@Override
 	public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
-		return !(cell instanceof ExitCell) && cell.getIndividual() != null;
+		return !(cell instanceof ExitCell) && !cell.getState().isEmpty();
 	}
 
 	@Override
 	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-		ind = cell.getIndividual();
+		ind = cell.getState().getIndividual();
 		if( ind.isAlarmed() ) {
 			if( canMove( ind ) )
 				if( isDirectExecute() ) { // we are in a "normal" simulation
@@ -153,7 +153,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 	 * @param performMove decides if the move is actually performed. If swapping is active, only values have to be updated.
 	 */
   private void initializeMove( EvacCell from, EvacCell targetCell ) {
-    Individual ind = from.getIndividual();
+    Individual ind = from.getState().getIndividual();
     if( ind == null ) {
       throw new IllegalStateException( "No Individual on from cell " + from );
     }
@@ -195,7 +195,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 	 * @param targetCell
 	 */
   protected void performMove( EvacCell from, EvacCell targetCell ) {
-    Individual ind = from.getIndividual();
+    Individual ind = from.getState().getIndividual();
 
     from.setOccupiedUntil( ind.getStepEndTime() );
     esp.getCa().moveIndividual( from, targetCell );
@@ -235,15 +235,15 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 
 	@Override
 	public void swap( EvacCell cell1, EvacCell cell2 ) {
-		if( cell1.getIndividual() == null )
+		if( cell1.getState().isEmpty())
 			throw new IllegalArgumentException( "No Individual standing on cell #1!" );
-		if( cell2.getIndividual() == null )
+		if( cell2.getState().isEmpty() )
 			throw new IllegalArgumentException( "No Individual standing on cell #2!" );
 		if( cell1.equals( cell2 ) )
 			throw new IllegalArgumentException( "The cells are equal. Can't swap on equal cells." );
-		ind = cell1.getIndividual();
+		ind = cell1.getState().getIndividual();
     initializeMove( cell1, cell2 );
-		ind = cell2.getIndividual();
+		ind = cell2.getState().getIndividual();
     initializeMove( cell2, cell1 ); // do not actually move!
 		esp.getCa().swapIndividuals( cell1, cell2 );
 	}

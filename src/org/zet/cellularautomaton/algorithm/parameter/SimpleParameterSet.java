@@ -39,7 +39,7 @@ public class SimpleParameterSet extends AbstractParameterSet {
 	 */
 	@Override
 	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell ) {
-		StaticPotential staticPotential = referenceCell.getIndividual().getStaticPotential();
+		StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
 		final double statPotlDiff = staticPotential.getPotential( referenceCell ) - staticPotential.getPotential( targetCell );
 		return statPotlDiff;
 	}

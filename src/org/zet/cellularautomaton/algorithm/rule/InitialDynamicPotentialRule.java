@@ -25,7 +25,7 @@ import org.zet.cellularautomaton.EvacCell;
 public class InitialDynamicPotentialRule extends AbstractInitialRule {
     @Override
     public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() != null;
+        return cell.getState().getIndividual() != null;
     }
 
     /**
@@ -35,6 +35,6 @@ public class InitialDynamicPotentialRule extends AbstractInitialRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        cell.getIndividual().setDynamicPotential(this.esp.getPotentialController().getPm().getDynamicPotential());
+        cell.getState().getIndividual().setDynamicPotential(this.esp.getPotentialController().getPm().getDynamicPotential());
     }
 }

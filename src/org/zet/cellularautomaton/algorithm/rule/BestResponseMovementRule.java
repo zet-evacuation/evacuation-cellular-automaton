@@ -44,12 +44,12 @@ public class BestResponseMovementRule extends AbstractMovementRule {
 	 */
 	@Override
 	public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
-		return cell.getIndividual() != null;
+		return !cell.getState().isEmpty();
 	}
 
 	@Override
 	protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-            Individual ind = cell.getIndividual();
+            Individual ind = cell.getState().getIndividual();
 
 		if( canMove( ind ) )
 			if( this.isDirectExecute() ) {
@@ -68,7 +68,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
 
 	@Override
   public void move( EvacCell from, EvacCell targetCell ) {
-    Individual ind = from.getIndividual();
+    Individual ind = from.getState().getIndividual();
     //public void move( EvacCell targetCell ) {
     if( ind.isSafe() && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell)) )
 			// Rauslaufen aus sicheren Bereichen ist nicht erlaubt
@@ -201,14 +201,14 @@ public class BestResponseMovementRule extends AbstractMovementRule {
 
 	@Override
 	public void swap( EvacCell cell1, EvacCell cell2 ) {
-		if( cell1.getIndividual() == null )
+		if( cell1.getState().isEmpty())
 			throw new IllegalArgumentException( "No Individual standing on cell #1!" );
-		if( cell2.getIndividual() == null )
+		if( cell2.getState().isEmpty())
 			throw new IllegalArgumentException( "No Individual standing on cell #2!" );
 		if( cell1.equals( cell2 ) )
 			throw new IllegalArgumentException( "The cells are equal. Can't swap on equal cells." );
-		doMoveWithDecision( cell1.getIndividual(), cell2, false );
-		doMoveWithDecision( cell2.getIndividual(), cell1, false );
+		doMoveWithDecision( cell1.getState().getIndividual(), cell2, false );
+		doMoveWithDecision( cell2.getState().getIndividual(), cell1, false );
 		//cell1.getRoom().swapIndividuals( cell1, cell2 );
 		esp.getCa().swapIndividuals( cell1, cell2 );
 	}

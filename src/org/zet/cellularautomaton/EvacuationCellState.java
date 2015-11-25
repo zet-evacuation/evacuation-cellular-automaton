@@ -15,6 +15,8 @@
  */
 package org.zet.cellularautomaton;
 
+import java.util.Objects;
+
 /**
  * Stores the state of a cell in an {@link EvacuationCellularAutomaton}. The state is defined by the individual
  * standing on the cell (or not) and its properties.
@@ -34,6 +36,20 @@ public class EvacuationCellState {
     }
 
     public void setIndividual(Individual individual) {
-        this.individual = individual;
+        if (!isEmpty()) {
+            throw new IllegalStateException("Already occupied with individual " + this.individual);
+        }
+        this.individual = Objects.requireNonNull(individual, "Individual is null.");
+    }
+    
+    public boolean isEmpty() {
+        return individual == null;
+    }
+
+    void removeIndividual() {
+        if(isEmpty()) {
+            throw new IllegalStateException("Cannot remove individual, is empty!");
+        }
+        this.individual = null;
     }
 }

@@ -28,21 +28,10 @@ public class ICEM09SaveIndividualsRule extends AbstractSaveRule {
 
     @Override
     protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-        org.zet.cellularautomaton.Individual savedIndividual = cell.getIndividual();
+        org.zet.cellularautomaton.Individual savedIndividual = cell.getState().getIndividual();
         if( !(savedIndividual.isSafe()) ) {
             esp.getCa().setIndividualSave( savedIndividual );
             esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic( savedIndividual );
         }
-    }
-
-    /**
-     * The rule is applicable if it is an exit or save cell and is occupied by
-     * an individual.
-     * @param cell the cell that is checked
-     * @return {@code true} if the rule is applicable to the given cell, {@code false} otherwise
-     */
-    @Override
-    public boolean executableOn( org.zet.cellularautomaton.EvacCell cell ) {
-        return (cell.getIndividual() != null) && ((cell instanceof org.zet.cellularautomaton.ExitCell) || (cell instanceof org.zet.cellularautomaton.SaveCell));
     }
 }

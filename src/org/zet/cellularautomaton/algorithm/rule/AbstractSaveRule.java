@@ -15,10 +15,24 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.SaveCell;
+
 /**
  * @author Daniel R. Schmidt
  *
  */
 public abstract class AbstractSaveRule extends AbstractEvacuationRule {
+    /**
+     * The rule is applicable if it is an exit or save cell and is occupied by an individual.
+     * 
+     * @param cell the cell that is checked
+     * @return {@code true} if the rule is applicable to the given cell, {@code false} otherwise
+     */
+    @Override
+    public boolean executableOn(EvacCell cell) {
+        return !cell.getState().isEmpty() && (cell instanceof ExitCell || cell instanceof SaveCell);
+    }
 
 }

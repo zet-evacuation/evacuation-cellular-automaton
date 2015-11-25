@@ -42,7 +42,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      */
     @Override
     public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() != null;
+        return !cell.getState().isEmpty();
     }
 
     /**
@@ -57,7 +57,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
             init();
         }
 
-        Individual individual = cell.getIndividual();
+        Individual individual = cell.getState().getIndividual();
         TargetCell target = esp.getCa().getIndividualToExitMapping().getExit(individual);
         if (target != null) {
             handleWithTarget(cell, target);
@@ -90,7 +90,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         if (potential == null) {
             throw new IllegalStateException("The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
         }
-        cell.getIndividual().setStaticPotential(potential);
+        cell.getState().getIndividual().setStaticPotential(potential);
     }
 
     /**

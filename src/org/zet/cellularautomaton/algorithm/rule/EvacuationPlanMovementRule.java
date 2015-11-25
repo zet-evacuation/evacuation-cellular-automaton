@@ -35,7 +35,7 @@ public class EvacuationPlanMovementRule extends WaitingMovementRule {
         while (it.hasNext()) {
             EvacCell cell = it.next();
             if (cell != fromCell) {
-                if (!checker.canPass(fromCell.getIndividual(), fromCell, cell)) {
+                if (!checker.canPass(fromCell.getState().getIndividual(), fromCell, cell)) {
                     it.remove();
                 }
             }

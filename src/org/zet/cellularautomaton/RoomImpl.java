@@ -145,7 +145,7 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
         if (!c.getRoom().equals(this)) {
             throw new IllegalStateException("The cell does not belong to this room.");
         }
-        c.setIndividual(i);
+        c.getState().setIndividual(i);
         i.setCell(c);
         individuals.add(i);
     }
@@ -164,7 +164,7 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
             if (!i.getCell().getRoom().equals(this)) {
                 throw new IllegalStateException("Individual is in the room, but the cell is in another room.");
             }
-            i.getCell().removeIndividual();
+            i.getCell().getState().removeIndividual();
             i.setCell(null);
         }
         individuals.remove(i);
@@ -173,18 +173,18 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
     //TODO: make package private?
     @Override
     public void moveIndividual(EvacCell from, EvacCell to) throws IllegalStateException {
-        Individual i = from.getIndividual();
+        Individual i = from.getState().getIndividual();
         checkIndividual(i);
-        to.setIndividual(from.getIndividual()); // removeIndividual is implicitly called
+        to.getState().setIndividual(from.getState().getIndividual());
         i.setCell(to);
-        from.removeIndividual();
+        from.getState().removeIndividual();
     }
 
     //TODO: make package private? was before in interface
     @Override
     public void swapIndividuals(EvacCell cell1, EvacCell cell2) throws IllegalStateException {
-        Individual c1i = cell1.getIndividual();
-        Individual c2i = cell2.getIndividual();
+        Individual c1i = cell1.getState().getIndividual();
+        Individual c2i = cell2.getState().getIndividual();
         checkIndividual(c1i);
         checkIndividual(c2i);
         cell1.swapIndividuals(cell2);

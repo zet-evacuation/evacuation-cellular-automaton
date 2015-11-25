@@ -37,7 +37,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
      */
     @Override
     public boolean executableOn(EvacCell cell) {
-        return cell.getIndividual() != null;
+        return !cell.getState().isEmpty();
     }
 
     @Override

@@ -80,32 +80,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     }
 
     /**
-     * Returns the individual that currently occupies the cell.
-     *
-     * @return The individual that occupies the cell.
-     */
-    public Individual getIndividual() {
-        return getState().getIndividual();
-    }
-
-    /**
-     * Sets an individual on the cell. It is <b>not</b> automatically removed from its source cell nor are rooms or any
-     * lists updated.
-     *
-     * @param individual The individual occupying the cell from now on. Set this value to "null" in order to mark this
-     * cell as not occupied.
-     */
-    void setIndividual(Individual i) {
-        if (getIndividual() != null && !i.equals(getIndividual())) {
-            throw new java.lang.IllegalStateException("Individual was already set!");
-        }
-        if (i == null) {
-            throw new java.lang.NullPointerException("Individual is null.");
-        }
-        getState().setIndividual(i);
-    }
-
-    /**
      * Swaps individuals and ignores the already occupied-check.
      *
      * @param ce
@@ -114,8 +88,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         EvacCell c1 = this;
         EvacCell c2 = ce;
 
-        Individual c1i = c1.getIndividual();
-        Individual c2i = c2.getIndividual();
+        Individual c1i = c1.getState().getIndividual();
+        Individual c2i = c2.getState().getIndividual();
         if (c1i == null) {
             throw new java.lang.NullPointerException("Individual on cell " + c1 + " is null.");
         }
@@ -126,10 +100,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         c2.getState().setIndividual(c1i);
         c1i.setCell(c2);
         c2i.setCell(c1);
-    }
-
-    void removeIndividual() {
-        getState().setIndividual(null);
     }
 
     /**
@@ -470,11 +440,11 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     protected <T extends EvacCell> T basicClone(T aClone, boolean cloneIndividual) {
         aClone.setSpeedFactor(this.getSpeedFactor());
 
-        if (cloneIndividual && this.getIndividual() != null) {
-            aClone.getState().setIndividual(this.getIndividual().clone());
+        if (cloneIndividual && this.getState().getIndividual() != null) {
+            aClone.getState().setIndividual(this.getState().getIndividual().clone());
             aClone.getState().getIndividual().setCell(aClone);
         } else {
-            aClone.getState().setIndividual(this.getIndividual());
+            aClone.getState().setIndividual(this.getState().getIndividual());
         }
 
         aClone.room = this.room;

@@ -37,10 +37,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 	 */
 	@Override
 	public boolean executableOn( EvacCell cell ) {
-		if( cell.getIndividual() != null && !cell.getIndividual().isSafe() )
-			return true;
-		else
-			return false;
+            return !cell.getState().isEmpty() && !cell.getState().getIndividual().isSafe();
 	}
 
 	/**
@@ -51,7 +48,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
 	protected void onExecute( EvacCell cell ) {
 
 		// Get the potential of the individual on the {@code cell} as well as some other concerning constants of the individual
-		Individual individual = cell.getIndividual();
+		Individual individual = cell.getState().getIndividual();
 		StaticPotential sp = individual.getStaticPotential();
 		int cellCountToChange = individual.getCellCountToChange();
 		int memoryIndex = individual.getMemoryIndex();

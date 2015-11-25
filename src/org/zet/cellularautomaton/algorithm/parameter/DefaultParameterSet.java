@@ -85,12 +85,12 @@ public class DefaultParameterSet extends AbstractParameterSet {
 	 */
 	@Override
 	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell ) {
-		if( referenceCell.getIndividual() == null ) {
+		if( referenceCell.getState().isEmpty()) {
 			throw new IllegalArgumentException( CellularAutomatonLocalization.LOC.getString( "algo.ca.parameter.NoIndividualOnReferenceCellException" ) );
 		}
-		final double panic = referenceCell.getIndividual().getPanic();
-		StaticPotential staticPotential = referenceCell.getIndividual().getStaticPotential();
-		DynamicPotential dynamicPotential = referenceCell.getIndividual().getDynamicPotential();
+		final double panic = referenceCell.getState().getIndividual().getPanic();
+		StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
+		DynamicPotential dynamicPotential = referenceCell.getState().getIndividual().getDynamicPotential();
 
 		if( dynamicPotential != null ) {
 			final double dynPotDiff = (-1) * (dynamicPotential.getPotential( referenceCell ) - dynamicPotential.getPotential( targetCell ));
@@ -181,7 +181,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
 		int failures = 0;
 
 		int chosenNeighbour = RandomUtils.getInstance().chooseRandomlyAbsolute( potentials );
-		while( possibleNeighbours.get( chosenNeighbour ).getIndividual() != null && failures <= possibleNeighbours.size() ) {
+		while( !possibleNeighbours.get( chosenNeighbour ).getState().isEmpty() && failures <= possibleNeighbours.size() ) {
 			failures++;
 			potentials[chosenNeighbour] = 0;
 			chosenNeighbour = RandomUtils.getInstance().chooseRandomlyAbsolute( potentials );

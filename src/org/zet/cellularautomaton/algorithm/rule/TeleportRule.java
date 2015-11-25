@@ -14,7 +14,7 @@ public class TeleportRule extends AbstractEvacuationRule {
     public boolean executableOn(EvacCell cell) {
         boolean res = cell instanceof TeleportCell && super.executableOn(cell);
         if (res) {
-            res = res && canMove(cell.getIndividual());
+            res = res && canMove(cell.getState().getIndividual());
         }
         return res;
     }
@@ -30,10 +30,10 @@ public class TeleportRule extends AbstractEvacuationRule {
 //						double beginTime = Math.max( i.getCell().getOccupiedUntil(), i.getStepEndTime() );
             double targetFreeAt = tc.getTarget(0).getOccupiedUntil();
 
-            if (tc.getTarget(0).getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < esp.getCa().getTimeStep()) {
-                double moveTime = Math.max(targetFreeAt, cell.getIndividual().getStepEndTime());
+            if (tc.getTarget(0).getState().getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < esp.getCa().getTimeStep()) {
+                double moveTime = Math.max(targetFreeAt, cell.getState().getIndividual().getStepEndTime());
                 //cell.getIndividual().setStepStartTime( cell.getIndividual().getStepEndTime() );
-                cell.getIndividual().setStepStartTime(moveTime);
+                cell.getState().getIndividual().setStepStartTime(moveTime);
                 esp.getCa().moveIndividual(cell, tc.getTarget(0));
                 tc.setTeleportFailed(false);
                 counter++;

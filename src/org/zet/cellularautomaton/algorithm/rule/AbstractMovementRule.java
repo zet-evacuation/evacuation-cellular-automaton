@@ -52,10 +52,10 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         possibleTargets = new ArrayList<>();
         List<EvacCell> neighbors = onlyFreeNeighbours ? fromCell.getFreeNeighbours() : fromCell.getNeighbours();
 
-        Direction8 dir = fromCell.getIndividual().getDirection();
+        Direction8 dir = fromCell.getState().getIndividual().getDirection();
 
         for (EvacCell c : neighbors) {
-            if (fromCell.getIndividual().isSafe() && !c.isSafe()) {
+            if (fromCell.getState().getIndividual().isSafe() && !c.isSafe()) {
                 continue; // ignore all moves that would mean walking out of safe areas
             }
             if (fromCell instanceof DoorCell && c instanceof DoorCell) {

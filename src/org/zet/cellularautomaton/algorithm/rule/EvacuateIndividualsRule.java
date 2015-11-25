@@ -36,10 +36,10 @@ public class EvacuateIndividualsRule extends AbstractEvacuationRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        esp.getCa().markIndividualForRemoval(cell.getIndividual());
+        esp.getCa().markIndividualForRemoval(cell.getState().getIndividual());
         // Potential needed for statistics:
         StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential(cell);
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(cell.getIndividual(), exit);
+        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(cell.getState().getIndividual(), exit);
         // safetyTime etc will be set in the SaveIndividualsRule
     }
 
@@ -53,6 +53,6 @@ public class EvacuateIndividualsRule extends AbstractEvacuationRule {
     public boolean executableOn(EvacCell cell) {
         return cell instanceof ExitCell &&
                 cell.isOccupied() &&
-                cell.getIndividual().getStepEndTime() < esp.getCa().getTimeStep() + 1;
+                cell.getState().getIndividual().getStepEndTime() < esp.getCa().getTimeStep() + 1;
     }
 }

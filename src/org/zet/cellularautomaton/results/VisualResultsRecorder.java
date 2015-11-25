@@ -307,10 +307,10 @@ public class VisualResultsRecorder {
             for (int x = 0; x < room.getWidth(); x++) {
                 for (int y = 0; y < room.getHeight(); y++) {
                     EvacCell cell = room.getCell(x, y);
-                    if (cell != null && cell.getIndividual() != null) {
+                    if (cell != null && cell.getState().getIndividual() != null) {
                         EvacCell clonedCell = cellMapping.get(cell);
-                        StaticPotential origPot = cell.getIndividual().getStaticPotential();
-                        clonedCell.getIndividual().setStaticPotential(potentialMapping.get(origPot));
+                        StaticPotential origPot = cell.getState().getIndividual().getStaticPotential();
+                        clonedCell.getState().getIndividual().setStaticPotential(potentialMapping.get(origPot));
                     }
                 }
             }

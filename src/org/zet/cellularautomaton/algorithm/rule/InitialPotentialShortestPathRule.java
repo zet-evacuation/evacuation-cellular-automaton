@@ -47,7 +47,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
     }
 
     public static void assignShortestPathPotential(EvacCell cell, EvacuationSimulationProblem esp) {
-        Individual individual = cell.getIndividual();
+        Individual individual = cell.getState().getIndividual();
         List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
         StaticPotential initialPotential = new StaticPotential();

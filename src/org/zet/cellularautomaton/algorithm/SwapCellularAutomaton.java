@@ -120,7 +120,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
                 EvacCell target2 = movement.selectTargetCell(i.getCell(), possibleTargets);
             }
 
-            if (target.getIndividual() == null) {
+            if (target.getState().isEmpty()) {
                 // Klappt alles
                 movement.move(i.getCell(), target);
                 //individualSwapped.add( i );
@@ -130,7 +130,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
                     unfinished2.add(i);
                 } else {
                     // steht ein individual drauf.
-                    Individual i2 = target.getIndividual();
+                    Individual i2 = target.getState().getIndividual();
                     if (individualSwapped.contains(i2)) {
                         unfinished2.add(i);
                     } else {

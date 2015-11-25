@@ -90,13 +90,13 @@ public class DieAction extends Action {
      */
     @Override
     public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
-        if (placeOfDeath.getIndividual() == null) {
+        if (placeOfDeath.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     "I could not mark the individual on cell "
                     + "as dead because it was not there (someone was lucky there, hu?)");
         }
 
-        onCA.setIndividualDead(placeOfDeath.getIndividual(), cause);
+        onCA.setIndividualDead(placeOfDeath.getState().getIndividual(), cause);
     }
 
     /**
