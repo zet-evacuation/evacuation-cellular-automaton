@@ -87,6 +87,7 @@ public class TestEvacuationRuleSet {
         EvacuationRule mockRule = context.mock(EvacuationRule.class);
         ruleSet.add(mockRule, true, false);
         ruleSet.add(mockRule, true, true);
+        ruleSet.add(mockRule);
         
         List<EvacuationRule> all = new LinkedList<>();
         List<EvacuationRule> primary = new LinkedList<>();
@@ -101,8 +102,8 @@ public class TestEvacuationRuleSet {
             primary.add(it.next());
         }
         assertThat(all, contains(mockRule));
-        assertThat(primary, contains(mockRule, mockRule));
-        assertThat(loop, contains(mockRule));
+        assertThat(primary, contains(mockRule, mockRule, mockRule));
+        assertThat(loop, contains(mockRule, mockRule));
     }
     
     @Test
