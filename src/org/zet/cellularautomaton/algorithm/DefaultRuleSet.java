@@ -38,6 +38,22 @@ public class DefaultRuleSet extends EvacuationRuleSet {
     public DefaultRuleSet() {
         // Build EvacuationRuleSet
         super();
+        selfInit();
+    }
+    
+    /**
+     *
+     */
+    private void selfInit() {
+        PropertyContainer pc = PropertyContainer.getGlobal();
+        ArrayList<String> initRules = (ArrayList<String>) pc.get("algo.ca.defaultRuleSet.init");
+        ArrayList<String> loopRules = (ArrayList<String>) pc.get("algo.ca.defaultRuleSet.loop");
+        for (String ruleName : initRules) {
+            add(createRule(ruleName), true, false);
+        }
+        for (String ruleName : loopRules) {
+            add(createRule(ruleName), false, true);
+        }
     }
 
     /**
@@ -84,21 +100,5 @@ public class DefaultRuleSet extends EvacuationRuleSet {
      */
     public AbstractMovementRule getMovementRule() {
         return movementRule;
-    }
-
-    /**
-     *
-     */
-    @Override
-    protected void selfInit() {
-        PropertyContainer pc = PropertyContainer.getGlobal();
-        ArrayList<String> initRules = (ArrayList<String>) pc.get("algo.ca.defaultRuleSet.init");
-        ArrayList<String> loopRules = (ArrayList<String>) pc.get("algo.ca.defaultRuleSet.loop");
-        for (String ruleName : initRules) {
-            add(createRule(ruleName), true, false);
-        }
-        for (String ruleName : loopRules) {
-            add(createRule(ruleName), false, true);
-        }
     }
 }

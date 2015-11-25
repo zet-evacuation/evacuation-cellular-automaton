@@ -18,6 +18,7 @@ package org.zet.cellularautomaton.algorithm;
 import java.util.Iterator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zetool.algorithm.simulation.cellularautomaton.RuleSet;
 
@@ -36,18 +37,12 @@ import org.zetool.algorithm.simulation.cellularautomaton.RuleSet;
  */
 public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
 
-    /**
-     * The {@code ArrayList} containing all rules in only one instance.
-     */
-    private final ArrayList<EvacuationRule> allRules;
-    /**
-     * The {@code ArrayList} containing all initialization rules, maybe twice or more often.
-     */
-    private final ArrayList<EvacuationRule> primaryRules;
-    /**
-     * The {@code ArrayList} containing all loop rules, maybe twice or more often.
-     */
-    private final ArrayList<EvacuationRule> loopRules;
+    /** The {@code ArrayList} containing all rules in only one instance. */
+    private final List<EvacuationRule> allRules;
+    /** The {@code ArrayList} containing all initialization rules, maybe twice or more often. */
+    private final List<EvacuationRule> primaryRules;
+    /** The {@code ArrayList} containing all loop rules, maybe twice or more often. */
+    private final List<EvacuationRule> loopRules;
 
     /**
      * Creates a new instance of {@code RuleSet} and initializes the container. The abstract method {@link #selfInit()}
@@ -57,7 +52,6 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
         allRules = new ArrayList<>();
         primaryRules = new ArrayList<>();
         loopRules = new ArrayList<>();
-        selfInit();
     }
 
     /**
@@ -76,7 +70,7 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      * @param rule the rule
      */
     public void add(EvacuationRule rule) {
-        if (!allRules.add(rule)) {
+        if (!allRules.contains(rule)) {
             allRules.add(rule);
         }
         primaryRules.add(rule);
@@ -91,8 +85,8 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      * @param useInLoopSet true if the rule should be added to the loop set
      * @throws java.lang.IllegalArgumentException if two movement rules are inserted
      */
-    public void add(EvacuationRule rule, boolean useInPrimarySet, boolean useInLoopSet) throws IllegalArgumentException {
-        if (!allRules.add(rule)) {
+    public void add(EvacuationRule rule, boolean useInPrimarySet, boolean useInLoopSet) {
+        if (!allRules.contains(rule)) {
             allRules.add(rule);
         }
         if (useInPrimarySet) {
@@ -111,25 +105,14 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      * @return the new instace
      */
     public static EvacuationRule createRule(String ruleName) {
-        Class<?> ruleClass = null;
-        EvacuationRule rule = null;
+        String ruleClassName = "org.zet.cellularautomaton.algorithm.rule." + ruleName;
         try {
-            ruleClass = Class.forName("org.zet.cellularautomaton.algorithm.rule." + ruleName);
-            rule = (EvacuationRule) ruleClass.getConstructor().newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            Class<?> ruleClass = Class.forName(ruleClassName);
+            return (EvacuationRule) ruleClass.getConstructor().newInstance();
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalArgumentException("Error creating Rule " + ruleClassName, e);
         }
-        return rule;
     }
 
     /**
@@ -140,25 +123,14 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      * @return the new instance
      */
     public static EvacuationRuleSet createRuleSet(String ruleSetName) {
-        Class<?> ruleSetClass = null;
-        EvacuationRuleSet ruleSet = null;
+        String ruleSetClassName = "org.zet.cellularautomaton.algorithm." + ruleSetName;
         try {
-            ruleSetClass = Class.forName("org.zet.cellularautomaton.algorithm." + ruleSetName);
-            ruleSet = (EvacuationRuleSet) ruleSetClass.getConstructor().newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            Class<?> ruleSetClass = Class.forName(ruleSetClassName);
+            return (EvacuationRuleSet) ruleSetClass.getConstructor().newInstance();
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalArgumentException("Error creating RuleSet " + ruleSetClassName, e);
         }
-        return ruleSet;
     }
 
     /**
@@ -179,10 +151,4 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
     public Iterator<EvacuationRule> primaryIterator() {
         return primaryRules.iterator();
     }
-
-    /**
-     * Performs the initialization. This method is called by the constructor and is supposed to load the rules contained
-     * in the {@code EvacuationRuleSet}
-     */
-    protected abstract void selfInit();
 }
