@@ -20,10 +20,6 @@ public class TestAbstractPotential {
         return new EvacCell(new EvacuationCellState(null), 1, 0, 0) {
 
             @Override
-            public void setSpeedFactor(double speedFactor) {
-            }
-
-            @Override
             public EvacCell clone() {
                 throw new UnsupportedOperationException("Not supported yet.");
             }

@@ -91,21 +91,6 @@ public class RoomCell extends EvacCell implements Cloneable {
     }
 
     /**
-     * Changes the Speed-Factor of the Room-EvacCell to the specified value.
-     *
-     * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
-     * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_ROOMCELL_SPEEDFACTOR" is set.
-     */
-    @Override
-    public void setSpeedFactor(double speedFactor) {
-        if ((speedFactor >= 0) && (speedFactor <= 1)) {
-            this.speedFactor = speedFactor;
-        } else {
-            this.speedFactor = RoomCell.STANDARD_ROOMCELL_SPEEDFACTOR;
-        }
-    }
-
-    /**
      * Returns a copy of itself as a new Object.
      * @return 
      */

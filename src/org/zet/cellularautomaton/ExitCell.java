@@ -60,21 +60,6 @@ public class ExitCell extends TargetCell implements Cloneable {
     }
 
     /**
-     * Changes the Speed-Factor of the Exit-Cell to the specified value.
-     *
-     * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
-     * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_EXITCELL_SPEEDFACTOR" is set.
-     */
-    @Override
-    public void setSpeedFactor(double speedFactor) {
-        if ((speedFactor >= 0) && (speedFactor <= 1)) {
-            this.speedFactor = speedFactor;
-        } else {
-            this.speedFactor = ExitCell.STANDARD_EXITCELL_SPEEDFACTOR;
-        }
-    }
-
-    /**
      * Returns a copy of itself as a new Object.
      *
      * @return a copy of itself as a new Object

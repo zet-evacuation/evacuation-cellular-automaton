@@ -60,21 +60,6 @@ public class SaveCell extends TargetCell implements Cloneable {
     }
 
     /**
-     * Changes the Speed-Factor of the Save-Cell to the specified value.
-     *
-     * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
-     * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_SAVECELL_SPEEDFACTOR" is set.
-     */
-    @Override
-    public void setSpeedFactor(double speedFactor) {
-        if ((speedFactor >= 0) && (speedFactor <= 1)) {
-            this.speedFactor = speedFactor;
-        } else {
-            this.speedFactor = SaveCell.STANDARD_SAVECELL_SPEEDFACTOR;
-        }
-    }
-
-    /**
      * Returns a copy of itself as a new Object.
      */
     @Override

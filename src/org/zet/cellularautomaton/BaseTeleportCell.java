@@ -129,15 +129,4 @@ public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable 
             teleportTargets.add(target);
         }
     }
-
-    /**
-     * Sets a speed factor to the cell. If the argument is in an unallowed range (negative or larger than one) the
-     * factor is set to 1.
-     *
-     * @param speedFactor defines a speed factor. Valid range is from 0 to 1
-     */
-    @Override
-    public void setSpeedFactor(double speedFactor) {
-        this.speedFactor = (speedFactor >= 0) && (speedFactor <= 1) ? speedFactor : 1;
-    }
 }

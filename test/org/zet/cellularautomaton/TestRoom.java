@@ -24,10 +24,6 @@ public class TestRoom {
         EvacCell ec = new EvacCell(state, 1, 1, 0) {
             
             @Override
-            public void setSpeedFactor(double speedFactor) {
-            }
-            
-            @Override
             public EvacCell clone() {
                 throw new UnsupportedOperationException("Not supported yet.");
             }

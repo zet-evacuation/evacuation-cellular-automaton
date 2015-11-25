@@ -43,10 +43,6 @@ public class TestAbstractMovementRule {
         }
 
         @Override
-        public void setSpeedFactor(double speedFactor) {
-        }
-
-        @Override
         public EvacCell clone() {
             return null;
         }

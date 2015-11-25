@@ -175,16 +175,4 @@ public class DoorCell extends BaseTeleportCell<DoorCell> {
             throw new IllegalArgumentException("The door you tried to remove is not connected to this cell.");
         }
     }
-
-    /**
-     * Changes the Speed-Factor of the Door-EvacCell to the specified value.
-     *
-     * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
-     * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_DOORCELL_SPEEDFACTOR" is set.
-     */
-    @Override
-    public void setSpeedFactor(double speedFactor) {
-        this.speedFactor = (speedFactor >= 0) && (speedFactor <= 1) ? speedFactor
-                : DoorCell.STANDARD_DOORCELL_SPEEDFACTOR;
-    }
 }

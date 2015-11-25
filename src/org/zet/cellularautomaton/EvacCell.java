@@ -70,7 +70,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     public EvacCell(EvacuationCellState state, double speedFactor, int x, int y, Room room) {
         super(state, x, y);
         this.room = room;
-        this.setSpeedFactor(speedFactor);
+        setSpeedFactorSafe(speedFactor);
 
         // Must be in this order
         setRoom(room);
@@ -149,7 +149,17 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value of the specific class which inherits from
      * EvacCell is set.
      */
-    public abstract void setSpeedFactor(double speedFactor);
+    public void setSpeedFactor(double speedFactor) {
+        setSpeedFactorSafe(speedFactor);
+    }
+    
+    private void setSpeedFactorSafe(double speedFactor) {
+        if ((speedFactor >= 0) && (speedFactor <= 1)) {
+            this.speedFactor = speedFactor;
+        } else {
+            throw new IllegalArgumentException("Speed factor " + speedFactor + " not in allowed interval [0,1]");
+        }
+    }
 
     /**
      * Returns all existing direct-neighbour-cells that are reachable of this cell
