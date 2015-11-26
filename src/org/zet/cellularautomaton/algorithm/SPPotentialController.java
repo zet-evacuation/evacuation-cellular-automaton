@@ -21,13 +21,11 @@ import org.zetool.rndutils.generators.GeneralRandom;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.potential.DynamicPotential;
-import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.TargetCell;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -140,8 +138,8 @@ public class SPPotentialController implements PotentialController {
                 // reduce it afterwards on this cell!
                 EvacCell randomNeighbour = null;
                 while (randomNeighbour == null) {
-                    final int randomInt = rnd.nextInt((getNeighbours(c)).size());
-                    randomNeighbour = (getNeighbours(c)).get(randomInt);
+                    final int randomInt = rnd.nextInt((c.getNeighbours()).size());
+                    randomNeighbour = (c.getNeighbours()).get(randomInt);
                 }
                 decreaseDynamicPotential(c);
                 // test, if now potential is 0 so the potential in the diffused cell can decrease already in this step.
@@ -220,58 +218,6 @@ public class SPPotentialController implements PotentialController {
          dynPot.deleteCell(cell);
          }
          }*/
-    }
-
-    /**
-     * Calculates a StaticPotential starting at the ExitCell specified in the parameter exitBlock. The potential
-     * describes the distance between a cell an the given ExitCells. Such a potential uses some "Smoothing" to
-     * approximate the real distance. It calculates also a second StaticPotential which represents the distance nearly
-     * exactly. For the diagonal distance between two cells 1.4 instead of sqrt(2) is used.
-     *
-     * @param exitBlock list of ExitCells
-     * @return the calculated StaticPotential
-     */
-    @Override
-    public StaticPotential createStaticPotential(List<ExitCell> exitBlock) {
-        StaticPotential newSP = new StaticPotential();
-        newSP.setAssociatedExitCells(exitBlock);
-        newSP.setAttractivity(exitBlock.get(0).getAttractivity());
-        List<? extends EvacCell> parentList;
-        ArrayList<EvacCell> childList;
-        HashMap<EvacCell, SmoothingTuple> childTuple;
-
-        for (ExitCell c : exitBlock) {
-            newSP.setPotential(c, 0);
-            newSP.setDistance(c, 0.0);
-        }
-
-        parentList = exitBlock;
-        while (!parentList.isEmpty()) {
-            childList = new ArrayList<>();
-            childTuple = new HashMap<>();
-            for (EvacCell p : parentList) {
-                for (EvacCell c : getNeighbours(p)) {
-                    if (!(c instanceof ExitCell) && !(newSP.hasValidPotential(c))) {
-                        //check if there already exists a tuple for this cell
-                        if (childTuple.containsKey(c)) {
-                            childTuple.get(c).addParent(newSP.getPotentialDouble(p), calculateDistance(p, c));
-                            childTuple.get(c).addDistanceParent(newSP.getDistance(p), calculateRealDistance(p, c));
-                        } else {
-                            childTuple.put(c, new SmoothingTuple(c, calculateDistance(p, c) + newSP.getPotentialDouble(p), calculateRealDistance(p, c) + newSP.getDistance(p), 1, newSP.getPotentialDouble(p)));
-
-                        }
-                    }
-                }
-            }
-            for (SmoothingTuple sT : childTuple.values()) {
-                sT.applySmoothing();
-                newSP.setPotential(sT.getCell(), sT.getValue());
-                newSP.setDistance(sT.getCell(), sT.getDistanceValue());
-                childList.add(sT.getCell());
-            }
-            parentList = childList;
-        }
-        return newSP;
     }
 
     /**
@@ -384,13 +330,4 @@ public class SPPotentialController implements PotentialController {
         return graphic;
     }
 
-    /**
-     * Returns the neighbors of the cell. Uses the method of {@code EvacCell}.
-     *
-     * @param cell A cell in the cellular automaton.
-     * @return The neighbor cells of this cell.
-     */
-    public List<EvacCell> getNeighbours(EvacCell cell) {
-        return cell.getNeighbours();
-    }
 }

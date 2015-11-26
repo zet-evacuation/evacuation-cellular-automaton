@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
 
@@ -24,49 +24,49 @@ import org.zet.cellularautomaton.EvacCell;
  *
  */
 public class SmoothingTuple {
-
+    private final static int SMOOTHING_FACTOR = 3;
     /** Reference to the cell. */
-    EvacCell cell;
-    /** Potential value. */
-    double value;
+    private final EvacCell cell;
+    /** Potential potential. */
+    private double potential;
     /** Real distance. */
-    double distanceValue;
+    private double distanceValue;
     /** Number of the cells that could affect this cell. */
-    int numberOfParents;
+    private int numberOfParents;
     /** Sum of the potentials of the parent cells. */
-    double sumOfValuesOfParents;
+    private double sumOfPorentialsOfParents;
 
     /**
      * Constructs a new SmoothingTuple for a cell.
      *
      * @param c the cell
-     * @param v the initial potential: the distance (diagonal: 14, horizontal or vertical: 10)
-     * @param d
-     * @param n initial 1
-     * @param s initial the potential of the first parent cell
+     * @param potentialOfParent the initial parent potential
+     * @param potentialDifference the distance (diagonal: 14, horizontal or vertical: 10)
+     * @param initialDistance the distance of the cell (using the parent as next)
      */
-    public SmoothingTuple(EvacCell c, double v, double d, int n, double s) {
+    public SmoothingTuple(EvacCell c, double potentialOfParent, int potentialDifference, double initialDistance) {
         cell = c;
-        value = v;
-        distanceValue = d;
-        numberOfParents = n;
-        sumOfValuesOfParents = s;
+        potential = potentialOfParent + potentialDifference;
+        distanceValue = initialDistance;
+        numberOfParents = 1;
+        sumOfPorentialsOfParents = potentialOfParent;
     }
 
     /**
      * Updates the values of this tuple.
      *
-     * @param valueOfParent potential of the parent
-     * @param distance distance between this cell and its parent (diagonal: 14, horizontal or vertical: 10)
+     * @param potentialOfParent potential of the parent
+     * @param potentialDifference distance between this cell and its parent (diagonal: 14, horizontal or vertical: 10)
      */
-    public void addParent(double valueOfParent, int distance) {
-        value = Math.min(value, valueOfParent + distance);
+    public void addParent(double potentialOfParent, int potentialDifference) {
+        potential = Math.min(potential, potentialOfParent + potentialDifference);
+        
         numberOfParents++;
-        sumOfValuesOfParents += valueOfParent;
+        sumOfPorentialsOfParents += potentialOfParent;
     }
 
-    public void addDistanceParent(double valueOfParent, double distance) {
-        distanceValue = Math.min(distanceValue, valueOfParent + distance);
+    public void addDistanceParent(double distanceOfParent, double distance) {
+        distanceValue = Math.min(distanceValue, distanceOfParent + distance);
     }
 
     /**
@@ -84,7 +84,7 @@ public class SmoothingTuple {
      * @return the potential
      */
     public double getValue() {
-        return value;
+        return potential;
     }
 
     /**
@@ -98,9 +98,9 @@ public class SmoothingTuple {
 
     /**
      * Applies the smoothing-algorithm to this tuple. It's based on the formula: potential =
-     * Math.round((3*value+sumOfValuesOfParents)/(3+numberOfParents))
+ Math.round((3*potential+sumOfValuesOfParents)/(3+numberOfParents))
      */
     public void applySmoothing() {
-        value = (3 * value + sumOfValuesOfParents) / (3 + numberOfParents);
+        potential = (SMOOTHING_FACTOR * potential + sumOfPorentialsOfParents) / (SMOOTHING_FACTOR + numberOfParents);
     }
 }

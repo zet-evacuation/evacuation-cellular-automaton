@@ -15,12 +15,9 @@
  */
 package org.zet.cellularautomaton.algorithm;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
-import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
@@ -45,8 +42,6 @@ public interface PotentialController {
     public void increaseDynamicPotential(EvacCell cell);
 
     public void decreaseDynamicPotential(EvacCell cell);
-
-    public StaticPotential createStaticPotential(List<ExitCell> exitBlock);
 
     public StaticPotential getRandomStaticPotential();
 

@@ -63,7 +63,7 @@ public class DefaultRuleSet extends EvacuationRuleSet {
      * @throws java.lang.IllegalArgumentException if two movement rules are inserted
      */
     @Override
-    public void add(EvacuationRule rule) throws IllegalArgumentException {
+    public void add(EvacuationRule rule) {
         if (rule instanceof AbstractMovementRule) {
             if (movementRule == null) {
                 movementRule = (AbstractMovementRule) rule;
