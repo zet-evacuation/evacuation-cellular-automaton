@@ -18,7 +18,7 @@ package org.zet.cellularautomaton.algorithm;
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import ds.PropertyContainer;
-import java.util.ArrayList;
+import java.util.List;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 
 /**
@@ -46,8 +46,8 @@ public class DefaultRuleSet extends EvacuationRuleSet {
      */
     private void selfInit() {
         PropertyContainer pc = PropertyContainer.getGlobal();
-        ArrayList<String> initRules = (ArrayList<String>) pc.get("algo.ca.defaultRuleSet.init");
-        ArrayList<String> loopRules = (ArrayList<String>) pc.get("algo.ca.defaultRuleSet.loop");
+        List<String> initRules = (List<String>) pc.get("algo.ca.defaultRuleSet.init");
+        List<String> loopRules = (List<String>) pc.get("algo.ca.defaultRuleSet.loop");
         for (String ruleName : initRules) {
             add(createRule(ruleName), true, false);
         }

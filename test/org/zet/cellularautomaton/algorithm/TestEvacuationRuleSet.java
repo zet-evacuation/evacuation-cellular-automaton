@@ -109,7 +109,7 @@ public class TestEvacuationRuleSet {
     @Test
     public void testRuleCreation() {
         EvacuationRule r = EvacuationRuleSet.createRule("EvacuateIndividualsRule");
-        assertThat( r, is(instanceOf(EvacuateIndividualsRule.class)));
+        assertThat(r, is(instanceOf(EvacuateIndividualsRule.class)));
     }
     
     @Test(expected = IllegalArgumentException.class)
