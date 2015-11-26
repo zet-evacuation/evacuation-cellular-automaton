@@ -116,7 +116,15 @@ public class TestDefaultRuleSet {
         ruleSet.add(rule1);
         ruleSet.add(rule2);
     }
-
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testMultipleMovementRulesFailsOverloaded() {
+        DefaultRuleSet ruleSet = new DefaultRuleSet();
+        AbstractMovementRule rule1 = new MockAbstractMovementRule();
+        AbstractMovementRule rule2 = new MockAbstractMovementRule();
+        ruleSet.add(rule1, false, true);
+        ruleSet.add(rule2, true, false);
+    }
     
     private static class MockAbstractMovementRule extends AbstractMovementRule {
 
