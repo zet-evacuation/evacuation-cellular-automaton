@@ -25,7 +25,6 @@ import org.zetool.common.algorithm.AbstractAlgorithm;
  */
 public abstract class SimulationAlgorithm<S, T> extends AbstractAlgorithm<S, T> {
     /* Counter for the current simulation step. **/
-
     private int stepCount;
 
     /**
@@ -74,8 +73,16 @@ public abstract class SimulationAlgorithm<S, T> extends AbstractAlgorithm<S, T> 
      */
     protected abstract T terminate();
 
+    /**
+     * Performs the simulation. First the steps are resetted, then the algorithm is initialized ({@link #initialize() }.
+     * The actual simulation is done by {@link #performSimulation() }. After the simulation some post-work can be done
+     * by {@link #terminate() } which also creates the solution value.
+     * 
+     * @param input the input for the simulation
+     * @return the computed simulation result
+     */
     @Override
-    final protected T runAlgorithm(S problem) {
+    final protected T runAlgorithm(S input) {
         stepCount = 0;
         initialize();
         performSimulation();
