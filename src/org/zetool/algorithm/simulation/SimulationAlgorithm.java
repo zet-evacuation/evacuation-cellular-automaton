@@ -82,7 +82,7 @@ public abstract class SimulationAlgorithm<S, T> extends AbstractAlgorithm<S, T> 
      * @return the computed simulation result
      */
     @Override
-    final protected T runAlgorithm(S input) {
+    protected final T runAlgorithm(S input) {
         stepCount = 0;
         initialize();
         performSimulation();
