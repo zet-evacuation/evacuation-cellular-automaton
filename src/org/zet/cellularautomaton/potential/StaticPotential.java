@@ -161,10 +161,6 @@ public class StaticPotential extends AbstractPotential {
         this.name = name;
     }
 
-    public int getTruePotential(EvacCell cell) {
-        return getPotential(cell);
-    }
-
     public EvacPotential getAsEvacPotential(Individual i, CellularAutomatonDirectionChecker checker) {
         EvacPotential evacPotential = new EvacPotential(i, checker);
         for( EvacCell c : getMappedCells()) {

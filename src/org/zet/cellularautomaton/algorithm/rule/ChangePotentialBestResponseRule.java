@@ -51,7 +51,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
 
             // Exit dependant values                                    
             double distance = Double.MAX_VALUE;
-            if (pot.getTruePotential(cell) > 0){
+            if (pot.getPotential(cell) > 0) {
                 distance = pot.getDistance(cell);
             }
             double movingTime = distance / speed;            

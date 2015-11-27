@@ -33,7 +33,7 @@ public class IndividualDistanceComparator<E extends Individual> implements Compa
      */
     @Override
     public int compare(Individual i1, Individual i2) {
-        return i1.getStaticPotential().getTruePotential(i1.getCell()) - i2.getStaticPotential().getTruePotential(i2.getCell());
+        return i1.getStaticPotential().getPotential(i1.getCell()) - i2.getStaticPotential().getPotential(i2.getCell());
     }
 
     /**

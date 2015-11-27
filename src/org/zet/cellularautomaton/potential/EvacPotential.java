@@ -46,10 +46,4 @@ public class EvacPotential extends StaticPotential {
             return Integer.MAX_VALUE;
         }
     }
-
-    @Override
-    public int getTruePotential(EvacCell cell) {
-        return super.getPotential(cell);
-    }
-
 }
