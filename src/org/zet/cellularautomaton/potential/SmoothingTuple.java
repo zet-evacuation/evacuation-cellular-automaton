@@ -24,7 +24,7 @@ import org.zet.cellularautomaton.EvacCell;
  *
  */
 public class SmoothingTuple {
-    private final static int SMOOTHING_FACTOR = 3;
+    private static final int SMOOTHING_FACTOR = 3;
     /** Reference to the cell. */
     private final EvacCell cell;
     /** Potential potential. */

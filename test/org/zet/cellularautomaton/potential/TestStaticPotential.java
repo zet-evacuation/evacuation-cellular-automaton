@@ -39,15 +39,16 @@ public class TestStaticPotential {
         assertThat(potential.getMaxDistance(), is(closeTo(0, 10e-8)));
         
         
-        potential.setDistance(new RoomCell(0, 0), minDistance);
-        potential.setDistance(new RoomCell(0, 0), maxDistance);
-        potential.setDistance(new RoomCell(0, 0), distance);
+        RoomCell r = new RoomCell(0, 0);
+        potential.setPotential(r, 0);
+        potential.setDistance(r, minDistance);
+        r = new RoomCell(0, 0);
+        potential.setPotential(r, 0);
+        potential.setDistance(r, maxDistance);
+        r = new RoomCell(0, 0);
+        potential.setPotential(r, 0);
+        potential.setDistance(r, distance);
         
         assertThat(potential.getMaxDistance(), is(equalTo(maxDistance)));
-    }
-    
-    @Test
-    public void testAssociateExitCells() {
-        
     }
 }

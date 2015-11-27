@@ -3,6 +3,8 @@ package org.zet.cellularautomaton.potential;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
@@ -13,8 +15,8 @@ import org.zetool.common.algorithm.AbstractAlgorithm;
  * @author Jan-Philipp Kappmeier
  */
 public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, StaticPotential> {
-    private final static int APPROXIMATE_ORTHOGONAL_DISTANCE = 10;
-    private final static int APPROXIMATE_DIAGONAL_DISTANCE = 14;
+    private static final int APPROXIMATE_ORTHOGONAL_DISTANCE = 10;
+    private static final int APPROXIMATE_DIAGONAL_DISTANCE = 14;
     
     @Override
     protected StaticPotential runAlgorithm(List<ExitCell> problem) {
@@ -35,7 +37,7 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
         staticPotential.setAssociatedExitCells(exitBlock);
         staticPotential.setAttractivity(exitBlock.get(0).getAttractivity());
         List<? extends EvacCell> parentList;
-        HashMap<EvacCell, SmoothingTuple> childTuple;
+        Map<EvacCell, SmoothingTuple> childTuple;
 
         for (ExitCell c : exitBlock) {
             staticPotential.setPotential(c, 0);
@@ -59,6 +61,8 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
                                     ));
 
                         }
+                    } else {
+                        Logger.getGlobal().warning("Reached an exit cell that does not get a potential!");
                     }
                 }
             }
