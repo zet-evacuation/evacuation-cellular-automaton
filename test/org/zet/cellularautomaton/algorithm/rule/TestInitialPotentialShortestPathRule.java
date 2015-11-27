@@ -100,7 +100,7 @@ public class TestInitialPotentialShortestPathRule {
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
         PotentialManager pm = eca.getPotentialManager();
-        sp.setDistance(cell, 1);
+        sp.setPotential(cell, 1);
 
         pm.addStaticPotential(sp);
         
@@ -124,9 +124,9 @@ public class TestInitialPotentialShortestPathRule {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
+        shortDistance.setPotential(cell, 1);
+        mediumDistance.setPotential(cell, 2);
+        longDistance.setPotential(cell, 3);
 
         pm.addStaticPotential(longDistance);
         pm.addStaticPotential(shortDistance);

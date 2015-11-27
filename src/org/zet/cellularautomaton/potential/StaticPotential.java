@@ -90,8 +90,6 @@ public class StaticPotential extends AbstractPotential {
         distance.put(cell, i);
     }
     
-    
-
     /**
      * Stores the specified distance for an {@link EvacCell} in this {@code StaticPotential}. If an {@link EvacCell}
      * is specified that already exists, the value will be overwritten.

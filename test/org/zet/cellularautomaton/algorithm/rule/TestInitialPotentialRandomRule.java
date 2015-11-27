@@ -100,7 +100,7 @@ public class TestInitialPotentialRandomRule {
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
         PotentialManager pm = eca.getPotentialManager();
-        sp.setDistance(cell, 1);
+        sp.setPotential(cell, 1);
 
         pm.addStaticPotential(sp);
         

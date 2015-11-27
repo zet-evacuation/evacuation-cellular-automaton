@@ -140,8 +140,8 @@ public class TestInitialPotentialExitMappingRule {
     public void fallbackShortest() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        longDistance.setDistance(cell, 2);
+        shortDistance.setPotential(cell, 1);
+        longDistance.setPotential(cell, 2);
         
         IndividualToExitMapping mapping = _unused -> null;
         esp.getCa().setIndividualToExitMapping(mapping);

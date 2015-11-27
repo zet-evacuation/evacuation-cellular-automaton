@@ -99,7 +99,7 @@ public class TestInitialConcretePotentialRule {
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
         PotentialManager pm = eca.getPotentialManager();
-        sp.setDistance(cell, 1);
+        sp.setPotential(cell, 1);
 
         pm.addStaticPotential(sp);
         
@@ -111,7 +111,7 @@ public class TestInitialConcretePotentialRule {
     
     @Test
     public void testHighFamiliarityChoosesBest() {
-        StaticPotential targetPotential =initFamiliarPotential( eca.getPotentialManager());
+        StaticPotential targetPotential = initFamiliarPotential( eca.getPotentialManager());
         
         i.setFamiliarity(1);
         rule.execute(cell);
@@ -157,9 +157,9 @@ public class TestInitialConcretePotentialRule {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
+        shortDistance.setPotential(cell, 1);
+        mediumDistance.setPotential(cell, 2);
+        longDistance.setPotential(cell, 3);
         
         shortDistance.setAttractivity(10);
         mediumDistance.setAttractivity(50);
@@ -175,9 +175,9 @@ public class TestInitialConcretePotentialRule {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
+        shortDistance.setPotential(cell, 1);
+        mediumDistance.setPotential(cell, 2);
+        longDistance.setPotential(cell, 3);
         shortDistance.setAttractivity(10);
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
@@ -192,9 +192,9 @@ public class TestInitialConcretePotentialRule {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
+        shortDistance.setPotential(cell, 1);
+        mediumDistance.setPotential(cell, 2);
+        longDistance.setPotential(cell, 3);
         shortDistance.setAttractivity(10);
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
@@ -209,9 +209,9 @@ public class TestInitialConcretePotentialRule {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
-        shortDistance.setDistance(cell, 1);
-        mediumDistance.setDistance(cell, 2);
-        longDistance.setDistance(cell, 3);
+        shortDistance.setPotential(cell, 1);
+        mediumDistance.setPotential(cell, 2);
+        longDistance.setPotential(cell, 3);
         shortDistance.setAttractivity(1000);
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
