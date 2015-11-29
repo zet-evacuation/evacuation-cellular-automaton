@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
@@ -45,9 +46,10 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  * @author Jan-Philipp Kappmeier
  * @author Matthias Woste
  */
-public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements Iterable<Individual> {
+public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements EvacuationCellularAutomatonInterface {
 
     private boolean recordingStarted;
+
 
     /**
      * the state of the cellular automaton.
@@ -244,6 +246,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the seconds one step needs
      */
+    @Override
     public double getSecondsPerStep() {
         return secondsPerStep;
     }
@@ -254,6 +257,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the number of steps performed by the cellular automaton within one second.
      */
+    @Override
     public double getStepsPerSecond() {
         return stepsPerSecond;
     }
@@ -265,6 +269,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param relativeSpeed
      * @return the absolute speed in meter per seconds for a given relative speed.
      */
+    @Override
     public double absoluteSpeed(double relativeSpeed) {
         return absoluteMaxSpeed * relativeSpeed;
     }
@@ -272,6 +277,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     /**
      * Increases the actual timeStep of the EvacuationCellularAutomaton about one.
      */
+    @Override
     public void nextTimeStep() {
         timeStep++;
         VisualResultsRecorder.getInstance().nextTimestep();
@@ -282,6 +288,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the timeStep
      */
+    @Override
     public int getTimeStep() {
         return timeStep;
     }
@@ -319,6 +326,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the ArrayList of rooms
      */
+    @Override
     public Collection<Room> getRooms() {
         return Collections.unmodifiableCollection(rooms.values());
     }
@@ -328,6 +336,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the mapping between individuals and exit cells
      */
+    @Override
     public IndividualToExitMapping getIndividualToExitMapping() {
         return individualToExitMapping;
     }
@@ -341,6 +350,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         this.individualToExitMapping = individualToExitMapping;
     }
 
+    @Override
     public Map<StaticPotential, Double> getExitToCapacityMapping() {
         return exitToCapacityMapping;
     }
@@ -410,6 +420,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws java.lang.IllegalArgumentException if the individual should be moved from an empty EvacCell, which is not
      * occupied by an Individual, or if the ''to''-EvacCell is already occupied by another individual.
      */
+    @Override
     public void moveIndividual(EvacCell from, EvacCell to) {
         if (from.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
@@ -434,6 +445,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         //Statistic.instance.getSpecificFlowCollector().collect( timeStep, from, to );
     }
 
+    @Override
     public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
         if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell #1!");
@@ -484,10 +496,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         i.setEvacuated();
     }
 
+    @Override
     public void markIndividualForRemoval(Individual i) {
         markedForRemoval.add(i);
     }
 
+    @Override
     public void removeMarkedIndividuals() {
         markedForRemoval.stream().forEach(individual -> setIndividualEvacuated(individual));
         markedForRemoval.clear();
@@ -508,6 +522,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @param i
      */
+    @Override
     public void setIndividualSave(Individual i) {
         notSaveIndividualsCount--;
         i.setSafe(true);
@@ -522,6 +537,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      * @param cause the dead cause of the individual
      */
+    @Override
     public void setIndividualDead(Individual i, DeathCause cause) {
         if (!individuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
@@ -540,6 +556,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the number of individuals
      */
+    @Override
     public int getInitialIndividualCount() {
         return initialIndividualCount;
     }
@@ -549,6 +566,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the number of individuals in the cellular automaton
      */
+    @Override
     public int getIndividualCount() {
         return individuals.size();
     }
@@ -569,6 +587,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return count;
     }
 
+    @Override
     public int getNotSafeIndividualsCount() {
         return notSaveIndividualsCount;
     }
@@ -720,6 +739,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         VisualResultsRecorder.getInstance().recordAction(new CAStateChangedAction(state));
     }
 
+    @Override
     public void start() {
         setState(State.RUNNING);
         notSaveIndividualsCount = individuals.size();
@@ -844,6 +864,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the time
      */
+    @Override
     public int getNeededTime() {
         return neededTime;
     }
@@ -853,7 +874,23 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @param neededTime the time step
      */
+    @Override
     public void setNeededTime(int neededTime) {
         this.neededTime = neededTime;
+    }
+
+    @Override
+    public Collection<StaticPotential> getStaticPotentials() {
+        return getPotentialManager().getStaticPotentials();
+    }
+
+    @Override
+    public DynamicPotential getDynamicPotential() {
+        return getPotentialManager().getDynamicPotential();
+    }
+
+    @Override
+    public StaticPotential getSafePotential() {
+        return getPotentialManager().getSafePotential();
     }
 }

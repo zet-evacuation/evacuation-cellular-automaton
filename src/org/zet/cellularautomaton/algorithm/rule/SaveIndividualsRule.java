@@ -33,7 +33,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     protected void onExecute(EvacCell cell) {
         Individual savedIndividual = cell.getState().getIndividual();
         if (!(savedIndividual.isSafe())) {
-            esp.getCa().setIndividualSave(savedIndividual);
+            esp.getCellularAutomaton().setIndividualSave(savedIndividual);
             savedIndividual.setPanic(0);
 
             if (cell instanceof SaveCell) {
@@ -46,10 +46,10 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     private void setExitPotential(SaveCell cell, Individual savedIndividual) {
         StaticPotential correspondingExitPotential = cell.getExitPotential();
         if (correspondingExitPotential == null) {
-            savedIndividual.setStaticPotential(esp.getCa().getPotentialManager().getSafePotential());
+            savedIndividual.setStaticPotential(esp.getCellularAutomaton().getSafePotential());
         } else {
             if (savedIndividual.getStaticPotential() != correspondingExitPotential) {
-                esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(savedIndividual, esp.getCa().getTimeStep());
+                esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(savedIndividual, esp.getCellularAutomaton().getTimeStep());
                 savedIndividual.setStaticPotential(correspondingExitPotential);
             }
             esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(savedIndividual, correspondingExitPotential);

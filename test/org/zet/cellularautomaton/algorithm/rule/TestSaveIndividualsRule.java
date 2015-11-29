@@ -66,7 +66,7 @@ public class TestSaveIndividualsRule {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(p).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
@@ -100,7 +100,7 @@ public class TestSaveIndividualsRule {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(p).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));

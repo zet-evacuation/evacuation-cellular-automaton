@@ -30,7 +30,7 @@ public class ICEM09SaveIndividualsRule extends AbstractSaveRule {
     protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
         org.zet.cellularautomaton.Individual savedIndividual = cell.getState().getIndividual();
         if( !(savedIndividual.isSafe()) ) {
-            esp.getCa().setIndividualSave( savedIndividual );
+            esp.getCellularAutomaton().setIndividualSave( savedIndividual );
             esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic( savedIndividual );
         }
     }

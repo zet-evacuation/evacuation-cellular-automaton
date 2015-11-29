@@ -36,7 +36,7 @@ public class ReactionRuleAllPersonsInRoom extends AbstractReactionRule {
     @Override
     protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
         for (Individual individual : cell.getRoom().getIndividuals()) {
-            if (esp.getCa().getTimeStep() < individual.getReactionTime() * esp.getCa().getStepsPerSecond()) {
+            if (esp.getCellularAutomaton().getTimeStep() < individual.getReactionTime() * esp.getCellularAutomaton().getStepsPerSecond()) {
                 return;
             }
         }

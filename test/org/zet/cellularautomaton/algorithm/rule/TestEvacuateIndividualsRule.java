@@ -28,7 +28,7 @@ public class TestEvacuateIndividualsRule {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
             }
         });
@@ -63,7 +63,7 @@ public class TestEvacuateIndividualsRule {
         PotentialController pc = context.mock(PotentialController.class);
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(p).getPotentialController();
                 will(returnValue(pc));

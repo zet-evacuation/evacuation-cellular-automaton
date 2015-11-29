@@ -41,7 +41,7 @@ public class TestInitialConcretePotentialRule {
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));

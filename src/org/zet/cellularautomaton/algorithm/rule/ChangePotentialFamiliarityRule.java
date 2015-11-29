@@ -66,7 +66,7 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 		if(!individual.isSafe()){
 			ArrayList<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
 			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
-			staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
+			staticPotentials.addAll(esp.getCellularAutomaton().getStaticPotentials());
 			for (StaticPotential sp : staticPotentials) {
                             // use the StaticPotential if it can lead the individual to an ExitCell
 				if (sp.getPotential(individual.getCell()) >= 0)  {
@@ -104,7 +104,7 @@ public class ChangePotentialFamiliarityRule extends AbstractPotentialChangeRule 
 
 			if(promisingNeighbours > CHANGE_THRESHOLD){
 				individual.setStaticPotential(newPotential);
-				esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, esp.getCa().getTimeStep());
+				esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, esp.getCellularAutomaton().getTimeStep());
 			}
 		}
 	}

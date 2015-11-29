@@ -58,7 +58,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         }
 
         Individual individual = cell.getState().getIndividual();
-        TargetCell target = esp.getCa().getIndividualToExitMapping().getExit(individual);
+        TargetCell target = esp.getCellularAutomaton().getIndividualToExitMapping().getExit(individual);
         if (target != null) {
             handleWithTarget(cell, target);
         } else {
@@ -71,7 +71,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      */
     protected void init() {
         potentialMapping = new HashMap<>();
-        for (StaticPotential potential : esp.getCa().getPotentialManager().getStaticPotentials()) {
+        for (StaticPotential potential : esp.getCellularAutomaton().getStaticPotentials()) {
             for (TargetCell target : potential.getAssociatedExitCells()) {
                 if (potentialMapping.put(target, potential) != null) {
                     throw new UnsupportedOperationException("There were two potentials leading to the same exit. This method can currently not deal with this.");

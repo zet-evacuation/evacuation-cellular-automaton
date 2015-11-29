@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
@@ -20,164 +20,152 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
  * @author Jan-Philipp Kappmeier
  */
 public abstract class EvacuationCellularAutomatonAlgorithm
-        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomaton, EvacCell,
-        EvacuationSimulationProblem, EvacuationSimulationResult> {
+        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell, EvacuationSimulationProblem, EvacuationSimulationResult> {
 
-  public EvacuationCellularAutomatonAlgorithm() {
-    System.out.println( "Instance created!" );
-  }
+    /** The simulation result. */
+    private EvacuationSimulationResult evacuationSimulationResult;
 
-  /** The simulation result. */
-  private EvacuationSimulationResult evacuationSimulationResult;
+    @Override
+    protected void initialize() {
+        setMaxSteps(getProblem().getEvacuationStepLimit());
+        log.log(Level.INFO, "{0} wird ausgeführt. ", toString());
+        evacuationSimulationResult = new EvacuationSimulationResult();
 
-  /**
-   * Define the maximum allowed time for evacuation (that is simulated) in seconds.
-   * @param time the time limit
-   */
-  public final void setMaxTimeInSeconds( double time ) {
-    int maxTimeInSteps = (int)Math.ceil( time * getProblem().getCa().getStepsPerSecond() );
-    setMaxSteps( maxTimeInSteps );
-  }
-
-  @Override
-  protected void initialize() {
-    log.log( Level.INFO, "{0} wird ausgeführt. ", toString() );
-    evacuationSimulationResult = new EvacuationSimulationResult();
-
-    getProblem().getCa().start();
-    Individual[] individualsCopy = getProblem().getCa().getIndividuals().toArray(
-            new Individual[getProblem().getCa().getIndividuals().size()] );
-    for( Individual i : individualsCopy ) {
-      Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
-      EvacCell c = i.getCell();
-      while( primary.hasNext() ) {
-        EvacuationRule r = primary.next();
-        r.execute( c );
-      }
-    }
-    getProblem().getCa().removeMarkedIndividuals();
-  }
-
-  @Override
-  protected void performStep() {
-    super.performStep();
-
-    super.increaseStep();
-
-    getProblem().getCa().removeMarkedIndividuals();
-    getProblem().getPotentialController().updateDynamicPotential(
-            getProblem().getParameterSet().probabilityDynamicIncrease(),
-            getProblem().getParameterSet().probabilityDynamicDecrease() );
-//		caController.getPotentialController().updateDynamicPotential(
-//            caController.parameterSet.probabilityDynamicIncrease(),
-//            caController.parameterSet.probabilityDynamicDecrease() );
-    getProblem().getCa().nextTimeStep();
-
-    fireProgressEvent( getProgress(), String.format( "%1$s von %2$s Personen evakuiert.",
-            getProblem().getCa().getInitialIndividualCount() - getProblem().getCa().getIndividualCount(),
-            getProblem().getCa().getInitialIndividualCount() ) );
-  }
-
-  @Override
-  protected final void execute( EvacCell cell ) {
-
-    Individual i = Objects.requireNonNull( cell.getState().getIndividual(),
-            "Execute called on EvacCell that does not contain an individual!" );
-    //System.out.println( "Executing rules for individual " + i );
-    Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
-    while( loop.hasNext() ) { // Execute all rules
-      EvacuationRule r = loop.next();
-      r.execute( i.getCell() );
-    }
-  }
-
-  @Override
-  protected EvacuationSimulationResult terminate() {
-    // let die all individuals which are not already dead and not safe
-    if( getProblem().getCa().getNotSafeIndividualsCount() != 0 ) {
-      Individual[] individualsCopy = getProblem().getCa().getIndividuals().toArray(
-              new Individual[getProblem().getCa().getIndividuals().size()] );
-      for( Individual i : individualsCopy ) {
-        if( !i.getCell().getState().getIndividual().isSafe() ) {
-          getProblem().getCa().setIndividualDead(i, DeathCause.NOT_ENOUGH_TIME );
+        getProblem().getCellularAutomaton().start();
+        Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
+                new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
+        for (Individual i : individualsCopy) {
+            Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
+            EvacCell c = i.getCell();
+            while (primary.hasNext()) {
+                EvacuationRule r = primary.next();
+                r.execute(c);
+            }
         }
-      }
+        getProblem().getCellularAutomaton().removeMarkedIndividuals();
     }
-    fireProgressEvent( 1, "Simulation abgeschlossen" );
 
-    getProblem().getCa().stop();
-    System.out.println( "Time steps: " + getProblem().getCa().getTimeStep() );
-    return evacuationSimulationResult;
-  }
+    @Override
+    protected void performStep() {
+        super.performStep();
 
-  @Override
-  protected boolean isFinished() {
-    boolean continueCondition = ((getProblem().getCa().getNotSafeIndividualsCount() > 0
-            || getProblem().getCa().getTimeStep() <= getProblem().getCa().getNeededTime()) /*&& !isCancelled()*/);
-    return super.isFinished() || !continueCondition;
-  }
+        super.increaseStep();
 
-  /**
-   * Sends a progress event. The progress is defined as the maximum of the percentage of already evacuated individuals
-   * and the fraction of time steps of the maximum amount of time steps already simulated.
-   * @return the current progress as percentage of safe individuals
-   */
-  @Override
-  protected final double getProgress() {
-    double timeProgress = super.getProgress();
-    double individualProgress = 1.0 - ((double)getProblem().getCa().getIndividualCount()
-            / getProblem().getCa().getInitialIndividualCount());
-    double progress = Math.max( individualProgress, timeProgress );
-    return progress;
-  }
+        getProblem().getCellularAutomaton().removeMarkedIndividuals();
+        getProblem().getPotentialController().updateDynamicPotential(
+                getProblem().getParameterSet().probabilityDynamicIncrease(),
+                getProblem().getParameterSet().probabilityDynamicDecrease());
+        getProblem().getCellularAutomaton().nextTimeStep();
 
-  /**
-   * An iterator that iterates over all cells of the cellular automaton that contains an individual. The rules of the
-   * simulation algorithm are being executed on each of the occupied cells.
-   * @return iterator of all occupied cells
-   */
-  @Override
-  public final Iterator<EvacCell> iterator() {
-    return new CellIterator( getIndividuals() );
+        fireProgressEvent(getProgress(), String.format("%1$s von %2$s Personen evakuiert.",
+                getProblem().getCellularAutomaton().getInitialIndividualCount() - getProblem().getCellularAutomaton().getIndividualCount(),
+                getProblem().getCellularAutomaton().getInitialIndividualCount()));
+    }
 
-  }
+    @Override
+    protected final void execute(EvacCell cell) {
 
-  /**
-   * Returns all individuals currently contained in the simulation in an unspecified order. Individuals are being
-   * removed from simulation when they are either dead or reach exit cells. The order can be specified by overwriting
-   * implementations.
-   * @return all individuals in the simulation
-   */
-  protected abstract List<Individual> getIndividuals();
+        Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
+                "Execute called on EvacCell that does not contain an individual!");
+        Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
+        while (loop.hasNext()) { // Execute all rules
+            EvacuationRule r = loop.next();
+            r.execute(i.getCell());
+        }
+    }
 
-  /**
-   * A simple iterator that iterates over all cells of the cellular automaton that contain an individual. The iteration
-   * order equals the order of the individuals given.
-   */
-  private static class CellIterator implements Iterator<EvacCell> {
-    private final Iterator<Individual> individuals;
+    @Override
+    protected EvacuationSimulationResult terminate() {
+        // let die all individuals which are not already dead and not safe
+        if (getProblem().getCellularAutomaton().getNotSafeIndividualsCount() != 0) {
+            Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
+                    new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
+            for (Individual i : individualsCopy) {
+                if (!i.getCell().getState().getIndividual().isSafe()) {
+                    getProblem().getCellularAutomaton().setIndividualDead(i, DeathCause.NOT_ENOUGH_TIME);
+                }
+            }
+        }
+        fireProgressEvent(1, "Simulation abgeschlossen");
+
+        getProblem().getCellularAutomaton().stop();
+        log("Time steps: " + getProblem().getCellularAutomaton().getTimeStep());
+        return evacuationSimulationResult;
+    }
+
+    @Override
+    protected boolean isFinished() {
+        boolean continueCondition = ((getProblem().getCellularAutomaton().getNotSafeIndividualsCount() > 0
+                || getProblem().getCellularAutomaton().getTimeStep() <= getProblem().getCellularAutomaton().getNeededTime()) /*&& !isCancelled()*/);
+        return super.isFinished() || !continueCondition;
+    }
 
     /**
-     * Initializes the object with a list of individuals whose cells are iterated over.
-     * @param individuals the individuals
+     * Sends a progress event. The progress is defined as the maximum of the percentage of already evacuated individuals
+     * and the fraction of time steps of the maximum amount of time steps already simulated.
+     *
+     * @return the current progress as percentage of safe individuals
      */
-    private CellIterator( List<Individual> individuals ) {
-      this.individuals = Objects.requireNonNull( individuals, "Individuals list must not be null." ).iterator();
+    @Override
+    protected final double getProgress() {
+        double timeProgress = super.getProgress();
+        double individualProgress = 1.0 - ((double) getProblem().getCellularAutomaton().getIndividualCount()
+                / getProblem().getCellularAutomaton().getInitialIndividualCount());
+        double progress = Math.max(individualProgress, timeProgress);
+        return progress;
     }
 
+    /**
+     * An iterator that iterates over all cells of the cellular automaton that contains an individual. The rules of the
+     * simulation algorithm are being executed on each of the occupied cells.
+     *
+     * @return iterator of all occupied cells
+     */
     @Override
-    public boolean hasNext() {
-      return individuals.hasNext();
+    public final Iterator<EvacCell> iterator() {
+        return new CellIterator(getIndividuals());
+
     }
 
-    @Override
-    public EvacCell next() {
-      return individuals.next().getCell();
-    }
+    /**
+     * Returns all individuals currently contained in the simulation in an unspecified order. Individuals are being
+     * removed from simulation when they are either dead or reach exit cells. The order can be specified by overwriting
+     * implementations.
+     *
+     * @return all individuals in the simulation
+     */
+    protected abstract List<Individual> getIndividuals();
 
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException( "Removal of cells is not supported." );
+    /**
+     * A simple iterator that iterates over all cells of the cellular automaton that contain an individual. The
+     * iteration order equals the order of the individuals given.
+     */
+    private static class CellIterator implements Iterator<EvacCell> {
+
+        private final Iterator<Individual> individuals;
+
+        /**
+         * Initializes the object with a list of individuals whose cells are iterated over.
+         *
+         * @param individuals the individuals
+         */
+        private CellIterator(List<Individual> individuals) {
+            this.individuals = Objects.requireNonNull(individuals, "Individuals list must not be null.").iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return individuals.hasNext();
+        }
+
+        @Override
+        public EvacCell next() {
+            return individuals.next().getCell();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Removal of cells is not supported.");
+        }
     }
-  }
 }

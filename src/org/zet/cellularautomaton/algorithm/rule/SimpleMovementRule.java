@@ -54,7 +54,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
-        esp.getCa().moveIndividual(from, targetCell);
+        esp.getCellularAutomaton().moveIndividual(from, targetCell);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
         Individual individual = cell.getState().getIndividual();
         List<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
         List<StaticPotential> staticPotentials = new ArrayList<>();
-        staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
+        staticPotentials.addAll(esp.getCellularAutomaton().getStaticPotentials());
         double minDistanceToEvacArea = Double.MAX_VALUE;
         double distanceToEvacArea;
         for (StaticPotential sp : staticPotentials) {
@@ -65,7 +65,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
         Collections.sort(potentialToLengthOfWayMapper);
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (potentialToLengthOfWayMapper.isEmpty()) {
-            esp.getCa().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
+            esp.getCellularAutomaton().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
         } else {
             int nrOfPossiblePotentials = (int) (Math.round((1 - individual.getFamiliarity()) * potentialToLengthOfWayMapper.size()));
             if (nrOfPossiblePotentials < 1) {

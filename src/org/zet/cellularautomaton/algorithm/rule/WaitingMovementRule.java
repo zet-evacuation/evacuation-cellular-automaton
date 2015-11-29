@@ -75,7 +75,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         double oldPanic = i.getPanic();
         esp.getParameterSet().updatePanic(i, targetCell, this.neighboursByPriority(i.getCell()));
         if (oldPanic != i.getPanic()) {
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(i, esp.getCa().getTimeStep(), i.getPanic());
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(i, esp.getCellularAutomaton().getTimeStep(), i.getPanic());
         }
     }
 
@@ -196,7 +196,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         double oldExhaustion = i.getExhaustion();
         esp.getParameterSet().updateExhaustion(i, targetCell);
         if (oldExhaustion != i.getExhaustion()) {
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(i, esp.getCa().getTimeStep(), i.getExhaustion());
+            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(i, esp.getCellularAutomaton().getTimeStep(), i.getExhaustion());
         }
     }
 

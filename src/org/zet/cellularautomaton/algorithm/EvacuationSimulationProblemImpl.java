@@ -27,6 +27,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationSimulationProblemImpl implements EvacuationSimulationProblem {
+    double seconds = 300;
 
     private EvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
@@ -54,7 +55,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     }
 
     @Override
-    public EvacuationCellularAutomaton getCa() {
+    public EvacuationCellularAutomaton getCellularAutomaton() {
         return ca;
     }
 
@@ -76,5 +77,15 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     @Override
     public EvacuationRuleSet getRuleSet() {
         return ruleSet;
+    }
+
+    
+    @Override
+    public int getEvacuationStepLimit() {
+        return (int)Math.ceil( seconds * getCellularAutomaton().getStepsPerSecond());
+    }
+
+    public void setEvacuationTimeLimit(double seconds) {
+        this.seconds = seconds;
     }
 }

@@ -12,6 +12,7 @@ import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.ArrayList;
 import java.util.List;
+import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 
 /**
  * The class {@code BestResponseDynamics} ...
@@ -47,9 +48,9 @@ public class BestResponseDynamics {
         System.out.println("Best Response Rounds: " + c);
     }
 
-    public int computePotential(EvacCell cell, EvacuationCellularAutomaton ca) {
+    public int computePotential(EvacCell cell, EvacuationCellularAutomatonInterface ca) {
         ArrayList<StaticPotential> exits = new ArrayList<>();
-        exits.addAll(ca.getPotentialManager().getStaticPotentials());
+        exits.addAll(ca.getStaticPotentials());
         StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
         double response = Double.MAX_VALUE;
         for (StaticPotential pot : exits) {
@@ -68,7 +69,7 @@ public class BestResponseDynamics {
         }
     }
 
-    private double getResponse(EvacuationCellularAutomaton ca, EvacCell cell, StaticPotential pot) {
+    private double getResponse(EvacuationCellularAutomatonInterface ca, EvacCell cell, StaticPotential pot) {
 
         // Constants
         Individual ind = cell.getState().getIndividual();

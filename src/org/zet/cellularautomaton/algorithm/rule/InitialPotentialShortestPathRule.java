@@ -49,7 +49,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
     public static void assignShortestPathPotential(EvacCell cell, EvacuationSimulationProblem esp) {
         Individual individual = cell.getState().getIndividual();
         List<StaticPotential> staticPotentials = new ArrayList<>();
-        staticPotentials.addAll(esp.getCa().getPotentialManager().getStaticPotentials());
+        staticPotentials.addAll(esp.getCellularAutomaton().getStaticPotentials());
         StaticPotential initialPotential = new StaticPotential();
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
         double distanceToEvacArea;
@@ -63,7 +63,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (Double.isInfinite(minDistanceToEvacArea)) {
-            esp.getCa().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
+            esp.getCellularAutomaton().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
         }
 
         individual.setStaticPotential(initialPotential);

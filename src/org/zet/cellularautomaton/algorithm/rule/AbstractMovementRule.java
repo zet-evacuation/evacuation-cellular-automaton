@@ -130,7 +130,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      */
     protected void setStepEndTime(Individual i, double d) {
         i.setStepEndTime(d);
-        esp.getCa().setNeededTime((int) Math.ceil(d));
+        esp.getCellularAutomaton().setNeededTime((int) Math.ceil(d));
     }
 
     public boolean isDirectExecute() {

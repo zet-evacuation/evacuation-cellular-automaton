@@ -55,7 +55,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
@@ -94,7 +94,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
 
     @Test
     public void assignedExitsAreAssigned() {
-        p.getCa().setIndividualToExitMapping(exitMapping);
+        eca.setIndividualToExitMapping(exitMapping);
         
         StaticPotential sp = new StaticPotential();
         List<ExitCell> spExits = new LinkedList<>();
@@ -111,13 +111,13 @@ public class TestInitialPotentialExitMappingRuleStrict {
 
     @Test(expected = IllegalStateException.class)
     public void noPotentialForTargetFails() {
-        p.getCa().setIndividualToExitMapping(exitMapping);
+        eca.setIndividualToExitMapping(exitMapping);
         rule.execute(cell);
     }
     
     @Test(expected = UnsupportedOperationException.class)
     public void twoPotentialsForOneCellFails() {
-        p.getCa().setIndividualToExitMapping(exitMapping);
+        eca.setIndividualToExitMapping(exitMapping);
         
         StaticPotential sp1 = new StaticPotential();
         List<ExitCell> sp1Exits = new LinkedList<>();
@@ -139,13 +139,13 @@ public class TestInitialPotentialExitMappingRuleStrict {
     
     @Test(expected = IllegalArgumentException.class)
     public void failsIfNotAssigned() {
-        p.getCa().setIndividualToExitMapping(_unused -> null);
+        eca.setIndividualToExitMapping(_unused -> null);
         rule.execute(cell);
     }
     
     @Test()
     public void deadIndividualWithoutTarget() {
-        p.getCa().setIndividualToExitMapping(_unused -> null);
+        eca.setIndividualToExitMapping(_unused -> null);
         i.die(DeathCause.EXIT_UNREACHABLE);
         rule.execute(cell);
     }

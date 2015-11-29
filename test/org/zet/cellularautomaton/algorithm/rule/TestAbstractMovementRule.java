@@ -207,7 +207,7 @@ public class TestAbstractMovementRule {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
-                allowing(esp).getCa();
+                allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
             }
         });        

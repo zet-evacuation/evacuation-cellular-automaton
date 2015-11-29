@@ -61,7 +61,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
             // calculate number of individuals that are heading to the same exit and closer to it            
             ArrayList<Individual> otherInds = new ArrayList<>();            
             ArrayList<Room> rooms = new ArrayList<>();
-            rooms.addAll(esp.getCa().getRooms());
+            rooms.addAll(esp.getCellularAutomaton().getRooms());
             for (Room room : rooms){
                 for (Individual i : room.getIndividuals()){
                     otherInds.add(i);
@@ -116,7 +116,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
 	protected void onExecute(EvacCell cell) {                                   
                         
             ArrayList<StaticPotential> exits = new ArrayList<StaticPotential>();
-            exits.addAll(esp.getCa().getPotentialManager().getStaticPotentials());            
+            exits.addAll(esp.getCellularAutomaton().getStaticPotentials());            
             StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
             double response = Double.MAX_VALUE;
             for (StaticPotential pot : exits){                

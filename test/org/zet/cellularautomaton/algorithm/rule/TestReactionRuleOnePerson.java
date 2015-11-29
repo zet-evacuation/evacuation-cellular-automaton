@@ -18,6 +18,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
  */
 public class TestReactionRuleOnePerson {
     private final Mockery context = new Mockery();
+    EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
 
     @Test
     public void alertsImmediately() {
@@ -47,27 +48,27 @@ public class TestReactionRuleOnePerson {
         rule.execute(cell);
         assertThat(evacuee.isAlarmed(), is(false));
         
-        p.getCa().setAbsoluteMaxSpeed(0.41);
+        eca.setAbsoluteMaxSpeed(0.41);
         
         rule.execute(cell);
         for( int i = 0; i < 7; ++i) {
-            p.getCa().nextTimeStep();
+            p.getCellularAutomaton().nextTimeStep();
             rule.execute(cell);
             assertThat(evacuee.isAlarmed(), is(false));        
         }
         // Individuals reaction time is 7 
         // one additional time steps sets time to 7.175
-        p.getCa().nextTimeStep();
+        p.getCellularAutomaton().nextTimeStep();
         rule.execute(cell);
         assertThat(evacuee.isAlarmed(), is(true));
     }
 
     private EvacuationSimulationProblem getEvacuationProblem() {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
-                allowing(p).getCa();
+                allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
             }
         });

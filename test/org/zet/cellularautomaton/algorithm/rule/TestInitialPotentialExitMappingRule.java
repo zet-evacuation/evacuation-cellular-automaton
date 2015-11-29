@@ -54,7 +54,7 @@ public class TestInitialPotentialExitMappingRule {
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(esp).getCa();
+                allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
@@ -93,7 +93,7 @@ public class TestInitialPotentialExitMappingRule {
 
     @Test
     public void assignedExitsAreAssigned() {
-        esp.getCa().setIndividualToExitMapping(exitMapping);
+        eca.setIndividualToExitMapping(exitMapping);
         
         StaticPotential sp = new StaticPotential();
         List<ExitCell> spExits = new LinkedList<>();
@@ -110,13 +110,13 @@ public class TestInitialPotentialExitMappingRule {
 
     @Test(expected = IllegalStateException.class)
     public void noPotentialForTargetFails() {
-        esp.getCa().setIndividualToExitMapping(exitMapping);
+        eca.setIndividualToExitMapping(exitMapping);
         rule.execute(cell);
     }
     
     @Test(expected = UnsupportedOperationException.class)
     public void twoPotentialsForOneCellFails() {
-        esp.getCa().setIndividualToExitMapping(exitMapping);
+        eca.setIndividualToExitMapping(exitMapping);
         
         StaticPotential sp1 = new StaticPotential();
         List<ExitCell> sp1Exits = new LinkedList<>();
@@ -144,7 +144,7 @@ public class TestInitialPotentialExitMappingRule {
         longDistance.setPotential(cell, 2);
         
         IndividualToExitMapping mapping = _unused -> null;
-        esp.getCa().setIndividualToExitMapping(mapping);
+        eca.setIndividualToExitMapping(mapping);
         
         PotentialManager pm = eca.getPotentialManager();
         pm.addStaticPotential(longDistance);

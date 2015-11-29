@@ -68,7 +68,7 @@ public class ChangePotentialAttractivityOfExitRule extends AbstractPotentialChan
 		Individual individual = cell.getState().getIndividual();
 		if( !individual.isSafe() ) {
 			ArrayList<StaticPotential> staticPotentials = new ArrayList<>();
-			staticPotentials.addAll( esp.getCa().getPotentialManager().getStaticPotentials() );
+			staticPotentials.addAll( esp.getPotentialController().getPm().getStaticPotentials() );
 			boolean initialPotentialFound = false;
 			StaticPotential mostAttractiveSP = null;
 			// Find any admissible StaticPotential for this Individual
@@ -101,7 +101,7 @@ public class ChangePotentialAttractivityOfExitRule extends AbstractPotentialChan
 
 			if( promisingNeighbours > CHANGE_THRESHOLD ) {
 				individual.setStaticPotential( mostAttractiveSP );
-				esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( individual, esp.getCa().getTimeStep() );
+				esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic( individual, esp.getCellularAutomaton().getTimeStep() );
 			}
 		}
 	}

@@ -44,7 +44,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         //if( !isInitialized() ) {
         //	throw new IllegalArgumentException( DefaultLoc.getSingleton().getString( "algo.ca.NotInitializedException" ) );
         //}
-        getProblem().getCa().nextTimeStep();
+        getProblem().getCellularAutomaton().nextTimeStep();
 
         // Suche movement rule und setze auf not direct action
         setDirectExecute(false);
@@ -196,7 +196,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         }
 
 		//setDirectExecute( true );
-        getProblem().getCa().removeMarkedIndividuals();
+        getProblem().getCellularAutomaton().removeMarkedIndividuals();
         getProblem().getPotentialController().updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());
     }

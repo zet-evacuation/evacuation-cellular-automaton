@@ -32,11 +32,11 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
     @Override
     protected void onExecute(EvacCell cell) {
         ArrayList<StaticPotential> exits = new ArrayList<>();
-        esp.getCa().getPotentialManager().getStaticPotentials().stream().filter(
+        esp.getCellularAutomaton().getStaticPotentials().stream().filter(
                 sp -> (sp.getDistance(cell) >= 0)).forEach(sp -> exits.add(sp));
         
         if( exits.isEmpty() ) {
-            esp.getCa().setIndividualDead(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
+            esp.getCellularAutomaton().setIndividualDead(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
         } else {
             int numberOfExits = exits.size();
             RandomUtils random = RandomUtils.getInstance();
