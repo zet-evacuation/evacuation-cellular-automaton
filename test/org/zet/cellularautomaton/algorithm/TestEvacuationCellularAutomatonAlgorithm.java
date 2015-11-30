@@ -15,6 +15,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 
 /**
@@ -119,6 +120,111 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.setProblem(esp);
         algorithm.runAlgorithm();
     }
+
+    @Test
+    public void testPerformStep() {
+        // Tests that
+        // - Execute is called for all rules
+        // - Marked individuals are removed from CA
+        // - Dynamic Potential is updated
+        // - Time Step of CA is updated.
+        
+        Individual i1 = new Individual();
+        EvacCell cell1 = new MockEvacCell(0, 0);
+        i1.setCell(cell1);
+        cell1.getState().setIndividual(i1);
+        Individual i2 = new Individual();
+        EvacCell cell2 = new MockEvacCell(0, 0);
+        i2.setCell(cell2);
+        cell2.getState().setIndividual(i2);
+        List<Individual> individuals = new LinkedList<>();
+        individuals.add(i1);
+        individuals.add(i2);
+
+        MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm() {
+            boolean finished = false;
+            @Override
+            protected void initialize() {
+                
+            }
+
+            @Override
+            protected EvacuationSimulationResult terminate() {
+                return null;
+            }
+
+            @Override
+            protected boolean isFinished() {
+                if (finished) {
+                    return true;
+                }
+                finished = true;
+                return false;
+            }
+
+            @Override
+            protected List<Individual> getIndividuals() {
+                return individuals;
+            }
+            
+            
+        };
+        
+        // Set up a rule set
+        EvacuationRuleSet rules = new EvacuationRuleSet() {
+            
+        };
+        EvacuationRule primary1 = context.mock(EvacuationRule.class, "primary rule 1");
+        EvacuationRule primary2 = context.mock(EvacuationRule.class, "primary rule 2");
+        EvacuationRule loop = context.mock(EvacuationRule.class);
+        
+        rules.add(primary1, true, false);
+        rules.add(primary2, true, true);
+        rules.add(loop, false, true);
+        
+        
+        
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        PotentialController pc = context.mock(PotentialController.class);
+        ParameterSet ps = context.mock(ParameterSet.class);
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(eca).getIndividuals();
+                will(returnValue(individuals));
+                allowing(esp).getRuleSet();
+                will(returnValue(rules));
+
+                exactly(1).of(eca).removeMarkedIndividuals();
+
+                allowing(esp).getPotentialController();
+                will(returnValue(pc));
+                allowing(esp).getParameterSet();
+                will(returnValue(ps));
+                allowing(ps).probabilityDynamicDecrease();
+                will(returnValue(0.0));
+                allowing(ps).probabilityDynamicIncrease();
+                will(returnValue(0.0));
+                exactly(1).of(pc).updateDynamicPotential(with(0.0), with(0.0));
+                exactly(1).of(eca).nextTimeStep();
+
+                allowing(eca).getIndividualCount();
+                allowing(eca).getInitialIndividualCount();
+
+                // loop rules are allowed to be called exactly once for each of the cells
+                never(primary1).execute(with(any(EvacCell.class)));
+                exactly(1).of(primary2).execute(with(cell1));
+                exactly(1).of(primary2).execute(with(cell2));
+                exactly(1).of(loop).execute(with(cell1));
+                exactly(1).of(loop).execute(with(cell2));
+            }
+        });        
+        
+        algorithm.setProblem(esp);
+        algorithm.runAlgorithm();
+    }    
     
     @Test
     public void testMaxStepsTakenFromProblem() {

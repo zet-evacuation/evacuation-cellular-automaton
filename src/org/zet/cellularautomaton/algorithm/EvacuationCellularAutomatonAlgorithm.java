@@ -53,8 +53,8 @@ public abstract class EvacuationCellularAutomatonAlgorithm
 
         getProblem().getCellularAutomaton().removeMarkedIndividuals();
         getProblem().getPotentialController().updateDynamicPotential(
-                getProblem().getParameterSet().probabilityDynamicIncrease(),
-                getProblem().getParameterSet().probabilityDynamicDecrease());
+        getProblem().getParameterSet().probabilityDynamicIncrease(),
+        getProblem().getParameterSet().probabilityDynamicDecrease());
         getProblem().getCellularAutomaton().nextTimeStep();
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s Personen evakuiert.",
