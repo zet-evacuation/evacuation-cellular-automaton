@@ -38,7 +38,7 @@ public abstract class AbstractCellularAutomatonSimulationAlgorithm<A extends Cel
         C extends Cell<?>, P extends CellularAutomatonSimulationProblem<A, C>, R>
         extends SimulationAlgorithm<P, R> implements Iterable<C> {
 
-    private int maxSteps;
+    private int maxSteps = 300;
 
     public int getMaxSteps() {
         return maxSteps;
