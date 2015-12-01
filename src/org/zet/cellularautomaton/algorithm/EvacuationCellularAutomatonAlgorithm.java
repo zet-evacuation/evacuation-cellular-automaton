@@ -95,9 +95,16 @@ public abstract class EvacuationCellularAutomatonAlgorithm
 
     @Override
     protected boolean isFinished() {
-        boolean continueCondition = ((getProblem().getCellularAutomaton().getNotSafeIndividualsCount() > 0
-                || getProblem().getCellularAutomaton().getTimeStep() <= getProblem().getCellularAutomaton().getNeededTime()) /*&& !isCancelled()*/);
-        return super.isFinished() || !continueCondition;
+        boolean thisFinished = allIndividualsSave() && timeOver();
+        return super.isFinished() || thisFinished;
+    }
+    
+    private boolean allIndividualsSave() {
+        return getProblem().getCellularAutomaton().getNotSafeIndividualsCount() == 0;
+    }
+    
+    private boolean timeOver() {
+        return getProblem().getCellularAutomaton().getTimeStep() > getProblem().getCellularAutomaton().getNeededTime();
     }
 
     /**
@@ -111,8 +118,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
         double timeProgress = super.getProgress();
         double individualProgress = 1.0 - ((double) getProblem().getCellularAutomaton().getIndividualCount()
                 / getProblem().getCellularAutomaton().getInitialIndividualCount());
-        double progress = Math.max(individualProgress, timeProgress);
-        return progress;
+        return Math.max(individualProgress, timeProgress);
     }
 
     /**
@@ -165,7 +171,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("Removal of cells is not supported.");
+            throw new AssertionError("Attempted cell removal.");
         }
     }
 }

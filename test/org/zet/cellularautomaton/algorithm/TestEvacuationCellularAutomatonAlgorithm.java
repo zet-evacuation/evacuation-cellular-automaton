@@ -231,6 +231,63 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.setProblem(esp);
         algorithm.runAlgorithm();
     }
+    
+    @Test
+    public void testUnfinished() {
+        assertThat(getAlgorithm(1, 0, 1, 2).isFinished(), is(false));
+    }
+
+    @Test
+    public void testContinueIfTimeNecessary() {
+        assertThat(getAlgorithm(0, 0, 1, 2).isFinished(), is(false));
+    }
+    
+    @Test
+    public void testContinueIfNotAllSafe() {
+        assertThat(getAlgorithm(1, 1, 0, 2).isFinished(), is(false));
+    }
+    
+    @Test
+    public void testFinishedIfAllSave() {
+        assertThat(getAlgorithm(0, 1, 0, 2).isFinished(), is(true));
+    }
+    
+    @Test
+    public void testFinishedIfMaxStep() {
+        assertThat(getAlgorithm(1, 0, 1, 1).isFinished(), is(true));
+    }
+    
+    public EvacuationCellularAutomatonAlgorithm getAlgorithm(int notSave, int timeStep, int neededTime, int maxSteps) {
+        MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm() {
+            @Override
+            protected void performStep() {
+                super.increaseStep();
+            }
+            
+            
+        };
+        
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(eca).getNotSafeIndividualsCount();
+                will(returnValue(notSave));
+                
+                allowing(eca).getTimeStep();
+                will(returnValue(timeStep));
+                
+                allowing(eca).getNeededTime();
+                will(returnValue(neededTime));
+            }
+        });
+        algorithm.setMaxSteps(maxSteps);
+        algorithm.performStep();
+        algorithm.setProblem(esp);
+        return algorithm;
+    }
 
     @Test
     public void testProgress() {
