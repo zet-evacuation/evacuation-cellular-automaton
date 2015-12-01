@@ -23,4 +23,8 @@ import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimula
  */
 public class EvacuationSimulationResult extends CellularAutomatonSimulationResult {
 
+    public EvacuationSimulationResult(int steps) {
+        super(steps);
+    }
+
 }

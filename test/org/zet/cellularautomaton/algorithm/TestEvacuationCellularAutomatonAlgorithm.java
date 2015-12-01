@@ -12,6 +12,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
+import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
@@ -142,6 +143,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         algorithm.setProblem(esp);
         algorithm.runAlgorithm();
+        context.assertIsSatisfied();
     }
 
     @Test
@@ -230,7 +232,99 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         algorithm.setProblem(esp);
         algorithm.runAlgorithm();
+        context.assertIsSatisfied();
     }
+    
+    @Test
+    public void testTerminateAllSave() {
+        MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
+            @Override
+            protected void initialize() {
+                
+            }
+
+            @Override
+            protected List<Individual> getIndividuals() {
+                return null;
+            }
+        };
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(eca).getNotSafeIndividualsCount();
+                will(returnValue(0));
+                
+                allowing(eca).stop();
+                allowing(eca).getTimeStep();
+                will(returnValue(15));
+            }
+        });
+        algorithm.addAlgorithmListener(event -> {
+            if( event instanceof AlgorithmProgressEvent ) {
+                assertThat(((AlgorithmDetailedProgressEvent) event).getProgress(), is(closeTo(1.0, 10e-6)));
+            }
+        });
+        
+        algorithm.setProblem(esp);
+        EvacuationSimulationResult result = algorithm.terminate();
+        assertThat(result.getSteps(), is(equalTo(15)));
+    }
+    
+    @Test
+    public void testTerminateSomeIndividualsLeft() {
+        MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
+            @Override
+            protected void initialize() {
+                
+            }
+
+            @Override
+            protected List<Individual> getIndividuals() {
+                return null;
+            }
+        };
+        Individual i1 = new Individual();
+        i1.setNumber(1);
+        EvacCell cell1 = new MockEvacCell(0, 0);
+        i1.setCell(cell1);
+        cell1.getState().setIndividual(i1);
+        Individual i2 = new Individual();
+        i2.setNumber(2);
+        EvacCell cell2 = new MockEvacCell(0, 0);
+        i2.setCell(cell2);
+        cell2.getState().setIndividual(i2);
+        List<Individual> individuals = new LinkedList<>();
+        individuals.add(i1);
+        individuals.add(i2);
+        i2.setSafe(true);
+
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(eca).getNotSafeIndividualsCount();
+                will(returnValue(1));
+                
+                allowing(eca).getIndividuals();
+                will(returnValue(individuals));
+                exactly(1).of(eca).setIndividualDead(i1, DeathCause.NOT_ENOUGH_TIME);
+                never(eca).setIndividualDead(i2, DeathCause.NOT_ENOUGH_TIME);
+
+                allowing(eca).stop();
+                allowing(eca).getTimeStep();
+            }
+        });
+        
+        algorithm.setProblem(esp);
+        EvacuationSimulationResult result = algorithm.terminate();
+        context.assertIsSatisfied();
+    }
+    
     
     @Test
     public void testUnfinished() {
@@ -340,6 +434,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.setProblem(esp);
         algorithm.runAlgorithm();
         assertThat(d[0], is(closeTo(0.5, 10e-8)));
+        context.assertIsSatisfied();
     }
     
     @Test

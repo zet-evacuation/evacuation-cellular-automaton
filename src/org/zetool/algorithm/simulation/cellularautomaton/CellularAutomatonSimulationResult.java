@@ -6,5 +6,15 @@ package org.zetool.algorithm.simulation.cellularautomaton;
  */
 public class CellularAutomatonSimulationResult {
 
-    int steps;
+    private final int steps;
+
+    public CellularAutomatonSimulationResult(int steps) {
+        this.steps = steps;
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+    
+    
 }

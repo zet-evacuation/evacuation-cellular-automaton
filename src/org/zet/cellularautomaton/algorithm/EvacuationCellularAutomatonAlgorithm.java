@@ -22,14 +22,10 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 public abstract class EvacuationCellularAutomatonAlgorithm
         extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell, EvacuationSimulationProblem, EvacuationSimulationResult> {
 
-    /** The simulation result. */
-    private EvacuationSimulationResult evacuationSimulationResult;
-
     @Override
     protected void initialize() {
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} wird ausgeführt. ", toString());
-        evacuationSimulationResult = new EvacuationSimulationResult();
 
         getProblem().getCellularAutomaton().start();
         Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
@@ -90,7 +86,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
 
         getProblem().getCellularAutomaton().stop();
         log("Time steps: " + getProblem().getCellularAutomaton().getTimeStep());
-        return evacuationSimulationResult;
+        return new EvacuationSimulationResult(getProblem().getCellularAutomaton().getTimeStep());
     }
 
     @Override

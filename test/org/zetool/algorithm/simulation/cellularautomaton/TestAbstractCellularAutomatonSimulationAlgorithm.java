@@ -149,7 +149,7 @@ public class TestAbstractCellularAutomatonSimulationAlgorithm {
     @Test
     public void testInit() {
         FakeAbstractCellularAutomatonSimulationAlgorithm algorithm = new FakeAbstractCellularAutomatonSimulationAlgorithm();
-        assertThat(algorithm.getMaxSteps(), is(equalTo(0)));
+        assertThat(algorithm.getMaxSteps(), is(equalTo(300)));
     }
     
     @Test
