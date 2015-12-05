@@ -18,27 +18,26 @@ package org.zet.cellularautomaton.algorithm;
 import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.Individual;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationCellularAutomatonRandom extends EvacuationCellularAutomatonAlgorithm {
-
-    @Override
-    public List<Individual> getIndividuals() {
-        Individual[] indArray = getProblem().getCellularAutomaton().getIndividuals().toArray(new Individual[0]);
+    private static final Function<List<Individual>, Iterator<Individual>> random = (List<Individual> t) -> {
+        Individual[] indArray = t.toArray(new Individual[0]);
         // permute
         for (int i = indArray.length - 1; i >= 0; i--) {
             int randomNumber = (RandomUtils.getInstance()).getRandomGenerator().nextInt(i + 1);
-            Individual t = indArray[i];	// Save position i
+            Individual temp = indArray[i];	// Save position i
             indArray[i] = indArray[randomNumber];	// Store randomNumber at i
-            indArray[randomNumber] = t;	// Set Individual from i to randomNumber
+            indArray[randomNumber] = temp;	// Set Individual from i to randomNumber
         }
-        return Collections.unmodifiableList(Arrays.asList(indArray));
-    }
+        return Arrays.asList(indArray).iterator();
+    };
 
     @Override
     public String toString() {

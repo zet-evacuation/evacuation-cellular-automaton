@@ -1,16 +1,22 @@
 package org.zet.cellularautomaton.algorithm;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.junit.Assert.assertThat;
+import static org.zetool.common.util.Helper.in;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
@@ -19,6 +25,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
 import org.zetool.common.algorithm.AlgorithmProgressEvent;
 
@@ -67,12 +74,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 return false;
             }
 
-        @Override
-        protected List<Individual> getIndividuals() {
-            return Collections.EMPTY_LIST;
-        };
     }
-    
+
     @Test
     public void testInitializationPerformsRules() {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
@@ -92,15 +95,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             }
         };
         
-        Individual i1 = new Individual();
-        EvacCell cell1 = new MockEvacCell(0, 0);
-        i1.setCell(cell1);
-        Individual i2 = new Individual();
-        EvacCell cell2 = new MockEvacCell(0, 0);
-        i2.setCell(cell2);
-        List<Individual> individuals = new LinkedList<>();
-        individuals.add(i1);
-        individuals.add(i2);
+        List<Individual> individuals = getIndividuals();
         
         // Set up a rule set
         EvacuationRuleSet rules = new EvacuationRuleSet() {
@@ -133,10 +128,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(eca).getNotSafeIndividualsCount();
                 
                 // primary rules are allowed to be called exactly once for each of the cells
-                exactly(1).of(primary1).execute(with(cell1));
-                exactly(1).of(primary1).execute(with(cell2));
-                exactly(1).of(primary2).execute(with(cell1));
-                exactly(1).of(primary2).execute(with(cell2));
+                exactly(1).of(primary1).execute(with(individuals.get(0).getCell()));
+                exactly(1).of(primary1).execute(with(individuals.get(1).getCell()));
+                exactly(1).of(primary2).execute(with(individuals.get(0).getCell()));
+                exactly(1).of(primary2).execute(with(individuals.get(1).getCell()));
                 never(loop).execute(with(any(EvacCell.class)));
             }
         });        
@@ -154,17 +149,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         // - Dynamic Potential is updated
         // - Time Step of CA is updated.
         
-        Individual i1 = new Individual();
-        EvacCell cell1 = new MockEvacCell(0, 0);
-        i1.setCell(cell1);
-        cell1.getState().setIndividual(i1);
-        Individual i2 = new Individual();
-        EvacCell cell2 = new MockEvacCell(0, 0);
-        i2.setCell(cell2);
-        cell2.getState().setIndividual(i2);
-        List<Individual> individuals = new LinkedList<>();
-        individuals.add(i1);
-        individuals.add(i2);
+        List<Individual> individuals = getIndividuals();
 
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
             @Override
@@ -177,15 +162,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 return null;
             }
 
-            @Override
-            protected List<Individual> getIndividuals() {
-                return individuals;
-            }
         };
         
         // Set up a rule set
         EvacuationRuleSet rules = new EvacuationRuleSet() {
-            
         };
 
         EvacuationRule primary1 = context.mock(EvacuationRule.class, "primary rule 1");
@@ -207,6 +187,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getRuleSet();
                 will(returnValue(rules));
 
+                exactly(1).of(eca).getIndividuals();
+                will(returnValue(individuals));
+                
                 exactly(1).of(eca).removeMarkedIndividuals();
 
                 allowing(esp).getPotentialController();
@@ -223,10 +206,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 // loop rules are allowed to be called exactly once for each of the cells
                 never(primary1).execute(with(any(EvacCell.class)));
-                exactly(1).of(primary2).execute(with(cell1));
-                exactly(1).of(primary2).execute(with(cell2));
-                exactly(1).of(loop).execute(with(cell1));
-                exactly(1).of(loop).execute(with(cell2));
+                exactly(1).of(primary2).execute(with(individuals.get(0).getCell()));
+                exactly(1).of(primary2).execute(with(individuals.get(1).getCell()));
+                exactly(1).of(loop).execute(with(individuals.get(0).getCell()));
+                exactly(1).of(loop).execute(with(individuals.get(1).getCell()));
             }
         });        
         
@@ -243,10 +226,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
             }
 
-            @Override
-            protected List<Individual> getIndividuals() {
-                return null;
-            }
         };
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
@@ -281,11 +260,39 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
             }
 
-            @Override
-            protected List<Individual> getIndividuals() {
-                return null;
-            }
         };
+        List<Individual> individuals = getIndividuals();
+        individuals.get(1).setSafe(true);
+
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(eca).getNotSafeIndividualsCount();
+                will(returnValue(1));
+                
+                allowing(eca).getIndividuals();
+                will(returnValue(individuals));
+                exactly(1).of(eca).setIndividualDead(individuals.get(0), DeathCause.NOT_ENOUGH_TIME);
+                never(eca).setIndividualDead(individuals.get(1), DeathCause.NOT_ENOUGH_TIME);
+
+                allowing(eca).stop();
+                allowing(eca).getTimeStep();
+            }
+        });
+        
+        algorithm.setProblem(esp);
+        EvacuationSimulationResult result = algorithm.terminate();
+        context.assertIsSatisfied();
+    }
+    
+    /**
+     * Returns a list of two individuals including cell information.
+     * @return a list of individuals
+     */
+    private List<Individual> getIndividuals() {
         Individual i1 = new Individual();
         i1.setNumber(1);
         EvacCell cell1 = new MockEvacCell(0, 0);
@@ -299,30 +306,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         List<Individual> individuals = new LinkedList<>();
         individuals.add(i1);
         individuals.add(i2);
-        i2.setSafe(true);
-
-        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
-        context.checking(new Expectations() {
-            {
-                allowing(esp).getCellularAutomaton();
-                will(returnValue(eca));
-                allowing(eca).getNotSafeIndividualsCount();
-                will(returnValue(1));
-                
-                allowing(eca).getIndividuals();
-                will(returnValue(individuals));
-                exactly(1).of(eca).setIndividualDead(i1, DeathCause.NOT_ENOUGH_TIME);
-                never(eca).setIndividualDead(i2, DeathCause.NOT_ENOUGH_TIME);
-
-                allowing(eca).stop();
-                allowing(eca).getTimeStep();
-            }
-        });
-        
-        algorithm.setProblem(esp);
-        EvacuationSimulationResult result = algorithm.terminate();
-        context.assertIsSatisfied();
+        return individuals;
     }
     
     
@@ -357,8 +341,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             protected void performStep() {
                 super.increaseStep();
             }
-            
-            
         };
         
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
@@ -381,6 +363,105 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.performStep();
         algorithm.setProblem(esp);
         return algorithm;
+    }
+    
+    @Test
+    public void testDefaultIterator() {
+        List<Individual> individuals = getIndividuals(new int[] {4, 2, 6, 1} );
+        List<Individual> expectedOrder = new ArrayList<>();
+        for (int i : new int[]{0, 1, 2, 3}) {
+            expectedOrder.add(individuals.get(i));
+        }
+        MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(false);
+        assertOrder(algorithm, individuals, expectedOrder);
+    }
+    
+    @Test
+    public void testManualIterator() {
+        List<Individual> individuals = getIndividuals(new int[] {4, 2, 6, 1} );
+        List<Individual> expectedOrder = new ArrayList<>();
+        for (int i : new int[]{2, 1, 3, 0}) {
+            expectedOrder.add(individuals.get(i));
+        }
+        Function<List<Individual>,Iterator<Individual>> manualOrder = x -> expectedOrder.iterator();
+        EvacuationCellularAutomatonAlgorithm algorithm = new EvacuationCellularAutomatonAlgorithm(manualOrder);
+        assertOrder(algorithm, individuals, expectedOrder);
+    }
+    
+    private void assertOrder(EvacuationCellularAutomatonAlgorithm algorithm, List<Individual> individuals, List<Individual> expectedOrder) {
+        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(esp).getCellularAutomaton();
+                will(returnValue(eca));
+                
+                exactly(1).of(eca).getIndividuals();
+                will(returnValue(individuals));
+            }
+        });       
+        algorithm.setProblem(esp);
+        
+        List<Individual> callOrder = new LinkedList<>();
+        for( EvacCell individual : algorithm ) {
+            callOrder.add(individual.getState().getIndividual());
+        }
+        assertThat(callOrder, hasSize(expectedOrder.size()));
+        assertThat(callOrder, is(equalTo(expectedOrder)));
+    }
+    
+    @Test
+    public void testIteratorFrontToBack() {
+        List<Individual> individuals = getIndividuals(new int[] {4, 2, 6, 1} );
+        List<Individual> expectedOrder = new ArrayList<>();
+        for (int i : new int[]{3, 1, 0, 2}) {
+            expectedOrder.add(individuals.get(i));
+        }
+        assertCorrectOrder(EvacuationCellularAutomatonAlgorithm.FRONT_TO_BACK, individuals, expectedOrder);
+    }
+    
+    @Test
+    public void testIteratorBackToFront() {
+        List<Individual> individuals = getIndividuals(new int[] {4, 2, 6, 1} );
+        List<Individual> expectedOrder = new ArrayList<>();
+        for (int i : new int[]{2, 0, 1, 3}) {
+            expectedOrder.add(individuals.get(i));
+        }
+        assertCorrectOrder(EvacuationCellularAutomatonAlgorithm.BACK_TO_FRONT, individuals, expectedOrder);
+    }
+    
+    /**
+     * Returns a list containing individuals with associated static potentials and the given distance.
+     * @param distance array containing the distances of the individuals
+     * @return list containing as many individuals as distances
+     */
+    private List<Individual> getIndividuals(int[] distance) {
+        List<Individual> individuals = new LinkedList<>();
+        int id = 1;
+        for( int d : distance ) {
+            Individual individual = new Individual();
+            EvacCell cell = new MockEvacCell(0, 0);
+            individual.setCell(cell);
+            cell.getState().setIndividual(individual);
+            individual.setNumber(id++);
+            StaticPotential sp = new StaticPotential();
+            sp.setPotential(cell, d);
+            individual.setStaticPotential(sp);
+            individuals.add(individual);
+        }        
+        return individuals;
+    }
+    
+    private void assertCorrectOrder(Function<List<Individual>, Iterator<Individual>> frontToBack,
+            List<Individual> original, List<Individual> expectedOrder) {
+        Iterator<Individual> resultIterator = frontToBack.apply(original);
+ 
+        List<Individual> callOrder = new LinkedList<>();
+        for( Individual individual : in(resultIterator) ) {
+            callOrder.add(individual);
+        }
+        assertThat(callOrder, hasSize(expectedOrder.size()));
+        assertThat(callOrder, is(equalTo(expectedOrder)));
     }
 
     @Test
@@ -406,6 +487,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
 
+                exactly(1).of(eca).getIndividuals();
+                will(returnValue(Collections.EMPTY_LIST));
+
                 allowing(eca).removeMarkedIndividuals();
 
                 allowing(esp).getPotentialController();
@@ -416,6 +500,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(ps).probabilityDynamicIncrease();
                 exactly(1).of(pc).updateDynamicPotential(with(0.0), with(0.0));
                 exactly(1).of(eca).nextTimeStep();
+                
 
                 allowing(eca).getIndividualCount();
                 will(returnValue(1));
@@ -436,7 +521,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         assertThat(d[0], is(closeTo(0.5, 10e-8)));
         context.assertIsSatisfied();
     }
-    
+
     @Test
     public void testMaxStepsTakenFromProblem() {
         final AtomicInteger c = new AtomicInteger();

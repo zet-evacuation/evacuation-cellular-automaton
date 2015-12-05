@@ -23,7 +23,7 @@ import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class EvacuationPlanCellularAutomatonInOrder extends EvacuationCellularAutomatonInOrder {
+public class EvacuationPlanCellularAutomatonInOrder extends EvacuationCellularAutomatonAlgorithm {
 
     CellularAutomatonDirectionChecker checker;
 

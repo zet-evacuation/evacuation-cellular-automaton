@@ -55,12 +55,12 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
         HashMap<Individual, List<EvacCell>> individualPossibleMapping = new HashMap<>();
         HashSet<Individual> individualSwapped = new HashSet<>();
 
-        for (Individual i : getIndividuals()) {
+        for (EvacCell cell : this) {
             Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
 
             while (loop.hasNext()) {
                 EvacuationRule r = loop.next();
-                r.execute(i.getCell());
+                r.execute(cell);
                 if (r instanceof AbstractMovementRule) {
                     movement = (AbstractMovementRule) r;
                     break;
@@ -68,32 +68,32 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
             }
 
             // hier ist movementrule die aktuelle movement rule.
-            if (movement.isMoveCompleted() && movement.executableOn(i.getCell())) {
-                unfinished.add(i);
+            if (movement.isMoveCompleted() && movement.executableOn(cell)) {
+                unfinished.add(cell.getState().getIndividual());
 
                 List<EvacCell> possibleTargets = movement.getPossibleTargets();
 
                 for (EvacCell c : possibleTargets) {
                     try {
-                        if (i.getCell() != c) {
-                            Direction8 dir = i.getCell().getRelative(c);
+                        if (cell != c) {
+                            Direction8 dir = cell.getRelative(c);
 
                         }
                     } catch (AssertionError e) {
                         System.out.println(e);
-                        EvacCell target2 = movement.selectTargetCell(i.getCell(), possibleTargets);
+                        EvacCell target2 = movement.selectTargetCell(cell, possibleTargets);
                         movement.getPossibleTargets();
                     }
 
                 }
 
-                individualPossibleMapping.put(i, movement.getPossibleTargets());
+                individualPossibleMapping.put(cell.getState().getIndividual(), movement.getPossibleTargets());
                 //movement.move( i, movement.selectTargetCell( i.getCell(), movement.getPossibleTargets() ) );
             } else {
                 // perform the other rules because this individual has finished its movement for this round
                 while (loop.hasNext()) {
                     EvacuationRule r = loop.next();
-                    r.execute(i.getCell());
+                    r.execute(cell);
                 }
             }
         }

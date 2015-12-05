@@ -1,5 +1,7 @@
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 import org.zet.cellularautomaton.DeathCause;
@@ -8,7 +10,9 @@ import org.zet.cellularautomaton.Individual;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.logging.Level;
+import org.zet.algo.ca.util.IndividualDistanceComparator;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 
 /**
@@ -19,13 +23,41 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
  *
  * @author Jan-Philipp Kappmeier
  */
-public abstract class EvacuationCellularAutomatonAlgorithm
+public class EvacuationCellularAutomatonAlgorithm
         extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell, EvacuationSimulationProblem, EvacuationSimulationResult> {
+
+    /** The order in which the individuals are asked for. */
+    public static final Function<List<Individual>,Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
+    /** The distance comparator. */
+    private static final IndividualDistanceComparator DISTANCE_COMPARATOR = new IndividualDistanceComparator<>();
+    /** Sorts the individuals by increasing distance to the exit. */
+    public static final Function<List<Individual>, Iterator<Individual>> FRONT_TO_BACK = (List<Individual> t) -> {
+        List<Individual> copy = new ArrayList<>(t);
+        Collections.sort(copy, DISTANCE_COMPARATOR);
+        return copy.iterator();
+    };
+    /** Sorts the individuals by decreasing distance to the exit. */
+    public static final Function<List<Individual>, Iterator<Individual>> BACK_TO_FRONT = (List<Individual> t) -> {
+        List<Individual> copy = new ArrayList<>(t);
+        Collections.sort(copy, DISTANCE_COMPARATOR);
+        Collections.reverse(copy);
+        return copy.iterator();
+    };
+    /** The ordering used in the evacuation cellular automaton. */
+    private Function<List<Individual>,Iterator<Individual>> reorder;
+    
+    public EvacuationCellularAutomatonAlgorithm() {
+        this(DEFAULT_ORDER);
+    }
+
+    public EvacuationCellularAutomatonAlgorithm(Function<List<Individual>,Iterator<Individual>> reorder) {
+        this.reorder = reorder;
+    }
 
     @Override
     protected void initialize() {
         setMaxSteps(getProblem().getEvacuationStepLimit());
-        log.log(Level.INFO, "{0} wird ausgeführt. ", toString());
+        log.log(Level.INFO, "{0} is executed. ", toString());
 
         getProblem().getCellularAutomaton().start();
         Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
@@ -44,7 +76,6 @@ public abstract class EvacuationCellularAutomatonAlgorithm
     @Override
     protected void performStep() {
         super.performStep();
-
         super.increaseStep();
 
         getProblem().getCellularAutomaton().removeMarkedIndividuals();
@@ -53,7 +84,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
         getProblem().getParameterSet().probabilityDynamicDecrease());
         getProblem().getCellularAutomaton().nextTimeStep();
 
-        fireProgressEvent(getProgress(), String.format("%1$s von %2$s Personen evakuiert.",
+        fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
                 getProblem().getCellularAutomaton().getInitialIndividualCount() - getProblem().getCellularAutomaton().getIndividualCount(),
                 getProblem().getCellularAutomaton().getInitialIndividualCount()));
     }
@@ -82,7 +113,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
                 }
             }
         }
-        fireProgressEvent(1, "Simulation abgeschlossen");
+        fireProgressEvent(1, "Simulation complete.");
 
         getProblem().getCellularAutomaton().stop();
         log("Time steps: " + getProblem().getCellularAutomaton().getTimeStep());
@@ -116,7 +147,7 @@ public abstract class EvacuationCellularAutomatonAlgorithm
                 / getProblem().getCellularAutomaton().getInitialIndividualCount());
         return Math.max(individualProgress, timeProgress);
     }
-
+    
     /**
      * An iterator that iterates over all cells of the cellular automaton that contains an individual. The rules of the
      * simulation algorithm are being executed on each of the occupied cells.
@@ -125,18 +156,8 @@ public abstract class EvacuationCellularAutomatonAlgorithm
      */
     @Override
     public final Iterator<EvacCell> iterator() {
-        return new CellIterator(getIndividuals());
-
+        return new CellIterator(reorder.apply(getProblem().getCellularAutomaton().getIndividuals()));
     }
-
-    /**
-     * Returns all individuals currently contained in the simulation in an unspecified order. Individuals are being
-     * removed from simulation when they are either dead or reach exit cells. The order can be specified by overwriting
-     * implementations.
-     *
-     * @return all individuals in the simulation
-     */
-    protected abstract List<Individual> getIndividuals();
 
     /**
      * A simple iterator that iterates over all cells of the cellular automaton that contain an individual. The
@@ -151,8 +172,8 @@ public abstract class EvacuationCellularAutomatonAlgorithm
          *
          * @param individuals the individuals
          */
-        private CellIterator(List<Individual> individuals) {
-            this.individuals = Objects.requireNonNull(individuals, "Individuals list must not be null.").iterator();
+        private CellIterator(Iterator<Individual> individuals) {
+            this.individuals = Objects.requireNonNull(individuals, "Individuals list must not be null.");
         }
 
         @Override
