@@ -26,22 +26,19 @@ import java.util.function.Function;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class EvacuationCellularAutomatonRandom extends EvacuationCellularAutomatonAlgorithm {
-    private static final Function<List<Individual>, Iterator<Individual>> random = (List<Individual> t) -> {
-        Individual[] indArray = t.toArray(new Individual[0]);
-        // permute
-        for (int i = indArray.length - 1; i >= 0; i--) {
-            int randomNumber = (RandomUtils.getInstance()).getRandomGenerator().nextInt(i + 1);
-            Individual temp = indArray[i];	// Save position i
-            indArray[i] = indArray[randomNumber];	// Store randomNumber at i
-            indArray[randomNumber] = temp;	// Set Individual from i to randomNumber
-        }
-        return Arrays.asList(indArray).iterator();
-    };
+public class RandomOrdering implements Function<List<Individual>, Iterator<Individual>> {
 
     @Override
-    public String toString() {
-        return "EvacuationCellularAutomatonRandom";
+    public Iterator<Individual> apply(List<Individual> t) {
+        Individual[] indArray = t.toArray(new Individual[0]);
+        // permute and swap with random position
+        for (int i = indArray.length - 1; i >= 0; i--) {
+            int randomNumber = (RandomUtils.getInstance()).getRandomGenerator().nextInt(i + 1);
+            Individual temp = indArray[i];
+            indArray[i] = indArray[randomNumber];
+            indArray[randomNumber] = temp;
+        }
+        return Arrays.asList(indArray).iterator();
     }
 
 }

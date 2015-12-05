@@ -13,9 +13,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationPlanMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
@@ -24,25 +27,32 @@ import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class EvacuationPlanCellularAutomatonRandomOrder extends EvacuationCellularAutomatonRandom {
-	CellularAutomatonDirectionChecker checker;
+public class EvacuationPlanSwapCellularAutomaton extends SwapCellularAutomaton {
 
-	EvacuationPlanCellularAutomatonRandomOrder( CellularAutomatonDirectionChecker checker ) {
-		this.checker = checker;
-	}
+    CellularAutomatonDirectionChecker checker;
 
-	@Override
-	public void initialize() {
-		super.initialize();
-		for( EvacuationRule rule : getProblem().getRuleSet() ) {
-			if( rule instanceof EvacuationPlanMovementRule ) {
-				((EvacuationPlanMovementRule)rule).setChecker( checker );
-			}
-		}
-	}
+    public EvacuationPlanSwapCellularAutomaton(CellularAutomatonDirectionChecker checker) {
+        this(new RandomOrdering(), checker);
+    }
 
-	@Override
-	public String toString() {
-		return "EvacuationCellularAutomatonRandomOrder";
-	}
+    public EvacuationPlanSwapCellularAutomaton(Function<List<Individual>,Iterator<Individual>> reorder,
+            CellularAutomatonDirectionChecker checker) {
+        super(reorder);
+        this.checker = checker;
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        for (EvacuationRule rule : getProblem().getRuleSet()) {
+            if (rule instanceof EvacuationPlanMovementRule) {
+                ((EvacuationPlanMovementRule) rule).setChecker(checker);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "EvacuationPlanSwapCellularAutomaton";
+    }
 }

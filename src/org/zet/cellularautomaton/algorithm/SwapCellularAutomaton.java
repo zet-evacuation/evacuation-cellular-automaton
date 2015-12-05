@@ -25,14 +25,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 /**
+ * By default swap cellular automaton are randomized.
  *
+ * @see RandomOrdering
  * @author Jan-Philipp Kappmeier
  */
-public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
+public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm {
 
     public SwapCellularAutomaton() {
+        super(new RandomOrdering());
+    }
+
+    public SwapCellularAutomaton(Function<List<Individual>, Iterator<Individual>> reorder) {
+        super(reorder);
     }
 
     /**
@@ -195,7 +203,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonRandom {
             }
         }
 
-		//setDirectExecute( true );
+        //setDirectExecute( true );
         getProblem().getCellularAutomaton().removeMarkedIndividuals();
         getProblem().getPotentialController().updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());

@@ -15,6 +15,10 @@
  */
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationPlanMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
@@ -23,11 +27,17 @@ import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class EvacuationPlanSwapCellularAutomatonInOrder extends SwapCellularAutomaton {
+public class EvacuationPlanCellularAutomaton extends EvacuationCellularAutomatonAlgorithm {
 
     CellularAutomatonDirectionChecker checker;
 
-    public EvacuationPlanSwapCellularAutomatonInOrder(CellularAutomatonDirectionChecker checker) {
+    EvacuationPlanCellularAutomaton(CellularAutomatonDirectionChecker checker) {
+        this(new RandomOrdering(), checker);
+    }
+
+    EvacuationPlanCellularAutomaton(Function<List<Individual>,Iterator<Individual>> reorder,
+            CellularAutomatonDirectionChecker checker) {
+        super(reorder);
         this.checker = checker;
     }
 
@@ -43,6 +53,6 @@ public class EvacuationPlanSwapCellularAutomatonInOrder extends SwapCellularAuto
 
     @Override
     public String toString() {
-        return "EvacuationCellularAutomatonInOrder";
+        return "EvacuationCellularAutomaton";
     }
 }
