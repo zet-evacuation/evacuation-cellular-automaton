@@ -24,5 +24,6 @@ import org.zet.cellularautomaton.Individual;
  */
 @FunctionalInterface
 public interface CellularAutomatonDirectionChecker {
+
     public boolean canPass(Individual i, EvacCell from, EvacCell to);
 }

@@ -79,7 +79,6 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
         return ruleSet;
     }
 
-    
     @Override
     public int getEvacuationStepLimit() {
         return (int)Math.ceil( seconds * getCellularAutomaton().getStepsPerSecond());

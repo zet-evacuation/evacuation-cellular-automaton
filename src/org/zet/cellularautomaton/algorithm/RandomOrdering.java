@@ -15,12 +15,15 @@
  */
 package org.zet.cellularautomaton.algorithm;
 
-import org.zetool.rndutils.RandomUtils;
-import org.zet.cellularautomaton.Individual;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import org.zet.cellularautomaton.Individual;
+import org.zetool.rndutils.generators.GeneralRandomWrapper;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.generators.GeneralRandom;
 
 /**
  *
@@ -30,15 +33,13 @@ public class RandomOrdering implements Function<List<Individual>, Iterator<Indiv
 
     @Override
     public Iterator<Individual> apply(List<Individual> t) {
-        Individual[] indArray = t.toArray(new Individual[0]);
-        // permute and swap with random position
-        for (int i = indArray.length - 1; i >= 0; i--) {
-            int randomNumber = (RandomUtils.getInstance()).getRandomGenerator().nextInt(i + 1);
-            Individual temp = indArray[i];
-            indArray[i] = indArray[randomNumber];
-            indArray[randomNumber] = temp;
-        }
-        return Arrays.asList(indArray).iterator();
+        List<Individual> individualsCopy = new LinkedList<>(t);
+        Collections.shuffle(individualsCopy, new GeneralRandomWrapper(getRandomGenerator()));
+        return individualsCopy.iterator();
+    }
+    
+    protected GeneralRandom getRandomGenerator() {
+        return (RandomUtils.getInstance()).getRandomGenerator();
     }
 
 }
