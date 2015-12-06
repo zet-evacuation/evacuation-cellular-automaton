@@ -30,7 +30,6 @@ public class TestRandomOrdering {
 
         List<Individual> result = new LinkedList<>();
         for (Individual i : in(individualIterator)) {
-            System.out.println("Adding individual: " + i);
             result.add(i);
         }
         assertThat(result, containsInAnyOrder(individuals.toArray()));
