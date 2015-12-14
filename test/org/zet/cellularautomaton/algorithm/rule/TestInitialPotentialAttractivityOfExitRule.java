@@ -120,11 +120,14 @@ public class TestInitialPotentialAttractivityOfExitRule {
         StaticPotential mostAttractive = new StaticPotential();
         mostAttractive.setPotential(cell, 1);
         mostAttractive.setAttractivity(200);
+        StaticPotential unreachable = new StaticPotential();
+
         PotentialManager pm = eca.getPotentialManager();
 
         pm.addStaticPotential(unattractive1);
         pm.addStaticPotential(mostAttractive);
         pm.addStaticPotential(unattractive2);
+        pm.addStaticPotential(unreachable);
 
         rule.execute(cell);
         assertThat(individual.getStaticPotential(), is(same(mostAttractive)));

@@ -72,12 +72,13 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      */
     private void assignMostAttractivePotential(List<StaticPotential> staticPotentials,
             StaticPotential referencePotential, EvacCell cell) {
+        StaticPotential mostAttractivePotential = referencePotential;
         for (StaticPotential sp : staticPotentials) {
             if ((sp.getAttractivity() > referencePotential.getAttractivity())
-                    && (sp.getPotential(cell) >= 0)) {
-                referencePotential = sp;
+                    && (sp.getDistance(cell) >= 0)) {
+                mostAttractivePotential = sp;
             }
         }
-        cell.getState().getIndividual().setStaticPotential(referencePotential);
+        cell.getState().getIndividual().setStaticPotential(mostAttractivePotential);
     }
 }

@@ -56,9 +56,8 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
         List<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
         List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(esp.getCellularAutomaton().getStaticPotentials());
-        staticPotentials.stream().filter((sp) -> (sp.getDistance(cell) >= 0)).forEach((sp) -> {
-            potentialToLengthOfWayMapper.add(new PotentialMemory<>(cell, sp));
-        });
+        staticPotentials.stream().filter(sp -> sp.getDistance(cell) >= 0).forEach(sp
+                -> potentialToLengthOfWayMapper.add(new PotentialMemory<>(cell, sp)));
         return potentialToLengthOfWayMapper;
     }
 
