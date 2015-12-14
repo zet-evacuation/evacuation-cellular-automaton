@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
 import evacuationplan.BestResponseDynamics;
+import org.zet.cellularautomaton.Individual;
 
 /**
  *
@@ -27,18 +28,12 @@ public class ChangePotentialBestResponseOptimizedRule extends AbstractPotentialC
 
     private static final int TIME_STEP_LIMIT_FOR_NASH_EQUILIBRIUM = 25;
 
-    /**
-     *
-     * @param cell
-     * @return true if the potential change rule can be used
-     */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    protected boolean wantsToChange(Individual i) {
         int timeStep = esp.getCellularAutomaton().getTimeStep();
-        return ((timeStep < TIME_STEP_LIMIT_FOR_NASH_EQUILIBRIUM) && (!cell.getState().isEmpty()));
-
+        return timeStep < TIME_STEP_LIMIT_FOR_NASH_EQUILIBRIUM;
     }
-
+    
     /**
      *
      * @param cell

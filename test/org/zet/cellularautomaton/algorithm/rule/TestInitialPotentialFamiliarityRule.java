@@ -26,39 +26,39 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialPotentialRandomRule {
+public class TestInitialPotentialFamiliarityRule {
     private final Mockery context = new Mockery();
-    InitialPotentialRandomRule rule;
-    EvacCell cell;
-    Individual i;
-    EvacuationCellularAutomaton eca;
+    private InitialPotentialFamiliarityRule rule;
+    private EvacCell cell;
+    private Individual individual;
+    private EvacuationCellularAutomaton eca;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
 
     @Before
     public void init() {
-        rule = new InitialPotentialRandomRule();
+        rule = new InitialPotentialFamiliarityRule();
         Room room = context.mock(Room.class);
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
-        i = new Individual();
+        individual = new Individual();
         context.checking(new Expectations() {
             {
                 allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
-                allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
-                allowing(room).removeIndividual(with(i));
+                allowing(room).addIndividual(with(any(EvacCell.class)), with(individual));
+                allowing(room).removeIndividual(with(individual));
                 allowing(p).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        i.setCell(cell);
-        cell.getState().setIndividual(i);
+        individual.setCell(cell);
+        cell.getState().setIndividual(individual);
 
         rule.setEvacuationSimulationProblem(p);
-        eca.addIndividual(cell, i);
+        eca.addIndividual(cell, individual);
     }
 
     @Test
@@ -66,25 +66,25 @@ public class TestInitialPotentialRandomRule {
         cell = new RoomCell(0, 0);
         assertThat(rule.executableOn(cell), is(false));
 
-        i = new Individual();
-        cell.getState().setIndividual(i);
+        individual = new Individual();
+        cell.getState().setIndividual(individual);
         assertThat(rule.executableOn(cell), is(true));
     }
     
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
-        i.setStaticPotential(sp);
+        individual.setStaticPotential(sp);
         assertThat(rule.executableOn(cell), is(false));
     }
     
     @Test
     public void testDeadIfNoPotentials() {
         rule.execute(cell);
-        assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
+        assertThat(individual.isDead(), is(true));
+        assertThat(individual.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
-    
+
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
@@ -93,10 +93,10 @@ public class TestInitialPotentialRandomRule {
         pm.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
+        assertThat(individual.isDead(), is(true));
+        assertThat(individual.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
-    
+
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
@@ -106,18 +106,29 @@ public class TestInitialPotentialRandomRule {
         pm.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
-        assertThat(i.getStaticPotential(), is(same(sp)));
+        assertThat(individual.isDead(), is(false));
+        assertThat(individual.getDeathCause(), is(nullValue()));
+        assertThat(individual.getStaticPotential(), is(same(sp)));
     }
-    
+
     @Test
-    public void testRandomPotentialTaken() {
-        // Need to insert seed into rule to manipulate random decision
-//        rule.execute(cell);
-//        assertThat(i.isDead(), is(false));
-//        assertThat(i.getDeathCause(), is(nullValue()));
-//        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+    public void testFirstTaken() {
+        StaticPotential longPotential1 = new StaticPotential();
+        longPotential1.setPotential(cell, 3);
+        StaticPotential longPotential2 = new StaticPotential();
+        longPotential2.setPotential(cell, 4);
+        StaticPotential shortestPotential = new StaticPotential();
+        shortestPotential.setPotential(cell, 2);
+        PotentialManager pm = eca.getPotentialManager();
+
+        pm.addStaticPotential(longPotential1);
+        pm.addStaticPotential(longPotential2);
+        pm.addStaticPotential(shortestPotential);
+
+        individual.setFamiliarity(0.667);
+        
+        rule.execute(cell);
+        assertThat(individual.getStaticPotential(), is(same(shortestPotential)));
     }
     
 }

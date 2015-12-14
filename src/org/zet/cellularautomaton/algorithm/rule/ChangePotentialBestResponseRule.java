@@ -27,105 +27,99 @@ import org.zet.cellularautomaton.Room;
  *
  * @author Joscha Kulbatzki
  */
-public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule{
+public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule {
 
-	private static final double QUEUEING_TIME_WEIGHT_FACTOR = 0.5;
-        private static final double MOVING_TIME_WEIGHT_FACTOR = 0.5;
-        private static final double NEIGHBOUR_WEIGHT_FACTOR = 0;
-        
-	/**
-	 * 
-	 * @param cell
-	 * @return true, if the change potential rule can be used
-	 */
-	@Override
-	public boolean executableOn(EvacCell cell) {
-            return !cell.getState().isEmpty();
-	}
-        
-        private double getResponse(EvacCell cell, StaticPotential pot){
-            
-            // Constants
-            Individual ind = cell.getState().getIndividual();
-            double speed = ind.getRelativeSpeed();            
+    private static final double QUEUEING_TIME_WEIGHT_FACTOR = 0.5;
+    private static final double MOVING_TIME_WEIGHT_FACTOR = 0.5;
+    private static final double NEIGHBOUR_WEIGHT_FACTOR = 0;
 
-            // Exit dependant values                                    
-            double distance = Double.MAX_VALUE;
-            if (pot.getPotential(cell) > 0) {
-                distance = pot.getDistance(cell);
+    @Override
+    protected boolean wantsToChange(Individual i) {
+        return true;
+    }
+
+    private double getResponse(EvacCell cell, StaticPotential pot) {
+        // Constants
+        Individual ind = cell.getState().getIndividual();
+        double speed = ind.getRelativeSpeed();
+
+        // Exit dependant values                                    
+        double distance = Double.MAX_VALUE;
+        if (pot.getPotential(cell) > 0) {
+            distance = pot.getDistance(cell);
+        }
+        double movingTime = distance / speed;
+        List<ExitCell> exitCells = pot.getAssociatedExitCells();
+        int exitCapacity = exitCells.size();
+
+        // calculate number of individuals that are heading to the same exit and closer to it            
+        ArrayList<Individual> otherInds = new ArrayList<>();
+        ArrayList<Room> rooms = new ArrayList<>();
+        rooms.addAll(esp.getCellularAutomaton().getRooms());
+        for (Room room : rooms) {
+            for (Individual i : room.getIndividuals()) {
+                otherInds.add(i);
             }
-            double movingTime = distance / speed;            
-            List<ExitCell> exitCells = pot.getAssociatedExitCells();
-            int exitCapacity = exitCells.size();                              
-            
-            // calculate number of individuals that are heading to the same exit and closer to it            
-            ArrayList<Individual> otherInds = new ArrayList<>();            
-            ArrayList<Room> rooms = new ArrayList<>();
-            rooms.addAll(esp.getCellularAutomaton().getRooms());
-            for (Room room : rooms){
-                for (Individual i : room.getIndividuals()){
-                    otherInds.add(i);
-                }                
-            }
-            int queueLength = 0;
-            if (otherInds != null)
-                for (Individual otherInd : otherInds){
-                    if (!otherInd.equals(ind)){
-                        if (otherInd.getStaticPotential() == pot){
-                            if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) > 0)
-                                if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) < distance){
-                                    queueLength++;
-                                }
+        }
+        int queueLength = 0;
+        if (otherInds != null) {
+            for (Individual otherInd : otherInds) {
+                if (!otherInd.equals(ind)) {
+                    if (otherInd.getStaticPotential() == pot) {
+                        if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) > 0) {
+                            if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) < distance) {
+                                queueLength++;
+                            }
                         }
                     }
-                }           
-            
-            int wrongDirectedNeighbours = 0;            
-            for (EvacCell neighbour : cell.getDirectNeighbors()){
-                if (!neighbour.getState().isEmpty()){
-                    if (neighbour.getState().getIndividual().getStaticPotential() != pot){
-                        wrongDirectedNeighbours++;
-                    }
                 }
             }
-            
-            //System.out.println("Potential = " + pot.getID());
-            //System.out.println("Queue / Kapa = " + queueLength + " / " + exitCapacity + " = " + (queueLength / exitCapacity));
-            //System.out.println("Dist / Speed = " + distance + " / " + speed + " = " + (distance / speed));
-            
-            
-            // calculateEstimatedEvacuationTime
-            return responseFunction1(queueLength,exitCapacity,movingTime);
-            //return responseFunction2(queueLength,exitCapacity,movingTime,wrongDirectedNeighbours);
-            
-        }
-        
-        private double responseFunction1(int queueLength, int exitCapacity, double movingTime){
-            return (QUEUEING_TIME_WEIGHT_FACTOR * (queueLength / exitCapacity)) + (MOVING_TIME_WEIGHT_FACTOR * movingTime);            
-        }
-        
-        private double responseFunction2(int queueLength, int exitCapacity, double movingTime, int wrongDirectedNeighbours){
-            return (QUEUEING_TIME_WEIGHT_FACTOR * (queueLength / exitCapacity)) + (MOVING_TIME_WEIGHT_FACTOR * movingTime) + (NEIGHBOUR_WEIGHT_FACTOR * wrongDirectedNeighbours);            
         }
 
-	/**
-	 * 
-	 * @param cell
-	 */
-	@Override
-	protected void onExecute(EvacCell cell) {                                   
-                        
-            ArrayList<StaticPotential> exits = new ArrayList<StaticPotential>();
-            exits.addAll(esp.getCellularAutomaton().getStaticPotentials());            
-            StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
-            double response = Double.MAX_VALUE;
-            for (StaticPotential pot : exits){                
-                if (getResponse(cell,pot) < response){
-                    response = getResponse(cell,pot);
-                    newPot = pot;
+        int wrongDirectedNeighbours = 0;
+        for (EvacCell neighbour : cell.getDirectNeighbors()) {
+            if (!neighbour.getState().isEmpty()) {
+                if (neighbour.getState().getIndividual().getStaticPotential() != pot) {
+                    wrongDirectedNeighbours++;
                 }
             }
-            cell.getState().getIndividual().setStaticPotential(newPot);            
-            
-	}
+        }
+
+            //System.out.println("Potential = " + pot.getID());
+        //System.out.println("Queue / Kapa = " + queueLength + " / " + exitCapacity + " = " + (queueLength / exitCapacity));
+        //System.out.println("Dist / Speed = " + distance + " / " + speed + " = " + (distance / speed));
+        // calculateEstimatedEvacuationTime
+        return responseFunction1(queueLength, exitCapacity, movingTime);
+            //return responseFunction2(queueLength,exitCapacity,movingTime,wrongDirectedNeighbours);
+
+    }
+
+    private double responseFunction1(int queueLength, int exitCapacity, double movingTime) {
+        return (QUEUEING_TIME_WEIGHT_FACTOR * (queueLength / exitCapacity)) + (MOVING_TIME_WEIGHT_FACTOR * movingTime);
+    }
+
+    private double responseFunction2(int queueLength, int exitCapacity, double movingTime, int wrongDirectedNeighbours) {
+        return (QUEUEING_TIME_WEIGHT_FACTOR * (queueLength / exitCapacity)) + (MOVING_TIME_WEIGHT_FACTOR * movingTime) + (NEIGHBOUR_WEIGHT_FACTOR * wrongDirectedNeighbours);
+    }
+
+    /**
+     *
+     * @param cell
+     */
+    @Override
+    protected void onExecute(EvacCell cell) {
+
+        ArrayList<StaticPotential> exits = new ArrayList<>();
+        exits.addAll(esp.getCellularAutomaton().getStaticPotentials());
+        StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
+        double response = Double.MAX_VALUE;
+        for (StaticPotential pot : exits) {
+            if (getResponse(cell, pot) < response) {
+                response = getResponse(cell, pot);
+                newPot = pot;
+            }
+        }
+        cell.getState().getIndividual().setStaticPotential(newPot);
+
+    }
 }
