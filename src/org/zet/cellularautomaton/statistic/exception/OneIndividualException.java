@@ -15,33 +15,23 @@
  */
 package org.zet.cellularautomaton.statistic.exception;
 
+import java.util.Objects;
 import org.zet.cellularautomaton.Individual;
 
 /**
  *
  * @author Sylvie Temme
  */
-
 public class OneIndividualException extends RuntimeException {
 
     protected Individual ind;
-
-    public OneIndividualException() {
-        this(null, null);
-    }
 
     /**
      * @param ind The Individual that caused the exception.
      */
     public OneIndividualException(Individual ind) {
-        this(ind, null);
-    }
-
-    /**
-     * @param message A message that further explains this exception.
-     */
-    public OneIndividualException(String message) {
-        this(null, message);
+        super();
+        this.ind = Objects.requireNonNull(ind);
     }
 
     /**
@@ -50,13 +40,13 @@ public class OneIndividualException extends RuntimeException {
      */
     public OneIndividualException(Individual ind, String message) {
         super(message);
-        this.ind = ind;
+        this.ind = Objects.requireNonNull(ind);
     }
 
     /**
      * @return ind The Individual that caused the exception.
      */
-    public Object getIndividual() {
+    public Individual getIndividual() {
         return ind;
     }
 }
