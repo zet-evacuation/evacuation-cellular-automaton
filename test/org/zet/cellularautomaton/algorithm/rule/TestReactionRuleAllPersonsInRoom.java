@@ -1,13 +1,14 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jmock.AbstractExpectations.returnValue;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
-import static org.hamcrest.CoreMatchers.is;
-import static org.jmock.AbstractExpectations.returnValue;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;

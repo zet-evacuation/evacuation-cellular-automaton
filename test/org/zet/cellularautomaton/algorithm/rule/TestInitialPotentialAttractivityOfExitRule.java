@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
@@ -17,6 +18,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -63,17 +65,18 @@ public class TestInitialPotentialAttractivityOfExitRule {
     @Test
     public void testAppliccableIfNotEmpty() {
         cell = new RoomCell(0, 0);
-        assertThat(rule.executableOn(cell), is(false));
+        assertThat(rule, is(not(executeableOn(cell))));
 
         individual = new Individual();
         cell.getState().setIndividual(individual);
-        assertThat(rule.executableOn(cell), is(true));
+        assertThat(rule, is(executeableOn(cell)));
     }
+
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
         individual.setStaticPotential(sp);
-        assertThat(rule.executableOn(cell), is(false));
+        assertThat(rule, is(not(executeableOn(cell))));
     }
     
     @Test

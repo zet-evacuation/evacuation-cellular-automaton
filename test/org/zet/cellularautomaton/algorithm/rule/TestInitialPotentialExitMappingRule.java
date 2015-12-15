@@ -1,11 +1,13 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.LinkedList;
-import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
+
+import java.util.LinkedList;
+import java.util.List;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import static org.junit.Assert.assertThat;
@@ -19,6 +21,7 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -78,17 +81,17 @@ public class TestInitialPotentialExitMappingRule {
     public void executableEvenIfPotentialAssigned() {
         StaticPotential sp = new StaticPotential();
         i.setStaticPotential(sp);
-        assertThat(rule.executableOn(cell), is(true));
+        assertThat(rule, is(executeableOn(cell)));
     }
 
     @Test
     public void testAppliccableIfNotEmpty() {
         cell = new RoomCell(0, 0);
-        assertThat(rule.executableOn(cell), is(false));
+        assertThat(rule, is(not(executeableOn(cell))));
 
         Individual i = new Individual();
         cell.getState().setIndividual(i);
-        assertThat(rule.executableOn(cell), is(true));
+        assertThat(rule, is(executeableOn(cell)));
     }
 
     @Test

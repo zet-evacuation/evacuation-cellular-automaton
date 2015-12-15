@@ -33,7 +33,7 @@ public abstract class AbstractPotentialChangeRule extends AbstractEvacuationRule
     @Override
     public boolean executableOn(EvacCell cell) {
         return !cell.getState().isEmpty() && !cell.getState().getIndividual().isSafe()
-                && !wantsToChange(cell.getState().getIndividual());
+                && wantsToChange(cell.getState().getIndividual());
     }
     
     protected abstract boolean wantsToChange(Individual i);

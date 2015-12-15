@@ -1,18 +1,20 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jmock.AbstractExpectations.returnValue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
-import static org.hamcrest.Matchers.closeTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.jmock.AbstractExpectations.returnValue;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
@@ -75,13 +77,9 @@ public class TestAbstractMovementRule {
             }
             return direction;
         }
-        
-        
-        
-        
-        
     }
-        AbstractMovementRule rule;
+
+    AbstractMovementRule rule;
     
     @Before
     public void initRule() {
@@ -108,12 +106,12 @@ public class TestAbstractMovementRule {
         EvacCell cell = new FakeEvacCell(true);
         cell.getState().setIndividual(i);
         
-        assertThat(rule.computePossibleTargets(cell, true), is(Matchers.empty()));
+        assertThat(rule.computePossibleTargets(cell, true), is(empty()));
 
         cell = new FakeEvacCell(false);
         cell.getState().setIndividual(i);
         
-        assertThat(rule.computePossibleTargets(cell, false), is(Matchers.empty()));
+        assertThat(rule.computePossibleTargets(cell, false), is(empty()));
     }
     
     @Test

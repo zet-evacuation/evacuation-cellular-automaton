@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import static org.junit.Assert.assertThat;
@@ -12,6 +13,7 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.PotentialController;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -39,21 +41,21 @@ public class TestEvacuateIndividualsRule {
         ExitCell exit = new ExitCell(0, 0);
         Individual toEvacuate = new Individual();
         exit.getState().setIndividual(toEvacuate);
-        assertThat(rule.executableOn(exit), is(true));
+        assertThat(rule, is(executeableOn(exit)));
 
         RoomCell other = new RoomCell(1, 1);
         Individual notToEvacuate = new Individual();
         other.getState().setIndividual(notToEvacuate);
-        assertThat(rule.executableOn(other), is(false));
+        assertThat(rule, is(not(executeableOn(other))));
     }
 
     @Test
     public void notApplicableOnEmptyCell() {
         EvacuateIndividualsRule rule = new EvacuateIndividualsRule();
         ExitCell exit = new ExitCell(0, 0);
-        assertThat(rule.executableOn(exit), is(false));
+        assertThat(rule, is(not(executeableOn(exit))));
         RoomCell other = new RoomCell(1, 1);
-        assertThat(rule.executableOn(other), is(false));
+        assertThat(rule, is(not(executeableOn(other))));
     }
 
     @Test

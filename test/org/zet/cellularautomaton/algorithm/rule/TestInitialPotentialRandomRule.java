@@ -1,11 +1,13 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
-import static org.junit.Assert.assertThat;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -64,18 +66,18 @@ public class TestInitialPotentialRandomRule {
     @Test
     public void testAppliccableIfNotEmpty() {
         cell = new RoomCell(0, 0);
-        assertThat(rule.executableOn(cell), is(false));
+        assertThat(rule, is(not(executeableOn(cell))));
 
         i = new Individual();
         cell.getState().setIndividual(i);
-        assertThat(rule.executableOn(cell), is(true));
+        assertThat(rule, is(executeableOn(cell)));
     }
     
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
         i.setStaticPotential(sp);
-        assertThat(rule.executableOn(cell), is(false));
+        assertThat(rule, is(not(executeableOn(cell))));
     }
     
     @Test

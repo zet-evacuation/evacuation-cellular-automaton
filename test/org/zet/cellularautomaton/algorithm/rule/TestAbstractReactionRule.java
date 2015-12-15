@@ -1,7 +1,10 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
+
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
@@ -21,14 +24,15 @@ public class TestAbstractReactionRule {
             }
         };
         RoomCell cell = new RoomCell(0, 0);
-        assertThat(rule.executableOn(cell), is(false));
+        assertThat(rule, is(not(executeableOn(cell))));
 
         Individual i = new Individual();
         cell.getState().setIndividual(i);
         i.setAlarmed(false);
-        assertThat(rule.executableOn(cell), is(true));
+        assertThat(rule, is(executeableOn(cell)));
         
         i.setAlarmed(true);
-        assertThat(rule.executableOn(cell), is(false));
+        
+        assertThat(rule, is(not(executeableOn(cell))));
     }
 }
