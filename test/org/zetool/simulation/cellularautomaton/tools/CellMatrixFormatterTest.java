@@ -1,23 +1,24 @@
 package org.zetool.simulation.cellularautomaton.tools;
 
-import org.zetool.simulation.cellularautomaton.FakeCell;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jmock.AbstractExpectations.returnValue;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.jmock.AbstractExpectations.returnValue;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zetool.common.util.Bounds;
 import org.zetool.common.util.Direction8;
 import org.zetool.common.util.Orientation;
 import org.zetool.simulation.cellularautomaton.Cell;
 import org.zetool.simulation.cellularautomaton.CellMatrix;
+import org.zetool.simulation.cellularautomaton.FakeCell;
 
 /**
  *
@@ -26,8 +27,7 @@ import org.zetool.simulation.cellularautomaton.CellMatrix;
 public class CellMatrixFormatterTest {
     private final Mockery context = new Mockery();
 
-
-    private static class MyMatrix implements CellMatrix<FakeCell> {
+    public static class MyMatrix implements CellMatrix<FakeCell> {
 
         private final int width;
         private final int height;

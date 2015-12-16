@@ -49,8 +49,6 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
 
         potentialController = new SPPotentialController(ca);
         //caStatisticWriter = new CAStatisticWriter();
-        potentialController.setCA(ca);
-        potentialController.setPm(ca.getPotentialManager());
         ca.setAbsoluteMaxSpeed(parameterSet.getAbsoluteMaxSpeed());
     }
 

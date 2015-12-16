@@ -15,20 +15,13 @@
  */
 package org.zet.cellularautomaton.algorithm;
 
-import org.zet.algo.ca.util.PotentialUtils;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.PotentialManager;
-import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zet.cellularautomaton.DoorCell;
-import org.zet.cellularautomaton.TargetCell;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 
 /**
@@ -45,9 +38,6 @@ public class SPPotentialController implements PotentialController {
     /**Reference to a PotentialManager. */
     private PotentialManager pm;
 
-    /** Maps static potentials to their associated target cells. */
-    private final HashMap<TargetCell, StaticPotential> targetToPotentialMapping;
-
     /**
      * Constructs an PotentialController instance for a given cellular automaton.
      *
@@ -56,27 +46,6 @@ public class SPPotentialController implements PotentialController {
     public SPPotentialController(EvacuationCellularAutomaton ca) {
         this.ca = ca;
         this.pm = ca.getPotentialManager();
-        this.targetToPotentialMapping = null;
-    }
-
-    /**
-     * Returns the associated cellular automaton.
-     *
-     * @return associated cellular automaton
-     */
-    @Override
-    public EvacuationCellularAutomaton getCA() {
-        return this.ca;
-    }
-
-    /**
-     * Sets the reference to a cellular automaton.
-     *
-     * @param ca EvacuationCellularAutomaton object
-     */
-    @Override
-    public void setCA(EvacuationCellularAutomaton ca) {
-        this.ca = ca;
     }
 
     /**
@@ -87,30 +56,6 @@ public class SPPotentialController implements PotentialController {
     @Override
     public PotentialManager getPm() {
         return pm;
-    }
-
-    /**
-     * Sets the reference to a potential manager.
-     *
-     * @param pm PotentialManager object
-     */
-    @Override
-    public void setPm(PotentialManager pm) {
-        this.pm = pm;
-    }
-
-    @Override
-    public void generateSafePotential() {
-        StaticPotential safePotential = new StaticPotential();
-        Collection<Room> rooms = ca.getRooms();
-        for (Room r : rooms) {
-            List<EvacCell> cells = r.getAllCells();
-            for (EvacCell c : cells) {
-                safePotential.setPotential(c, 1);
-            }
-        }
-        safePotential.setName("SafePotential");
-        pm.setsafePotential(safePotential);
     }
 
     /**
@@ -154,19 +99,6 @@ public class SPPotentialController implements PotentialController {
             }
         }
 
-    }
-
-    /**
-     * This method merges StaticPotentials into a new one. The new potential is calculated for each cell by taking the
-     * minimum over all given static potentials. The attractiveness of the new static potential is the average over all
-     * attractiveness values given by the specified static potentials to merge.
-     *
-     * @param potentialsToMerge Contains an ArrayList with the StaticPotential object to merge
-     * @return the new potential
-     */
-    @Override
-    public StaticPotential mergePotentials(List<StaticPotential> potentialsToMerge) {
-        return PotentialUtils.mergePotentials(potentialsToMerge);
     }
 
     /**
@@ -221,36 +153,6 @@ public class SPPotentialController implements PotentialController {
     }
 
     /**
-     * Calculates nearly the physical distance between two neighbour cells.
-     *
-     * @param c one neighbour
-     * @param n the other neighbour
-     * @return 10 if the two cells are horizontal or vertical neighbours, 14 else
-     */
-    public int calculateDistance(EvacCell c, EvacCell n) {
-        if ((c.getX() == n.getX()) || (c.getY() == n.getY()) || (c instanceof DoorCell && n instanceof DoorCell)) {
-            return 10;
-        } else {
-            return 14;
-        }
-    }
-
-    /**
-     * Calculates nearly the physical distance between two neighbour cells.
-     *
-     * @param c one neighbour
-     * @param n the other neighbour
-     * @return 10 if the two cells are horizontal or vertical neighbours, 14 else
-     */
-    public double calculateRealDistance(EvacCell c, EvacCell n) {
-        if ((c.getX() == n.getX()) || (c.getY() == n.getY()) || (c instanceof DoorCell && n instanceof DoorCell)) {
-            return 0.4;
-        } else {
-            return Math.sqrt(2) * 0.4;
-        }
-    }
-
-    /**
      * Returns a random StaticPotential
      *
      * @return random StaticPotential
@@ -285,49 +187,6 @@ public class SPPotentialController implements PotentialController {
             }
         }
         return (numberOfDisjunctStaticPotentials == pm.getStaticPotentials().size() ? null : nearestPot);
-    }
-
-    @Override
-    public String dynamicPotentialToString() {
-        String graphic = "";
-        for (org.zet.cellularautomaton.Room room : getCA().getRooms()) {
-            final int width = room.getWidth();
-            final int height = room.getHeight();
-
-            graphic += "+---";
-            for (int i = 1; i < width; i++) {
-                graphic += "----";
-            }
-            graphic += "+\n";
-
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    if (room.getCell(x, y) != null) {
-                        graphic += "|";
-                        int pot = getPm().getDynamicPotential().getPotential(room.getCell(x, y));
-
-                        if (pot < 100) {
-                            graphic += " ";
-                        }
-                        if (pot < 10) {
-                            graphic += " ";
-                        }
-
-                        graphic += pot;
-                    } else {
-                        graphic += "|   ";
-                    }
-                }
-                graphic += "|\n";
-                graphic += "+---";
-                for (int i = 1; i < width; i++) {
-                    graphic += "----";
-                }
-                graphic += "+\n";
-            }
-            graphic += "\n\n";
-        }
-        return graphic;
     }
 
 }

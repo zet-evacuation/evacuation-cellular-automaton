@@ -104,6 +104,7 @@ public class CellMatrixFormatter<E extends Cell<?>> {
     
     /**
      * Formats a cell matrix using the default cell formatter, i.e. without any specialized cell renderers.
+     * @param <E>
      * @param matrix the cell matrix
      * @return multi-line string representation of the matrix' geometry
      */

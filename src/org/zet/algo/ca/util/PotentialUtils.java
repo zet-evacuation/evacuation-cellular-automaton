@@ -28,14 +28,13 @@ import java.util.Collection;
 public class PotentialUtils {
 
     /**
-     * This method merges StaticPotentials into a new one. The new potential
-     * is calculated for each cell by taking the minimum over all given static potentials.
-     * The attractivity of the new static potential is the average over all attractivity values given by the
-     * specified static potentials to merge.
+     * This method merges StaticPotentials into a new one. The new potential is calculated for each cell by taking the
+     * minimum over all given static potentials. The attractivity of the new static potential is the average over all
+     * attractivity values given by the specified static potentials to merge.
+     *
      * @param potentialsToMerge Contains an ArrayList with the StaticPotential object to merge
      * @return the new potential
      */
-
     public static StaticPotential mergePotentials(Collection<StaticPotential> potentialsToMerge) {
         StaticPotential newSP = new StaticPotential();
         //stores the minimum potential for one cell over all potentials in potentialsToMerge
