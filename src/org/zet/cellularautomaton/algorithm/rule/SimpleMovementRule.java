@@ -73,6 +73,6 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public void swap(EvacCell cell1, EvacCell cell2) {
-        throw new UnsupportedOperationException("Not supported.");
+        esp.getCellularAutomaton().swapIndividuals(cell1, cell2);
     }
 }

@@ -40,9 +40,10 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         directExecute = true;
         moveCompleted = false;
     }
+    
     /**
-     * Computes and returns possible targets and also sets them, such that they can be retrieved using {@link #getPossibleTargets()
-     * }.
+     * Computes and returns possible targets and also sets them, such that they can be retrieved using
+     * {@link #getPossibleTargets()}.
      *
      * @param fromCell
      * @param onlyFreeNeighbours
@@ -99,12 +100,18 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      */
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
         Debug.globalLogger.warning("Not-overriden target cell selection is used.");
-        if( targets.isEmpty()) {
+        if (targets.isEmpty()) {
             throw new IllegalArgumentException("Target list cannot be empty.");
         }
         return targets.get(0);
     }
 
+    /**
+     * Returns a sway delay if the individual is changing the walking direction.
+     * @param ind
+     * @param direction
+     * @return 
+     */
     protected double getSwayDelay(Individual ind, Direction8 direction) {
         if (ind.getDirection() == direction) {
             return 0;
@@ -120,7 +127,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     }
 
     /**
-     * Sets the time when the current movement is over for an individual and actualizates the needed time in the
+     * Sets the time when the current movement is over for an individual and updates the needed time in the
      * cellular automaton. Fractional values are accepted and are rounded up to the next integral value, to be used
      * in the integral cellular automaton. Updates also the step end time for the given individual (the time is not
      * rounded).
