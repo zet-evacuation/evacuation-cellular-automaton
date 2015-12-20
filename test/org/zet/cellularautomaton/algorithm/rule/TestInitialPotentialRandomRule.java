@@ -19,7 +19,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -30,28 +29,29 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  */
 public class TestInitialPotentialRandomRule {
     private final Mockery context = new Mockery();
-    InitialPotentialRandomRule rule;
-    EvacCell cell;
-    Individual i;
-    EvacuationCellularAutomaton eca;
+    private InitialPotentialRandomRule rule;
+    private EvacCell cell;
+    private Individual i;
+    private EvacuationCellularAutomaton eca;
+    private EvacuationState es;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
 
     @Before
     public void init() {
         rule = new InitialPotentialRandomRule();
         Room room = context.mock(Room.class);
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
+        es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
@@ -59,7 +59,7 @@ public class TestInitialPotentialRandomRule {
         i.setCell(cell);
         cell.getState().setIndividual(i);
 
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
         eca.addIndividual(cell, i);
     }
 
@@ -82,9 +82,10 @@ public class TestInitialPotentialRandomRule {
     
     @Test
     public void testDeadIfNoPotentials() {
+        context.checking(new Expectations() {{
+                exactly(1).of(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
+        }});
         rule.execute(cell);
-        assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test
@@ -94,9 +95,11 @@ public class TestInitialPotentialRandomRule {
 
         pm.addStaticPotential(sp);
         
+        context.checking(new Expectations() {{
+                exactly(1).of(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
+        }});
         rule.execute(cell);
-        assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
+        context.assertIsSatisfied();
     }
     
     @Test

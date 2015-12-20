@@ -50,7 +50,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
 
     private boolean recordingStarted;
 
-
     /**
      * the state of the cellular automaton.
      */
@@ -92,9 +91,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     /** Reference to all Floor Fields. */
     private PotentialManager potentialManager;
     /** The current time step. */
-    private int timeStep;
-    /** The minimal number of steps that is needed until all movements are FINISHED. */
-    private int neededTime;
+    //private int timeStep;
     /** The current state of the cellular automaton, e.g. RUNNING, stopped, ... */
     private State state;
     private double absoluteMaxSpeed;
@@ -109,7 +106,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public EvacuationCellularAutomaton() {
         super(null);
-        timeStep = 0;
+        //timeStep = 0;
         individuals = new ArrayList<>();
         individualsByID = new HashMap<>();
         evacuatedIndividuals = new ArrayList<>();
@@ -271,21 +268,21 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     /**
      * Increases the actual timeStep of the EvacuationCellularAutomaton about one.
      */
-    @Override
-    public void nextTimeStep() {
-        timeStep++;
-        VisualResultsRecorder.getInstance().nextTimestep();
-    }
+//    @Override
+//    public void nextTimeStep() {
+//        timeStep++;
+//        VisualResultsRecorder.getInstance().nextTimestep();
+//    }
 
     /**
      * Gets the actual timeStep of the EvacuationCellularAutomaton.
      *
      * @return the timeStep
      */
-    @Override
-    public int getTimeStep() {
-        return timeStep;
-    }
+//    @Override
+//    public int getTimeStep() {
+//        return timeStep;
+//    }
 
     /**
      * Returns an ArrayList of all exists of the building
@@ -478,9 +475,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (!individuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
-        if (getTimeStep() == 0) {
-            throw new IllegalStateException();
-        }
+//        if (getTimeStep() == 0) {
+//            throw new IllegalStateException();
+//        }
         VisualResultsRecorder.getInstance().recordAction(new ExitAction((ExitCell) i.getCell()));
         EvacCell evacCell = i.getCell();
 
@@ -763,7 +760,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         individuals.clear();
         typeIndividualMap.clear();
 
-        timeStep = 0;
+        //timeStep = 0;
         state = State.READY;
     }
 
@@ -852,26 +849,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public Collection<Room> getRoomsOnFloor(Integer floorID) {
         return roomsByFloor.get(floorID);
-    }
-
-    /**
-     * Gets the minimal number of time steps that are necessary to finish all (virtually not discrete) movements.
-     *
-     * @return the time
-     */
-    @Override
-    public int getNeededTime() {
-        return neededTime;
-    }
-
-    /**
-     * Sets a new minimal number of time steps that are necessary to finish all (virtually non discrete) movements.
-     *
-     * @param neededTime the time step
-     */
-    @Override
-    public void setNeededTime(int neededTime) {
-        this.neededTime = neededTime;
     }
 
     @Override

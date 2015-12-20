@@ -2,11 +2,12 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
@@ -14,8 +15,6 @@ import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.SaveCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -65,20 +64,21 @@ public class TestSaveIndividualsRule {
         Individual i = new Individual();
         cell.getState().setIndividual(i);
 
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
+                exactly(1).of(es).setIndividualSave(with(i));
             }
         });
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
 
         rule.execute(cell);
-        assertThat(i.isSafe(), is(true));
+        context.assertIsSatisfied();
     }
 
     @Test
@@ -99,17 +99,17 @@ public class TestSaveIndividualsRule {
 
         cell.getState().setIndividual(i);
 
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
             }
         });
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
 
         rule.execute(cell);
     }

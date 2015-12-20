@@ -25,6 +25,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
 import org.zetool.common.algorithm.AlgorithmProgressEvent;
@@ -120,6 +121,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getRuleSet();
                 will(returnValue(rules));
                 
+                allowing(primary1).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                allowing(primary2).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                allowing(loop).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                
                 allowing(eca).start();
                 allowing(eca).getIndividuals();
                 will(returnValue(individuals));
@@ -199,7 +204,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
                 exactly(1).of(pc).updateDynamicPotential(with(0.0), with(0.0));
-                exactly(1).of(eca).nextTimeStep();
 
                 allowing(eca).getIndividualCount();
                 allowing(eca).getInitialIndividualCount();
@@ -219,7 +223,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     }
     
     @Test
-    public void testTerminateAllSave() {
+    public void testTerminateEventAllSave() {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
             @Override
             protected void initialize() {
@@ -237,8 +241,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(0));
                 
                 allowing(eca).stop();
-                allowing(eca).getTimeStep();
-                will(returnValue(15));
             }
         });
         algorithm.addAlgorithmListener(event -> {
@@ -249,15 +251,13 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         algorithm.setProblem(esp);
         EvacuationSimulationResult result = algorithm.terminate();
-        assertThat(result.getSteps(), is(equalTo(15)));
     }
-    
+
     @Test
     public void testTerminateSomeIndividualsLeft() {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
             @Override
             protected void initialize() {
-                
             }
 
         };
@@ -279,7 +279,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 never(eca).setIndividualDead(individuals.get(1), DeathCause.NOT_ENOUGH_TIME);
 
                 allowing(eca).stop();
-                allowing(eca).getTimeStep();
             }
         });
         
@@ -287,7 +286,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         EvacuationSimulationResult result = algorithm.terminate();
         context.assertIsSatisfied();
     }
-    
+
     /**
      * Returns a list of two individuals including cell information.
      * @return a list of individuals
@@ -308,8 +307,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         individuals.add(i2);
         return individuals;
     }
-    
-    
+
     @Test
     public void testUnfinished() {
         assertThat(getAlgorithm(1, 0, 1, 2).isFinished(), is(false));
@@ -342,6 +340,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 super.increaseStep();
             }
         };
+        algorithm.setNeededTime(neededTime);
         
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
@@ -352,11 +351,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(eca).getNotSafeIndividualsCount();
                 will(returnValue(notSave));
                 
-                allowing(eca).getTimeStep();
-                will(returnValue(timeStep));
-                
-                allowing(eca).getNeededTime();
-                will(returnValue(neededTime));
+                //allowing(eca).getNeededTime();
+                //will(returnValue(neededTime));
             }
         });
         algorithm.setMaxSteps(maxSteps);
@@ -469,7 +465,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
             @Override
             protected void initialize() {
-                
             }
 
             @Override
@@ -499,7 +494,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
                 exactly(1).of(pc).updateDynamicPotential(with(0.0), with(0.0));
-                exactly(1).of(eca).nextTimeStep();
+                //exactly(1).of(eca).nextTimeStep();
                 
 
                 allowing(eca).getIndividualCount();
@@ -524,24 +519,27 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
     @Test
     public void testMaxStepsTakenFromProblem() {
-        final AtomicInteger c = new AtomicInteger();
+        final AtomicInteger stepCounter = new AtomicInteger();
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm() {
 
             @Override
             protected void performStep() {
                 super.increaseStep();
-                c.incrementAndGet();
+                stepCounter.incrementAndGet();
             }
         };
-        
+        algorithm.setNeededTime(Integer.MAX_VALUE);
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        
         context.checking(new Expectations() {
             {
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(3));
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
+                allowing(esp).getRuleSet();
+                will(returnValue(new EvacuationRuleSet() {}));
                 
                 allowing(eca).start();
                 allowing(eca).getIndividuals();
@@ -549,10 +547,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(eca).removeMarkedIndividuals();
                 allowing(eca).getNotSafeIndividualsCount();
                 will(returnValue(0));
-                allowing(eca).getTimeStep();
-                will(returnValue(0));
-                allowing(eca).getNeededTime();
-                will(returnValue(0));
+                //allowing(eca).getNeededTime();
+                //will(returnValue(Integer.MAX_VALUE));
                 allowing(eca).stop();
             }
         });        
@@ -561,6 +557,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.runAlgorithm();
         
         assertThat(algorithm.getMaxSteps(), is(equalTo(3)));
-        assertThat(c.get(), is(equalTo(3)));
+        assertThat(stepCounter.get(), is(equalTo(3)));
     }
 }

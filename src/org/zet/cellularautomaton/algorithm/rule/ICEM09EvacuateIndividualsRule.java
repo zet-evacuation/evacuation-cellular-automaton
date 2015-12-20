@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
 
@@ -24,10 +25,10 @@ public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
 
     @Override
     protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
-        esp.getCellularAutomaton().markIndividualForRemoval( cell.getState().getIndividual() );
+        es.markIndividualForRemoval( cell.getState().getIndividual() );
         // Potential needed for statistics:
-        org.zet.cellularautomaton.potential.StaticPotential exit = esp.getPotentialController().getNearestExitStaticPotential( cell );
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getState().getIndividual(), exit );
+        StaticPotential exit = getNearestExitStaticPotential(es.getCellularAutomaton().getStaticPotentials(), cell );
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic( cell.getState().getIndividual(), exit );
         // safetyTime etc will be set in the SaveIndividualsRule
     }
 
@@ -36,7 +37,7 @@ public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
         Individual i = cell.getState().getIndividual();
         boolean testval = false;
         if( (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell)) {
-            testval = i.getStepEndTime() < esp.getCellularAutomaton().getTimeStep() + 1;
+            testval = i.getStepEndTime() < es.getTimeStep() + 1;
         }
         return (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell) && testval;
     }

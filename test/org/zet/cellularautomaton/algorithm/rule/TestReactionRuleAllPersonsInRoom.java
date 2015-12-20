@@ -15,7 +15,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 
 /**
  *
@@ -23,6 +22,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
  */
 public class TestReactionRuleAllPersonsInRoom {
     private final Mockery context = new Mockery();
+    EvacuationState es;
 
     @Test
     public void testSingleIndividual() {
@@ -31,6 +31,10 @@ public class TestReactionRuleAllPersonsInRoom {
         RoomCell cell = generateCell(room, i);
         
         ReactionRuleAllPersonsInRoom rule = generateRule();
+        context.checking(new Expectations() {{
+                exactly(1).of(es).getTimeStep();
+                will(returnValue(0));
+        }});
         rule.execute(cell);
         assertThat(i.isAlarmed(), is(true));
     }
@@ -46,6 +50,10 @@ public class TestReactionRuleAllPersonsInRoom {
         generateCell(room, i3);
         
         ReactionRuleAllPersonsInRoom rule = generateRule();
+        context.checking(new Expectations() {{
+                exactly(3).of(es).getTimeStep();
+                will(returnValue(0));
+        }});
         rule.execute(cell);
         assertThat(i1.isAlarmed(), is(true));
         assertThat(i2.isAlarmed(), is(true));
@@ -63,6 +71,10 @@ public class TestReactionRuleAllPersonsInRoom {
         generateCell(room, i3);
         
         ReactionRuleAllPersonsInRoom rule = generateRule();
+        context.checking(new Expectations() {{
+                exactly(2).of(es).getTimeStep();
+                will(returnValue(0));
+        }});
         rule.execute(cell);
         assertThat(i1.isAlarmed(), is(false));
         assertThat(i2.isAlarmed(), is(false));
@@ -70,16 +82,14 @@ public class TestReactionRuleAllPersonsInRoom {
     }
 
     private ReactionRuleAllPersonsInRoom generateRule() {
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        context.checking(new Expectations() {
-            {
-                allowing(p).getCellularAutomaton();
+        es = context.mock(EvacuationState.class);
+        context.checking(new Expectations() {{
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
-            }
-        });
+        }});
         ReactionRuleAllPersonsInRoom rule = new ReactionRuleAllPersonsInRoom();
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
         return rule;
     }
     

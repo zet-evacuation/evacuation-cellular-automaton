@@ -52,7 +52,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
         //if( !isInitialized() ) {
         //	throw new IllegalArgumentException( DefaultLoc.getSingleton().getString( "algo.ca.NotInitializedException" ) );
         //}
-        getProblem().getCellularAutomaton().nextTimeStep();
+        increaseStep();
 
         // Suche movement rule und setze auf not direct action
         setDirectExecute(false);

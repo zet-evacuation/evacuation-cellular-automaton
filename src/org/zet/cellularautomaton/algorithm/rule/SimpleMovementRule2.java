@@ -80,16 +80,16 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
         if (ind.getCell().equals(targetCell)) {
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
-                    .addWaitedTimeToStatistic(ind, esp.getCellularAutomaton().getTimeStep());
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
-                    .addCellToWaitingStatistic(targetCell, esp.getCellularAutomaton().getTimeStep());
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
-                    .addCellToUtilizationStatistic(targetCell, esp.getCellularAutomaton().getTimeStep());
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
+                    .addWaitedTimeToStatistic(ind, es.getTimeStep());
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
+                    .addCellToWaitingStatistic(targetCell, es.getTimeStep());
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
+                    .addCellToUtilizationStatistic(targetCell, es.getTimeStep());
             noMove();
         } else {
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
-                    .addCellToUtilizationStatistic(targetCell, esp.getCellularAutomaton().getTimeStep());
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
+                    .addCellToUtilizationStatistic(targetCell, es.getTimeStep());
             initializeMove(from, targetCell);
             performMove(from, targetCell);
             setMoveRuleCompleted(false);
@@ -103,11 +103,11 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     protected void noMove() {
         ind.setStepStartTime(ind.getStepEndTime());
         setStepEndTime(ind, ind.getStepEndTime() + 1);
-        esp.getCellularAutomaton().moveIndividual(ind.getCell(), ind.getCell());
+        es.moveIndividual(ind.getCell(), ind.getCell());
 
         ind.setDirection(getDirection());
         setMoveRuleCompleted(false);
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(ind, esp.getCellularAutomaton().getTimeStep(), 0);
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(ind, es.getTimeStep(), 0);
     }
 
     /**
@@ -159,14 +159,14 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         if (ind == null) {
             throw new IllegalStateException("No Individual on from cell " + from);
         }
-        this.esp.getPotentialController().increaseDynamicPotential(targetCell);
+        this.es.increaseDynamicPotential(targetCell);
 
         if (from instanceof DoorCell && targetCell instanceof DoorCell) {
-            if (esp.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
-                speed = esp.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed());
+            if (es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
+                speed = es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed());
                 speed *= targetCell.getSpeedFactor() * 1;
                 ind.setStepStartTime(Math.max(ind.getCell().getOccupiedUntil(), ind.getStepEndTime()));
-                setStepEndTime(ind, ind.getStepEndTime() + (dist / speed) * esp.getCellularAutomaton().getStepsPerSecond() + 0);
+                setStepEndTime(ind, ind.getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
                 ind.setDirection(ind.getDirection());
             } else {
                 throw new IllegalStateException("Individuum has no speed.");
@@ -179,13 +179,13 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
             dist = direction.distance() * 0.4; // calculate distance
             double add = getSwayDelay(ind, direction); // add a delay if the person is changing direction
 
-            if (esp.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
-                speed = esp.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed());
+            if (es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
+                speed = es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed());
                 double factor = targetCell.getSpeedFactor() * stairSpeedFactor;
                 //System.out.println( "Speed factor: " + factor + " stairspeed: " + stairSpeedFactor );
                 speed *= factor;
                 ind.setStepStartTime(Math.max(from.getOccupiedUntil(), ind.getStepEndTime()));
-                setStepEndTime(ind, ind.getStepEndTime() + (dist / speed) * esp.getCellularAutomaton().getStepsPerSecond() + add * esp.getCellularAutomaton().getStepsPerSecond());
+                setStepEndTime(ind, ind.getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + add * es.getCellularAutomaton().getStepsPerSecond());
                 ind.setDirection(direction);
             } else {
                 throw new IllegalStateException("Individuum has no speed.");
@@ -203,9 +203,9 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         Individual ind = from.getState().getIndividual();
 
         from.setOccupiedUntil(ind.getStepEndTime());
-        esp.getCellularAutomaton().moveIndividual(from, targetCell);
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(ind, esp.getCellularAutomaton().getTimeStep(), speed * esp.getCellularAutomaton().getSecondsPerStep());
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(ind, (int) Math.ceil(ind.getStepEndTime()), dist);
+        es.moveIndividual(from, targetCell);
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(ind, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(ind, (int) Math.ceil(ind.getStepEndTime()), dist);
     }
 
     /**
@@ -217,9 +217,9 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     @Override
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
         EvacCell target = cell;
-        double minPot = esp.getParameterSet().effectivePotential(cell, cell);
+        double minPot = es.getParameterSet().effectivePotential(cell, cell);
         for (EvacCell c : targets) {
-            double pot = esp.getParameterSet().effectivePotential(cell, c);
+            double pot = es.getParameterSet().effectivePotential(cell, c);
             if (pot > minPot) {
                 target = c;
                 minPot = pot;
@@ -236,7 +236,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @return {@code true} if the individual moves or {@code false} otherwise.
      */
     protected boolean canMove(Individual i) {
-        return esp.getCellularAutomaton().getTimeStep() >= i.getStepEndTime();
+        return es.getTimeStep() >= i.getStepEndTime();
     }
 
     @Override
@@ -254,7 +254,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         initializeMove(cell1, cell2);
         ind = cell2.getState().getIndividual();
         initializeMove(cell2, cell1); // do not actually move!
-        esp.getCellularAutomaton().swapIndividuals(cell1, cell2);
+        es.swapIndividuals(cell1, cell2);
     }
 
     /**

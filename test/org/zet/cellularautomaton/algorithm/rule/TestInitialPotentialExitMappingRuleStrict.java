@@ -3,14 +3,15 @@ package org.zet.cellularautomaton.algorithm.rule;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import java.util.LinkedList;
 import java.util.List;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
@@ -22,7 +23,6 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -55,23 +55,24 @@ public class TestInitialPotentialExitMappingRuleStrict {
         Room room = context.mock(Room.class);
         p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
         i.setCell(cell);
         cell.getState().setIndividual(i);
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
         eca.addIndividual(cell, i);
 
         target = new ExitCell(1.0, 0, 0, room);

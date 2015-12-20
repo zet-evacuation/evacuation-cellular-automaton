@@ -163,30 +163,4 @@ public class SPPotentialController implements PotentialController {
         return pm.getStaticPotential(rnd.nextInt(pm.getStaticPotentials().size()));
     }
 
-    /**
-     * Returns a StaticPotential which contains the lowest potential for the specified cell. If this cell is not in any
-     * staticPotetial null is returned.
-     *
-     * @param c EvacCell for which the lowest potential is searched
-     * @return StaticPotential that provides the fastest way out or null, if this cell is not mapped to any static
-     * potential
-     */
-    @Override
-    public StaticPotential getNearestExitStaticPotential(EvacCell c) {
-        StaticPotential nearestPot = new StaticPotential();
-        int distance = Integer.MAX_VALUE;
-        int numberOfDisjunctStaticPotentials = 0;
-        for (StaticPotential sP : pm.getStaticPotentials()) {
-            if (sP.getPotential(c) == -1) {
-                numberOfDisjunctStaticPotentials++;
-            } else {
-                if (sP.getPotential(c) < distance) {
-                    nearestPot = sP;
-                    distance = sP.getPotential(c);
-                }
-            }
-        }
-        return (numberOfDisjunctStaticPotentials == pm.getStaticPotentials().size() ? null : nearestPot);
-    }
-
 }

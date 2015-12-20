@@ -40,10 +40,10 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        List<StaticPotential> staticPotentials = new ArrayList<>(esp.getCellularAutomaton().getStaticPotentials());
+        List<StaticPotential> staticPotentials = new ArrayList<>(es.getCellularAutomaton().getStaticPotentials());
         StaticPotential initialPotential = initialPotential(staticPotentials, cell);
         if (initialPotential == null) {
-            esp.getCellularAutomaton().setIndividualDead(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
+            es.setIndividualDead(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
         } else {
             assignMostAttractivePotential(staticPotentials, initialPotential, cell);
         }

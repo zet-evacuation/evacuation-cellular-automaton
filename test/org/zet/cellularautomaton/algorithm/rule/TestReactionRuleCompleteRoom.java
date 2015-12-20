@@ -14,7 +14,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 
 /**
  *
@@ -22,6 +21,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
  */
 public class TestReactionRuleCompleteRoom {
     private final Mockery context = new Mockery();
+    private EvacuationState es;
 
     @Test
     public void roomAlerted() {
@@ -30,6 +30,10 @@ public class TestReactionRuleCompleteRoom {
         RoomCell cell = generateCell(room, i);
         
         ReactionRuleCompleteRoom rule = generateReactionRule();
+        context.checking(new Expectations() {{
+                exactly(1).of(es).getTimeStep();
+                will(returnValue(0));
+        }});
         rule.execute(cell);
         assertThat(i.isAlarmed(), is(true));
     }
@@ -41,6 +45,10 @@ public class TestReactionRuleCompleteRoom {
         RoomCell cell = generateCell(room, i);
         
         ReactionRuleCompleteRoom rule = generateReactionRule();
+        context.checking(new Expectations() {{
+                exactly(1).of(es).getTimeStep();
+                will(returnValue(0));
+        }});
         rule.execute(cell);
         assertThat(i.isAlarmed(), is(false));
     }
@@ -57,16 +65,16 @@ public class TestReactionRuleCompleteRoom {
     }
 
     private ReactionRuleCompleteRoom generateReactionRule() {
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
+        es = context.mock(EvacuationState.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
             }
         });
         ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
         return rule;
     }
     

@@ -85,17 +85,18 @@ public class TestAbstractEvacuationRule {
     @Test
     public void testSettingCellularAutomatonFails() {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
+        EvacuationState es = context.mock(EvacuationState.class);
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
             protected void onExecute(EvacCell cell) {
             }
         };
-        rule.setEvacuationSimulationProblem(p);
-        assertThat(rule.esp, is(equalTo(p)));
+        rule.setEvacuationSimulationProblem(es);
+        assertThat(rule.es, is(equalTo(es)));
 
         exception.expect(RuntimeException.class);
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
     }
     
     @Test(expected = NullPointerException.class)

@@ -93,14 +93,14 @@ public class MoveAction extends Action {
     public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (from.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
-                    onCA.getTimeStep(),
+                    -1,
                     this,
                     "Cannot move individual because it is not there.");
         }
 
         if (!(to == from) && !to.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
-                    onCA.getTimeStep(),
+                    -1,
                     this,
                     "Cannot move individual because there is an individual on the target cell.");
         }

@@ -53,24 +53,25 @@ public class TestInitialPotentialExitMappingRule {
         rule = new InitialPotentialExitMappingRule();
         Room room = context.mock(Room.class);
         esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationState es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(esp).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
-                allowing(esp).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
         i.setCell(cell);
         cell.getState().setIndividual(i);
-        rule.setEvacuationSimulationProblem(esp);
+        rule.setEvacuationSimulationProblem(es);
         eca.addIndividual(cell, i);
 
         target = new ExitCell(1.0, 0, 0, room);

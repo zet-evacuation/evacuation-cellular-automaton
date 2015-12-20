@@ -3,7 +3,6 @@ package org.zet.cellularautomaton.algorithm;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimulationProblem;
 
 /**
@@ -13,8 +12,6 @@ import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimula
 public interface EvacuationSimulationProblem extends CellularAutomatonSimulationProblem<EvacuationCellularAutomatonInterface, EvacCell> {
 
     public ParameterSet getParameterSet();
-
-    public CAStatisticWriter getStatisticWriter();
 
     public PotentialController getPotentialController();
 

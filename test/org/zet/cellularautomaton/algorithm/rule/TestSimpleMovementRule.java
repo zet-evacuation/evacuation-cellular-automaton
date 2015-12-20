@@ -14,10 +14,8 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 
 /**
@@ -96,20 +94,17 @@ public class TestSimpleMovementRule {
     @Test
     public void moveCallsCellularAutomaton() {
         Mockery context = new Mockery();
-        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationState es = context.mock(EvacuationState.class);
         EvacCell startCell = new RoomCell(0, 0);
         EvacCell targetCell = new RoomCell(0, 0);
 
         context.checking(new Expectations() {
             {
-                allowing(esp).getCellularAutomaton();
-                will(returnValue(eca));
-                exactly(1).of(eca).moveIndividual(with(startCell), with(targetCell));
+                exactly(1).of(es).moveIndividual(with(startCell), with(targetCell));
             }
         });
         SimpleMovementRule rule = new SimpleMovementRule();
-        rule.setEvacuationSimulationProblem(esp);
+        rule.setEvacuationSimulationProblem(es);
 
         rule.move(startCell, targetCell);
 
@@ -135,17 +130,17 @@ public class TestSimpleMovementRule {
         List<EvacCell> targets = Collections.singletonList(targetCell);
 
         Mockery context = new Mockery();
-        EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
+        EvacuationState es = context.mock(EvacuationState.class);
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {
             {
-                allowing(esp).getParameterSet();
+                allowing(es).getParameterSet();
                 will(returnValue(ps));
                 allowing(ps).effectivePotential(currentCell, targetCell);
                 will(returnValue(1.0));
             }
         });
-        rule.setEvacuationSimulationProblem(esp);
+        rule.setEvacuationSimulationProblem(es);
 
         EvacCell selectedCell = rule.selectTargetCell(currentCell, targets);
 

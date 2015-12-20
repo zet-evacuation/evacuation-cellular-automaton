@@ -2,18 +2,18 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.PotentialController;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -28,15 +28,18 @@ public class TestEvacuateIndividualsRule {
     public void applicableIfOccupied() {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
         context.checking(new Expectations() {
             {
                 allowing(p).getCellularAutomaton();
                 will(returnValue(eca));
+                allowing(es).getTimeStep();
+                will(returnValue(0));
             }
         });
 
         EvacuateIndividualsRule rule = new EvacuateIndividualsRule();
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
 
         ExitCell exit = new ExitCell(0, 0);
         Individual toEvacuate = new Individual();
@@ -63,28 +66,31 @@ public class TestEvacuateIndividualsRule {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         PotentialController pc = context.mock(PotentialController.class);
+        EvacuationState es = context.mock(EvacuationState.class);
+        Individual toEvacuate = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
-                will(returnValue(eca));
                 allowing(p).getPotentialController();
                 will(returnValue(pc));
-                allowing(pc).getNearestExitStaticPotential(with(any(ExitCell.class)));
-                will(returnValue(new StaticPotential()));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
+                allowing(es).getTimeStep();
+                will(returnValue(0));
+                allowing(es).getCellularAutomaton();
+                will(returnValue(eca));
+                
+                exactly(1).of(es).markIndividualForRemoval(with(toEvacuate));
             }
         });
 
         EvacuateIndividualsRule rule = new EvacuateIndividualsRule();
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
 
         ExitCell exit = new ExitCell(0, 0);
-        Individual toEvacuate = new Individual();
         exit.getState().setIndividual(toEvacuate);
 
         assertThat(eca.isIndividualMarked(toEvacuate), is(false));
         rule.onExecute(exit);
-        assertThat(eca.isIndividualMarked(toEvacuate), is(true));
+        context.assertIsSatisfied();
     }
 }

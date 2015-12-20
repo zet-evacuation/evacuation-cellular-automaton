@@ -30,7 +30,7 @@ public class ChangePotentialBestResponseOptimizedRule extends AbstractPotentialC
 
     @Override
     protected boolean wantsToChange(Individual i) {
-        int timeStep = esp.getCellularAutomaton().getTimeStep();
+        int timeStep = es.getTimeStep();
         return timeStep < TIME_STEP_LIMIT_FOR_NASH_EQUILIBRIUM;
     }
     
@@ -42,6 +42,6 @@ public class ChangePotentialBestResponseOptimizedRule extends AbstractPotentialC
     protected void onExecute(EvacCell cell) {
         // perform initial best response dynamics exit selection
         BestResponseDynamics brd = new BestResponseDynamics();
-        brd.computePotential(cell, esp.getCellularAutomaton());
+        brd.computePotential(cell, es.getCellularAutomaton());
     }
 }

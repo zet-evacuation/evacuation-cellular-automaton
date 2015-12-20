@@ -43,13 +43,13 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        assignShortestPathPotential(cell, this.esp);
+        assignShortestPathPotential(cell, this.es);
     }
 
-    public static void assignShortestPathPotential(EvacCell cell, EvacuationSimulationProblem esp) {
+    public static void assignShortestPathPotential(EvacCell cell, EvacuationState es) {
         Individual individual = cell.getState().getIndividual();
         List<StaticPotential> staticPotentials = new ArrayList<>();
-        staticPotentials.addAll(esp.getCellularAutomaton().getStaticPotentials());
+        staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());
         StaticPotential initialPotential = new StaticPotential();
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
         double distanceToEvacArea;
@@ -63,13 +63,13 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (Double.isInfinite(minDistanceToEvacArea)) {
-            esp.getCellularAutomaton().setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
+            es.setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
         }
 
         individual.setStaticPotential(initialPotential);
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic(individual, minDistanceToEvacArea, initialPotential.getDistance(cell));
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, 0);
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, individual.getExhaustion());
-        esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, individual.getPanic());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic(individual, minDistanceToEvacArea, initialPotential.getDistance(cell));
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, 0);
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, individual.getExhaustion());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, individual.getPanic());
     }
 }

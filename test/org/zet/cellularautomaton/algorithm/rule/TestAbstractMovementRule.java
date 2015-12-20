@@ -202,19 +202,20 @@ public class TestAbstractMovementRule {
         Mockery context = new Mockery();
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
         context.checking(new Expectations() {
             {
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
+                allowing(es).setNeededTime(with(3));
             }
         });        
-        rule.setEvacuationSimulationProblem(esp);
+        rule.setEvacuationSimulationProblem(es);
         
         Individual i = new Individual();
         rule.setStepEndTime(i, 2.68);
 
         assertThat(i.getStepEndTime(), is(closeTo(2.68, 10e-8)));
-        assertThat(eca.getNeededTime(), is(equalTo(3)));
     }
     
     @Test

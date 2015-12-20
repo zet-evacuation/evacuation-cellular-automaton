@@ -17,10 +17,8 @@ package org.zet.cellularautomaton.algorithm;
 
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import ds.PropertyContainer;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
-import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
  *
@@ -33,7 +31,6 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
     public PotentialController potentialController;
-    public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
 
     public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca) {
         this.ca = ca;
@@ -41,9 +38,9 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
         PropertyContainer props = PropertyContainer.getGlobal();
 
         ruleSet = EvacuationRuleSet.createRuleSet(props.getAsString("algo.ca.ruleSet"));
-        for (EvacuationRule rule : ruleSet) {
-            rule.setEvacuationSimulationProblem(this);
-        }
+        //for (EvacuationRule rule : ruleSet) {
+        //    rule.setEvacuationSimulationProblem(this);
+        //}
 
         parameterSet = AbstractParameterSet.createParameterSet(props.getAsString("algo.ca.parameterSet"));
 
@@ -60,11 +57,6 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     @Override
     public ParameterSet getParameterSet() {
         return parameterSet;
-    }
-
-    @Override
-    public CAStatisticWriter getStatisticWriter() {
-        return caStatisticWriter;
     }
 
     @Override

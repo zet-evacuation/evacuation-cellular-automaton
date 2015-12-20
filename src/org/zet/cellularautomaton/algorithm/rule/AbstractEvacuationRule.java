@@ -15,18 +15,20 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Collection;
 import java.util.Objects;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * @author Daniel R. Schmidt
  */
 public abstract class AbstractEvacuationRule implements EvacuationRule {
 
-    protected EvacuationSimulationProblem esp;
+    //protected EvacuationSimulationProblem esp;
+    protected EvacuationState es;
 
     /**
      * Returns if the rule is executable on the cell. The default behavior is, that a rule is executable if an
@@ -52,12 +54,30 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     protected abstract void onExecute(EvacCell cell);
 
     @Override
-    public void setEvacuationSimulationProblem(EvacuationSimulationProblem esp) {
-        if (this.esp != null) {
+    public void setEvacuationSimulationProblem(EvacuationState es) {
+        if (this.es != null) {
             throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
                     "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
         }
-        this.esp = Objects.requireNonNull(esp, CellularAutomatonLocalization.LOC.getString(
+        this.es = Objects.requireNonNull(es, CellularAutomatonLocalization.LOC.getString(
                 "algo.ca.rule.CAControllerIsNullException"));
     }
+    
+    protected static StaticPotential getNearestExitStaticPotential(Collection<StaticPotential> potentials, EvacCell c) {
+        StaticPotential nearestPot = new StaticPotential();
+        int distance = Integer.MAX_VALUE;
+        int numberOfDisjunctStaticPotentials = 0;
+        for (StaticPotential sP : potentials) {
+            if (sP.getPotential(c) == -1) {
+                numberOfDisjunctStaticPotentials++;
+            } else {
+                if (sP.getPotential(c) < distance) {
+                    nearestPot = sP;
+                    distance = sP.getPotential(c);
+                }
+            }
+        }
+        return numberOfDisjunctStaticPotentials == potentials.size() ? null : nearestPot;
+    }
+    
 }

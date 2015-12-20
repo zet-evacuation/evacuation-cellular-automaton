@@ -48,7 +48,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
     @Override
     protected void onExecute(EvacCell cell) {
         EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
-        Logger.getGlobal().log(Level.INFO, "Target cell: " + targetCell);
+        Logger.getGlobal().log(Level.INFO, "Target cell: {0}", targetCell);
         if (cell.equals(targetCell)) {
             return;
         }
@@ -57,8 +57,8 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
-        Logger.getGlobal().log(Level.INFO, "Move from " + from + " to " + targetCell);
-        esp.getCellularAutomaton().moveIndividual(from, targetCell);
+        Logger.getGlobal().log(Level.INFO, "Move from {0} to {1}", new Object[]{from, targetCell});
+        es.moveIndividual(from, targetCell);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
         double p[] = new double[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(esp.getParameterSet().effectivePotential(cell, targets.get(i)));
+            p[i] = Math.exp(es.getParameterSet().effectivePotential(cell, targets.get(i)));
         }
 
         return targets.get(RandomUtils.getInstance().chooseRandomlyAbsolute(p));
@@ -77,6 +77,6 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public void swap(EvacCell cell1, EvacCell cell2) {
-        esp.getCellularAutomaton().swapIndividuals(cell1, cell2);
+        es.swapIndividuals(cell1, cell2);
     }
 }

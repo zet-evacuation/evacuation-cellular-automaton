@@ -117,10 +117,10 @@ public class SwapAction extends Action {
     @Override
     public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (cell1.getState().isEmpty()) {
-            throw new InconsistentPlaybackStateException(onCA.getTimeStep(), this, "There is no Individual on cell 1.");
+            throw new InconsistentPlaybackStateException(-1, this, "There is no Individual on cell 1.");
         }
         if (cell2.getState().isEmpty()) {
-            throw new InconsistentPlaybackStateException(onCA.getTimeStep(), this, "There is no Individual on cell 2.");
+            throw new InconsistentPlaybackStateException(-1, this, "There is no Individual on cell 2.");
         }
 
         //cell1.getRoom().swapIndividuals( cell1, cell2 );

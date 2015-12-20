@@ -34,7 +34,7 @@ public class ReactionRuleOnePerson extends AbstractReactionRule {
     @Override
     protected void onExecute(EvacCell cell) {
         Individual i = cell.getState().getIndividual();
-        if (!i.isAlarmed() && esp.getCellularAutomaton().getTimeStep() >= i.getReactionTime() * esp.getCellularAutomaton().getStepsPerSecond()) {
+        if (!i.isAlarmed() && es.getTimeStep() >= i.getReactionTime() * es.getCellularAutomaton().getStepsPerSecond()) {
             i.setAlarmed(true);
         }
     }

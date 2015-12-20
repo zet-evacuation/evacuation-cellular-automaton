@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
@@ -18,7 +19,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -33,24 +33,25 @@ public class TestInitialConcretePotentialRule {
     EvacCell cell;
     Individual i;
     EvacuationCellularAutomaton eca;
+    EvacuationState es;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     
     @Before
     public void init() {
         rule = new InitialConcretePotentialRule();
         Room room = context.mock(Room.class);
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
+        es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         i = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
@@ -58,7 +59,7 @@ public class TestInitialConcretePotentialRule {
         i.setCell(cell);
         cell.getState().setIndividual(i);
 
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
         eca.addIndividual(cell, i);
     }
     
@@ -81,9 +82,13 @@ public class TestInitialConcretePotentialRule {
     
     @Test
     public void testDeadIfNoPotentials() {
+        context.checking(new Expectations() {
+            {
+                
+                allowing(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
+            }
+        });
         rule.execute(cell);
-        assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test
@@ -92,10 +97,13 @@ public class TestInitialConcretePotentialRule {
         PotentialManager pm = eca.getPotentialManager();
 
         pm.addStaticPotential(sp);
-        
+        context.checking(new Expectations() {
+            {
+                
+                allowing(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
+            }
+        });
         rule.execute(cell);
-        assertThat(i.isDead(), is(true));
-        assertThat(i.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
     }
     
     @Test

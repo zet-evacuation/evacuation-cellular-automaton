@@ -33,6 +33,7 @@ public class TestInitialPotentialFamiliarityRule {
     private InitialPotentialFamiliarityRule rule;
     private EvacCell cell;
     private Individual individual;
+    private EvacuationState es;
     private EvacuationCellularAutomaton eca;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
 
@@ -40,18 +41,18 @@ public class TestInitialPotentialFamiliarityRule {
     public void init() {
         rule = new InitialPotentialFamiliarityRule();
         Room room = context.mock(Room.class);
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
+        es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         individual = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getCellularAutomaton();
+                allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(individual));
                 allowing(room).removeIndividual(with(individual));
-                allowing(p).getStatisticWriter();
+                allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
             }
         });
@@ -59,7 +60,7 @@ public class TestInitialPotentialFamiliarityRule {
         individual.setCell(cell);
         cell.getState().setIndividual(individual);
 
-        rule.setEvacuationSimulationProblem(p);
+        rule.setEvacuationSimulationProblem(es);
         eca.addIndividual(cell, individual);
     }
 
@@ -82,9 +83,11 @@ public class TestInitialPotentialFamiliarityRule {
     
     @Test
     public void testDeadIfNoPotentials() {
+        context.checking(new Expectations() {{
+                exactly(1).of(es).setIndividualDead(with(individual), with(DeathCause.EXIT_UNREACHABLE));
+        }});
         rule.execute(cell);
-        assertThat(individual.isDead(), is(true));
-        assertThat(individual.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
+        context.assertIsSatisfied();
     }
 
     @Test
@@ -94,9 +97,11 @@ public class TestInitialPotentialFamiliarityRule {
 
         pm.addStaticPotential(sp);
         
+        context.checking(new Expectations() {{
+                exactly(1).of(es).setIndividualDead(with(individual), with(DeathCause.EXIT_UNREACHABLE));
+        }});
         rule.execute(cell);
-        assertThat(individual.isDead(), is(true));
-        assertThat(individual.getDeathCause(), is(DeathCause.EXIT_UNREACHABLE));
+        context.assertIsSatisfied();
     }
 
     @Test

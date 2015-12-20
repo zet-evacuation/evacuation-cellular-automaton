@@ -14,6 +14,10 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import org.zet.algo.ca.util.IndividualDistanceComparator;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
+import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
+import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import static org.zetool.common.util.Helper.in;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
@@ -57,6 +61,7 @@ public class EvacuationCellularAutomatonAlgorithm
 
     @Override
     protected void initialize() {
+        initRulesAndState();
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
 
@@ -74,6 +79,84 @@ public class EvacuationCellularAutomatonAlgorithm
         getProblem().getCellularAutomaton().removeMarkedIndividuals();
     }
 
+    EvacuationState es;
+    /** The minimal number of steps that is needed until all movements are FINISHED. */
+    private int neededTime;
+    public void setNeededTime(int i) {
+        neededTime = i;
+    }
+
+    private void initRulesAndState() {
+        es = new EvacuationState() {
+            public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
+
+            @Override
+            public int getTimeStep() {
+                return getStep();
+            }
+
+            @Override
+            public void setNeededTime(int i) {
+                neededTime = i;
+            }
+
+            @Override
+            public int getNeededTime() {
+                return neededTime;
+            }
+            
+            
+
+            @Override
+            public CAStatisticWriter getStatisticWriter() {
+                return caStatisticWriter;
+            }
+
+            @Override
+            public void setIndividualDead(Individual individual, DeathCause deathCause) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void setIndividualSave(Individual savedIndividual) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void moveIndividual(EvacCell from, EvacCell targetCell) {
+                getCellularAutomaton().moveIndividual(from, targetCell);
+            }
+
+            @Override
+            public void increaseDynamicPotential(EvacCell targetCell) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public EvacuationCellularAutomatonInterface getCellularAutomaton() {
+                return getProblem().getCellularAutomaton();
+            }
+
+            @Override
+            public void markIndividualForRemoval(Individual individual) {
+                getCellularAutomaton().markIndividualForRemoval(individual);
+            }
+
+            @Override
+            public ParameterSet getParameterSet() {
+                return getProblem().getParameterSet();
+            }
+        };
+        for( EvacuationRule r : getProblem().getRuleSet()) {
+            r.setEvacuationSimulationProblem(es);
+        }
+    }
+
     @Override
     protected void performStep() {
         super.performStep();
@@ -83,7 +166,7 @@ public class EvacuationCellularAutomatonAlgorithm
         getProblem().getPotentialController().updateDynamicPotential(
         getProblem().getParameterSet().probabilityDynamicIncrease(),
         getProblem().getParameterSet().probabilityDynamicDecrease());
-        getProblem().getCellularAutomaton().nextTimeStep();
+        //getProblem().getCellularAutomaton().nextTimeStep();
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
                 getProblem().getCellularAutomaton().getInitialIndividualCount() - getProblem().getCellularAutomaton().getIndividualCount(),
@@ -95,9 +178,10 @@ public class EvacuationCellularAutomatonAlgorithm
 
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
-        Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
-        while (loop.hasNext()) { // Execute all rules
-            EvacuationRule r = loop.next();
+        //Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
+        //while (loop.hasNext()) { // Execute all rules
+        for( EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
+          //  EvacuationRule r = loop.next();
             r.execute(i.getCell());
         }
     }
@@ -116,9 +200,10 @@ public class EvacuationCellularAutomatonAlgorithm
         }
         fireProgressEvent(1, "Simulation complete.");
 
-        getProblem().getCellularAutomaton().stop();
-        log("Time steps: " + getProblem().getCellularAutomaton().getTimeStep());
-        return new EvacuationSimulationResult(getProblem().getCellularAutomaton().getTimeStep());
+        EvacuationSimulationProblem p = getProblem();
+        p.getCellularAutomaton().stop();
+        log("Time steps: " + getStep());
+        return new EvacuationSimulationResult(getStep());
     }
 
     @Override
@@ -132,7 +217,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
     
     private boolean timeOver() {
-        return getProblem().getCellularAutomaton().getTimeStep() > getProblem().getCellularAutomaton().getNeededTime();
+        return getStep() > neededTime;
     }
 
     /**

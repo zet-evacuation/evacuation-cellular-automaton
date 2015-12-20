@@ -25,8 +25,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public void setIndividualSave(Individual i);
 
-    public int getNeededTime();
-
     public double getStepsPerSecond();
 
     public double absoluteSpeed(double relativeSpeed);
@@ -48,17 +46,14 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public StaticPotential getSafePotential();
 
-// should setters be in the interface?
-    public void setNeededTime(int neededTime);
-
     // TODO: remove these
     public void start();
 
     public void stop();
 
-    public void nextTimeStep();
+    //public void nextTimeStep();
 
-    public int getTimeStep();
+    //public int getTimeStep();
 
     public void removeMarkedIndividuals(); // marking should probably be stored in the algorithm, or an additional current-step datastructure
 

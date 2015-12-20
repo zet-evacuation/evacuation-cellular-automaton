@@ -33,26 +33,26 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     protected void onExecute(EvacCell cell) {
         Individual savedIndividual = cell.getState().getIndividual();
         if (!(savedIndividual.isSafe())) {
-            esp.getCellularAutomaton().setIndividualSave(savedIndividual);
+            es.setIndividualSave(savedIndividual);
             savedIndividual.setPanic(0);
 
             if (cell instanceof SaveCell) {
                 setExitPotential((SaveCell) cell, savedIndividual);
             }
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
     }
     
     private void setExitPotential(SaveCell cell, Individual savedIndividual) {
         StaticPotential correspondingExitPotential = cell.getExitPotential();
         if (correspondingExitPotential == null) {
-            savedIndividual.setStaticPotential(esp.getCellularAutomaton().getSafePotential());
+            savedIndividual.setStaticPotential(es.getCellularAutomaton().getSafePotential());
         } else {
             if (savedIndividual.getStaticPotential() != correspondingExitPotential) {
-                esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(savedIndividual, esp.getCellularAutomaton().getTimeStep());
+                es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(savedIndividual, es.getTimeStep());
                 savedIndividual.setStaticPotential(correspondingExitPotential);
             }
-            esp.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(savedIndividual, correspondingExitPotential);
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(savedIndividual, correspondingExitPotential);
         }
     }
 

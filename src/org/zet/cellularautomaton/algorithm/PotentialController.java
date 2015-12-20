@@ -34,6 +34,4 @@ public interface PotentialController {
     public void decreaseDynamicPotential(EvacCell cell);
 
     public StaticPotential getRandomStaticPotential();
-
-    public StaticPotential getNearestExitStaticPotential(EvacCell c);
 }

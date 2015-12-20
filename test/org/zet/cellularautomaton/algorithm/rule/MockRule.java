@@ -2,7 +2,6 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 
 /**
  *
@@ -26,7 +25,7 @@ public class MockRule {
         }
 
         @Override
-        public void setEvacuationSimulationProblem(EvacuationSimulationProblem esp) {
+        public void setEvacuationSimulationProblem(EvacuationState esp) {
         }
 
     }
@@ -46,7 +45,7 @@ public class MockRule {
         }
 
         @Override
-        public void setEvacuationSimulationProblem(EvacuationSimulationProblem esp) {
+        public void setEvacuationSimulationProblem(EvacuationState esp) {
         }
 
     }
