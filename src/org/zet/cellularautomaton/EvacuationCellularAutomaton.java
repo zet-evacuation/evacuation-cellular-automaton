@@ -56,30 +56,24 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public enum State {
 
-        /**
-         * if all values and individuals are set, the simulation can be executed.
-         */
+        /** If all values and individuals are set, the simulation can be executed. */
         READY,
-        /**
-         * if a simulation is RUNNING.
-         */
+        /** If a simulation is running. */
         RUNNING,
-        /**
-         * if a simulation is FINISHED. in this case all individuals are removed or in save areas.
-         */
+        /** If a simulation is finished. in this case all individuals are removed or in save areas. */
         FINISHED
     }
-    /** an ArrayList of all Individual objects in the cellular automaton. */
+    /** An ArrayList of all Individual objects in the cellular automaton. */
     private List<Individual> individuals;
-    /** an ArrayList of all Individual objects, which are already out of the simulation because they are evacuated. */
+    /** An ArrayList of all Individual objects, which are already out of the simulation because they are evacuated. */
     private List<Individual> evacuatedIndividuals;
-    /** an ArrayList of all Individual objects, which are marked as "dead". */
+    /** An ArrayList of all Individual objects, which are marked as "dead". */
     private List<Individual> deadIndividuals;
     /** An {@code ArrayList} marked to be removed. */
     private List<Individual> markedForRemoval;
-    /** an ArrayList of all ExitCell objects (i.e. all exits) of the building. */
+    /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
     private List<ExitCell> exits;
-    /** an HashMap used to map rooms to identification numbers. */
+    /** A map of rooms to identification numbers. */
     private Map<Integer, Room> rooms;
     /** A mapping floor-id <-> floor-name. */
     private List<String> floorNames;
@@ -493,6 +487,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         i.getCell().getRoom().removeIndividual(i);
         i.setCell(evacCell);
         evacuatedIndividuals.add(i);
+        notSaveIndividualsCount--;
         i.setEvacuated();
     }
 

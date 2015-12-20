@@ -78,7 +78,7 @@ public class Individual implements Identifiable {
     private PotentialMemory potentialMemoryEnd;
     private int memoryIndex;
     int cellCountToChange;
-    Direction8 dir;
+    Direction8 dir = Direction8.Top;
 
     public Individual() {
     }
@@ -99,7 +99,6 @@ public class Individual implements Identifiable {
         this.uid = uid;
         safe = false;
         safetyTime = -1;
-        this.dir = Direction8.Top; // Just use an arbitrary direction
 
         /**
          * Calibratingfactor - The bigger {@code cellCountToChange}, the longer an individual moves before a possible

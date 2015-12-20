@@ -13,7 +13,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package org.zet.cellularautomaton.algorithm.parameter;
 
 import org.zet.cellularautomaton.EvacCell;
@@ -26,84 +25,89 @@ import java.util.Collection;
  */
 public class SimpleParameterSet extends AbstractParameterSet {
 
-	@Override
-	public double changePotentialThreshold( Individual individual ) {
-		return 0;
-	}
+    public SimpleParameterSet() {
+        super(0, 1, 0, 0, 0, 4);
+    }
 
-	/**
-	 *
-	 * @param referenceCell
-	 * @param targetCell
-	 * @return the potential difference between the two cells
-	 */
-	@Override
-	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell ) {
-		StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
-		final double statPotlDiff = staticPotential.getPotential( referenceCell ) - staticPotential.getPotential( targetCell );
-		return statPotlDiff;
-	}
+    
+    
+    @Override
+    public double changePotentialThreshold(Individual individual) {
+        return 0;
+    }
 
-	@Override
-	public double idleThreshold( Individual i ) {
-		return i.getSlackness() * 0.4;
-	}
+    /**
+     *
+     * @param referenceCell
+     * @param targetCell
+     * @return the potential difference between the two cells
+     */
+    @Override
+    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell) {
+        StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
+        final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
+        return statPotlDiff;
+    }
 
-	@Override
-	public double movementThreshold( Individual i ) {
-		double individualSpeed = i.getRelativeSpeed();
-		double cellSpeed = i.getCell().getSpeedFactor();
-		return individualSpeed * cellSpeed;
-	}
+    @Override
+    public double idleThreshold(Individual i) {
+        return i.getSlackness() * 0.4;
+    }
 
-	@Override
-	public double updateExhaustion( Individual individual, EvacCell targetCell ) {
-		return 0;
-	}
+    @Override
+    public double movementThreshold(Individual i) {
+        double individualSpeed = i.getRelativeSpeed();
+        double cellSpeed = i.getCell().getSpeedFactor();
+        return individualSpeed * cellSpeed;
+    }
 
-	@Override
-	public double updatePanic( Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells ) {
-		return 0;
-	}
+    @Override
+    public double updateExhaustion(Individual individual, EvacCell targetCell) {
+        return 0;
+    }
 
-	@Override
-	public double updatePreferredSpeed( Individual individual ) {
-		return 0;
-	}
+    @Override
+    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
+        return 0;
+    }
 
-	public double getAbsoluteMaxSpeed() {
-		return 1.8;
-	}
+    @Override
+    public double updatePreferredSpeed(Individual individual) {
+        return 0;
+    }
 
-	public double getSpeedFromAge( double pAge ) {
-		return 1;
-	}
+    @Override
+    public double getAbsoluteMaxSpeed() {
+        return 1.8;
+    }
 
-	public double getSlacknessFromDecisiveness( double pDecisiveness ) {
-		return (1-pDecisiveness)*0.25;
-	}
-	public double getExhaustionFromAge( double pAge){
-		return 0.1;
-	}
+    @Override
+    public double getSpeedFromAge(double pAge) {
+        return 1;
+    }
 
-  /**
-	 * Returns a reactin time of 5.
-	 * @return 5
-	 */
-	public double getReactionTimeFromAge( double pAge){
-		return 5;
-	}
+    @Override
+    public double getSlacknessFromDecisiveness(double pDecisiveness) {
+        return (1 - pDecisiveness) * 0.25;
+    }
 
-	@Override
-	public double getReactionTime() {
-		throw new UnsupportedOperationException( "Not supported yet." );
-	}
+    @Override
+    public double getExhaustionFromAge(double pAge) {
+        return 0.1;
+    }
 
-	/**
-	 * Returns a reactin time of 5.
-	 * @return 5
-	 */
-	//public double getReactionTime() {
-	//	return 5;
-	//}
+    /**
+     * Returns a reactin time of 5.
+     *
+     * @return 5
+     */
+    @Override
+    public double getReactionTimeFromAge(double pAge) {
+        return 5;
+    }
+
+    @Override
+    public double getReactionTime() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

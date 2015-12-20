@@ -33,7 +33,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
     public PotentialController potentialController;
-    public CAStatisticWriter caStatisticWriter;
+    public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
 
     public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca) {
         this.ca = ca;

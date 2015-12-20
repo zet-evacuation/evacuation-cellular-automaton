@@ -24,7 +24,8 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationCellularAutomatonAlgorithm
-        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell, EvacuationSimulationProblem, EvacuationSimulationResult> {
+        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell,
+        EvacuationSimulationProblem, EvacuationSimulationResult> {
 
     /** The order in which the individuals are asked for. */
     public static final Function<List<Individual>,Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();

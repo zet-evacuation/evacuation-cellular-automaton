@@ -18,6 +18,8 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.EvacCell;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A simple movement rule that does not care about anything like slack, speed, panic or anything else. Steps are always
@@ -46,6 +48,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
     @Override
     protected void onExecute(EvacCell cell) {
         EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
+        Logger.getGlobal().log(Level.INFO, "Target cell: " + targetCell);
         if (cell.equals(targetCell)) {
             return;
         }
@@ -54,6 +57,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
+        Logger.getGlobal().log(Level.INFO, "Move from " + from + " to " + targetCell);
         esp.getCellularAutomaton().moveIndividual(from, targetCell);
     }
 
