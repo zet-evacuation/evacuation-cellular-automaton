@@ -23,7 +23,6 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.potential.DynamicPotential;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.InitialConfiguration;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -257,13 +256,14 @@ public class VisualResultsRecorder {
         // Now we can clone the potentials. To do so, iterate over
         // all cells and all potentials. The cells are iterated room
         // by room
-        PotentialManager globals = orig.getPotentialManager();
-        Collection<StaticPotential> statics = globals.getStaticPotentials();
-        PotentialManager clonedGlobals = new PotentialManager();
+        //PotentialManager globals = orig.getPotentialManager();
+        Collection<StaticPotential> statics = orig.getStaticPotentials();
+        //PotentialManager clonedGlobals = new PotentialManager();
+        Collection<StaticPotential> staticClone = new LinkedList<>();
         if (statics != null) {
             for (StaticPotential pot : statics) {
                 StaticPotential clone = new StaticPotential();
-                clonedGlobals.addStaticPotential(clone);
+                staticClone.add(clone);
                 potentialMapping.put(pot, clone);
 
                 for (Room room : orig.getRooms()) {
@@ -283,7 +283,7 @@ public class VisualResultsRecorder {
 
         // At last we need to clone the dynamic potential. This is done by 
         // iterating over all cells again.
-        DynamicPotential dynOrig = orig.getPotentialManager().getDynamicPotential();
+        DynamicPotential dynOrig = orig.getDynamicPotential();
         DynamicPotential dynClone = new DynamicPotential();
         if (dynOrig != null) {
             for (Room room : orig.getRooms()) {
@@ -300,7 +300,7 @@ public class VisualResultsRecorder {
             }
         }
 
-        clonedGlobals.setDynamicPotential(dynClone);
+        //clonedGlobals.setDynamicPotential(dynClone);
 
         // Now store the new potentials in the individuals:
         for (Room room : orig.getRooms()) {
@@ -316,7 +316,7 @@ public class VisualResultsRecorder {
             }
         }
 
-        return new InitialConfiguration(clonedFloors, clonedRooms, clonedGlobals, orig.getAbsoluteMaxSpeed());
+        return new InitialConfiguration(clonedFloors, clonedRooms, staticClone, dynClone, orig.getAbsoluteMaxSpeed());
     }
 
     /**

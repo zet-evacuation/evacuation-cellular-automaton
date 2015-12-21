@@ -16,8 +16,11 @@
 package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.results.DynamicPotentialChangeAction;
 import org.zet.cellularautomaton.results.VisualResultsRecorder;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.generators.GeneralRandom;
 
 /**
  * A DynamicPotential is a potential that additionally to handling a potential sends out messages to store the results.
@@ -69,6 +72,95 @@ public class DynamicPotential extends AbstractPotential {
     @Override
     public int getMaxPotential() {
         return Math.max(0, super.getMaxPotential());
+    }
+
+    /**
+     * This method updates the values stored in the dynamic potential in the following way. With the probability decay a
+     * cell decreases its dynamic potential by one. Afterwards a cell with a dynamic potential greater than zero
+     * increases the dynamic potential of one of its neighbour cells by one.
+     *
+     * @param diffusion The probability of increasing the dynamic potential of one neighbour cell of a cell with a
+     * dynamic potential greater than zero by one.
+     * @param decay The probability of decreasing the dynamic potential of a cell.
+     */
+    public void update(double diffusion, double decay) {
+        GeneralRandom rnd = RandomUtils.getInstance().getRandomGenerator();
+        DynamicPotential dynPot = this;
+        //ArrayList<Cell> diffusionCells = new ArrayList<Cell>();
+        EvacCell[] cellsCopy = dynPot.getMappedCells().toArray(new EvacCell[dynPot.getMappedCells().size()]);
+        /* NEW CODE */
+        for (EvacCell c : cellsCopy) {
+            //System.out.println( "DynPot: "+ dynPot.getPotential(c));
+            double randomNumber = rnd.nextDouble();
+//			System.out.println( "Randomnumber " + randomNumber + " in updateDynamicPotential" );
+            if ( /*dynPot.getPotential(c) > 0 && */diffusion > randomNumber) {
+				// Potential diffuses to a a neighbour cell. It should not increase, so
+                // reduce it afterwards on this cell!
+                EvacCell randomNeighbour = null;
+                while (randomNeighbour == null) {
+                    final int randomInt = rnd.nextInt((c.getNeighbours()).size());
+                    randomNeighbour = (c.getNeighbours()).get(randomInt);
+                }
+                decrease(c);
+                // test, if now potential is 0 so the potential in the diffused cell can decrease already in this step.
+                randomNumber = rnd.nextDouble();
+                if (!(dynPot.getPotential(c) == 0 && decay > randomNumber)) {
+                    increase(randomNeighbour);
+                }
+            }
+            randomNumber = rnd.nextDouble();
+            if (dynPot.getPotential(c) > 0 && decay > randomNumber) {
+                decrease(c);
+            }
+        }
+    }
+    /**
+     * Increases the potential of the specified EvacCell about one. Associates the specified potential with the
+     * specified EvacCell in this PotentialMap.
+     *
+     * @param cell A cell which potential you want to increase.
+     */
+    public void increase(EvacCell cell) {
+        int potential;
+        DynamicPotential dynPot = this;
+        if (dynPot.hasValidPotential(cell)) {
+            potential = dynPot.getPotential(cell) + 1;
+            dynPot.deleteCell(cell);
+            dynPot.setPotential(cell, (double) potential);
+        } else {
+            potential = 1;
+            dynPot.setPotential(cell, (double) potential);
+        }
+    }
+
+    /**
+     * Decreases the potential of the specified EvacCell about one if its dynamic potential is greater than zero.
+     * Associates the specified potential with the specified EvacCell in this PotentialMap. The method throws
+     * {@code IllegalArgumentExceptions} if you try to decrease the potential of a EvacCell that not exists in this
+     * PotentialMap.
+     *
+     * @param cell A cell which potential you want to decrease.
+     */
+    public void decrease(EvacCell cell) throws IllegalArgumentException {
+        DynamicPotential dynPot = this;
+        if (!(dynPot.hasValidPotential(cell))) {
+            throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.InsertCellPreviouslyException"));
+        }
+
+		//if(cell.getIndividual() != null){
+        //    return;
+        //}
+        if (dynPot.getPotential(cell) == 1) {
+            dynPot.deleteCell(cell);
+        } else {
+            int potential = dynPot.getPotential(cell) - 1;
+            dynPot.setPotential(cell, potential);
+        }
+        /*if(dynPot.contains(cell)){
+         if(dynPot.getPotential(cell) == 0){
+         dynPot.deleteCell(cell);
+         }
+         }*/
     }
     
     

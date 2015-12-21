@@ -205,7 +205,8 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
 
         //setDirectExecute( true );
         getProblem().getCellularAutomaton().removeMarkedIndividuals();
-        getProblem().getPotentialController().updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
+        getProblem().getCellularAutomaton().getDynamicPotential().update(
+                getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());
     }
 

@@ -13,7 +13,6 @@ import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.algorithm.PotentialController;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -65,13 +64,10 @@ public class TestEvacuateIndividualsRule {
     public void testExecutionMarksIndividuals() {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        PotentialController pc = context.mock(PotentialController.class);
         EvacuationState es = context.mock(EvacuationState.class);
         Individual toEvacuate = new Individual();
         context.checking(new Expectations() {
             {
-                allowing(p).getPotentialController();
-                will(returnValue(pc));
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
                 allowing(es).getTimeStep();

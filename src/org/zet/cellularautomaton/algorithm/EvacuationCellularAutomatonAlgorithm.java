@@ -1,23 +1,24 @@
 package org.zet.cellularautomaton.algorithm;
 
+import static org.zetool.common.util.Helper.in;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
-import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
-import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.Individual;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Level;
+import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
+import org.zet.cellularautomaton.DeathCause;
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.Individual;
 import org.zet.algo.ca.util.IndividualDistanceComparator;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
-import static org.zetool.common.util.Helper.in;
+import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
@@ -163,7 +164,7 @@ public class EvacuationCellularAutomatonAlgorithm
         super.increaseStep();
 
         getProblem().getCellularAutomaton().removeMarkedIndividuals();
-        getProblem().getPotentialController().updateDynamicPotential(
+        getProblem().getCellularAutomaton().updateDynamicPotential(
         getProblem().getParameterSet().probabilityDynamicIncrease(),
         getProblem().getParameterSet().probabilityDynamicDecrease());
         //getProblem().getCellularAutomaton().nextTimeStep();

@@ -1,16 +1,17 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import java.util.LinkedList;
 import java.util.List;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
@@ -21,8 +22,6 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -104,8 +103,7 @@ public class TestInitialPotentialExitMappingRule {
         spExits.add(target);
         sp.setAssociatedExitCells(spExits);
 
-        PotentialManager pm = eca.getPotentialManager();
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(sp)));
@@ -132,9 +130,8 @@ public class TestInitialPotentialExitMappingRule {
         sp2Exits.add(target);
         sp2.setAssociatedExitCells(sp2Exits);
         
-        PotentialManager pm = eca.getPotentialManager();
-        pm.addStaticPotential(sp1);
-        pm.addStaticPotential(sp2);
+        eca.addStaticPotential(sp1);
+        eca.addStaticPotential(sp2);
         
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(sp2)));
@@ -150,9 +147,8 @@ public class TestInitialPotentialExitMappingRule {
         IndividualToExitMapping mapping = _unused -> null;
         eca.setIndividualToExitMapping(mapping);
         
-        PotentialManager pm = eca.getPotentialManager();
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
+        eca.addStaticPotential(longDistance);
+        eca.addStaticPotential(shortDistance);
         
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(shortDistance)));

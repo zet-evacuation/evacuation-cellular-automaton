@@ -20,7 +20,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -96,9 +95,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
-
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
 
         context.checking(new Expectations() {
             {
@@ -112,10 +109,8 @@ public class TestInitialPotentialAttractivityOfExitRule {
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
         sp.setPotential(cell, 1);
-
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(individual.isDead(), is(false));
@@ -136,12 +131,10 @@ public class TestInitialPotentialAttractivityOfExitRule {
         mostAttractive.setAttractivity(200);
         StaticPotential unreachable = new StaticPotential();
 
-        PotentialManager pm = eca.getPotentialManager();
-
-        pm.addStaticPotential(unattractive1);
-        pm.addStaticPotential(mostAttractive);
-        pm.addStaticPotential(unattractive2);
-        pm.addStaticPotential(unreachable);
+        eca.addStaticPotential(unattractive1);
+        eca.addStaticPotential(mostAttractive);
+        eca.addStaticPotential(unattractive2);
+        eca.addStaticPotential(unreachable);
 
         rule.execute(cell);
         assertThat(individual.getStaticPotential(), is(same(mostAttractive)));

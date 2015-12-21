@@ -19,7 +19,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -94,9 +93,8 @@ public class TestInitialConcretePotentialRule {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
 
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         context.checking(new Expectations() {
             {
                 
@@ -109,10 +107,9 @@ public class TestInitialConcretePotentialRule {
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
         sp.setPotential(cell, 1);
 
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(i.isDead(), is(false));
@@ -122,7 +119,7 @@ public class TestInitialConcretePotentialRule {
     
     @Test
     public void testHighFamiliarityChoosesBest() {
-        StaticPotential targetPotential = initFamiliarPotential( eca.getPotentialManager());
+        StaticPotential targetPotential = initFamiliarPotential();
         
         i.setFamiliarity(1);
         rule.execute(cell);
@@ -133,7 +130,7 @@ public class TestInitialConcretePotentialRule {
     
     @Test
     public void testLowFamiliarityChoosesAttractive() {
-        StaticPotential targetPotential = initUnfamiliarPotential( eca.getPotentialManager());
+        StaticPotential targetPotential = initUnfamiliarPotential();
         
         i.setFamiliarity(0);
         rule.execute(cell);
@@ -144,7 +141,7 @@ public class TestInitialConcretePotentialRule {
     
     @Test
     public void testMediumFamiliarity() {
-        StaticPotential targetPotential = initMediumPotential( eca.getPotentialManager());
+        StaticPotential targetPotential = initMediumPotential();
         
         i.setFamiliarity(0.5);
         rule.execute(cell);
@@ -155,7 +152,7 @@ public class TestInitialConcretePotentialRule {
     
     @Test
     public void testAttractivePotentialShort() {
-        StaticPotential targetPotential = initAttractiveShortPotential( eca.getPotentialManager());
+        StaticPotential targetPotential = initAttractiveShortPotential();
         
         i.setFamiliarity(0.5);
         rule.execute(cell);
@@ -164,7 +161,7 @@ public class TestInitialConcretePotentialRule {
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
-    private StaticPotential initFamiliarPotential(PotentialManager pm) {
+    private StaticPotential initFamiliarPotential() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
@@ -176,13 +173,13 @@ public class TestInitialConcretePotentialRule {
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
 
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
+        eca.addStaticPotential(longDistance);
+        eca.addStaticPotential(shortDistance);
+        eca.addStaticPotential(mediumDistance);
         return shortDistance;
     }
 
-    private StaticPotential initUnfamiliarPotential(PotentialManager pm) {
+    private StaticPotential initUnfamiliarPotential() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
@@ -193,13 +190,13 @@ public class TestInitialConcretePotentialRule {
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
 
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
+        eca.addStaticPotential(longDistance);
+        eca.addStaticPotential(shortDistance);
+        eca.addStaticPotential(mediumDistance);
         return longDistance;
     }
 
-    private StaticPotential initMediumPotential(PotentialManager pm) {
+    private StaticPotential initMediumPotential() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
@@ -210,13 +207,13 @@ public class TestInitialConcretePotentialRule {
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
 
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
+        eca.addStaticPotential(longDistance);
+        eca.addStaticPotential(shortDistance);
+        eca.addStaticPotential(mediumDistance);
         return mediumDistance;
     }
 
-    private StaticPotential initAttractiveShortPotential(PotentialManager pm) {
+    private StaticPotential initAttractiveShortPotential() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
@@ -227,9 +224,9 @@ public class TestInitialConcretePotentialRule {
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
 
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
+        eca.addStaticPotential(longDistance);
+        eca.addStaticPotential(shortDistance);
+        eca.addStaticPotential(mediumDistance);
         return shortDistance;
     }
 }

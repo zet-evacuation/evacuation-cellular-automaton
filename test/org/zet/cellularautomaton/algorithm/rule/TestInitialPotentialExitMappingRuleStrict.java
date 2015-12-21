@@ -23,7 +23,6 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -105,8 +104,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         spExits.add(target);
         sp.setAssociatedExitCells(spExits);
 
-        PotentialManager pm = eca.getPotentialManager();
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(sp)));
@@ -133,9 +131,8 @@ public class TestInitialPotentialExitMappingRuleStrict {
         sp2Exits.add(target);
         sp2.setAssociatedExitCells(sp2Exits);
         
-        PotentialManager pm = eca.getPotentialManager();
-        pm.addStaticPotential(sp1);
-        pm.addStaticPotential(sp2);
+        eca.addStaticPotential(sp1);
+        eca.addStaticPotential(sp2);
         
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(sp2)));

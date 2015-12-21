@@ -183,7 +183,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
-        PotentialController pc = context.mock(PotentialController.class);
+        //PotentialController pc = context.mock(PotentialController.class);
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {
             {
@@ -197,13 +197,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
                 exactly(1).of(eca).removeMarkedIndividuals();
 
-                allowing(esp).getPotentialController();
-                will(returnValue(pc));
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
-                exactly(1).of(pc).updateDynamicPotential(with(0.0), with(0.0));
+                exactly(1).of(eca).updateDynamicPotential(with(0.0), with(0.0));
 
                 allowing(eca).getIndividualCount();
                 allowing(eca).getInitialIndividualCount();
@@ -475,7 +473,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
-        PotentialController pc = context.mock(PotentialController.class);
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {
             {
@@ -487,14 +484,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 allowing(eca).removeMarkedIndividuals();
 
-                allowing(esp).getPotentialController();
-                will(returnValue(pc));
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
-                exactly(1).of(pc).updateDynamicPotential(with(0.0), with(0.0));
-                //exactly(1).of(eca).nextTimeStep();
+                exactly(1).of(eca).updateDynamicPotential(with(0.0), with(0.0));
                 
 
                 allowing(eca).getIndividualCount();

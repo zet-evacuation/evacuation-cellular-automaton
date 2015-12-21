@@ -44,7 +44,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
 
         parameterSet = AbstractParameterSet.createParameterSet(props.getAsString("algo.ca.parameterSet"));
 
-        potentialController = new SPPotentialController(ca);
+        //potentialController = new SPPotentialController(ca);
         //caStatisticWriter = new CAStatisticWriter();
         ca.setAbsoluteMaxSpeed(parameterSet.getAbsoluteMaxSpeed());
     }
@@ -57,11 +57,6 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     @Override
     public ParameterSet getParameterSet() {
         return parameterSet;
-    }
-
-    @Override
-    public PotentialController getPotentialController() {
-        return potentialController;
     }
 
     @Override

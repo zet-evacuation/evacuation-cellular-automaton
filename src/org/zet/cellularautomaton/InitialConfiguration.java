@@ -15,9 +15,9 @@
  */
 package org.zet.cellularautomaton;
 
-import org.zet.cellularautomaton.potential.PotentialManager;
 import java.util.Collection;
-import org.zetool.simulation.cellularautomaton.tools.CellFormatter;
+import org.zet.cellularautomaton.potential.DynamicPotential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
@@ -33,8 +33,10 @@ public class InitialConfiguration {
     /** The rooms of the cellular automaton, including cells. */
     private final Collection<Room> rooms;
     private final Collection<String> floors;
-    /** The global potential of the cellular automaton. */
-    private final PotentialManager potentialManager;
+    /** A {@code TreeMap} of all StaticPotentials. */
+    private final Collection<StaticPotential> staticPotentials;
+    /** The single DynamicPotential. */
+    private DynamicPotential dynamicPotential;
 
     private double absoluteMaxSpeed;
 
@@ -43,14 +45,14 @@ public class InitialConfiguration {
      *
      * @param floors floors
      * @param rooms The automaton's rooms, including cells and the initial placing of individuals
-     * @param potentialManager the potential manager
      * @param absoluteMaxSpeed the maximal speed that any individual can have at maximum
      */
-    public InitialConfiguration(Collection<String> floors, Collection<Room> rooms, PotentialManager potentialManager,
-            double absoluteMaxSpeed) {
+    public InitialConfiguration(Collection<String> floors, Collection<Room> rooms, Collection<StaticPotential> staticPotentials,
+            DynamicPotential dynamicPotential, double absoluteMaxSpeed) {
         this.rooms = rooms;
         this.floors = floors;
-        this.potentialManager = potentialManager;
+        this.staticPotentials = staticPotentials;
+        this.dynamicPotential = dynamicPotential;
         this.absoluteMaxSpeed = absoluteMaxSpeed;
     }
 
@@ -63,9 +65,9 @@ public class InitialConfiguration {
      *
      * @return The initial static potentials
      */
-    public PotentialManager getPotentialManager() {
-        return potentialManager;
-    }
+//    public PotentialManager getPotentialManager() {
+//        return potentialManager;
+//    }
 
     /**
      * Get all rooms, including all cells and the initial placing of individuals
@@ -104,5 +106,13 @@ public class InitialConfiguration {
 
     void setAbsoluteMaxSpeed(double absoluteMaxSpeed) {
         this.absoluteMaxSpeed = absoluteMaxSpeed;
+    }
+
+    public Collection<StaticPotential> getStaticPotentials() {
+        return staticPotentials;
+    }
+
+    public DynamicPotential getDynamicPotential() {
+        return dynamicPotential;
     }
 }

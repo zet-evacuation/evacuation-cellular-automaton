@@ -15,15 +15,6 @@
  */
 package org.zet.cellularautomaton;
 
-import org.zet.cellularautomaton.potential.PotentialManager;
-import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zetool.simulation.cellularautomaton.SquareCellularAutomaton;
-import org.zet.cellularautomaton.results.CAStateChangedAction;
-import org.zet.cellularautomaton.results.DieAction;
-import org.zet.cellularautomaton.results.ExitAction;
-import org.zet.cellularautomaton.results.MoveAction;
-import org.zet.cellularautomaton.results.SwapAction;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.CAStateChangedAction;
+import org.zet.cellularautomaton.results.DieAction;
+import org.zet.cellularautomaton.results.ExitAction;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
+import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import org.zet.cellularautomaton.potential.DynamicPotential;
+import org.zetool.simulation.cellularautomaton.SquareCellularAutomaton;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
@@ -49,6 +48,7 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements EvacuationCellularAutomatonInterface {
 
     private boolean recordingStarted;
+
 
     /**
      * the state of the cellular automaton.
@@ -89,7 +89,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     /** A mapping that maps exits to their capacity. */
     private Map<StaticPotential, Double> exitToCapacityMapping;
     /** Reference to all Floor Fields. */
-    private PotentialManager potentialManager;
+    //private PotentialManager potentialManager;
     /** The current time step. */
     //private int timeStep;
     /** The current state of the cellular automaton, e.g. RUNNING, stopped, ... */
@@ -100,6 +100,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private int notSaveIndividualsCount = 0;
     private int initialIndividualCount;
     private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
+    /** A {@code TreeMap} of all StaticPotentials. */
+    private final HashMap<Integer, StaticPotential> staticPotentials;
+    /** The safe potential*/
+    private StaticPotential safePotential;
+    /** The single DynamicPotential. */
+    private DynamicPotential dynamicPotential;
 
     /**
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
@@ -117,13 +123,16 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         assignmentTypes = new HashMap<>();
         typeIndividualMap = new HashMap<>();
         roomsByFloor = new LinkedList<>();
-        potentialManager = new PotentialManager();
+        //potentialManager = new PotentialManager();
         absoluteMaxSpeed = 1;
         secondsPerStep = 1;
         stepsPerSecond = 1;
         state = State.READY;
         floorNames = new LinkedList<>();
         recordingStarted = false;
+        staticPotentials = new HashMap<>();
+        dynamicPotential = new DynamicPotential();
+        safePotential = new StaticPotential();
     }
 
     /**
@@ -135,12 +144,10 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     public EvacuationCellularAutomaton(InitialConfiguration initialConfiguration) {
         this();
         stopRecording();
-        // set up floors
-        initialConfiguration.getFloors().stream().forEach(s -> addFloor(s));
-
-        for (Room room : initialConfiguration.getRooms()) {
-            this.addRoom(room);
-        }
+        
+        // set up floors and rooms
+        initialConfiguration.getFloors().stream().forEach(floor -> addFloor(floor));
+        initialConfiguration.getRooms().stream().forEach(room -> addRoom(room));
 
         for (Room room : initialConfiguration.getRooms()) {
             for (EvacCell cell : room.getAllCells()) {
@@ -150,11 +157,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             }
         }
 
-        for (StaticPotential staticPot : initialConfiguration.getPotentialManager().getStaticPotentials()) {
-            this.getPotentialManager().addStaticPotential(staticPot);
+        for (StaticPotential staticPot : initialConfiguration.getStaticPotentials()) {
+            addStaticPotential(staticPot);
         }
 
-        this.potentialManager.setDynamicPotential(initialConfiguration.getPotentialManager().getDynamicPotential());
+        setDynamicPotential(initialConfiguration.getDynamicPotential());
         setAbsoluteMaxSpeed(initialConfiguration.getAbsoluteMaxSpeed());
     }
 
@@ -176,7 +183,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
 
     public void startRecording() {
         recordingStarted = true;
-        VisualResultsRecorder.getInstance().setInitialConfiguration(new InitialConfiguration(floorNames, rooms.values(), potentialManager, absoluteMaxSpeed));
+        VisualResultsRecorder.getInstance().setInitialConfiguration(new InitialConfiguration(floorNames, rooms.values(), getStaticPotentials(), getDynamicPotential(), absoluteMaxSpeed));
         VisualResultsRecorder.getInstance().startRecording();
     }
 
@@ -298,9 +305,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return PotentialManager object
      */
-    public final PotentialManager getPotentialManager() {
-        return potentialManager;
-    }
+//    public final PotentialManager getPotentialManager() {
+//        return potentialManager;
+//    }
 
     /**
      * Returns all Individuals in the given AssignmentType
@@ -379,7 +386,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
 
         // assign shortest path potential to individual, so it is not null.
         int currentMin = -1;
-        for (StaticPotential sp : potentialManager.getStaticPotentials()) {
+        for (StaticPotential sp : getStaticPotentials()) {
             if (currentMin == -1) {
                 i.setStaticPotential(sp);
                 currentMin = sp.getPotential(c);
@@ -701,17 +708,91 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     public double getStaticPotential(EvacCell cell, int id) {
-        return potentialManager.getStaticPotential(id).getPotential(cell);
+        return getStaticPotential(id).getPotential(cell);
     }
 
     public int getDynamicPotential(EvacCell cell) {
-        return potentialManager.getDynamicPotential().getPotential(cell);
+        return getDynamicPotential().getPotential(cell);
     }
 
     public void setDynamicPotential(EvacCell cell, double value) {
-        potentialManager.getDynamicPotential().setPotential(cell, value);
+        getDynamicPotential().setPotential(cell, value);
     }
 
+    @Override
+    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
+        dynamicPotential.update(probabilityDynamicIncrease, probabilityDynamicDecrease);
+    }
+    
+
+    /**
+     * Get a Collection of all staticPotentials.
+     *
+     * @return The Collection of all staticPotentials
+     */
+    @Override
+    public Collection<StaticPotential> getStaticPotentials() {
+        return staticPotentials.values();
+    }
+
+    /**
+     * Adds the StaticPotential into the List of staticPotentials. The method throws {@code IllegalArgumentException} if
+     * the StaticPtential already exists.
+     *
+     * @param potential The StaticPotential you want to add to the List.
+     * @throws IllegalArgumentException if the {@code StaticPotential} already exists
+     */
+    public void addStaticPotential(StaticPotential potential) throws IllegalArgumentException {
+        if (staticPotentials.containsKey(potential.getID())) {
+            throw new IllegalArgumentException("The StaticPtential already exists!");
+        }
+        Integer i = potential.getID();
+        staticPotentials.put(i, potential);
+    }
+
+    /**
+     * Get the StaticPotential with the specified ID. The method throws {@code IllegalArgumentException} if the
+     * specified ID not exists.
+     *
+     * @param id
+     * @return The StaticPotential
+     * @throws IllegalArgumentException
+     */
+    public StaticPotential getStaticPotential(int id) throws IllegalArgumentException {
+        if (!(staticPotentials.containsKey(id))) {
+            throw new IllegalArgumentException("No StaticPotential with this ID exists!");
+        }
+        return staticPotentials.get(id);
+    }
+
+    /**
+     * Set the dynamicPotential.
+     *
+     * @param potential The DynamicPotential you want to set.
+     */
+    public void setDynamicPotential(DynamicPotential potential) {
+        dynamicPotential = potential;
+    }
+
+    /**
+     * Get the dynamicPotential. Returns null if the DynamicPotential not exists.
+     *
+     * @return The DynamicPotential
+     */
+    @Override
+    public DynamicPotential getDynamicPotential() {
+        return dynamicPotential;
+    }
+
+    @Override
+    public StaticPotential getSafePotential() {
+        return safePotential;
+    }
+
+    public void setsafePotential(StaticPotential potential) {
+        safePotential = potential;
+    }
+   
     /**
      * Returns the current state of the cellular automaton.
      *
@@ -769,6 +850,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the view
      */
+    @Override
     public List<Individual> getIndividuals() {
         return Collections.unmodifiableList(individuals);
     }
@@ -849,20 +931,5 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public Collection<Room> getRoomsOnFloor(Integer floorID) {
         return roomsByFloor.get(floorID);
-    }
-
-    @Override
-    public Collection<StaticPotential> getStaticPotentials() {
-        return getPotentialManager().getStaticPotentials();
-    }
-
-    @Override
-    public DynamicPotential getDynamicPotential() {
-        return getPotentialManager().getDynamicPotential();
-    }
-
-    @Override
-    public StaticPotential getSafePotential() {
-        return getPotentialManager().getSafePotential();
     }
 }

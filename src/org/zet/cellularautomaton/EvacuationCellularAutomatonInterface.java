@@ -61,4 +61,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public IndividualToExitMapping getIndividualToExitMapping(); // this should be only stored for the best response?
 
+    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);
+
 }

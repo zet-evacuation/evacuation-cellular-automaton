@@ -19,7 +19,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -91,9 +90,7 @@ public class TestInitialPotentialRandomRule {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
-
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         context.checking(new Expectations() {{
                 exactly(1).of(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
@@ -105,10 +102,9 @@ public class TestInitialPotentialRandomRule {
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
         sp.setPotential(cell, 1);
 
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(i.isDead(), is(false));

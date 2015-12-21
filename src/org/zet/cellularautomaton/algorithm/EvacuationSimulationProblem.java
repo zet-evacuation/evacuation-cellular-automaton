@@ -13,8 +13,6 @@ public interface EvacuationSimulationProblem extends CellularAutomatonSimulation
 
     public ParameterSet getParameterSet();
 
-    public PotentialController getPotentialController();
-
     public EvacuationRuleSet getRuleSet();
     
     /**

@@ -19,8 +19,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -93,9 +91,7 @@ public class TestInitialPotentialFamiliarityRule {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
-
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         context.checking(new Expectations() {{
                 exactly(1).of(es).setIndividualDead(with(individual), with(DeathCause.EXIT_UNREACHABLE));
@@ -107,10 +103,9 @@ public class TestInitialPotentialFamiliarityRule {
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
         sp.setPotential(cell, 1);
 
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(individual.isDead(), is(false));
@@ -126,11 +121,10 @@ public class TestInitialPotentialFamiliarityRule {
         longPotential2.setPotential(cell, 4);
         StaticPotential shortestPotential = new StaticPotential();
         shortestPotential.setPotential(cell, 2);
-        PotentialManager pm = eca.getPotentialManager();
 
-        pm.addStaticPotential(longPotential1);
-        pm.addStaticPotential(longPotential2);
-        pm.addStaticPotential(shortestPotential);
+        eca.addStaticPotential(longPotential1);
+        eca.addStaticPotential(longPotential2);
+        eca.addStaticPotential(shortestPotential);
 
         individual.setFamiliarity(0.667);
         

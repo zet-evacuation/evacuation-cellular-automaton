@@ -7,6 +7,7 @@ import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import static org.junit.Assert.assertThat;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -18,8 +19,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
-import org.zet.cellularautomaton.potential.PotentialManager;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -92,9 +91,7 @@ public class TestInitialPotentialShortestPathRule {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
-
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         context.checking(new Expectations() {{
                 exactly(1).of(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
@@ -106,10 +103,9 @@ public class TestInitialPotentialShortestPathRule {
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
-        PotentialManager pm = eca.getPotentialManager();
         sp.setPotential(cell, 1);
 
-        pm.addStaticPotential(sp);
+        eca.addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(i.isDead(), is(false));
@@ -119,7 +115,7 @@ public class TestInitialPotentialShortestPathRule {
     
     @Test
     public void testShortestPotentialTaken() {
-        StaticPotential targetPotential = initPotential( eca.getPotentialManager());
+        StaticPotential targetPotential = initPotential();
         
         rule.execute(cell);
         assertThat(i.isDead(), is(false));
@@ -127,7 +123,7 @@ public class TestInitialPotentialShortestPathRule {
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
-    private StaticPotential initPotential(PotentialManager pm) {
+    private StaticPotential initPotential() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
         StaticPotential longDistance = new StaticPotential();
@@ -135,9 +131,9 @@ public class TestInitialPotentialShortestPathRule {
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
 
-        pm.addStaticPotential(longDistance);
-        pm.addStaticPotential(shortDistance);
-        pm.addStaticPotential(mediumDistance);
+        eca.addStaticPotential(longDistance);
+        eca.addStaticPotential(shortDistance);
+        eca.addStaticPotential(mediumDistance);
         return shortDistance;
     }
 }
