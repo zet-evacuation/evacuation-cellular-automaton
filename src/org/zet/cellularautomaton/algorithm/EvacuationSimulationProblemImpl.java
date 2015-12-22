@@ -30,7 +30,6 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     private EvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
-    public PotentialController potentialController;
 
     public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca) {
         this.ca = ca;

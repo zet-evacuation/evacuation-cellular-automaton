@@ -707,14 +707,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return representation.toString();
     }
 
-    public double getStaticPotential(EvacCell cell, int id) {
-        return getStaticPotential(id).getPotential(cell);
-    }
-
-    public int getDynamicPotential(EvacCell cell) {
-        return getDynamicPotential().getPotential(cell);
-    }
-
     public void setDynamicPotential(EvacCell cell, double value) {
         getDynamicPotential().setPotential(cell, value);
     }
@@ -723,7 +715,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
         dynamicPotential.update(probabilityDynamicIncrease, probabilityDynamicDecrease);
     }
-    
 
     /**
      * Get a Collection of all staticPotentials.
@@ -855,10 +846,16 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return Collections.unmodifiableList(individuals);
     }
 
+    /**
+     * Returns a list of all individuals that are active in the simulation. The list does not contain individuals
+     * which are dead or evacuated. Safe individuals are contained in the list.
+     * 
+     * @return list of active individuals
+     */
     public List<Individual> getRemainingIndividuals() {
         List<Individual> remaining = new ArrayList<>(individuals.size() - evacuatedIndividuals.size());
 
-        individuals.stream().filter(i -> (!i.isEvacuated() || i.isDead())).forEach(i -> remaining.add(i));
+        individuals.stream().filter(i -> !(i.isEvacuated() || i.isDead())).forEach(i -> remaining.add(i));
 
         return Collections.unmodifiableList(remaining);
     }

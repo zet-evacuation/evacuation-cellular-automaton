@@ -1,10 +1,12 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collections;
+import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.jmock.AbstractExpectations.returnValue;
 import org.jmock.Expectations;
@@ -97,5 +99,40 @@ public class TestEvacuationCellularAutomaton {
         eca.removeMarkedIndividuals();
         assertThat(eca.getIndividuals(), not(hasItem(toEvacuate)));
         assertThat(eca.getIndividuals(), hasItem(notToEvacuate));
+    }
+    
+    @Test
+    public void remainingIndividuals() {
+        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        Individual activeIndividual = new Individual();
+        Individual evacuatedIndividual = new Individual();
+        evacuatedIndividual.setNumber(1);
+        Individual saveIndividual = new Individual();
+        saveIndividual.setNumber(2);
+        Individual deadIndividual = new Individual();
+        deadIndividual.setNumber(3);
+
+        Room room = context.mock(Room.class, "room1");
+        context.checking(new Expectations() {{
+            allowing(room).addIndividual(with(any(RoomCell.class)), with(any(Individual.class)));
+            allowing(room).getID();
+            will(returnValue(1));
+        }});
+        RoomCell cell1 = new RoomCell(1, 0, 1, room);
+        eca.addIndividual(cell1, activeIndividual);
+        RoomCell cell2 = new RoomCell(1, 0, 2, room);
+        eca.addIndividual(cell2, evacuatedIndividual);
+        RoomCell cell3 = new RoomCell(1, 0, 3, room);
+        eca.addIndividual(cell3, saveIndividual);
+        RoomCell cell4 = new RoomCell(1, 0, 4, room);
+        eca.addIndividual(cell4, deadIndividual);
+        
+        evacuatedIndividual.setEvacuated();
+        saveIndividual.setSafe(true);
+        deadIndividual.die(DeathCause.NOT_ENOUGH_TIME);
+        
+        List<Individual> remaining = eca.getRemainingIndividuals();
+        assertThat(remaining, contains(activeIndividual, saveIndividual));
+        
     }
 }

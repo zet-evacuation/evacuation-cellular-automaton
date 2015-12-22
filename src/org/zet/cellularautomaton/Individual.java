@@ -21,7 +21,6 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 import org.zetool.container.mapping.Identifiable;
 import java.util.UUID;
-import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * A Individual represets a Person in the evacuationtool with the following characteristics: familiarity, panic,
