@@ -860,12 +860,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return Collections.unmodifiableList(remaining);
     }
 
-    public List<Individual> getNotDeadIndividuals() {
-        List<Individual> notDeadIndividuals = Collections.unmodifiableList(individuals);
-        evacuatedIndividuals.stream().forEach(individual -> notDeadIndividuals.add(individual));
-        return notDeadIndividuals;
-    }
-
     /**
      * Returns a view of all evacuated individuals.
      *

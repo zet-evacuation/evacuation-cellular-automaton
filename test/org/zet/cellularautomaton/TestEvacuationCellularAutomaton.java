@@ -94,7 +94,6 @@ public class TestEvacuationCellularAutomaton {
 
         eca.addIndividual(cell2, notToEvacuate);
 
-        //eca.nextTimeStep();
         eca.markIndividualForRemoval(toEvacuate);
         eca.removeMarkedIndividuals();
         assertThat(eca.getIndividuals(), not(hasItem(toEvacuate)));
@@ -115,24 +114,29 @@ public class TestEvacuationCellularAutomaton {
         Room room = context.mock(Room.class, "room1");
         context.checking(new Expectations() {{
             allowing(room).addIndividual(with(any(RoomCell.class)), with(any(Individual.class)));
+            allowing(room).addIndividual(with(any(ExitCell.class)), with(any(Individual.class)));
             allowing(room).getID();
             will(returnValue(1));
+            allowing(room).removeIndividual(with(evacuatedIndividual));
+            allowing(room).removeIndividual(with(deadIndividual));
         }});
         RoomCell cell1 = new RoomCell(1, 0, 1, room);
         eca.addIndividual(cell1, activeIndividual);
-        RoomCell cell2 = new RoomCell(1, 0, 2, room);
+        ExitCell cell2 = new ExitCell(1, 0, 2, room);
         eca.addIndividual(cell2, evacuatedIndividual);
         RoomCell cell3 = new RoomCell(1, 0, 3, room);
         eca.addIndividual(cell3, saveIndividual);
         RoomCell cell4 = new RoomCell(1, 0, 4, room);
         eca.addIndividual(cell4, deadIndividual);
         
-        evacuatedIndividual.setEvacuated();
-        saveIndividual.setSafe(true);
-        deadIndividual.die(DeathCause.NOT_ENOUGH_TIME);
+        eca.setIndividualSave(saveIndividual);
+        evacuatedIndividual.setCell(cell2);
+        eca.setIndividualEvacuated(evacuatedIndividual);
+        deadIndividual.setCell(cell4);
+        eca.setIndividualDead(deadIndividual, DeathCause.NOT_ENOUGH_TIME);
         
-        List<Individual> remaining = eca.getRemainingIndividuals();
-        assertThat(remaining, contains(activeIndividual, saveIndividual));
-        
+        assertThat(eca.getRemainingIndividuals(), contains(activeIndividual, saveIndividual));
+        assertThat(eca.getEvacuatedIndividuals(), contains(evacuatedIndividual));
+        assertThat(eca.getDeadIndividuals(), contains(deadIndividual));
     }
 }
