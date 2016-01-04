@@ -49,10 +49,8 @@ public class ExitCell extends TargetCell implements Cloneable {
      * @param speedFactor Defines how fast the cell can be crossed. The value should be a rational number greater than
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_EXITCELL_SPEEDFACTOR" is set.
      * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
-     * @p
-     * aram y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
-     * @pa
-     * ram room
+     * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
+     * @param room
      */
     public ExitCell(double speedFactor, int x, int y, Room room) {
         super(new EvacuationCellState(null), speedFactor, x, y, room);

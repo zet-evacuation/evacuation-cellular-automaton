@@ -18,6 +18,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 
 /**
@@ -105,8 +106,6 @@ public class EvacuationCellularAutomatonAlgorithm
             public int getNeededTime() {
                 return neededTime;
             }
-            
-            
 
             @Override
             public CAStatisticWriter getStatisticWriter() {
@@ -175,13 +174,9 @@ public class EvacuationCellularAutomatonAlgorithm
 
     @Override
     protected final void execute(EvacCell cell) {
-
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
-        //Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
-        //while (loop.hasNext()) { // Execute all rules
         for( EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
-          //  EvacuationRule r = loop.next();
             r.execute(i.getCell());
         }
     }
@@ -206,6 +201,10 @@ public class EvacuationCellularAutomatonAlgorithm
         return new EvacuationSimulationResult(getStep());
     }
 
+    public StoredCAStatisticResults getStatisticResults() {
+        return es.getStatisticWriter().getStoredCAStatisticResults();
+    }
+        
     @Override
     protected boolean isFinished() {
         boolean thisFinished = allIndividualsSave() && timeOver();

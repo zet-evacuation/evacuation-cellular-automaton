@@ -15,9 +15,9 @@
  */
 package org.zet.cellularautomaton.algorithm;
 
+import ds.PropertyContainer;
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import ds.PropertyContainer;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
@@ -27,7 +27,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 public class EvacuationSimulationProblemImpl implements EvacuationSimulationProblem {
     double seconds = 300;
 
-    private EvacuationCellularAutomaton ca;
+    private final EvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
 
@@ -37,14 +37,9 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
         PropertyContainer props = PropertyContainer.getGlobal();
 
         ruleSet = EvacuationRuleSet.createRuleSet(props.getAsString("algo.ca.ruleSet"));
-        //for (EvacuationRule rule : ruleSet) {
-        //    rule.setEvacuationSimulationProblem(this);
-        //}
 
         parameterSet = AbstractParameterSet.createParameterSet(props.getAsString("algo.ca.parameterSet"));
 
-        //potentialController = new SPPotentialController(ca);
-        //caStatisticWriter = new CAStatisticWriter();
         ca.setAbsoluteMaxSpeed(parameterSet.getAbsoluteMaxSpeed());
     }
 

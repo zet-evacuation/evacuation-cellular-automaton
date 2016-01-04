@@ -49,7 +49,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
 
     private boolean recordingStarted;
 
-
     /**
      * the state of the cellular automaton.
      */
@@ -88,10 +87,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private IndividualToExitMapping individualToExitMapping;
     /** A mapping that maps exits to their capacity. */
     private Map<StaticPotential, Double> exitToCapacityMapping;
-    /** Reference to all Floor Fields. */
-    //private PotentialManager potentialManager;
-    /** The current time step. */
-    //private int timeStep;
     /** The current state of the cellular automaton, e.g. RUNNING, stopped, ... */
     private State state;
     private double absoluteMaxSpeed;
@@ -112,7 +107,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public EvacuationCellularAutomaton() {
         super(null);
-        //timeStep = 0;
         individuals = new ArrayList<>();
         individualsByID = new HashMap<>();
         evacuatedIndividuals = new ArrayList<>();
@@ -123,7 +117,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         assignmentTypes = new HashMap<>();
         typeIndividualMap = new HashMap<>();
         roomsByFloor = new LinkedList<>();
-        //potentialManager = new PotentialManager();
         absoluteMaxSpeed = 1;
         secondsPerStep = 1;
         stepsPerSecond = 1;
@@ -273,25 +266,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     /**
-     * Increases the actual timeStep of the EvacuationCellularAutomaton about one.
-     */
-//    @Override
-//    public void nextTimeStep() {
-//        timeStep++;
-//        VisualResultsRecorder.getInstance().nextTimestep();
-//    }
-
-    /**
-     * Gets the actual timeStep of the EvacuationCellularAutomaton.
-     *
-     * @return the timeStep
-     */
-//    @Override
-//    public int getTimeStep() {
-//        return timeStep;
-//    }
-
-    /**
      * Returns an ArrayList of all exists of the building
      *
      * @return the ArrayList of exits
@@ -299,15 +273,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     public List<ExitCell> getExits() {
         return Collections.unmodifiableList(exits);
     }
-
-    /**
-     * Returns the object which organizes all potentials
-     *
-     * @return PotentialManager object
-     */
-//    public final PotentialManager getPotentialManager() {
-//        return potentialManager;
-//    }
 
     /**
      * Returns all Individuals in the given AssignmentType
@@ -439,8 +404,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             from.getRoom().removeIndividual(i);
             to.getRoom().addIndividual(to, i);
         }
-
-        //Statistic.instance.getSpecificFlowCollector().collect( timeStep, from, to );
     }
 
     @Override
@@ -482,9 +445,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (!individuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
-//        if (getTimeStep() == 0) {
-//            throw new IllegalStateException();
-//        }
         VisualResultsRecorder.getInstance().recordAction(new ExitAction((ExitCell) i.getCell()));
         EvacCell evacCell = i.getCell();
 
@@ -514,7 +474,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     public boolean isIndividualMarked(Individual toEvacuate) {
         return markedForRemoval.contains(toEvacuate);
     }
-
 
     /**
      * Sets the specified individual to the status safe and sets the correct safety time.
@@ -578,11 +537,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public int getDeadIndividualCount(DeathCause deathCause) {
         int count = 0;
-        for (Individual i : getDeadIndividuals()) {
-            if (i.getDeathCause().compareTo(deathCause) == 0) {
-                count++;
-            }
-        }
+        count = getDeadIndividuals().stream().filter(i -> i.getDeathCause() == deathCause).
+                map((_item) -> 1).reduce(count, Integer::sum);
         return count;
     }
 
@@ -832,7 +788,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         individuals.clear();
         typeIndividualMap.clear();
 
-        //timeStep = 0;
         state = State.READY;
     }
 

@@ -51,10 +51,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public void stop();
 
-    //public void nextTimeStep();
-
-    //public int getTimeStep();
-
     public void removeMarkedIndividuals(); // marking should probably be stored in the algorithm, or an additional current-step datastructure
 
     public void markIndividualForRemoval(Individual i);

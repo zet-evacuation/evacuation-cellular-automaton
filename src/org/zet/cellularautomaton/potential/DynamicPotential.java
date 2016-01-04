@@ -86,15 +86,12 @@ public class DynamicPotential extends AbstractPotential {
     public void update(double diffusion, double decay) {
         GeneralRandom rnd = RandomUtils.getInstance().getRandomGenerator();
         DynamicPotential dynPot = this;
-        //ArrayList<Cell> diffusionCells = new ArrayList<Cell>();
         EvacCell[] cellsCopy = dynPot.getMappedCells().toArray(new EvacCell[dynPot.getMappedCells().size()]);
         /* NEW CODE */
         for (EvacCell c : cellsCopy) {
-            //System.out.println( "DynPot: "+ dynPot.getPotential(c));
             double randomNumber = rnd.nextDouble();
-//			System.out.println( "Randomnumber " + randomNumber + " in updateDynamicPotential" );
             if ( /*dynPot.getPotential(c) > 0 && */diffusion > randomNumber) {
-				// Potential diffuses to a a neighbour cell. It should not increase, so
+                // Potential diffuses to a a neighbour cell. It should not increase, so
                 // reduce it afterwards on this cell!
                 EvacCell randomNeighbour = null;
                 while (randomNeighbour == null) {
@@ -114,6 +111,7 @@ public class DynamicPotential extends AbstractPotential {
             }
         }
     }
+
     /**
      * Increases the potential of the specified EvacCell about one. Associates the specified potential with the
      * specified EvacCell in this PotentialMap.
@@ -121,15 +119,15 @@ public class DynamicPotential extends AbstractPotential {
      * @param cell A cell which potential you want to increase.
      */
     public void increase(EvacCell cell) {
-        int potential;
+        int newPotential;
         DynamicPotential dynPot = this;
         if (dynPot.hasValidPotential(cell)) {
-            potential = dynPot.getPotential(cell) + 1;
+            newPotential = dynPot.getPotential(cell) + 1;
             dynPot.deleteCell(cell);
-            dynPot.setPotential(cell, (double) potential);
+            dynPot.setPotential(cell, (double) newPotential);
         } else {
-            potential = 1;
-            dynPot.setPotential(cell, (double) potential);
+            newPotential = 1;
+            dynPot.setPotential(cell, (double) newPotential);
         }
     }
 
@@ -147,21 +145,11 @@ public class DynamicPotential extends AbstractPotential {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.InsertCellPreviouslyException"));
         }
 
-		//if(cell.getIndividual() != null){
-        //    return;
-        //}
         if (dynPot.getPotential(cell) == 1) {
             dynPot.deleteCell(cell);
         } else {
-            int potential = dynPot.getPotential(cell) - 1;
-            dynPot.setPotential(cell, potential);
+            int newPotential = dynPot.getPotential(cell) - 1;
+            dynPot.setPotential(cell, newPotential);
         }
-        /*if(dynPot.contains(cell)){
-         if(dynPot.getPotential(cell) == 0){
-         dynPot.deleteCell(cell);
-         }
-         }*/
     }
-    
-    
 }

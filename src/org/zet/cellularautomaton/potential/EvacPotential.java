@@ -32,10 +32,10 @@ public class EvacPotential extends StaticPotential {
     @Override
     public int getPotential(EvacCell cell) {
         if (cell != null) {
-            Double potential = this.potential.get(cell);
-            if (potential != null) {
+            Double newPotential = this.potential.get(cell);
+            if (newPotential != null) {
                 if (checker.canPass(ind, ind.getCell(), cell)) {
-                    return (int) Math.round(potential);
+                    return (int) Math.round(newPotential);
                 } else {
                     return Integer.MAX_VALUE;
                 }
