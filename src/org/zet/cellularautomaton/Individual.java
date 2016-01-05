@@ -20,7 +20,6 @@ import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 import org.zetool.container.mapping.Identifiable;
-import java.util.UUID;
 
 /**
  * A Individual represets a Person in the evacuationtool with the following characteristics: familiarity, panic,
@@ -29,27 +28,26 @@ import java.util.UUID;
  * {@link StaticPotential}, which guides the person to an exit.
  */
 public class Individual implements Identifiable {
-
-    private int age;
-    private double familiarity;
+    
+    // read only properties
+    private final int age;
+    private final double familiarity;
+    private final double panicFactor;
+    private final double slackness;
+    private final double exhaustionFactor;
+    private final double relativeMaxSpeed;
+    /** The number of the individual. Each Individual of an CA should have a unique identifier. */
+    private final int number;
+    private final double reactionTime;
+    
     private double panic = 0.0001;
-    private double panicFactor;
-    private double slackness;
     private double exhaustion = 0;
-    private double exhaustionFactor;
     private double relativeSpeed;
-    private double relativeMaxSpeed;
-    private double absoluteMaxSpeed;
     private boolean alarmed;
-    private double reactionTime;
     private EvacCell cell;
     private StaticPotential staticPotential;
     private DynamicPotential dynamicPotential;
     private DeathCause deathCause;
-    /**
-     * The number of the individual. Each Individual of an CA should have a unique identifier.
-     */
-    private int individualNumber = 0;
     /**
      * The (accurate) time when the moving of the individual is over. Initializes with 0 as step 0 is the first cellular
      * automaton step.
@@ -59,10 +57,6 @@ public class Individual implements Identifiable {
      * The (accurate) time when the first moving of the individual starts. Initializes invalid.
      */
     private double stepStartTime = -1;
-    /**
-     * Unique ID of the assignment type this individual is in
-     */
-    private UUID uid;
     /**
      * The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells)
      */
@@ -79,23 +73,25 @@ public class Individual implements Identifiable {
     int cellCountToChange;
     Direction8 dir = Direction8.Top;
 
-    public Individual() {
-    }
-
-    public Individual(int age, double familiarity, double panicFactor, double slackness, double exhaustionFactor, double relativeMaxSpeed, double reactiontime, UUID uid) {
+//    public Individual() {
+//    }
+//
+    public Individual(int number, int age, double familiarity, double panicFactor, double slackness, double exhaustionFactor, double relativeMaxSpeed, double reactionTime) {
+        this.number = number;
         this.age = age;
         this.familiarity = familiarity;
         this.panicFactor = panicFactor;
         this.slackness = slackness;
         this.exhaustionFactor = exhaustionFactor;
         this.relativeMaxSpeed = relativeMaxSpeed;
+        this.reactionTime = reactionTime;
+
+        // Simulation state variables
         this.relativeSpeed = relativeMaxSpeed;
         this.alarmed = false;
         this.cell = null;
         this.staticPotential = null;
         this.dynamicPotential = null;
-        this.reactionTime = reactiontime;
-        this.uid = uid;
         safe = false;
         safetyTime = -1;
 
@@ -107,6 +103,11 @@ public class Individual implements Identifiable {
         potentialMemoryStart = new PotentialMemory<>();
         potentialMemoryEnd = new PotentialMemory<>();
         memoryIndex = 0;
+    }
+
+    Individual(Individual individual) {
+        this(individual.number, individual.age, individual.familiarity, individual.panicFactor, individual.slackness,
+                individual.exhaustionFactor, individual.relativeMaxSpeed, individual.reactionTime);
     }
 
     public PotentialMemory getPotentialMemoryStart() {
@@ -292,9 +293,9 @@ public class Individual implements Identifiable {
      *
      * @param val the exhaustion factor
      */
-    public void setExhaustionFactor(double val) {
-        this.exhaustionFactor = val;
-    }
+//    public void setExhaustionFactor(double val) {
+//        this.exhaustionFactor = val;
+//    }
 
     /**
      * Get the familiarity of the individual.
@@ -310,9 +311,9 @@ public class Individual implements Identifiable {
      *
      * @param val the familiarity value
      */
-    public void setFamiliarity(double val) {
-        this.familiarity = val;
-    }
+//    public void setFamiliarity(double val) {
+//        this.familiarity = val;
+//    }
 
     /**
      * Returns the identifier of this individual.
@@ -320,7 +321,7 @@ public class Individual implements Identifiable {
      * @return the number
      */
     public int getNumber() {
-        return individualNumber;
+        return number;
     }
 
     /**
@@ -328,9 +329,9 @@ public class Individual implements Identifiable {
      *
      * @param i the number
      */
-    public void setNumber(int i) {
-        individualNumber = i;
-    }
+//    public void setNumber(int i) {
+//        individualNumber = i;
+//    }
 
     /**
      * Returns the identifier of this individual.
@@ -339,7 +340,7 @@ public class Individual implements Identifiable {
      */
     @Override
     public int id() {
-        return individualNumber;
+        return number;
     }
 
     public Direction8 getDirection() {
@@ -372,9 +373,9 @@ public class Individual implements Identifiable {
      *
      * @param val
      */
-    public void setPanicFactor(double val) {
-        this.panicFactor = val;
-    }
+//    public void setPanicFactor(double val) {
+//        this.panicFactor = val;
+//    }
 
     /**
      * Get the slackness of the individual.
@@ -390,18 +391,18 @@ public class Individual implements Identifiable {
      *
      * @param val
      */
-    public void setSlackness(double val) {
-        this.slackness = val;
-    }
+//    public void setSlackness(double val) {
+//        this.slackness = val;
+//    }
 
     /**
      * Set the relativeMaxSpeed of the individual.
      *
      * @param maxSpeed the maximal speed
      */
-    public void setMaxSpeed(double maxSpeed) {
-        this.relativeMaxSpeed = maxSpeed;
-    }
+//    public void setMaxSpeed(double maxSpeed) {
+//        this.relativeMaxSpeed = maxSpeed;
+//    }
 
     /**
      * Returns the relativeMaxSpeed of the individual.
@@ -498,34 +499,33 @@ public class Individual implements Identifiable {
      * Returns a copy of itself as a new Object.
      * @return 
      */
-    @Override
-    public Individual clone() {
-        Individual aClone = new Individual();
-        aClone.absoluteMaxSpeed = this.absoluteMaxSpeed;
-        aClone.age = this.age;
-        aClone.cell = this.cell;
-        aClone.relativeSpeed = this.relativeSpeed;
-        aClone.deathCause = this.deathCause;
-        aClone.dynamicPotential = this.dynamicPotential;
-        aClone.exhaustion = this.exhaustion;
-        aClone.exhaustionFactor = this.exhaustionFactor;
-        aClone.familiarity = this.familiarity;
-        aClone.individualNumber = this.individualNumber;
-        aClone.alarmed = this.alarmed;
-        aClone.isEvacuated = this.isEvacuated;
-        aClone.safe = this.safe;
-        aClone.relativeMaxSpeed = this.relativeMaxSpeed;
-        aClone.panic = this.panic;
-        aClone.panicFactor = this.panicFactor;
-        aClone.reactionTime = this.reactionTime;
-        aClone.safetyTime = this.safetyTime;
-        aClone.slackness = this.slackness;
-        aClone.staticPotential = this.staticPotential;
-        aClone.stepEndTime = this.stepEndTime;
-        aClone.stepStartTime = this.stepStartTime;
-        aClone.uid = this.uid;
-        return aClone;
-    }
+//    public Individual clone() {
+//        Individual aClone = new Individual();
+//        aClone.absoluteMaxSpeed = this.absoluteMaxSpeed;
+//        aClone.age = this.age;
+//        aClone.cell = this.cell;
+//        aClone.relativeSpeed = this.relativeSpeed;
+//        aClone.deathCause = this.deathCause;
+//        aClone.dynamicPotential = this.dynamicPotential;
+//        aClone.exhaustion = this.exhaustion;
+//        aClone.exhaustionFactor = this.exhaustionFactor;
+//        aClone.familiarity = this.familiarity;
+//        aClone.individualNumber = this.individualNumber;
+//        aClone.alarmed = this.alarmed;
+//        aClone.isEvacuated = this.isEvacuated;
+//        aClone.safe = this.safe;
+//        aClone.relativeMaxSpeed = this.relativeMaxSpeed;
+//        aClone.panic = this.panic;
+//        aClone.panicFactor = this.panicFactor;
+//        aClone.reactionTime = this.reactionTime;
+//        aClone.safetyTime = this.safetyTime;
+//        aClone.slackness = this.slackness;
+//        aClone.staticPotential = this.staticPotential;
+//        aClone.stepEndTime = this.stepEndTime;
+//        aClone.stepStartTime = this.stepStartTime;
+//        aClone.uid = this.uid;
+//        return aClone;
+//    }
 
     /**
      * Returns a string "Individual" and the id number of the individual.
@@ -549,8 +549,7 @@ public class Individual implements Identifiable {
                 + "Slackness: " + slackness + "\n"
                 + "Exhaustion: " + exhaustion + "\n"
                 + "Exhaustion factor: " + exhaustionFactor + "\n"
-                + "MaxSpeed: " + relativeMaxSpeed + "\n"
-                + "Absolute max speed: " + absoluteMaxSpeed;
+                + "MaxSpeed: " + relativeMaxSpeed;
     }
 
     /**
@@ -573,15 +572,5 @@ public class Individual implements Identifiable {
     @Override
     public boolean equals(Object o) {
         return o instanceof Individual ? ((Individual) o).id() == id() : false;
-    }
-
-    /////////////////////////////////////////////////////////////////////////////
-    // alter stuff. todo ändern
-    public UUID getUid() {
-        return uid;
-    }
-
-    public void setUid(UUID uid) {
-        this.uid = uid;
     }
 }

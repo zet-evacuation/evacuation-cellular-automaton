@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
@@ -36,6 +37,7 @@ import org.zetool.common.algorithm.AlgorithmProgressEvent;
  */
 public class TestEvacuationCellularAutomatonAlgorithm {
     private Mockery context = new Mockery();
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     private static class MockEvacCell extends EvacCell {
 
@@ -290,13 +292,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
      * @return a list of individuals
      */
     private List<Individual> getIndividuals() {
-        Individual i1 = new Individual();
-        i1.setNumber(1);
+        Individual i1 = builder.buildNewIndividual();
         EvacCell cell1 = new MockEvacCell(0, 0);
         i1.setCell(cell1);
         cell1.getState().setIndividual(i1);
-        Individual i2 = new Individual();
-        i2.setNumber(2);
+        Individual i2 = builder.buildNewIndividual();
         EvacCell cell2 = new MockEvacCell(0, 0);
         i2.setCell(cell2);
         cell2.getState().setIndividual(i2);
@@ -431,13 +431,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
      */
     private List<Individual> getIndividuals(int[] distance) {
         List<Individual> individuals = new LinkedList<>();
-        int id = 1;
         for( int d : distance ) {
-            Individual individual = new Individual();
+            Individual individual = builder.buildNewIndividual();
             EvacCell cell = new MockEvacCell(0, 0);
             individual.setCell(cell);
             cell.getState().setIndividual(individual);
-            individual.setNumber(id++);
             StaticPotential sp = new StaticPotential();
             sp.setPotential(cell, d);
             individual.setStaticPotential(sp);

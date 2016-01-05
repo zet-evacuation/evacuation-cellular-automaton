@@ -18,6 +18,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
@@ -39,6 +40,7 @@ public class TestInitialPotentialExitMappingRule {
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     EvacuationSimulationProblem esp;
     ExitCell target;
+    private final static IndividualBuilder builder = new IndividualBuilder();
     
     private final IndividualToExitMapping exitMapping = (Individual individual) -> {
         if (individual == TestInitialPotentialExitMappingRule.this.i) {
@@ -54,7 +56,7 @@ public class TestInitialPotentialExitMappingRule {
         esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationState es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
-        i = new Individual();
+        i = builder.buildNewIndividual();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -89,7 +91,7 @@ public class TestInitialPotentialExitMappingRule {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = new Individual();
+        Individual i = builder.buildNewIndividual();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }

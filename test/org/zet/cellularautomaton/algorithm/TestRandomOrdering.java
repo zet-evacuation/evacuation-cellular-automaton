@@ -9,19 +9,20 @@ import java.util.LinkedList;
 import java.util.List;
 import org.junit.Test;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class TestRandomOrdering {
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
     public void testDefaultInAnyOrder() {
         List<Individual> individuals = new LinkedList<>();
         for (int i = 1; i <= 5; ++i) {
-            Individual ind = new Individual();
-            ind.setNumber(i);
+            Individual ind = builder.buildNewIndividual();
             individuals.add(ind);
         }
 

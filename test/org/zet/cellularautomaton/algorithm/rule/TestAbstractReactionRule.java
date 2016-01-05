@@ -8,6 +8,7 @@ import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executea
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 
 /**
@@ -26,7 +27,7 @@ public class TestAbstractReactionRule {
         RoomCell cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = new Individual();
+        Individual i = new IndividualBuilder().buildNewIndividual();
         cell.getState().setIndividual(i);
         i.setAlarmed(false);
         assertThat(rule, is(executeableOn(cell)));

@@ -20,6 +20,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zetool.common.util.Direction8;
 
@@ -29,6 +30,7 @@ import org.zetool.common.util.Direction8;
  */
 public class TestAbstractMovementRule {
     private final static Direction8 DEFAULT_DIRECTION = Direction8.Top;
+    private final static IndividualBuilder builder = new IndividualBuilder();
     
     private class FakeEvacCell extends EvacCell {
         private final boolean isFreeNeighbors;
@@ -100,7 +102,7 @@ public class TestAbstractMovementRule {
         
     @Test
     public void testPossibleTargetsNeighbors() {
-        Individual i = new Individual();
+        Individual i = builder.newIndividual(0).build();
 
         EvacCell cell = new FakeEvacCell(true);
         cell.getState().setIndividual(i);
@@ -115,7 +117,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testSafeNeighbors() {
-        Individual i = new Individual();
+        Individual i = builder.buildNewIndividual();
         i.setSafe(true);
         i.setDirection(DEFAULT_DIRECTION);
         
@@ -144,7 +146,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testDirections() {
-        Individual individual = new Individual();
+        Individual individual = builder.buildNewIndividual();
         individual.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new ArrayList<>(Direction8.values().length);
@@ -185,7 +187,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testSway() {
-        Individual individual = new Individual();
+        Individual individual = builder.buildNewIndividual();
         individual.setDirection(DEFAULT_DIRECTION);
         assertThat(rule.getSwayDelay(individual, Direction8.Top), is(closeTo(0, 10e-8)));
         assertThat(rule.getSwayDelay(individual, Direction8.TopLeft), is(closeTo(0.5, 10e-8)));
@@ -212,7 +214,7 @@ public class TestAbstractMovementRule {
         });        
         rule.setEvacuationSimulationProblem(es);
         
-        Individual i = new Individual();
+        Individual i = builder.buildNewIndividual();
         rule.setStepEndTime(i, 2.68);
 
         assertThat(i.getStepEndTime(), is(closeTo(2.68, 10e-8)));

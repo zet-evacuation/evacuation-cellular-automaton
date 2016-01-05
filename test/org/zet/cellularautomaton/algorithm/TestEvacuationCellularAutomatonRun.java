@@ -63,10 +63,7 @@ public class TestEvacuationCellularAutomatonRun {
             //saveCellSearch(cells, sp);
         }
         
-        //eca.getPotentialManager().addStaticPotential(null);
-        
-        Individual i = new Individual();
-        //rightCell.getState().setIndividual(i);
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         eca.addIndividual(rightCell, i);
         
         

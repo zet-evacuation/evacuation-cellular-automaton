@@ -1,13 +1,14 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
-import static org.hamcrest.CoreMatchers.not;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 
 /**
@@ -15,7 +16,8 @@ import org.zet.cellularautomaton.RoomCell;
  * @author Jan-Philipp Kappmeier
  */
 public class TestAbstractPotentialChangeRule {
-
+    private final static IndividualBuilder builder = new IndividualBuilder();
+    
     private static class FakeAbstractPotentialChangeRule extends AbstractPotentialChangeRule {
 
         private final boolean wantsToChange;
@@ -38,7 +40,7 @@ public class TestAbstractPotentialChangeRule {
     private EvacCell createCell(boolean occupied, boolean safe) {
         EvacCell cell = new RoomCell(0, 0);
         if( occupied ) {
-            Individual i = new Individual();
+            Individual i = builder.buildNewIndividual();
             cell.getState().setIndividual(i);
             i.setCell(cell);
             i.setSafe(safe);

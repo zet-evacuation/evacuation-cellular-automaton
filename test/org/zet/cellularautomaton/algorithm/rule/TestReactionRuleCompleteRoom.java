@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 
@@ -22,10 +23,11 @@ import org.zet.cellularautomaton.RoomCell;
 public class TestReactionRuleCompleteRoom {
     private final Mockery context = new Mockery();
     private EvacuationState es;
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
     public void roomAlerted() {
-        Individual i = new Individual();
+        Individual i = builder.buildNewIndividual();
         Room room = mockRoom(i, false, 1);
         RoomCell cell = generateCell(room, i);
         
@@ -40,7 +42,7 @@ public class TestReactionRuleCompleteRoom {
     
     @Test
     public void roomNotAlerted() {
-        Individual i = new Individual(0, 0, 0, 0, 0, 1, 7, new UUID(0, 0));
+        Individual i = builder.newIndividual(0).withReactionTime(7).build();
         Room room = mockRoom(i, false, 0);
         RoomCell cell = generateCell(room, i);
         
@@ -55,7 +57,7 @@ public class TestReactionRuleCompleteRoom {
     
     @Test
     public void alertedByRoom() {
-        Individual i = new Individual(0, 0, 0, 0, 0, 1, 7, new UUID(0, 0));
+        Individual i = builder.newIndividual(0).withReactionTime(7).build();
         Room room = mockRoom(i, true, 0);
         RoomCell cell = generateCell(room, i);
         

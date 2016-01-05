@@ -340,12 +340,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         } else {
             individuals.add(i);
             individualsByID.put(i.getNumber(), i);
-            if (typeIndividualMap.get(i.getUid()) == null) {
-                typeIndividualMap.put(i.getUid(), new HashSet<>());
-            }
-            if (!typeIndividualMap.get(i.getUid()).contains(i)) {
-                typeIndividualMap.get(i.getUid()).add(i);
-            }
         }
         c.getRoom().addIndividual(c, i);
 

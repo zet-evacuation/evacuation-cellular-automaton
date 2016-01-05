@@ -37,7 +37,7 @@ public class TestSaveIndividualsRule {
         ExitCell exitCell = new ExitCell(0, 1);
         RoomCell other = new RoomCell(1, 1);
 
-        Individual i = new Individual();
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         saveCell.getState().setIndividual(i);
         exitCell.getState().setIndividual(i);
         other.getState().setIndividual(i);
@@ -61,7 +61,7 @@ public class TestSaveIndividualsRule {
     @Test
     public void unsaveIndividualsSaved() {
         SaveCell cell = new SaveCell(0, 0);
-        Individual i = new Individual();
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         cell.getState().setIndividual(i);
 
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
@@ -85,7 +85,7 @@ public class TestSaveIndividualsRule {
     public void saveIndividualNotSaved() {
         SaveCell cell = new SaveCell(0, 0);
 
-        Individual i = new Individual() {
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0) {
             @Override
             public void setSafe(boolean saveStatus) {
                 throw new AssertionError("setSafe called!");

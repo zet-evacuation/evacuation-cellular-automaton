@@ -1,7 +1,5 @@
 package org.zet.cellularautomaton;
 
-import java.util.Collections;
-import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
@@ -9,9 +7,10 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.junit.Assert.assertThat;
+import java.util.Collections;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 /**
@@ -20,6 +19,7 @@ import org.junit.Test;
  */
 public class TestEvacuationCellularAutomaton {
     private final Mockery context = new Mockery();
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
     public void testInitialization() {
@@ -70,9 +70,8 @@ public class TestEvacuationCellularAutomaton {
     @Test
     public void testRemoveIndividuals() {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        Individual toEvacuate = new Individual();
-        Individual notToEvacuate = new Individual();
-        notToEvacuate.setNumber(1);
+        Individual toEvacuate = builder.buildNewIndividual();
+        Individual notToEvacuate = builder.buildNewIndividual();
         
         eca.addFloor("floor1");
         Room room = context.mock(Room.class, "room1");
@@ -103,13 +102,10 @@ public class TestEvacuationCellularAutomaton {
     @Test
     public void remainingIndividuals() {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        Individual activeIndividual = new Individual();
-        Individual evacuatedIndividual = new Individual();
-        evacuatedIndividual.setNumber(1);
-        Individual saveIndividual = new Individual();
-        saveIndividual.setNumber(2);
-        Individual deadIndividual = new Individual();
-        deadIndividual.setNumber(3);
+        Individual activeIndividual = builder.buildNewIndividual();
+        Individual evacuatedIndividual = builder.buildNewIndividual();
+        Individual saveIndividual = builder.buildNewIndividual();
+        Individual deadIndividual = builder.buildNewIndividual();
 
         Room room = context.mock(Room.class, "room1");
         context.checking(new Expectations() {{

@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 
@@ -39,7 +40,7 @@ public class TestAbstractEvacuationRule {
         RoomCell cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = new Individual();
+        Individual i = new IndividualBuilder().newIndividual(0).build();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }

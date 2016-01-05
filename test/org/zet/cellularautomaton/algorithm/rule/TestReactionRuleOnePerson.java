@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 
 /**
@@ -21,6 +22,7 @@ public class TestReactionRuleOnePerson {
     private final Mockery context = new Mockery();
     private EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
     private EvacuationState es;
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
     public void alertsImmediately() {
@@ -28,7 +30,7 @@ public class TestReactionRuleOnePerson {
         rule.setEvacuationSimulationProblem(es);
 
         RoomCell cell = new RoomCell(0, 0);
-        Individual i = new Individual();
+        Individual i = builder.buildNewIndividual();
         cell.getState().setIndividual(i);
 
         assertThat(i.isAlarmed(), is(false));
@@ -46,7 +48,7 @@ public class TestReactionRuleOnePerson {
         rule.setEvacuationSimulationProblem(es);
 
         RoomCell cell = new RoomCell(0, 0);
-        Individual evacuee = new Individual(0, 0, 0, 0, 0, 1, 7, new UUID(0, 0));
+        Individual evacuee = builder.newIndividual(0).withReactionTime(7).build();
         cell.getState().setIndividual(evacuee);
         
         assertThat(evacuee.isAlarmed(), is(false));

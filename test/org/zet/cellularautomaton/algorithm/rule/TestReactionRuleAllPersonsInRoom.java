@@ -6,13 +6,13 @@ import static org.jmock.AbstractExpectations.returnValue;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.UUID;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 
@@ -23,10 +23,11 @@ import org.zet.cellularautomaton.RoomCell;
 public class TestReactionRuleAllPersonsInRoom {
     private final Mockery context = new Mockery();
     EvacuationState es;
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
     public void testSingleIndividual() {
-        Individual i = new Individual();
+        Individual i = builder.buildNewIndividual();
         Room room = mockRoom(i);
         RoomCell cell = generateCell(room, i);
         
@@ -41,9 +42,9 @@ public class TestReactionRuleAllPersonsInRoom {
 
     @Test
     public void testMultipleIndividuals() {
-        Individual i1 = new Individual();
-        Individual i2 = new Individual();
-        Individual i3 = new Individual();
+        Individual i1 = builder.buildNewIndividual();
+        Individual i2 = builder.buildNewIndividual();
+        Individual i3 = builder.buildNewIndividual();
         Room room = mockRoom(i1, i2, i3);
         RoomCell cell = generateCell(room, i1);
         generateCell(room, i2);
@@ -62,9 +63,9 @@ public class TestReactionRuleAllPersonsInRoom {
     
     @Test
     public void testNotAllReady() {
-        Individual i1 = new Individual();
-        Individual i2 = new Individual(0, 0, 0, 0, 0, 1, 7, new UUID(0, 0));
-        Individual i3 = new Individual();
+        Individual i1 = builder.buildNewIndividual();
+        Individual i2 = builder.newIndividual(0).withReactionTime(7).build();
+        Individual i3 = builder.buildNewIndividual();
         Room room = mockRoom(i1, i2, i3);
         RoomCell cell = generateCell(room, i1);
         generateCell(room, i2);

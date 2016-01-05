@@ -441,7 +441,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         aClone.setSpeedFactor(this.getSpeedFactor());
 
         if (cloneIndividual && this.getState().getIndividual() != null) {
-            aClone.getState().setIndividual(this.getState().getIndividual().clone());
+            aClone.getState().setIndividual(new Individual(this.getState().getIndividual()));
             aClone.getState().getIndividual().setCell(aClone);
         } else {
             aClone.getState().setIndividual(this.getState().getIndividual());

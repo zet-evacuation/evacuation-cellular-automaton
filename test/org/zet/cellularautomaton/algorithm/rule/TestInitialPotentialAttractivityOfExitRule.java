@@ -17,6 +17,7 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
@@ -35,6 +36,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
+    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Before
     public void init() {
@@ -43,7 +45,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
-        individual = new Individual();
+        individual = builder.buildNewIndividual();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -69,7 +71,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        individual = new Individual();
+        individual = builder.buildNewIndividual();
         cell.getState().setIndividual(individual);
         assertThat(rule, is(executeableOn(cell)));
     }

@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -41,12 +42,12 @@ public class TestEvacuateIndividualsRule {
         rule.setEvacuationSimulationProblem(es);
 
         ExitCell exit = new ExitCell(0, 0);
-        Individual toEvacuate = new Individual();
+        Individual toEvacuate = new IndividualBuilder().buildNewIndividual();
         exit.getState().setIndividual(toEvacuate);
         assertThat(rule, is(executeableOn(exit)));
 
         RoomCell other = new RoomCell(1, 1);
-        Individual notToEvacuate = new Individual();
+        Individual notToEvacuate = new IndividualBuilder().buildNewIndividual();
         other.getState().setIndividual(notToEvacuate);
         assertThat(rule, is(not(executeableOn(other))));
     }
@@ -65,7 +66,7 @@ public class TestEvacuateIndividualsRule {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         EvacuationState es = context.mock(EvacuationState.class);
-        Individual toEvacuate = new Individual();
+        Individual toEvacuate = new IndividualBuilder().buildNewIndividual();
         context.checking(new Expectations() {
             {
                 allowing(es).getStatisticWriter();
