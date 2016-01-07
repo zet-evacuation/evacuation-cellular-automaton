@@ -45,7 +45,7 @@ public class TestInitialConcretePotentialRule {
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
-        i = builder.newIndividual(30).withFamiliarity(familiarity).build();
+        i = builder.withAge(30).withFamiliarity(familiarity).build();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -72,7 +72,7 @@ public class TestInitialConcretePotentialRule {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = builder.buildNewIndividual();
+        Individual i = builder.build();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }

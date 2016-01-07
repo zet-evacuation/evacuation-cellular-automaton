@@ -70,8 +70,8 @@ public class TestEvacuationCellularAutomaton {
     @Test
     public void testRemoveIndividuals() {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        Individual toEvacuate = builder.buildNewIndividual();
-        Individual notToEvacuate = builder.buildNewIndividual();
+        Individual toEvacuate = builder.build();
+        Individual notToEvacuate = builder.build();
         
         eca.addFloor("floor1");
         Room room = context.mock(Room.class, "room1");
@@ -102,10 +102,10 @@ public class TestEvacuationCellularAutomaton {
     @Test
     public void remainingIndividuals() {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        Individual activeIndividual = builder.buildNewIndividual();
-        Individual evacuatedIndividual = builder.buildNewIndividual();
-        Individual saveIndividual = builder.buildNewIndividual();
-        Individual deadIndividual = builder.buildNewIndividual();
+        Individual activeIndividual = builder.build();
+        Individual evacuatedIndividual = builder.build();
+        Individual saveIndividual = builder.build();
+        Individual deadIndividual = builder.build();
 
         Room room = context.mock(Room.class, "room1");
         context.checking(new Expectations() {{

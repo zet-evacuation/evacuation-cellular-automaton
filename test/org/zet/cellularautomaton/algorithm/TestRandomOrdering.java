@@ -22,7 +22,7 @@ public class TestRandomOrdering {
     public void testDefaultInAnyOrder() {
         List<Individual> individuals = new LinkedList<>();
         for (int i = 1; i <= 5; ++i) {
-            Individual ind = builder.buildNewIndividual();
+            Individual ind = builder.build();
             individuals.add(ind);
         }
 

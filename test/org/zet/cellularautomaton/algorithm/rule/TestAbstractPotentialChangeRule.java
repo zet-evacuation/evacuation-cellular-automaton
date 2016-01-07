@@ -40,7 +40,7 @@ public class TestAbstractPotentialChangeRule {
     private EvacCell createCell(boolean occupied, boolean safe) {
         EvacCell cell = new RoomCell(0, 0);
         if( occupied ) {
-            Individual i = builder.buildNewIndividual();
+            Individual i = builder.build();
             cell.getState().setIndividual(i);
             i.setCell(cell);
             i.setSafe(safe);

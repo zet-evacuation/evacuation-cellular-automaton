@@ -43,7 +43,7 @@ public class TestInitialPotentialShortestPathRule {
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
-        i = builder.buildNewIndividual();
+        i = builder.build();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -69,7 +69,7 @@ public class TestInitialPotentialShortestPathRule {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        i = builder.buildNewIndividual();
+        i = builder.build();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }

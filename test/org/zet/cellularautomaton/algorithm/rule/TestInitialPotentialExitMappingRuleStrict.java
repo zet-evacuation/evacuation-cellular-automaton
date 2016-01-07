@@ -57,7 +57,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
         EvacuationState es = context.mock(EvacuationState.class);
-        i = builder.buildNewIndividual();
+        i = builder.build();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -92,7 +92,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = builder.buildNewIndividual();
+        Individual i = builder.build();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }

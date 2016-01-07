@@ -42,12 +42,12 @@ public class TestEvacuateIndividualsRule {
         rule.setEvacuationSimulationProblem(es);
 
         ExitCell exit = new ExitCell(0, 0);
-        Individual toEvacuate = new IndividualBuilder().buildNewIndividual();
+        Individual toEvacuate = new IndividualBuilder().build();
         exit.getState().setIndividual(toEvacuate);
         assertThat(rule, is(executeableOn(exit)));
 
         RoomCell other = new RoomCell(1, 1);
-        Individual notToEvacuate = new IndividualBuilder().buildNewIndividual();
+        Individual notToEvacuate = new IndividualBuilder().build();
         other.getState().setIndividual(notToEvacuate);
         assertThat(rule, is(not(executeableOn(other))));
     }
@@ -66,7 +66,7 @@ public class TestEvacuateIndividualsRule {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         EvacuationState es = context.mock(EvacuationState.class);
-        Individual toEvacuate = new IndividualBuilder().buildNewIndividual();
+        Individual toEvacuate = new IndividualBuilder().build();
         context.checking(new Expectations() {
             {
                 allowing(es).getStatisticWriter();

@@ -292,11 +292,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
      * @return a list of individuals
      */
     private List<Individual> getIndividuals() {
-        Individual i1 = builder.buildNewIndividual();
+        Individual i1 = builder.build();
         EvacCell cell1 = new MockEvacCell(0, 0);
         i1.setCell(cell1);
         cell1.getState().setIndividual(i1);
-        Individual i2 = builder.buildNewIndividual();
+        Individual i2 = builder.build();
         EvacCell cell2 = new MockEvacCell(0, 0);
         i2.setCell(cell2);
         cell2.getState().setIndividual(i2);
@@ -432,7 +432,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     private List<Individual> getIndividuals(int[] distance) {
         List<Individual> individuals = new LinkedList<>();
         for( int d : distance ) {
-            Individual individual = builder.buildNewIndividual();
+            Individual individual = builder.build();
             EvacCell cell = new MockEvacCell(0, 0);
             individual.setCell(cell);
             cell.getState().setIndividual(individual);

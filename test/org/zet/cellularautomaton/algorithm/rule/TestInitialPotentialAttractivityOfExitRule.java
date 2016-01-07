@@ -45,7 +45,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
-        individual = builder.buildNewIndividual();
+        individual = builder.build();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -71,7 +71,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        individual = builder.buildNewIndividual();
+        individual = builder.build();
         cell.getState().setIndividual(individual);
         assertThat(rule, is(executeableOn(cell)));
     }

@@ -40,7 +40,7 @@ public class TestAbstractEvacuationRule {
         RoomCell cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = new IndividualBuilder().newIndividual(0).build();
+        Individual i = new IndividualBuilder().withAge(0).build();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }

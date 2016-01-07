@@ -30,7 +30,7 @@ public class TestReactionRuleOnePerson {
         rule.setEvacuationSimulationProblem(es);
 
         RoomCell cell = new RoomCell(0, 0);
-        Individual i = builder.buildNewIndividual();
+        Individual i = builder.build();
         cell.getState().setIndividual(i);
 
         assertThat(i.isAlarmed(), is(false));
@@ -48,7 +48,7 @@ public class TestReactionRuleOnePerson {
         rule.setEvacuationSimulationProblem(es);
 
         RoomCell cell = new RoomCell(0, 0);
-        Individual evacuee = builder.newIndividual(0).withReactionTime(7).build();
+        Individual evacuee = builder.withAge(0).withReactionTime(7).build();
         cell.getState().setIndividual(evacuee);
         
         assertThat(evacuee.isAlarmed(), is(false));

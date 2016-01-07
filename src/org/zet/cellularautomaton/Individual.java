@@ -53,17 +53,11 @@ public class Individual implements Identifiable {
      * automaton step.
      */
     private double stepEndTime = 0;
-    /**
-     * The (accurate) time when the first moving of the individual starts. Initializes invalid.
-     */
+    /** The (accurate) time when the first moving of the individual starts. Initializes invalid. */
     private double stepStartTime = -1;
-    /**
-     * The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells)
-     */
+    /** The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells). */
     private int safetyTime;
-    /**
-     * Indicates, if the individual is already safe; that means: on save- oder exitcells
-     */
+    /** Indicates, if the individual is already safe; that means: on save or exit cells. */
     private boolean safe;
     private boolean isEvacuated = false;
     private boolean isDead = false;
@@ -73,9 +67,6 @@ public class Individual implements Identifiable {
     int cellCountToChange;
     Direction8 dir = Direction8.Top;
 
-//    public Individual() {
-//    }
-//
     public Individual(int number, int age, double familiarity, double panicFactor, double slackness, double exhaustionFactor, double relativeMaxSpeed, double reactionTime) {
         this.number = number;
         this.age = age;
@@ -289,15 +280,6 @@ public class Individual implements Identifiable {
     }
 
     /**
-     * Sets the exhaustion factor of the {@code Individual} to a specified value.
-     *
-     * @param val the exhaustion factor
-     */
-//    public void setExhaustionFactor(double val) {
-//        this.exhaustionFactor = val;
-//    }
-
-    /**
      * Get the familiarity of the individual.
      *
      * @return The familiarity
@@ -307,15 +289,6 @@ public class Individual implements Identifiable {
     }
 
     /**
-     * Set the familiarity of the individual.
-     *
-     * @param val the familiarity value
-     */
-//    public void setFamiliarity(double val) {
-//        this.familiarity = val;
-//    }
-
-    /**
      * Returns the identifier of this individual.
      *
      * @return the number
@@ -323,15 +296,6 @@ public class Individual implements Identifiable {
     public int getNumber() {
         return number;
     }
-
-    /**
-     * Sets the identification Number of the {@code Individual}.
-     *
-     * @param i the number
-     */
-//    public void setNumber(int i) {
-//        individualNumber = i;
-//    }
 
     /**
      * Returns the identifier of this individual.
@@ -369,15 +333,6 @@ public class Individual implements Identifiable {
     }
 
     /**
-     * Set the panic-factor of the individual.
-     *
-     * @param val
-     */
-//    public void setPanicFactor(double val) {
-//        this.panicFactor = val;
-//    }
-
-    /**
      * Get the slackness of the individual.
      *
      * @return The slackness
@@ -385,24 +340,6 @@ public class Individual implements Identifiable {
     public double getSlackness() {
         return slackness;
     }
-
-    /**
-     * Set the slackness of the individual.
-     *
-     * @param val
-     */
-//    public void setSlackness(double val) {
-//        this.slackness = val;
-//    }
-
-    /**
-     * Set the relativeMaxSpeed of the individual.
-     *
-     * @param maxSpeed the maximal speed
-     */
-//    public void setMaxSpeed(double maxSpeed) {
-//        this.relativeMaxSpeed = maxSpeed;
-//    }
 
     /**
      * Returns the relativeMaxSpeed of the individual.
@@ -494,38 +431,6 @@ public class Individual implements Identifiable {
     public boolean isDead() {
         return isDead;
     }
-
-    /**
-     * Returns a copy of itself as a new Object.
-     * @return 
-     */
-//    public Individual clone() {
-//        Individual aClone = new Individual();
-//        aClone.absoluteMaxSpeed = this.absoluteMaxSpeed;
-//        aClone.age = this.age;
-//        aClone.cell = this.cell;
-//        aClone.relativeSpeed = this.relativeSpeed;
-//        aClone.deathCause = this.deathCause;
-//        aClone.dynamicPotential = this.dynamicPotential;
-//        aClone.exhaustion = this.exhaustion;
-//        aClone.exhaustionFactor = this.exhaustionFactor;
-//        aClone.familiarity = this.familiarity;
-//        aClone.individualNumber = this.individualNumber;
-//        aClone.alarmed = this.alarmed;
-//        aClone.isEvacuated = this.isEvacuated;
-//        aClone.safe = this.safe;
-//        aClone.relativeMaxSpeed = this.relativeMaxSpeed;
-//        aClone.panic = this.panic;
-//        aClone.panicFactor = this.panicFactor;
-//        aClone.reactionTime = this.reactionTime;
-//        aClone.safetyTime = this.safetyTime;
-//        aClone.slackness = this.slackness;
-//        aClone.staticPotential = this.staticPotential;
-//        aClone.stepEndTime = this.stepEndTime;
-//        aClone.stepStartTime = this.stepStartTime;
-//        aClone.uid = this.uid;
-//        return aClone;
-//    }
 
     /**
      * Returns a string "Individual" and the id number of the individual.

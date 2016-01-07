@@ -27,7 +27,7 @@ public class TestReactionRuleAllPersonsInRoom {
 
     @Test
     public void testSingleIndividual() {
-        Individual i = builder.buildNewIndividual();
+        Individual i = builder.build();
         Room room = mockRoom(i);
         RoomCell cell = generateCell(room, i);
         
@@ -42,9 +42,9 @@ public class TestReactionRuleAllPersonsInRoom {
 
     @Test
     public void testMultipleIndividuals() {
-        Individual i1 = builder.buildNewIndividual();
-        Individual i2 = builder.buildNewIndividual();
-        Individual i3 = builder.buildNewIndividual();
+        Individual i1 = builder.build();
+        Individual i2 = builder.build();
+        Individual i3 = builder.build();
         Room room = mockRoom(i1, i2, i3);
         RoomCell cell = generateCell(room, i1);
         generateCell(room, i2);
@@ -63,9 +63,9 @@ public class TestReactionRuleAllPersonsInRoom {
     
     @Test
     public void testNotAllReady() {
-        Individual i1 = builder.buildNewIndividual();
-        Individual i2 = builder.newIndividual(0).withReactionTime(7).build();
-        Individual i3 = builder.buildNewIndividual();
+        Individual i1 = builder.build();
+        Individual i2 = builder.withReactionTime(7).build();
+        Individual i3 = builder.withReactionTime(0).build();
         Room room = mockRoom(i1, i2, i3);
         RoomCell cell = generateCell(room, i1);
         generateCell(room, i2);

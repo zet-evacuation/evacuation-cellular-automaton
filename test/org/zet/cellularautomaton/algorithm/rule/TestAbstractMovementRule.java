@@ -102,7 +102,7 @@ public class TestAbstractMovementRule {
         
     @Test
     public void testPossibleTargetsNeighbors() {
-        Individual i = builder.newIndividual(0).build();
+        Individual i = builder.withAge(0).build();
 
         EvacCell cell = new FakeEvacCell(true);
         cell.getState().setIndividual(i);
@@ -117,7 +117,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testSafeNeighbors() {
-        Individual i = builder.buildNewIndividual();
+        Individual i = builder.build();
         i.setSafe(true);
         i.setDirection(DEFAULT_DIRECTION);
         
@@ -146,7 +146,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testDirections() {
-        Individual individual = builder.buildNewIndividual();
+        Individual individual = builder.build();
         individual.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new ArrayList<>(Direction8.values().length);
@@ -187,7 +187,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testSway() {
-        Individual individual = builder.buildNewIndividual();
+        Individual individual = builder.build();
         individual.setDirection(DEFAULT_DIRECTION);
         assertThat(rule.getSwayDelay(individual, Direction8.Top), is(closeTo(0, 10e-8)));
         assertThat(rule.getSwayDelay(individual, Direction8.TopLeft), is(closeTo(0.5, 10e-8)));
@@ -214,7 +214,7 @@ public class TestAbstractMovementRule {
         });        
         rule.setEvacuationSimulationProblem(es);
         
-        Individual i = builder.buildNewIndividual();
+        Individual i = builder.build();
         rule.setStepEndTime(i, 2.68);
 
         assertThat(i.getStepEndTime(), is(closeTo(2.68, 10e-8)));

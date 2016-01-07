@@ -1,77 +1,60 @@
 package org.zet.cellularautomaton;
 
+import org.zetool.common.util.Helper;
+
 /**
- * Creates individuals with unique ids.
+ * Creates individuals with unique ids. The ids for the individuals are consecutively given whenever {@link #build() }
+ * is called. Consecutive calls of {@link #build() } create instances of {@link Individual} which have the same
+ * parameters if they have not been changed in the mean time.
  * 
  * @author Jan-Philipp Kappmeier
  */
 public class IndividualBuilder {
     private int id = 0;
-    private int age;
-    private double familiarity;
+    private int age = 30;
+    private double familiarity = 1;
     private double panicFactor;
     private double slackness;
     private double exhaustionFactor;
-    private double relativeMaxSpeed;
+    private double relativeMaxSpeed = 1;
     private double reactionTime;
-    private boolean buildStarted = false;
 
-    public Individual buildNewIndividual() {
-        newIndividual(30);
-        return build();
-    }
-    
-    public IndividualBuilder newIndividual(int age) {
-        if(buildStarted) {
-            throw new IllegalStateException("Build not completed.");
-        }
-        buildStarted = true;
-        id++;
-        initDefault();
-        this.age = age;
+    public IndividualBuilder withAge(int age) {
+        this.age = Helper.requireNonNegative(age);
         return this;
     }
     
-    private void initDefault() {
-        familiarity = relativeMaxSpeed = 1;
-        panicFactor = slackness = exhaustionFactor = reactionTime = 0;
-    }
-    
     public IndividualBuilder withFamiliarity(double familiarity) {
-        this.familiarity = familiarity;
+        this.familiarity = Helper.requireInRange(0, 1, familiarity);
         return this;
     }
     
     public IndividualBuilder withPanicFactor(double panicFactor) {
-        this.panicFactor = panicFactor;
+        this.panicFactor = Helper.requireInRange(0, 1, panicFactor);
         return this;
     }
     
     public IndividualBuilder withSlackness(double slackness) {
-        this.slackness = slackness;
+        this.slackness = Helper.requireInRange(0, 1, slackness);
         return this;
     }
     
     public IndividualBuilder withExhaustionFactor(double exhaustionFactor) {
-        this.exhaustionFactor = exhaustionFactor;
+        this.exhaustionFactor = Helper.requireInRange(0, 1, exhaustionFactor);
         return this;
     }
     
     public IndividualBuilder withRelativeMaxSpeed(double relativeMaxSpeed) {
-        this.relativeMaxSpeed = relativeMaxSpeed;
+        this.relativeMaxSpeed = Helper.requireNonNegative(relativeMaxSpeed);
         return this;
     }
     
     public IndividualBuilder withReactionTime(double reactionTime) {
-        this.reactionTime = reactionTime;
+        this.reactionTime = Helper.requireNonNegative(reactionTime);
         return this;
     }
     
     public Individual build() {
-        if(!buildStarted) {
-            throw new IllegalStateException("Build not started.");
-        }
-        buildStarted = false;
         return new Individual(id++, age, familiarity, panicFactor, slackness, exhaustionFactor, relativeMaxSpeed, reactionTime);
     }
 }

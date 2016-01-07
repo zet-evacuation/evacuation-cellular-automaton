@@ -27,7 +27,7 @@ public class TestAbstractReactionRule {
         RoomCell cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = new IndividualBuilder().buildNewIndividual();
+        Individual i = new IndividualBuilder().build();
         cell.getState().setIndividual(i);
         i.setAlarmed(false);
         assertThat(rule, is(executeableOn(cell)));
