@@ -42,7 +42,7 @@ public class TestReactionRuleCompleteRoom {
     
     @Test
     public void roomNotAlerted() {
-        Individual i = builder.withAge(0).withReactionTime(7).build();
+        Individual i = builder.withAge(0).withReactionTime(7).buildAndReset();
         Room room = mockRoom(i, false, 0);
         RoomCell cell = generateCell(room, i);
         
