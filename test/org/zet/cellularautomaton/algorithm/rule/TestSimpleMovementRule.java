@@ -14,9 +14,11 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  *
@@ -132,11 +134,16 @@ public class TestSimpleMovementRule {
         Mockery context = new Mockery();
         EvacuationState es = context.mock(EvacuationState.class);
         ParameterSet ps = context.mock(ParameterSet.class);
+        EvacuationCellularAutomatonInterface ca = context.mock(EvacuationCellularAutomatonInterface.class);
         context.checking(new Expectations() {
             {
                 allowing(es).getParameterSet();
                 will(returnValue(ps));
-                allowing(ps).effectivePotential(currentCell, targetCell);
+                allowing(es).getCellularAutomaton();
+                will(returnValue(ca));
+                allowing(ca).getDynamicPotential();
+                will(returnValue(null));
+                allowing(ps).effectivePotential(with(currentCell), with(targetCell), with((DynamicPotential)null));
                 will(returnValue(1.0));
             }
         });

@@ -388,24 +388,6 @@ public class Individual implements Identifiable {
     }
 
     /**
-     * Set the dynamicPotential of the individual.
-     *
-     * @param dp
-     */
-    public void setDynamicPotential(DynamicPotential dp) {
-        this.dynamicPotential = dp;
-    }
-
-    /**
-     * Get the dynamicPotential of the individual.
-     *
-     * @return The dynamicPotential
-     */
-    public DynamicPotential getDynamicPotential() {
-        return dynamicPotential;
-    }
-
-    /**
      * Set the staticPotential of the individual.
      *
      * @param sp

@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.Collection;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * @author Jan-Philipp Kappmeier
@@ -40,10 +41,11 @@ public class SimpleParameterSet extends AbstractParameterSet {
      *
      * @param referenceCell
      * @param targetCell
+     * @param dynamicPotential 
      * @return the potential difference between the two cells
      */
     @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell) {
+    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
         StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
         final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
         return statPotlDiff;

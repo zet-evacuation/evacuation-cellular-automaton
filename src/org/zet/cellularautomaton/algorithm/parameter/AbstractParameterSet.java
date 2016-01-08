@@ -21,6 +21,7 @@ import ds.PropertyContainer;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.lang.reflect.InvocationTargetException;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * @author Daniel R. Schmidt
@@ -101,7 +102,7 @@ public abstract class AbstractParameterSet implements ParameterSet {
     public abstract double changePotentialThreshold(Individual individual);
 
     @Override
-    public abstract double effectivePotential(EvacCell referenceCell, EvacCell targetCell);
+    public abstract double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential);
 
     @Override
     public abstract double idleThreshold(Individual individual);
@@ -125,10 +126,9 @@ public abstract class AbstractParameterSet implements ParameterSet {
      * @return the object of the subclass type.
      */
     public static AbstractParameterSet createParameterSet(String parameterSetName) {
-        Class<?> parameterSetClass = null;
         AbstractParameterSet parameterSet = null;
         try {
-            parameterSetClass = Class.forName("org.zet.cellularautomaton.algorithm.parameter." + parameterSetName);
+            Class<?> parameterSetClass = Class.forName("org.zet.cellularautomaton.algorithm.parameter." + parameterSetName);
             parameterSet = (AbstractParameterSet) parameterSetClass.getConstructor().newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
                 IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

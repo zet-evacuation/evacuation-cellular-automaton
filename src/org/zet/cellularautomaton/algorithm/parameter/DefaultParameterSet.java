@@ -15,16 +15,16 @@
  */
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import org.zetool.rndutils.RandomUtils;
-import org.zetool.rndutils.distribution.continuous.NormalDistribution;
 import ds.PropertyContainer;
+import java.util.Collection;
+import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import java.util.Collection;
-import java.util.List;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.distribution.continuous.NormalDistribution;
 
 /**
  * @author Daniel R. Schmidt
@@ -82,17 +82,17 @@ public class DefaultParameterSet extends AbstractParameterSet {
      *
      * @param referenceCell A cell with an individual
      * @param targetCell A neighbour of {@code cell}
+     * @param dynamicPotential the dynamic potential
      * @return The potential between {@code referenceCell} and {@code targetCell} with respect to the static and the
      * dynamic potential.
      */
     @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell) {
+    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
         }
         final double panic = referenceCell.getState().getIndividual().getPanic();
         StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
-        DynamicPotential dynamicPotential = referenceCell.getState().getIndividual().getDynamicPotential();
 
         if (dynamicPotential != null) {
             final double dynPotDiff = (-1) * (dynamicPotential.getPotential(referenceCell) - dynamicPotential.getPotential(targetCell));
@@ -100,7 +100,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
             return (Math.pow(panic, PANIC_WEIGHT_ON_POTENTIALS) * dynPotDiff * dynamicPotentialWeight()) + ((1 - Math.pow(panic, PANIC_WEIGHT_ON_POTENTIALS)) * statPotlDiff * staticPotentialWeight());
             //return statPotlDiff * staticPotentialWeight();
         } else {
-            //	System.out.println( "DynamicPotential = NULL!");
+            //    System.out.println( "DynamicPotential = NULL!");
             final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
             return Math.pow(1 - panic, PANIC_WEIGHT_ON_POTENTIALS) * statPotlDiff * staticPotentialWeight();
         }
@@ -119,13 +119,13 @@ public class DefaultParameterSet extends AbstractParameterSet {
      * {@inheritDoc}
      * @see algo.ca.parameter.AbstractParameterSet#movementThreshold( ds.ca.Individual )
      */
-	// wird nur benutzt wenn die Geschwindigkeit der Individuen mit Wahrscheinlichkeiten simuliert wird
+    // wird nur benutzt wenn die Geschwindigkeit der Individuen mit Wahrscheinlichkeiten simuliert wird
     // das ist in der NonWaitingMovementRule nicht der Fall
     @Override
     public double movementThreshold(Individual i) {
         double individualSpeed = i.getRelativeSpeed();
         double cellSpeed = i.getCell().getSpeedFactor();
-		// double exhaustion = i.getExhaustion();  brauchen wir nur wenn wir in
+        // double exhaustion = i.getExhaustion();  brauchen wir nur wenn wir in
         //currentspeed exhaustion nicht einrechenen
         return individualSpeed * cellSpeed;
     }
@@ -136,7 +136,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
      */
     @Override
     public double updateExhaustion(Individual individual, EvacCell targetCell) {
-		// ExhaustionFactor depends from the age. currently it is always initialized with 1, so all individuals exhauste with the same
+        // ExhaustionFactor depends from the age. currently it is always initialized with 1, so all individuals exhauste with the same
         // speed.
         // i hope the formular is right: it does the following
         // each individual looses a percentage of the exhauston factor, depending of the current speed:
@@ -147,11 +147,11 @@ public class DefaultParameterSet extends AbstractParameterSet {
         final double MAX_EXHAUSTION = 0.99d;
         double newExhaustion;
         if (individual.getCell().equals(targetCell)) {
-            newExhaustion
-                    = (0 / individual.getMaxSpeed() - 0.5) * individual.getExhaustionFactor() + individual.getExhaustion();
+            newExhaustion = (0 / individual.getMaxSpeed() - 0.5) * individual.getExhaustionFactor()
+                    + individual.getExhaustion();
         } else {
-            newExhaustion
-                    = (individual.getRelativeSpeed() / individual.getMaxSpeed() - 0.5) * individual.getExhaustionFactor() + individual.getExhaustion();
+            newExhaustion = (individual.getRelativeSpeed() / individual.getMaxSpeed() - 0.5)
+                    * individual.getExhaustionFactor() + individual.getExhaustion();
         }
 
         if (newExhaustion < MIN_EXHAUSTION) {
@@ -202,36 +202,36 @@ public class DefaultParameterSet extends AbstractParameterSet {
         return newPanic;
 
         /* alter Code */
-//		    // update panic only if the individual is not standing on a savecell or an exitcell
-//	        if (! ( (individual.getCell() instanceof ds.ca.SaveCell) || (individual.getCell() instanceof ds.ca.ExitCell) )) {
+//            // update panic only if the individual is not standing on a savecell or an exitcell
+//            if (! ( (individual.getCell() instanceof ds.ca.SaveCell) || (individual.getCell() instanceof ds.ca.ExitCell) )) {
 //
-//	            double panic = individual.getPanic();
+//                double panic = individual.getPanic();
 //
-//	            //person will gar nicht laufen (slack usw.)
-//				if( preferedCells.size() == 0 )
-//					return panic;
+//                //person will gar nicht laufen (slack usw.)
+//                if( preferedCells.size() == 0 )
+//                    return panic;
 //
-//				Iterator<Cell> it = preferedCells.iterator();
-//				EvacCell neighbour = it.next();
-//				double panicFactor = individual.getPanicFactor();
-//				if(individual.getCell() != targetCell){
-//					individual.setPanic(Math.max(panic - getPanicDecrease()*0.17, MINIMUM_PANIC));
-//					return individual.getPanic();
-//				}
+//                Iterator<Cell> it = preferedCells.iterator();
+//                EvacCell neighbour = it.next();
+//                double panicFactor = individual.getPanicFactor();
+//                if(individual.getCell() != targetCell){
+//                    individual.setPanic(Math.max(panic - getPanicDecrease()*0.17, MINIMUM_PANIC));
+//                    return individual.getPanic();
+//                }
 //
-//				int skippedCells = 0;
-//				while( it.hasNext() && neighbour != targetCell ) {
-//					if( neighbour.getIndividual() != null ) {
-//						panic += getPanicIncrease() * panicFactor / (2 << (preferedCells.size() - skippedCells));
-//						skippedCells++;
-//					}
-//					neighbour = it.next();
-//				}
+//                int skippedCells = 0;
+//                while( it.hasNext() && neighbour != targetCell ) {
+//                    if( neighbour.getIndividual() != null ) {
+//                        panic += getPanicIncrease() * panicFactor / (2 << (preferedCells.size() - skippedCells));
+//                        skippedCells++;
+//                    }
+//                    neighbour = it.next();
+//                }
 //
-//				individual.setPanic( Math.min(panic, MAXIMUM_PANIC));
-//			    }
-//				return individual.getPanic();
-			/* Ende alter Code */
+//                individual.setPanic( Math.min(panic, MAXIMUM_PANIC));
+//                }
+//                return individual.getPanic();
+            /* Ende alter Code */
     }
 
     /*
@@ -245,10 +245,10 @@ public class DefaultParameterSet extends AbstractParameterSet {
         double newSpeed = maxSpeed + ((i.getPanic() * panicWeightOnSpeed()) - (i.getExhaustion() * exhaustionWeightOnSpeed()));
         i.setRelativeSpeed(Math.max(0.0001, Math.min(maxSpeed, newSpeed)));
 
-        //		if( i.getMaxSpeed() < newSpeed )
-//			i.setRelativeSpeed( i.getMaxSpeed() );
-//		else
-//			i.setRelativeSpeed( newSpeed );
+        //        if( i.getMaxSpeed() < newSpeed )
+//            i.setRelativeSpeed( i.getMaxSpeed() );
+//        else
+//            i.setRelativeSpeed( newSpeed );
         return i.getRelativeSpeed();
     }
 
@@ -276,12 +276,13 @@ public class DefaultParameterSet extends AbstractParameterSet {
         return EXHAUSTION_WEIGHT_ON_SPEED;
     }
 
+    @Override
     public double getExhaustionFromAge(double age) {
-		//minum Exhaustion: individual is fully exhausted
+        //minum Exhaustion: individual is fully exhausted
         //after about 450 meter
         final double MIN_EXHAUSTION = 0.0018d;
 
-		//minum Exhaustion: individual is fully exhausted
+        //minum Exhaustion: individual is fully exhausted
         //after about 200 meter
         final double MAX_EXHAUSTION = 0.004d;
         if (age < 10d) {
@@ -291,8 +292,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
             //assume exhaustion is at the least on age of 20
         } else if (age <= 20) {
             double ageRatio = (age - 10d) / 10;
-            double ret = MAX_EXHAUSTION
-                    - ageRatio * (MAX_EXHAUSTION - MIN_EXHAUSTION);
+            double ret = MAX_EXHAUSTION - ageRatio * (MAX_EXHAUSTION - MIN_EXHAUSTION);
             return ret;
 
         } else {
@@ -329,6 +329,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
      * @param pAge
      * @return the maximal speed as percentage of the overall maximal speed for the simulation run
      */
+    @Override
     public double getSpeedFromAge(double pAge) {
         // additional: calculate the average speed.
         double ageArray[] = {
@@ -364,7 +365,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
 
         boolean male = RandomUtils.getInstance().binaryDecision(0.5);
 
-		// Change speeds for male and female individuals:
+        // Change speeds for male and female individuals:
         // + 5% for male, -5% for female
         maxSpeedExpected *= male ? 1.05 : 0.95;
 
@@ -385,9 +386,9 @@ public class DefaultParameterSet extends AbstractParameterSet {
             cumulativeMale += randSpeed;
         }
 
-//		System.out.println( "Berechnete Speed: " + randSpeed );
-//		if(true )
-//			return 1.33;
+//        System.out.println( "Berechnete Speed: " + randSpeed );
+//        if(true )
+//            return 1.33;
         return randSpeed;
     }
 
@@ -398,6 +399,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
      * @param pDecisiveness the decisiveness of the person
      * @return the inverted probability.
      */
+    @Override
     public double getSlacknessFromDecisiveness(double pDecisiveness) {
         return 1 - pDecisiveness;
     }

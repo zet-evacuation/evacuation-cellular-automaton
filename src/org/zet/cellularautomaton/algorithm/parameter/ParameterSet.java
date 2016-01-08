@@ -19,6 +19,7 @@ package org.zet.cellularautomaton.algorithm.parameter;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.Collection;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * An abstract class defining all methods that parameter sets have to support.
@@ -42,7 +43,7 @@ public interface ParameterSet {
 	public double movementThreshold( Individual individual );
 
 	/* Other dynamic parameters */
-	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell );
+	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential);
 
 	/* Some constants*/
 	public double dynamicPotentialWeight();
