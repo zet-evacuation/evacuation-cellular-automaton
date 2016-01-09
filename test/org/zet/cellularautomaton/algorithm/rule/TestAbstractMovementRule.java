@@ -216,18 +216,15 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testStepEndTime() {
-        Mockery context = new Mockery();
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        EvacuationState es = context.mock(EvacuationState.class);
         context.checking(new Expectations() {
             {
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
-                allowing(es).setNeededTime(with(3));
+                allowing(rule.es).setNeededTime(with(3));
             }
         });        
-        rule.setEvacuationSimulationProblem(es);
         
         Individual i = builder.build();
         rule.setStepEndTime(i, 2.68);
