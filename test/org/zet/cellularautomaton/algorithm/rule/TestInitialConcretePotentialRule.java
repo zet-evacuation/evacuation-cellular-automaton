@@ -1,5 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -19,6 +21,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -33,6 +36,7 @@ public class TestInitialConcretePotentialRule {
     Individual i;
     EvacuationCellularAutomaton eca;
     EvacuationState es;
+    IndividualState is;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
     
@@ -44,6 +48,7 @@ public class TestInitialConcretePotentialRule {
         rule = new InitialConcretePotentialRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
+        is = new IndividualState();
         eca = new EvacuationCellularAutomaton();
         i = builder.withAge(30).withFamiliarity(familiarity).build();
         context.checking(new Expectations() {
@@ -56,6 +61,8 @@ public class TestInitialConcretePotentialRule {
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
+                allowing(es).getIndividualState();
+                will(returnValue(is));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
@@ -88,12 +95,9 @@ public class TestInitialConcretePotentialRule {
     @Test
     public void testDeadIfNoPotentials() {
         init();
-        context.checking(new Expectations() {
-            {
-                allowing(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
-            }
-        });
         rule.execute(cell);
+        assertThat(is.isDead(i), is(true));
+        assertThat(is.getDeathCause(i), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
     }
     
     @Test
@@ -102,13 +106,9 @@ public class TestInitialConcretePotentialRule {
         StaticPotential sp = new StaticPotential();
 
         eca.addStaticPotential(sp);
-        context.checking(new Expectations() {
-            {
-                
-                allowing(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
-            }
-        });
         rule.execute(cell);
+        assertThat(is.isDead(i), is(true));
+        assertThat(is.getDeathCause(i), is(equalTo(DeathCause.EXIT_UNREACHABLE)));        
     }
     
     @Test
@@ -120,8 +120,8 @@ public class TestInitialConcretePotentialRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(is.isDead(i), is(false));
+        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(sp)));
     }
     
@@ -131,8 +131,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initFamiliarPotential();
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(is.isDead(i), is(false));
+        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
@@ -142,8 +142,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initUnfamiliarPotential();
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(is.isDead(i), is(false));
+        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
@@ -153,8 +153,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initMediumPotential();
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(is.isDead(i), is(false));
+        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
@@ -164,8 +164,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initAttractiveShortPotential();
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(is.isDead(i), is(false));
+        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     

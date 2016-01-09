@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton;
 
 import org.zet.cellularautomaton.potential.PotentialMemory;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 import org.zetool.container.mapping.Identifiable;
@@ -46,8 +45,6 @@ public class Individual implements Identifiable {
     private boolean alarmed;
     private EvacCell cell;
     private StaticPotential staticPotential;
-    private DynamicPotential dynamicPotential;
-    private DeathCause deathCause;
     /**
      * The (accurate) time when the moving of the individual is over. Initializes with 0 as step 0 is the first cellular
      * automaton step.
@@ -57,10 +54,7 @@ public class Individual implements Identifiable {
     private double stepStartTime = -1;
     /** The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells). */
     private int safetyTime;
-    /** Indicates, if the individual is already safe; that means: on save or exit cells. */
-    private boolean safe;
     private boolean isEvacuated = false;
-    private boolean isDead = false;
     private PotentialMemory potentialMemoryStart;
     private PotentialMemory potentialMemoryEnd;
     private int memoryIndex;
@@ -82,8 +76,6 @@ public class Individual implements Identifiable {
         this.alarmed = false;
         this.cell = null;
         this.staticPotential = null;
-        this.dynamicPotential = null;
-        safe = false;
         safetyTime = -1;
 
         /**
@@ -155,30 +147,6 @@ public class Individual implements Identifiable {
         this.stepStartTime = stepStartTime;
     }
 
-    /**
-     * Returns true, if the person is evacuated, false elsewise.
-     *
-     * @return the evacuation status
-     */
-    public boolean isEvacuated() {
-        return this.isEvacuated;
-    }
-
-    /**
-     * Sets this {@code Individual} evacuated.
-     */
-    public void setEvacuated() {
-        isEvacuated = true;
-    }
-
-    /**
-     * Returns the {@link DeathCause} of an individual.
-     *
-     * @return the cause
-     */
-    public DeathCause getDeathCause() {
-        return deathCause;
-    }
 
     /**
      * Returns the time when the individual is safe.
@@ -205,24 +173,6 @@ public class Individual implements Identifiable {
      */
     public int getAge() {
         return age;
-    }
-
-    /**
-     * Returns, if the individual is already safe; that means: on save- oder exit cells.
-     *
-     * @return if the individual is already safe
-     */
-    public boolean isSafe() {
-        return safe;
-    }
-
-    /**
-     * Sets the safe-status of the individual.
-     *
-     * @param saveStatus indicates wheather the individual is save or not
-     */
-    public void setSafe(boolean saveStatus) {
-        safe = saveStatus;
     }
 
     /**
@@ -403,15 +353,6 @@ public class Individual implements Identifiable {
      */
     public StaticPotential getStaticPotential() {
         return staticPotential;
-    }
-
-    public void die(DeathCause cause) {
-        this.deathCause = cause;
-        isDead = true;
-    }
-
-    public boolean isDead() {
-        return isDead;
     }
 
     /**

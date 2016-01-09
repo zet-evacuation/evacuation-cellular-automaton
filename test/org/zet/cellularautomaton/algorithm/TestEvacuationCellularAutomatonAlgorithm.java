@@ -26,7 +26,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
-import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
 import org.zetool.common.algorithm.AlgorithmProgressEvent;
@@ -256,13 +255,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     @Test
     public void testTerminateSomeIndividualsLeft() {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
-            @Override
-            protected void initialize() {
-            }
-
         };
         List<Individual> individuals = getIndividuals();
-        individuals.get(1).setSafe(true);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
@@ -273,18 +267,31 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(eca).getNotSafeIndividualsCount();
                 will(returnValue(1));
                 
+                allowing(esp).getRuleSet();
+                will(returnValue(new EvacuationRuleSet() {
+                    
+                }));
+                allowing(esp).getEvacuationStepLimit();
+                allowing(eca).start();
+                allowing(eca).removeMarkedIndividuals();
+                
+                
                 allowing(eca).getIndividuals();
                 will(returnValue(individuals));
-                exactly(1).of(eca).setIndividualDead(individuals.get(0), DeathCause.NOT_ENOUGH_TIME);
-                never(eca).setIndividualDead(individuals.get(1), DeathCause.NOT_ENOUGH_TIME);
 
                 allowing(eca).stop();
             }
         });
-        
         algorithm.setProblem(esp);
+        algorithm.initialize();
+
+        EvacuationState es = algorithm.getEvacuationState();
+        es.getIndividualState().setSafe(individuals.get(1));
+        
         EvacuationSimulationResult result = algorithm.terminate();
-        context.assertIsSatisfied();
+        assertThat(es.getIndividualState().isDead(individuals.get(0)), is(true));
+        assertThat(es.getIndividualState().getDeathCause(individuals.get(0)), is(equalTo(DeathCause.NOT_ENOUGH_TIME)));
+        assertThat(es.getIndividualState().isDead(individuals.get(1)), is(false));
     }
 
     /**

@@ -66,10 +66,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
      */
     @Override
     public double changePotentialThreshold(Individual i) {
-        if (!i.isSafe()) {
-            return i.getPanic() * panicToProbOfPotentialChangeRatio();
-        }
-        return 0;
+        return i.getPanic() * panicToProbOfPotentialChangeRatio();
     }
 
     /**

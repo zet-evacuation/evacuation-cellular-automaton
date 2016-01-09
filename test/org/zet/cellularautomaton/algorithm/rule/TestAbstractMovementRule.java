@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.closeTo;
@@ -22,6 +23,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -31,7 +33,9 @@ import org.zetool.common.util.Direction8;
 public class TestAbstractMovementRule {
     private final static Direction8 DEFAULT_DIRECTION = Direction8.Top;
     private final static IndividualBuilder builder = new IndividualBuilder();
-    
+    private Mockery context = new Mockery();
+    private IndividualState is;
+
     private class FakeEvacCell extends EvacCell {
         private final boolean isFreeNeighbors;
         private List<EvacCell> neighbors = Collections.EMPTY_LIST;
@@ -98,6 +102,15 @@ public class TestAbstractMovementRule {
             protected void onExecute(EvacCell cell) {
             }
         };
+        EvacuationState es = context.mock(EvacuationState.class);
+        is = new IndividualState();
+        context.checking(new Expectations() {
+            {
+                allowing(es).getIndividualState();
+                will(returnValue(is));
+            }
+        });
+        rule.setEvacuationSimulationProblem(es);
     }
         
     @Test
@@ -118,7 +131,7 @@ public class TestAbstractMovementRule {
     @Test
     public void testSafeNeighbors() {
         Individual i = builder.build();
-        i.setSafe(true);
+        is.setSafe(i);
         i.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new LinkedList<>();
@@ -137,6 +150,7 @@ public class TestAbstractMovementRule {
         FakeEvacCell cell = new FakeEvacCell();
         cell.getState().setIndividual(i);
         cell.neighbors = cellList;
+        
         
         List<EvacCell> result = rule.computePossibleTargets(cell, false);
         assertThat(result, hasSize(2));
@@ -160,7 +174,8 @@ public class TestAbstractMovementRule {
         FakeEvacCell cell = new FakeEvacCell();
         cell.getState().setIndividual(individual);
         cell.neighbors = cellList;
-        
+
+
         List<EvacCell> result = rule.computePossibleTargets(cell, false);
         assertThat(result, hasSize(5));
         for( int i : new int[] {0, 1, 2, 6, 7}) {

@@ -1,5 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -20,6 +22,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -34,6 +37,7 @@ public class TestInitialPotentialRandomRule {
     private Individual i;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
+    private IndividualState is;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
@@ -42,6 +46,7 @@ public class TestInitialPotentialRandomRule {
         rule = new InitialPotentialRandomRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
+        is = new IndividualState();
         eca = new EvacuationCellularAutomaton();
         i = builder.build();
         context.checking(new Expectations() {
@@ -54,6 +59,8 @@ public class TestInitialPotentialRandomRule {
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
+                allowing(es).getIndividualState();
+                will(returnValue(is));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
@@ -83,10 +90,9 @@ public class TestInitialPotentialRandomRule {
     
     @Test
     public void testDeadIfNoPotentials() {
-        context.checking(new Expectations() {{
-                exactly(1).of(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
-        }});
         rule.execute(cell);
+        assertThat(is.isDead(i), is(true));
+        assertThat(is.getDeathCause(i), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
     }
     
     @Test
@@ -94,11 +100,9 @@ public class TestInitialPotentialRandomRule {
         StaticPotential sp = new StaticPotential();
         eca.addStaticPotential(sp);
         
-        context.checking(new Expectations() {{
-                exactly(1).of(es).setIndividualDead(with(i), with(DeathCause.EXIT_UNREACHABLE));
-        }});
         rule.execute(cell);
-        context.assertIsSatisfied();
+        assertThat(is.isDead(i), is(true));
+        assertThat(is.getDeathCause(i), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
     }
     
     @Test
@@ -109,8 +113,8 @@ public class TestInitialPotentialRandomRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(i.isDead(), is(false));
-        assertThat(i.getDeathCause(), is(nullValue()));
+        assertThat(is.isDead(i), is(false));
+        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(sp)));
     }
     

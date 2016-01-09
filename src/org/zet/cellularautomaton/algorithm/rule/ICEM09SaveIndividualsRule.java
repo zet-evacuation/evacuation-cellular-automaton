@@ -15,23 +15,26 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCell;
+
 /**
- * Sets an individual save. The time is stored in the cellular automaton
- * statistic. This rule is supposed to be called bevore the
- * {@link ICEM09EvacuateIndividualsRule}.
-*/
+ * Sets an individual save. The time is stored in the cellular automaton statistic. This rule is supposed to be called
+ * bevore the {@link ICEM09EvacuateIndividualsRule}.
+ */
 public class ICEM09SaveIndividualsRule extends AbstractSaveRule {
+
     /**
      * Public constructor.
      */
-    public ICEM09SaveIndividualsRule() {}
+    public ICEM09SaveIndividualsRule() {
+    }
 
     @Override
-    protected void onExecute( org.zet.cellularautomaton.EvacCell cell ) {
+    protected void onExecute(EvacCell cell) {
         org.zet.cellularautomaton.Individual savedIndividual = cell.getState().getIndividual();
-        if( !(savedIndividual.isSafe()) ) {
-            es.setIndividualSave( savedIndividual );
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic( savedIndividual );
+        if (!(es.getIndividualState().isSafe(savedIndividual))) {
+            es.getIndividualState().setSafe(savedIndividual);
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
     }
 }

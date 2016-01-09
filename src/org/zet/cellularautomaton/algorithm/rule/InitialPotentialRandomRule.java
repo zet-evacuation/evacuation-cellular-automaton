@@ -15,10 +15,10 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.ArrayList;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import java.util.ArrayList;
 import org.zetool.rndutils.RandomUtils;
 
 /**
@@ -36,7 +36,7 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
                 sp -> (sp.getDistance(cell) >= 0)).forEach(sp -> exits.add(sp));
         
         if( exits.isEmpty() ) {
-            es.setIndividualDead(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
+            es.getIndividualState().die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
         } else {
             int numberOfExits = exits.size();
             RandomUtils random = RandomUtils.getInstance();

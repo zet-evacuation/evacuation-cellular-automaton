@@ -15,14 +15,14 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.potential.PotentialMemory;
-import org.zet.cellularautomaton.DeathCause;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.PotentialMemory;
 
 /**
  * This rule chooses an {@link Individual}'s initial {@link StaticPotential} according to the attractivity value of
@@ -65,7 +65,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
         Collections.sort(potentialToLengthOfWayMapper);
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (potentialToLengthOfWayMapper.isEmpty()) {
-            es.setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
+            es.getIndividualState().die(individual, DeathCause.EXIT_UNREACHABLE);
         } else {
             int nrOfPossiblePotentials = (int) (Math.round((1 - individual.getFamiliarity()) * potentialToLengthOfWayMapper.size()));
             if (nrOfPossiblePotentials < 1) {

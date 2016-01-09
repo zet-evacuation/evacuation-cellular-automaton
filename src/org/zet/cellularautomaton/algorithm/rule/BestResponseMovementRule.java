@@ -15,15 +15,15 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zetool.common.util.Direction8;
-import org.zetool.common.util.Level;
+import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
+import org.zet.cellularautomaton.results.VisualResultsRecorder;
+import org.zetool.common.util.Direction8;
+import org.zetool.common.util.Level;
 import org.zetool.rndutils.RandomUtils;
-import java.util.List;
 
 /**
  *
@@ -72,7 +72,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     public void move(EvacCell from, EvacCell targetCell) {
         Individual ind = from.getState().getIndividual();
         //public void move( EvacCell targetCell ) {
-        if (ind.isSafe() && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell))) // Rauslaufen aus sicheren Bereichen ist nicht erlaubt
+        if (es.getIndividualState().isSafe(ind) && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell))) // Rauslaufen aus sicheren Bereichen ist nicht erlaubt
         {
             targetCell = from;
         }

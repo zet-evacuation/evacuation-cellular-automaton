@@ -16,7 +16,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.algo.ca.util.IndividualDistanceComparator;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.algorithm.rule.EvacuationState;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
@@ -71,6 +70,7 @@ public class EvacuationCellularAutomatonAlgorithm
         Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
                 new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
         for (Individual i : individualsCopy) {
+            es.getIndividualState().addIndividual(i);
             Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
             EvacCell c = i.getCell();
             while (primary.hasNext()) {
@@ -90,6 +90,7 @@ public class EvacuationCellularAutomatonAlgorithm
 
     private void initRulesAndState() {
         es = new EvacuationState() {
+            private final IndividualState individualState = new IndividualState();
             public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
 
             @Override
@@ -110,16 +111,6 @@ public class EvacuationCellularAutomatonAlgorithm
             @Override
             public CAStatisticWriter getStatisticWriter() {
                 return caStatisticWriter;
-            }
-
-            @Override
-            public void setIndividualDead(Individual individual, DeathCause deathCause) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void setIndividualSave(Individual savedIndividual) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -150,6 +141,11 @@ public class EvacuationCellularAutomatonAlgorithm
             @Override
             public ParameterSet getParameterSet() {
                 return getProblem().getParameterSet();
+            }
+
+            @Override
+            public IndividualState getIndividualState() {
+                return individualState;
             }
         };
         for( EvacuationRule r : getProblem().getRuleSet()) {
@@ -188,8 +184,8 @@ public class EvacuationCellularAutomatonAlgorithm
             Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
                     new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
             for (Individual i : individualsCopy) {
-                if (!i.getCell().getState().getIndividual().isSafe()) {
-                    getProblem().getCellularAutomaton().setIndividualDead(i, DeathCause.NOT_ENOUGH_TIME);
+                if (!es.getIndividualState().isSafe(i.getCell().getState().getIndividual())) {
+                    es.getIndividualState().die(i, DeathCause.NOT_ENOUGH_TIME);
                 }
             }
         }
@@ -276,4 +272,9 @@ public class EvacuationCellularAutomatonAlgorithm
             throw new AssertionError("Attempted cell removal.");
         }
     }
+
+    public EvacuationState getEvacuationState() {
+        return es;
+    }
+
 }

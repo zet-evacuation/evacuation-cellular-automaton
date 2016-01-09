@@ -15,13 +15,13 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.DeathCause;
 import java.util.ArrayList;
 import java.util.List;
+import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * This rule chooses an Individual's (the one standing on the current cell) initial StaticPotential according to the
@@ -63,7 +63,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (Double.isInfinite(minDistanceToEvacArea)) {
-            es.setIndividualDead(individual, DeathCause.EXIT_UNREACHABLE);
+            es.getIndividualState().die(individual, DeathCause.EXIT_UNREACHABLE);
         }
 
         individual.setStaticPotential(initialPotential);

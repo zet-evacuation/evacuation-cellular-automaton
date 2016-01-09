@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.CAStateChangedAction;
 import org.zet.cellularautomaton.results.DieAction;
@@ -63,10 +64,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
     /** An ArrayList of all Individual objects in the cellular automaton. */
     private List<Individual> individuals;
-    /** An ArrayList of all Individual objects, which are already out of the simulation because they are evacuated. */
-    private List<Individual> evacuatedIndividuals;
     /** An ArrayList of all Individual objects, which are marked as "dead". */
-    private List<Individual> deadIndividuals;
+    //private List<Individual> deadIndividuals;
     /** An {@code ArrayList} marked to be removed. */
     private List<Individual> markedForRemoval;
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
@@ -109,8 +108,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         super(null);
         individuals = new ArrayList<>();
         individualsByID = new HashMap<>();
-        evacuatedIndividuals = new ArrayList<>();
-        deadIndividuals = new ArrayList<>();
         markedForRemoval = new ArrayList<>();
         exits = new ArrayList<>();
         rooms = new HashMap<>();
@@ -436,17 +433,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      */
     public void setIndividualEvacuated(Individual i) {
-        if (!individuals.remove(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-        }
         VisualResultsRecorder.getInstance().recordAction(new ExitAction((ExitCell) i.getCell()));
         EvacCell evacCell = i.getCell();
 
         i.getCell().getRoom().removeIndividual(i);
         i.setCell(evacCell);
-        evacuatedIndividuals.add(i);
         notSaveIndividualsCount--;
-        i.setEvacuated();
     }
 
     @Override
@@ -477,7 +469,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     @Override
     public void setIndividualSave(Individual i) {
         notSaveIndividualsCount--;
-        i.setSafe(true);
         i.setSafetyTime((int) Math.ceil(i.getStepEndTime()));
     }
 
@@ -498,9 +489,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         EvacCell c = i.getCell();
         c.getRoom().removeIndividual(i);
         i.setCell(c);
-        deadIndividuals.add(i);
+        //deadIndividuals.add(i);
         notSaveIndividualsCount--;
-        i.die(cause);
+        //i.die(cause);
     }
 
     /**
@@ -521,19 +512,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     @Override
     public int getIndividualCount() {
         return individuals.size();
-    }
-
-    /**
-     * Calculates the number of individuals that died by a specified death cause.
-     *
-     * @param deathCause the death cause
-     * @return the number of individuals died by the death cause
-     */
-    public int getDeadIndividualCount(DeathCause deathCause) {
-        int count = 0;
-        count = getDeadIndividuals().stream().filter(i -> i.getDeathCause() == deathCause).
-                map((_item) -> 1).reduce(count, Integer::sum);
-        return count;
     }
 
     @Override
@@ -777,8 +755,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         for (Individual individual : individualsCopy) {
             removeIndividual(individual);
         }
-        deadIndividuals.clear();
-        evacuatedIndividuals.clear();
+        //deadIndividuals.clear();
+        //evacuatedIndividuals.clear();
         individuals.clear();
         typeIndividualMap.clear();
 
@@ -793,46 +771,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     @Override
     public List<Individual> getIndividuals() {
         return Collections.unmodifiableList(individuals);
-    }
-
-    /**
-     * Returns a list of all individuals that are active in the simulation. The list does not contain individuals
-     * which are dead or evacuated. Safe individuals are contained in the list.
-     * 
-     * @return list of active individuals
-     */
-    public List<Individual> getRemainingIndividuals() {
-        List<Individual> remaining = new ArrayList<>(individuals.size() - evacuatedIndividuals.size());
-
-        individuals.stream().filter(i -> !(i.isEvacuated() || i.isDead())).forEach(i -> remaining.add(i));
-
-        return Collections.unmodifiableList(remaining);
-    }
-
-    /**
-     * Returns a view of all evacuated individuals.
-     *
-     * @return the view
-     */
-    public List<Individual> getEvacuatedIndividuals() {
-        return Collections.unmodifiableList(evacuatedIndividuals);
-    }
-
-    public int evacuatedIndividualsCount() {
-        return evacuatedIndividuals.size();
-    }
-
-    /**
-     * Returns a view of all dead individuals.
-     *
-     * @return the view
-     */
-    public List<Individual> getDeadIndividuals() {
-        return Collections.unmodifiableList(deadIndividuals);
-    }
-
-    public int deadIndividualsCount() {
-        return deadIndividuals.size();
     }
 
     @Override

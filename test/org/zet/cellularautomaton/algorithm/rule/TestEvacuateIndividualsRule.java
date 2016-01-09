@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -1,6 +1,5 @@
-package org.zet.cellularautomaton.algorithm.rule;
+package org.zet.cellularautomaton.algorithm;
 
-import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
@@ -36,10 +35,6 @@ public interface EvacuationState {
 
     public CAStatisticWriter getStatisticWriter();
 
-    public void setIndividualDead(Individual individual, DeathCause deathCause);
-
-    public void setIndividualSave(Individual savedIndividual);
-
     public void swapIndividuals(EvacCell cell1, EvacCell cell2);
 
     public void moveIndividual(EvacCell from, EvacCell targetCell);
@@ -51,4 +46,6 @@ public interface EvacuationState {
     public void markIndividualForRemoval(Individual individual);
 
     public ParameterSet getParameterSet();
+    
+    public IndividualState getIndividualState();
 }

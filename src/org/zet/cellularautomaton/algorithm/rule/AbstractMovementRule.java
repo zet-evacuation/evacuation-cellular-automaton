@@ -31,7 +31,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 
     protected double speed;
     protected double dist;
-    
+
     private boolean directExecute;
     private boolean moveCompleted;
     private List<EvacCell> possibleTargets;
@@ -40,7 +40,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         directExecute = true;
         moveCompleted = false;
     }
-    
+
     /**
      * Computes and returns possible targets and also sets them, such that they can be retrieved using
      * {@link #getPossibleTargets()}.
@@ -56,7 +56,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         Direction8 dir = fromCell.getState().getIndividual().getDirection();
 
         for (EvacCell c : neighbors) {
-            if (fromCell.getState().getIndividual().isSafe() && !c.isSafe()) {
+            if (es.getIndividualState().isSafe(fromCell.getState().getIndividual()) && !c.isSafe()) {
                 continue; // ignore all moves that would mean walking out of safe areas
             }
             if (fromCell instanceof DoorCell && c instanceof DoorCell) {
@@ -78,7 +78,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         }
         return possibleTargets;
     }
-    
+
     /**
      * Returns the possible targets already sorted by priority. The possible targets either have been set before using {@link #setPossibleTargets(java.util.ArrayList)
      * }
@@ -108,9 +108,10 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 
     /**
      * Returns a sway delay if the individual is changing the walking direction.
+     *
      * @param ind
      * @param direction
-     * @return 
+     * @return
      */
     protected double getSwayDelay(Individual ind, Direction8 direction) {
         if (ind.getDirection() == direction) {
@@ -127,10 +128,9 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     }
 
     /**
-     * Sets the time when the current movement is over for an individual and updates the needed time in the
-     * cellular automaton. Fractional values are accepted and are rounded up to the next integral value, to be used
-     * in the integral cellular automaton. Updates also the step end time for the given individual (the time is not
-     * rounded).
+     * Sets the time when the current movement is over for an individual and updates the needed time in the cellular
+     * automaton. Fractional values are accepted and are rounded up to the next integral value, to be used in the
+     * integral cellular automaton. Updates also the step end time for the given individual (the time is not rounded).
      *
      * @param i the individual
      * @param d the (real) time when the movement is over

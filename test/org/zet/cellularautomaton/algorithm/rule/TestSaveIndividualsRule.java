@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +16,7 @@ import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.SaveCell;
+import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -72,10 +74,12 @@ public class TestSaveIndividualsRule {
                 will(returnValue(eca));
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
-                exactly(1).of(es).setIndividualSave(with(i));
+                allowing(es).getIndividualState();
+                will(returnValue(new IndividualState()));
             }
         });
         rule.setEvacuationSimulationProblem(es);
+        es.getIndividualState().setSafe(i);
 
         rule.execute(cell);
         context.assertIsSatisfied();
@@ -85,15 +89,17 @@ public class TestSaveIndividualsRule {
     public void saveIndividualNotSaved() {
         SaveCell cell = new SaveCell(0, 0);
 
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0) {
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        
+        IndividualState is = new IndividualState() {
             @Override
-            public void setSafe(boolean saveStatus) {
+            public void setSafe(Individual i) {
                 throw new AssertionError("setSafe called!");
             }
 
             @Override
-            public boolean isSafe() {
-                return true;
+            public boolean isSafe(Individual thisi) {
+                return thisi == i;
             }
         };
 
@@ -107,10 +113,11 @@ public class TestSaveIndividualsRule {
                 will(returnValue(eca));
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
+                allowing(es).getIndividualState();
+                will(returnValue(is));
             }
         });
         rule.setEvacuationSimulationProblem(es);
-
         rule.execute(cell);
     }
 }

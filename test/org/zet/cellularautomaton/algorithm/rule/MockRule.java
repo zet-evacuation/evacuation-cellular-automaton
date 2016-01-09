@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
 

@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;

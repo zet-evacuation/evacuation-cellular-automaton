@@ -22,6 +22,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * The save rule must be executed before the evacuation rule is executed.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class SaveIndividualsRule extends AbstractSaveRule {
@@ -32,8 +33,8 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     @Override
     protected void onExecute(EvacCell cell) {
         Individual savedIndividual = cell.getState().getIndividual();
-        if (!(savedIndividual.isSafe())) {
-            es.setIndividualSave(savedIndividual);
+        if (!(es.getIndividualState().isSafe(savedIndividual))) {
+            es.getIndividualState().setSafe(savedIndividual);
             savedIndividual.setPanic(0);
 
             if (cell instanceof SaveCell) {
@@ -42,7 +43,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
     }
-    
+
     private void setExitPotential(SaveCell cell, Individual savedIndividual) {
         StaticPotential correspondingExitPotential = cell.getExitPotential();
         if (correspondingExitPotential == null) {

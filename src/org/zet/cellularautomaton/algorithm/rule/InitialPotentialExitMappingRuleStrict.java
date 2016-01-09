@@ -27,7 +27,7 @@ public class InitialPotentialExitMappingRuleStrict extends InitialPotentialExitM
 
     @Override
     protected void handleWithoutTarget(EvacCell cell) {
-        if (!cell.getState().getIndividual().isDead()) {
+        if (!es.getIndividualState().isDead(cell.getState().getIndividual())) {
             throw new IllegalArgumentException("The individual " + cell.getState().getIndividual().getNumber()
                     + " lives, but has not been mapped to an exit." + " Therefore, I cannot map it to a potential.");
         }

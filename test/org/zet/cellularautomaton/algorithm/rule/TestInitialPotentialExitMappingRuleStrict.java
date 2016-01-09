@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
@@ -24,6 +25,7 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -57,6 +59,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
         EvacuationState es = context.mock(EvacuationState.class);
+        IndividualState is = new IndividualState();
         i = builder.build();
         context.checking(new Expectations() {
             {
@@ -68,6 +71,9 @@ public class TestInitialPotentialExitMappingRuleStrict {
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
                 will(returnValue(statisticWriter));
+                allowing(es).getIndividualState();
+                will(returnValue(is));
+                
             }
         });
         cell = new RoomCell(1, 0, 0, room);
@@ -149,7 +155,8 @@ public class TestInitialPotentialExitMappingRuleStrict {
     @Test()
     public void deadIndividualWithoutTarget() {
         eca.setIndividualToExitMapping(_unused -> null);
-        i.die(DeathCause.EXIT_UNREACHABLE);
+        rule.es.getIndividualState().die(i, DeathCause.EXIT_UNREACHABLE);
+        //i.die(DeathCause.EXIT_UNREACHABLE);
         rule.execute(cell);
     }
 
