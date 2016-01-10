@@ -15,9 +15,9 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.algo.ca.util.IndividualDistanceComparator;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
-import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import org.zet.cellularautomaton.algorithm.parameter.DefaultParameterSet;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 
@@ -61,7 +61,7 @@ public class EvacuationCellularAutomatonAlgorithm
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<Collection<Individual>, Iterator<Individual>> reorder;
-    EvacuationState es = createEvacuationState();
+    EvacuationState es = new DefaultEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton());
 
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
@@ -93,21 +93,16 @@ public class EvacuationCellularAutomatonAlgorithm
                 r.execute(c);
             }
         }
-        //getProblem().getCellularAutomaton().removeMarkedIndividuals();
         es.removeMarkedIndividuals();
     }
 
-    /**
-     * The minimal number of steps that is needed until all movements are FINISHED.
-     */
-    private int neededTime;
 
     public void setNeededTime(int i) {
-        neededTime = i;
+        es.setNeededTime(i);
     }
 
     private void initRulesAndState() {
-        es = createEvacuationState();
+        es = new DefaultEvacuationState(getProblem().getParameterSet(), getProblem().getCellularAutomaton());
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationSimulationProblem(es);
         }
@@ -172,7 +167,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private boolean timeOver() {
-        return getStep() > neededTime;
+        return getStep() > es.getNeededTime();
     }
 
     /**
@@ -235,82 +230,6 @@ public class EvacuationCellularAutomatonAlgorithm
 
     public EvacuationState getEvacuationState() {
         return es;
-    }
-    
-    private EvacuationState createEvacuationState() {
-        return new EvacuationState() {
-            private final IndividualState individualState = new IndividualState();
-            public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
-
-            @Override
-            public int getTimeStep() {
-                return getStep();
-            }
-
-            @Override
-            public void setNeededTime(int i) {
-                neededTime = i;
-            }
-
-            @Override
-            public int getNeededTime() {
-                return neededTime;
-            }
-
-            @Override
-            public CAStatisticWriter getStatisticWriter() {
-                return caStatisticWriter;
-            }
-
-            @Override
-            public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void moveIndividual(EvacCell from, EvacCell targetCell) {
-                getCellularAutomaton().moveIndividual(from, targetCell);
-            }
-
-            @Override
-            public void increaseDynamicPotential(EvacCell targetCell) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public EvacuationCellularAutomatonInterface getCellularAutomaton() {
-                return getProblem().getCellularAutomaton();
-            }
-
-    /** An {@code ArrayList} marked to be removed. */
-    private final List<Individual> markedForRemoval = new ArrayList<>();
-//    @Override
-//            public void markIndividualForRemoval(Individual individual) {
-//                getCellularAutomaton().markIndividualForRemoval(individual);
-//            }
-
-            @Override
-            public void markIndividualForRemoval(Individual i) {
-                markedForRemoval.add(i);
-            }
-
-            @Override
-            public void removeMarkedIndividuals() {
-                markedForRemoval.stream().forEach(individual -> {individualState.setIndividualEvacuated(individual);
-                getCellularAutomaton().setIndividualEvacuated(individual);});
-                markedForRemoval.clear();
-            }
-
-            @Override
-            public ParameterSet getParameterSet() {
-                return getProblem().getParameterSet();
-            }
-
-            @Override
-            public IndividualState getIndividualState() {
-                return individualState;
-            }
-        };        
     }
 
 }

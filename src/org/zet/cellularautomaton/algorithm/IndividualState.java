@@ -36,7 +36,6 @@ public class IndividualState implements Iterable<Individual> {
      *
      * @return the number of individuals
      */
-    //@Override
     public int getInitialIndividualCount() {
         return initialIndividualCount;
     }
@@ -98,6 +97,9 @@ public class IndividualState implements Iterable<Individual> {
      * @return if the individual is already safe
      */
     public boolean isSafe(Individual i) {
+        if (!(individuals.contains(i) || safeIndividuals.contains(i))) {
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+        }
         return safeIndividuals.contains(i);
     }
 
@@ -119,9 +121,13 @@ public class IndividualState implements Iterable<Individual> {
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      */
     public void setIndividualEvacuated(Individual i) {
-        if (!individuals.remove(i)) {
+        if (!individuals.contains(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
+        if( !isSafe(i)) {
+            setSafe(i);
+        }
+        individuals.remove(i);
 
         evacuatedIndividuals.add(i);
         notSaveIndividualsCount--;
@@ -134,6 +140,9 @@ public class IndividualState implements Iterable<Individual> {
      * @return the evacuation status
      */
     public boolean isEvacuated(Individual i) {
+        if (!(individuals.contains(i) || evacuatedIndividuals.contains(i))) {
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+        }
         return evacuatedIndividuals.contains(i);
     }
 
@@ -160,7 +169,10 @@ public class IndividualState implements Iterable<Individual> {
     }
 
     public boolean isDead(Individual i) {
-        return deadIndividuals.contains(i);
+        if(!(individuals.contains(i) || deadIndividuals.contains(i) || safeIndividuals.contains(i))) {
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+        }
+        return deadIndividuals.contains(i);        
     }
 
     /**
@@ -170,6 +182,9 @@ public class IndividualState implements Iterable<Individual> {
      * @return the cause
      */
     public DeathCause getDeathCause(Individual i) {
+        if( !isDead(i)) {
+            throw new IllegalArgumentException("Individual " + i + " is not dead.");
+        }
         return deathCause.get(i);
     }
 

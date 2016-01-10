@@ -441,15 +441,10 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     @Override
     public void setIndividualDead(Individual i, DeathCause cause) {
-        //if (!individuals.remove(i)) {
-        //    throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-        //}
         recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
         EvacCell c = i.getCell();
         c.getRoom().removeIndividual(i);
         i.setCell(c);
-        //deadIndividuals.add(i);
-        //i.die(cause);
     }
 
     /*
