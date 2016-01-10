@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,28 +18,52 @@ import org.zet.cellularautomaton.Individual;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class IndividualState {
+public class IndividualState implements Iterable<Individual> {
+
     private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
 
-    private final Set<Individual> individuals = new HashSet<>();
+    private final List<Individual> individuals = new LinkedList<>();
     private final Set<Individual> deadIndividuals = new HashSet<>();
     private final Set<Individual> safeIndividuals = new HashSet<>();
     /** An ArrayList of all Individual objects, which are already out of the simulation because they are evacuated. */
-//    private List<Individual> evacuatedIndividuals;
     private final Set<Individual> evacuatedIndividuals = new HashSet<>();
     private final Map<Individual, DeathCause> deathCause = new HashMap<>();
     private int notSaveIndividualsCount = 0;
+    private int initialIndividualCount;
+
+    /**
+     * Returns the number of individuals that were in the cellular automaton when the simulation starts.
+     *
+     * @return the number of individuals
+     */
+    //@Override
+    public int getInitialIndividualCount() {
+        return initialIndividualCount;
+    }
 
     void addIndividual(Individual i) {
-        individuals.add(i);
+        if (individuals.contains(i)) {
+            throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
+        } else {
+            individuals.add(i);
+        }
+
         notSaveIndividualsCount++;
     }
 
+    /**
+     * Returns the number of individuals that currently in the cellular automaton.
+     *
+     * @return the number of individuals in the cellular automaton
+     */
+    public int getIndividualCount() {
+        return individuals.size();
+    }
 
     /**
-     * Returns a list of all individuals that are active in the simulation. The list does not contain individuals
-     * which are dead or evacuated. Safe individuals are contained in the list.
-     * 
+     * Returns a list of all individuals that are active in the simulation. The list does not contain individuals which
+     * are dead or evacuated. Safe individuals are contained in the list.
+     *
      * @return list of active individuals
      */
     public List<Individual> getRemainingIndividuals() {
@@ -48,7 +74,20 @@ public class IndividualState {
         return Collections.unmodifiableList(remaining);
     }
 
-    
+    /**
+     * Returns a view of all individuals.
+     *
+     * @return the view
+     */
+    public List<Individual> getIndividuals() {
+        return Collections.unmodifiableList(individuals);
+    }
+
+    @Override
+    public Iterator<Individual> iterator() {
+        return individuals.iterator();
+    }
+
     /**
      * Indicates, if the individual is already safe; that means: on save or exit cells.
      */
@@ -98,7 +137,6 @@ public class IndividualState {
         return evacuatedIndividuals.contains(i);
     }
 
-
     /**
      * Returns a view of all evacuated individuals.
      *
@@ -113,6 +151,9 @@ public class IndividualState {
     }
 
     public void die(Individual i, DeathCause cause) {
+        if (!individuals.remove(i)) {
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+        }
         deadIndividuals.add(i);
         deathCause.put(i, cause);
         notSaveIndividualsCount--;

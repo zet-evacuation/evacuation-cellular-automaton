@@ -21,6 +21,7 @@ import org.zetool.common.util.Direction8;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
         super(new RandomOrdering());
     }
 
-    public SwapCellularAutomaton(Function<List<Individual>, Iterator<Individual>> reorder) {
+    public SwapCellularAutomaton(Function<Collection<Individual>, Iterator<Individual>> reorder) {
         super(reorder);
     }
 

@@ -11,13 +11,13 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
  *
  * @author Jan-Philipp Kappmeier
  */
-public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<EvacCell>, Iterable<Individual> {
+public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<EvacCell> {
 
-    public List<Individual> getIndividuals();
+    //public List<Individual> getIndividuals();
 
-    public int getIndividualCount();
+    //public int getIndividualCount();
 
-    public int getInitialIndividualCount();
+    //public int getInitialIndividualCount();
 
     public void setIndividualDead(Individual i, DeathCause cause);
 

@@ -1,7 +1,9 @@
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
+import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimulationProblem;
 
@@ -12,6 +14,8 @@ import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimula
 public interface EvacuationSimulationProblem extends CellularAutomatonSimulationProblem<EvacuationCellularAutomatonInterface, EvacCell> {
 
     public ParameterSet getParameterSet();
+
+    public List<Individual> getIndividuals();
 
     public EvacuationRuleSet getRuleSet();
     

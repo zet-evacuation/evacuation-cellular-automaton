@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         FINISHED
     }
     /** An ArrayList of all Individual objects in the cellular automaton. */
-    private List<Individual> individuals;
+    //private List<Individual> individuals;
     /** An ArrayList of all Individual objects, which are marked as "dead". */
     //private List<Individual> deadIndividuals;
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
@@ -86,7 +85,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private double absoluteMaxSpeed;
     private double secondsPerStep;
     private double stepsPerSecond;
-    private int initialIndividualCount;
     private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
     /** A {@code TreeMap} of all StaticPotentials. */
     private final HashMap<Integer, StaticPotential> staticPotentials;
@@ -100,7 +98,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public EvacuationCellularAutomaton() {
         super(null);
-        individuals = new ArrayList<>();
+        //individuals = new ArrayList<>();
         exits = new ArrayList<>();
         rooms = new HashMap<>();
         assignmentTypes = new HashMap<>();
@@ -323,11 +321,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (this.state != State.READY) {
             throw new IllegalStateException("Individual added after simulation has started.");
         }
-        if (individuals.contains(i)) {
-            throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
-        } else {
-            individuals.add(i);
-        }
 
         c.getRoom().addIndividual(c, i);
 
@@ -350,12 +343,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @param i specifies the Individual object which has to be removed from the list
      * @throws IllegalArgumentException if the the specific individual does not exist in the list individuals
      */
-    private void removeIndividual(Individual i) {
-        i.getCell().getState().removeIndividual();
-        if (!individuals.remove(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-        }
-    }
+//    private void removeIndividual(Individual i) {
+//        i.getCell().getState().removeIndividual();
+//        if (!individuals.remove(i)) {
+//            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+//        }
+//    }
 
     /**
      * Move the individual standing on the "from"-EvacCell to the "to"-EvacCell.
@@ -448,35 +441,15 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     @Override
     public void setIndividualDead(Individual i, DeathCause cause) {
-        if (!individuals.remove(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-        }
+        //if (!individuals.remove(i)) {
+        //    throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+        //}
         recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
         EvacCell c = i.getCell();
         c.getRoom().removeIndividual(i);
         i.setCell(c);
         //deadIndividuals.add(i);
         //i.die(cause);
-    }
-
-    /**
-     * Returns the number of individuals that were in the cellular automaton when the simulation starts.
-     *
-     * @return the number of individuals
-     */
-    @Override
-    public int getInitialIndividualCount() {
-        return initialIndividualCount;
-    }
-
-    /**
-     * Returns the number of individuals that currently in the cellular automaton.
-     *
-     * @return the number of individuals in the cellular automaton
-     */
-    @Override
-    public int getIndividualCount() {
-        return individuals.size();
     }
 
     /*
@@ -694,7 +667,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     @Override
     public void start() {
         setState(State.RUNNING);
-        initialIndividualCount = individuals.size();
+        //initialIndividualCount = individuals.size();
     }
 
     public void stop() {
@@ -707,30 +680,15 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * you placed individuals in the cellular automaton to start recording again.
      */
     public void reset() {
-        Individual[] individualsCopy = individuals.toArray(new Individual[individuals.size()]);
+        //Individual[] individualsCopy = individuals.toArray(new Individual[individuals.size()]);
 
-        for (Individual individual : individualsCopy) {
-            removeIndividual(individual);
-        }
-        individuals.clear();
+        //for (Individual individual : individualsCopy) {
+        //    removeIndividual(individual);
+        //}
+        //individuals.clear();
         typeIndividualMap.clear();
 
         state = State.READY;
-    }
-
-    /**
-     * Returns a view of all individuals.
-     *
-     * @return the view
-     */
-    @Override
-    public List<Individual> getIndividuals() {
-        return Collections.unmodifiableList(individuals);
-    }
-
-    @Override
-    public Iterator<Individual> iterator() {
-        return individuals.iterator();
     }
 
     public Room getRoom(int id) {

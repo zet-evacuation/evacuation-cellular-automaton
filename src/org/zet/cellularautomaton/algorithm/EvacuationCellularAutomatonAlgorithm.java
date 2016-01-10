@@ -3,6 +3,7 @@ package org.zet.cellularautomaton.algorithm;
 import static org.zetool.common.util.Helper.in;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +35,7 @@ public class EvacuationCellularAutomatonAlgorithm
     /**
      * The order in which the individuals are asked for.
      */
-    public static final Function<List<Individual>, Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
+    public static final Function<Collection<Individual>, Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
     /**
      * The distance comparator.
      */
@@ -59,28 +60,32 @@ public class EvacuationCellularAutomatonAlgorithm
     /**
      * The ordering used in the evacuation cellular automaton.
      */
-    private Function<List<Individual>, Iterator<Individual>> reorder;
+    private Function<Collection<Individual>, Iterator<Individual>> reorder;
     EvacuationState es = createEvacuationState();
 
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
     }
 
-    public EvacuationCellularAutomatonAlgorithm(Function<List<Individual>, Iterator<Individual>> reorder) {
+    public EvacuationCellularAutomatonAlgorithm(Function<Collection<Individual>, Iterator<Individual>> reorder) {
         this.reorder = reorder;
     }
 
     @Override
     protected void initialize() {
         initRulesAndState();
+        
+        for( Individual i : getProblem().getIndividuals()) {
+            es.getIndividualState().addIndividual(i);
+        }
+        
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
 
         getProblem().getCellularAutomaton().start();
-        Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
-                new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
+        Individual[] individualsCopy = es.getIndividualState().getIndividuals().toArray(
+                new Individual[es.getIndividualState().getIndividuals().size()]);
         for (Individual i : individualsCopy) {
-            es.getIndividualState().addIndividual(i);
             Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
             EvacCell c = i.getCell();
             while (primary.hasNext()) {
@@ -119,8 +124,8 @@ public class EvacuationCellularAutomatonAlgorithm
                 getProblem().getParameterSet().probabilityDynamicDecrease());
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
-                getProblem().getCellularAutomaton().getInitialIndividualCount() - getProblem().getCellularAutomaton().getIndividualCount(),
-                getProblem().getCellularAutomaton().getInitialIndividualCount()));
+                es.getIndividualState().getInitialIndividualCount() - es.getIndividualState().getIndividualCount(),
+                es.getIndividualState().getInitialIndividualCount()));
     }
 
     @Override
@@ -136,8 +141,8 @@ public class EvacuationCellularAutomatonAlgorithm
     protected EvacuationSimulationResult terminate() {
         // let die all individuals which are not already dead and not safe
         if (es.getIndividualState().getNotSafeIndividualsCount() != 0) {
-            Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
-                    new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
+            Individual[] individualsCopy = es.getIndividualState().getIndividuals().toArray(
+                    new Individual[es.getIndividualState().getIndividuals().size()]);
             for (Individual i : individualsCopy) {
                 if (!es.getIndividualState().isSafe(i.getCell().getState().getIndividual())) {
                     es.getIndividualState().die(i, DeathCause.NOT_ENOUGH_TIME);
@@ -179,8 +184,8 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected final double getProgress() {
         double timeProgress = super.getProgress();
-        double individualProgress = 1.0 - ((double) getProblem().getCellularAutomaton().getIndividualCount()
-                / getProblem().getCellularAutomaton().getInitialIndividualCount());
+        double individualProgress = 1.0 - ((double) es.getIndividualState().getIndividualCount()
+                / getProblem().getIndividuals().size());
         return Math.max(individualProgress, timeProgress);
     }
 
@@ -192,7 +197,7 @@ public class EvacuationCellularAutomatonAlgorithm
      */
     @Override
     public final Iterator<EvacCell> iterator() {
-        return new CellIterator(reorder.apply(getProblem().getCellularAutomaton().getIndividuals()));
+        return new CellIterator(reorder.apply(es.getIndividualState().getIndividuals()));
     }
 
     /**

@@ -1,10 +1,7 @@
 package org.zet.cellularautomaton;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.junit.Assert.assertThat;
@@ -27,9 +24,6 @@ public class TestEvacuationCellularAutomaton {
         assertThat(ca.getCellCount(), is(equalTo(0)));
         assertThat(ca.getDimension(), is(equalTo(2)));
         assertThat(ca.getFloors(), is(empty()));
-        assertThat(ca.getIndividualCount(), is(equalTo(0)));
-        assertThat(ca.getIndividuals(), is(empty()));
-        assertThat(ca.getInitialIndividualCount(), is(equalTo(0)));
         assertThat(ca.getRooms(), is(empty()));
         assertThat(ca.getState(), is(equalTo(EvacuationCellularAutomaton.State.READY)));
         //assertThat(ca.getTimeStep(), is(equalTo(0)));

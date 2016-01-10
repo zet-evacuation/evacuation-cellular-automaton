@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat;
 import static org.zetool.common.util.Helper.in;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -128,12 +129,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(primary2).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
                 allowing(loop).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
 
-                allowing(eca).getIndividuals();
+                allowing(esp).getIndividuals();
                 will(returnValue(individuals));
 
                 allowing(eca).start();
-                //allowing(eca).removeMarkedIndividuals();
-                //allowing(eca).getNotSafeIndividualsCount();
 
                 // primary rules are allowed to be called exactly once for each of the cells
                 exactly(1).of(primary1).execute(with(individuals.get(0).getCell()));
@@ -160,10 +159,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         List<Individual> individuals = getIndividuals();
 
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
-            @Override
-            protected void initialize() {
-
-            }
 
             @Override
             protected EvacuationSimulationResult terminate() {
@@ -186,7 +181,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
-        //PotentialController pc = context.mock(PotentialController.class);
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {
             {
@@ -195,24 +189,32 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getRuleSet();
                 will(returnValue(rules));
 
-                exactly(1).of(eca).getIndividuals();
+                allowing(esp).getIndividuals();
                 will(returnValue(individuals));
-
-                //exactly(1).of(eca).removeMarkedIndividuals();
 
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
+                allowing(esp).getEvacuationStepLimit();
+                will(returnValue(0));
+                allowing(eca).start();
+
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
                 exactly(1).of(eca).updateDynamicPotential(with(0.0), with(0.0));
 
-                allowing(eca).getIndividualCount();
-                allowing(eca).getInitialIndividualCount();
+                //allowing(eca).getIndividualCount();
+                //allowing(eca).getInitialIndividualCount();
+
+                allowing(primary1).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                allowing(primary2).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                allowing(loop).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
 
                 // loop rules are allowed to be called exactly once for each of the cells
-                never(primary1).execute(with(any(EvacCell.class)));
-                exactly(1).of(primary2).execute(with(individuals.get(0).getCell()));
-                exactly(1).of(primary2).execute(with(individuals.get(1).getCell()));
+                exactly(1).of(primary1).execute(with(individuals.get(0).getCell()));
+                exactly(1).of(primary1).execute(with(individuals.get(1).getCell()));
+                //never(primary1).execute(with(any(EvacCell.class)));
+                exactly(2).of(primary2).execute(with(individuals.get(0).getCell()));
+                exactly(2).of(primary2).execute(with(individuals.get(1).getCell()));
                 exactly(1).of(loop).execute(with(individuals.get(0).getCell()));
                 exactly(1).of(loop).execute(with(individuals.get(1).getCell()));
             }
@@ -237,9 +239,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(300));
                 allowing(eca).start();
-                allowing(eca).getIndividuals();                
+                allowing(esp).getIndividuals();                
                 will(returnValue(Collections.emptyList()));
-                //allowing(eca).removeMarkedIndividuals();
 
                 allowing(eca).stop();
             }
@@ -276,9 +277,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 }));
                 allowing(esp).getEvacuationStepLimit();
                 allowing(eca).start();
-                //allowing(eca).removeMarkedIndividuals();
 
-                allowing(eca).getIndividuals();
+                allowing(esp).getIndividuals();
                 will(returnValue(individuals));
 
                 allowing(eca).stop();
@@ -307,7 +307,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         i1.setCell(cell1);
         cell1.getState().setIndividual(i1);
         Individual i2 = builder.build();
-        EvacCell cell2 = new MockEvacCell(0, 0);
+        EvacCell cell2 = new MockEvacCell(1, 1);
         i2.setCell(cell2);
         cell2.getState().setIndividual(i2);
         List<Individual> individuals = new LinkedList<>();
@@ -361,9 +361,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(maxSteps));
                 allowing(eca).start();
-                allowing(eca).getIndividuals();                
+                allowing(esp).getIndividuals();                
                 will(returnValue(Collections.emptyList()));
-                //allowing(eca).removeMarkedIndividuals();
             }
         });
         algorithm.performStep();
@@ -395,7 +394,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         for (int i : new int[]{2, 1, 3, 0}) {
             expectedOrder.add(individuals.get(i));
         }
-        Function<List<Individual>, Iterator<Individual>> manualOrder = x -> expectedOrder.iterator();
+        Function<Collection<Individual>, Iterator<Individual>> manualOrder = x -> expectedOrder.iterator();
         EvacuationCellularAutomatonAlgorithm algorithm = new EvacuationCellularAutomatonAlgorithm(manualOrder);
         assertOrder(algorithm, individuals, expectedOrder);
     }
@@ -407,13 +406,20 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             {
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
+                allowing(esp).getRuleSet();
+                will(returnValue(new TestEvacuationRuleSet.FakeEvacuationRuleSet()));
+                allowing(esp).getEvacuationStepLimit();
+                will(returnValue(300));
+                
+                
+                allowing(eca).start();
 
-                exactly(1).of(eca).getIndividuals();
+                allowing(esp).getIndividuals();
                 will(returnValue(individuals));
             }
         });
         algorithm.setProblem(esp);
-
+        algorithm.initialize();
         List<Individual> callOrder = new LinkedList<>();
         for (EvacCell individual : algorithm) {
             callOrder.add(individual.getState().getIndividual());
@@ -477,11 +483,25 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
     @Test
     public void testProgress() {
+        List<Individual> individuals = new LinkedList<>();
+        IndividualBuilder b = new IndividualBuilder();
+        individuals.add(b.build());
+        individuals.add(b.build());
+        Individual dead = individuals.get(0);
+        
+        Individual i2 = individuals.get(1);
+        EvacCell cell1 = new MockEvacCell(0, 0);
+        i2.setCell(cell1);
+        cell1.getState().setIndividual(i2);
+        
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
+
             @Override
             protected void initialize() {
+                super.initialize();
+                es.getIndividualState().setIndividualEvacuated(dead);
             }
-
+            
             @Override
             protected EvacuationSimulationResult terminate() {
                 return null;
@@ -496,21 +516,19 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
 
-                exactly(1).of(eca).getIndividuals();
-                will(returnValue(Collections.EMPTY_LIST));
-
-                //allowing(eca).removeMarkedIndividuals();
+                allowing(esp).getRuleSet();
+                will(returnValue(new TestEvacuationRuleSet.FakeEvacuationRuleSet()));
+                allowing(esp).getEvacuationStepLimit();
+                will(returnValue(300));
+                allowing(eca).start();
+                allowing(esp).getIndividuals();
+                will(returnValue(individuals));
 
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
                 exactly(1).of(eca).updateDynamicPotential(with(0.0), with(0.0));
-
-                allowing(eca).getIndividualCount();
-                will(returnValue(1));
-                allowing(eca).getInitialIndividualCount();
-                will(returnValue(2));
             }
         });
 
@@ -553,9 +571,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 }));
 
                 allowing(eca).start();
-                allowing(eca).getIndividuals();
+                allowing(esp).getIndividuals();
                 will(returnValue(Collections.EMPTY_LIST));
-                //allowing(eca).removeMarkedIndividuals();
                 allowing(eca).stop();
             }
         });

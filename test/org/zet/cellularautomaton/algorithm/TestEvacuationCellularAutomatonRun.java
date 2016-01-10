@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.Collections;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,7 +65,8 @@ public class TestEvacuationCellularAutomatonRun {
         }
         
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        eca.addIndividual(rightCell, i);
+        //eca.addIndividual(rightCell, i);
+        
         
         
         
@@ -75,7 +77,7 @@ public class TestEvacuationCellularAutomatonRun {
         ds.PropertyContainer.getGlobal().define("algo.ca.ruleSet", String.class, ruleSet);
         ds.PropertyContainer.getGlobal().define("algo.ca.parameterSet", String.class, "SimpleParameterSet");
         
-        EvacuationSimulationProblem esp = new EvacuationSimulationProblemImpl(eca);
+        EvacuationSimulationProblem esp = new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i));
         
         caAlgorithm.setProblem(esp);
         

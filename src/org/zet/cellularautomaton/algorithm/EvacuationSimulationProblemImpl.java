@@ -16,9 +16,11 @@
 package org.zet.cellularautomaton.algorithm;
 
 import ds.PropertyContainer;
+import java.util.List;
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Individual;
 
 /**
  *
@@ -30,9 +32,11 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     private final EvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
+    private final List<Individual> individuals;
 
-    public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca) {
+    public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca, List<Individual> individuals) {
         this.ca = ca;
+        this.individuals = individuals;
 
         PropertyContainer props = PropertyContainer.getGlobal();
 
@@ -53,6 +57,11 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
         return parameterSet;
     }
 
+    @Override
+    public List<Individual> getIndividuals() {
+        return individuals;
+    }
+    
     @Override
     public EvacuationRuleSet getRuleSet() {
         return ruleSet;

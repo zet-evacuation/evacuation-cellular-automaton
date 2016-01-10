@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,10 +30,10 @@ import org.zetool.rndutils.generators.GeneralRandom;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class RandomOrdering implements Function<List<Individual>, Iterator<Individual>> {
+public class RandomOrdering implements Function<Collection<Individual>, Iterator<Individual>> {
 
     @Override
-    public Iterator<Individual> apply(List<Individual> t) {
+    public Iterator<Individual> apply(Collection<Individual> t) {
         List<Individual> individualsCopy = new LinkedList<>(t);
         Collections.shuffle(individualsCopy, new GeneralRandomWrapper(getRandomGenerator()));
         return individualsCopy.iterator();
