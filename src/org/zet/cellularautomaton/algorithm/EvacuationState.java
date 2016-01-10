@@ -48,4 +48,6 @@ public interface EvacuationState {
     public ParameterSet getParameterSet();
     
     public IndividualState getIndividualState();
+    
+    public void removeMarkedIndividuals();
 }

@@ -22,6 +22,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.Action;
 
 /**
  * @author Daniel R. Schmidt
@@ -80,5 +81,9 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         }
         return numberOfDisjunctStaticPotentials == potentials.size() ? null : nearestPot;
     }
+ 
     
+    protected void recordAction(Action a) {
+        // ignore publishing
+    }
 }

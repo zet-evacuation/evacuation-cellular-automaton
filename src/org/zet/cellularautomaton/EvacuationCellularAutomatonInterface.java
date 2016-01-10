@@ -3,7 +3,6 @@ package org.zet.cellularautomaton;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.CellularAutomaton;
@@ -19,8 +18,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
     public int getIndividualCount();
 
     public int getInitialIndividualCount();
-
-    public int getNotSafeIndividualsCount();
 
     public void setIndividualDead(Individual i, DeathCause cause);
 
@@ -52,9 +49,11 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public void stop();
 
-    public void removeMarkedIndividuals(); // marking should probably be stored in the algorithm, or an additional current-step datastructure
+    //public void removeMarkedIndividuals(); // marking should probably be stored in the algorithm, or an additional current-step datastructure
 
-    public void markIndividualForRemoval(Individual i);
+    //public void markIndividualForRemoval(Individual i);
+    
+    public void setIndividualEvacuated(Individual i);
 
     public IndividualToExitMapping getIndividualToExitMapping(); // this should be only stored for the best response?
 

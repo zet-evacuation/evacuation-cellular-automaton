@@ -25,7 +25,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +73,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
             noMove();
         }
 
-        VisualResultsRecorder.getInstance().recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(ind));
     }
 
     @Override

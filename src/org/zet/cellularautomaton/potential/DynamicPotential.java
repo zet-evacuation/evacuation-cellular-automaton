@@ -17,8 +17,8 @@ package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
+import org.zet.cellularautomaton.results.Action;
 import org.zet.cellularautomaton.results.DynamicPotentialChangeAction;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 
@@ -37,7 +37,7 @@ public class DynamicPotential extends AbstractPotential {
     @Override
     public void setPotential(EvacCell cell, double value) {
         super.setPotential(cell, value);
-        VisualResultsRecorder.getInstance().recordAction(new DynamicPotentialChangeAction(cell, value));
+        recordAction(new DynamicPotentialChangeAction(cell, value));
     }
 
     /**
@@ -49,7 +49,11 @@ public class DynamicPotential extends AbstractPotential {
     @Override
     public void deleteCell(EvacCell cell) {
         super.deleteCell(cell);
-        VisualResultsRecorder.getInstance().recordAction(new DynamicPotentialChangeAction(cell, 0));
+        recordAction(new DynamicPotentialChangeAction(cell, 0));
+    }
+
+    protected void recordAction(Action a) {
+        // ignore publishing
     }
 
     /**

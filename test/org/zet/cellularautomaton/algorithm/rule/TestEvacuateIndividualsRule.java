@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +14,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -87,7 +87,6 @@ public class TestEvacuateIndividualsRule {
         ExitCell exit = new ExitCell(0, 0);
         exit.getState().setIndividual(toEvacuate);
 
-        assertThat(eca.isIndividualMarked(toEvacuate), is(false));
         rule.onExecute(exit);
         context.assertIsSatisfied();
     }

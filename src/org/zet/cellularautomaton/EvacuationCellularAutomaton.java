@@ -26,15 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.CAStateChangedAction;
 import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.results.ExitAction;
 import org.zet.cellularautomaton.results.MoveAction;
 import org.zet.cellularautomaton.results.SwapAction;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import org.zet.cellularautomaton.potential.DynamicPotential;
+import org.zet.cellularautomaton.results.Action;
 import org.zetool.simulation.cellularautomaton.SquareCellularAutomaton;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
@@ -66,8 +65,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private List<Individual> individuals;
     /** An ArrayList of all Individual objects, which are marked as "dead". */
     //private List<Individual> deadIndividuals;
-    /** An {@code ArrayList} marked to be removed. */
-    private List<Individual> markedForRemoval;
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
     private List<ExitCell> exits;
     /** A map of rooms to identification numbers. */
@@ -80,8 +77,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private Map<UUID, HashSet<Individual>> typeIndividualMap;
     /** Maps name of an assignment types to its unique id. */
     private Map<String, UUID> assignmentTypes;
-    /** Maps Unique IDs to individuals. */
-    private Map<Integer, Individual> individualsByID;
     /** A mapping that maps individuals to exits. */
     private IndividualToExitMapping individualToExitMapping;
     /** A mapping that maps exits to their capacity. */
@@ -91,7 +86,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private double absoluteMaxSpeed;
     private double secondsPerStep;
     private double stepsPerSecond;
-    private int notSaveIndividualsCount = 0;
     private int initialIndividualCount;
     private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
     /** A {@code TreeMap} of all StaticPotentials. */
@@ -107,8 +101,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     public EvacuationCellularAutomaton() {
         super(null);
         individuals = new ArrayList<>();
-        individualsByID = new HashMap<>();
-        markedForRemoval = new ArrayList<>();
         exits = new ArrayList<>();
         rooms = new HashMap<>();
         assignmentTypes = new HashMap<>();
@@ -133,7 +125,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public EvacuationCellularAutomaton(InitialConfiguration initialConfiguration) {
         this();
-        stopRecording();
         
         // set up floors and rooms
         initialConfiguration.getFloors().stream().forEach(floor -> addFloor(floor));
@@ -171,17 +162,17 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return count;
     }
 
-    public void startRecording() {
-        recordingStarted = true;
-        VisualResultsRecorder.getInstance().setInitialConfiguration(new InitialConfiguration(floorNames, rooms.values(), getStaticPotentials(), getDynamicPotential(), absoluteMaxSpeed));
-        VisualResultsRecorder.getInstance().startRecording();
-    }
-
-    public final void stopRecording() {
-        recordingStarted = false;
-        VisualResultsRecorder.getInstance().stopRecording();
-    }
-
+//    public void startRecording() {
+//        recordingStarted = true;
+//        VisualResultsRecorder.getInstance().setInitialConfiguration(new InitialConfiguration(floorNames, rooms.values(), getStaticPotentials(), getDynamicPotential(), absoluteMaxSpeed));
+//        VisualResultsRecorder.getInstance().startRecording();
+//    }
+//
+//    public final void stopRecording() {
+//        recordingStarted = false;
+//        VisualResultsRecorder.getInstance().stopRecording();
+//    }
+//
     /**
      * Assigns the UUID to the name of the assignment type
      *
@@ -224,9 +215,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         this.absoluteMaxSpeed = absoluteMaxSpeed;
         this.stepsPerSecond = absoluteMaxSpeed / 0.4;
         this.secondsPerStep = 0.4 / absoluteMaxSpeed;
-        if (recordingStarted) {
-            VisualResultsRecorder.getInstance().getInitialConfiguration().setAbsoluteMaxSpeed(absoluteMaxSpeed);
-        }
+//        if (recordingStarted) {
+//            VisualResultsRecorder.getInstance().getInitialConfiguration().setAbsoluteMaxSpeed(absoluteMaxSpeed);
+//        }
     }
 
     /**
@@ -336,8 +327,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
         } else {
             individuals.add(i);
-            individualsByID.put(i.getNumber(), i);
         }
+
         c.getRoom().addIndividual(c, i);
 
         // assign shortest path potential to individual, so it is not null.
@@ -380,14 +371,14 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
         }
         if (from.equals(to)) {
-            VisualResultsRecorder.getInstance().recordAction(new MoveAction(from, from, from.getState().getIndividual()));
+            recordAction(new MoveAction(from, from, from.getState().getIndividual()));
             return;
         }
         if (!to.getState().isEmpty()) {
             throw new IllegalArgumentException("Individual " + to.getState().getIndividual() + " already standing on the ''to''-Cell!");
         }
 
-        VisualResultsRecorder.getInstance().recordAction(new MoveAction(from, to, from.getState().getIndividual()));
+        recordAction(new MoveAction(from, to, from.getState().getIndividual()));
         if (from.getRoom().equals(to.getRoom())) {
             from.getRoom().moveIndividual(from, to);
         } else {
@@ -408,7 +399,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (cell1.equals(cell2)) {
             throw new IllegalArgumentException("The cells are equal. Can't swap on equal cells.");
         }
-        VisualResultsRecorder.getInstance().recordAction(new SwapAction(cell1, cell2));
+        recordAction(new SwapAction(cell1, cell2));
         if (cell1.getRoom().equals(cell2.getRoom())) {
             cell1.getRoom().swapIndividuals(cell1, cell2);
         } else {
@@ -421,10 +412,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         }
     }
 
-    public Individual getIndividual(Integer id) {
-        return individualsByID.get(id);
-    }
-
     /**
      * Removes an individual from the list of all individuals of the building and adds it to the list of individuals,
      * which are out of the simulation because the are evacuated.
@@ -432,33 +419,13 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws java.lang.IllegalArgumentException if the the specific individual does not exist in the list individuals
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      */
+    @Override
     public void setIndividualEvacuated(Individual i) {
-        VisualResultsRecorder.getInstance().recordAction(new ExitAction((ExitCell) i.getCell()));
+        recordAction(new ExitAction((ExitCell) i.getCell()));
         EvacCell evacCell = i.getCell();
 
         i.getCell().getRoom().removeIndividual(i);
         i.setCell(evacCell);
-        notSaveIndividualsCount--;
-    }
-
-    @Override
-    public void markIndividualForRemoval(Individual i) {
-        markedForRemoval.add(i);
-    }
-
-    @Override
-    public void removeMarkedIndividuals() {
-        markedForRemoval.stream().forEach(individual -> setIndividualEvacuated(individual));
-        markedForRemoval.clear();
-    }
-
-    /**
-     * Checks whether an individual is marked for removal by the next call to {@link #removeMarkedIndividuals() }.
-     * @param toEvacuate the individual
-     * @return  {@code true} if the individual is removed 
-     */
-    public boolean isIndividualMarked(Individual toEvacuate) {
-        return markedForRemoval.contains(toEvacuate);
     }
 
     /**
@@ -468,7 +435,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     @Override
     public void setIndividualSave(Individual i) {
-        notSaveIndividualsCount--;
         i.setSafetyTime((int) Math.ceil(i.getStepEndTime()));
     }
 
@@ -485,12 +451,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (!individuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
-        VisualResultsRecorder.getInstance().recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
+        recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
         EvacCell c = i.getCell();
         c.getRoom().removeIndividual(i);
         i.setCell(c);
         //deadIndividuals.add(i);
-        notSaveIndividualsCount--;
         //i.die(cause);
     }
 
@@ -512,11 +477,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     @Override
     public int getIndividualCount() {
         return individuals.size();
-    }
-
-    @Override
-    public int getNotSafeIndividualsCount() {
-        return notSaveIndividualsCount;
     }
 
     /*
@@ -728,13 +688,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public void setState(State state) {
         this.state = state;
-        VisualResultsRecorder.getInstance().recordAction(new CAStateChangedAction(state));
+        recordAction(new CAStateChangedAction(state));
     }
 
     @Override
     public void start() {
         setState(State.RUNNING);
-        notSaveIndividualsCount = individuals.size();
         initialIndividualCount = individuals.size();
     }
 
@@ -748,15 +707,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * you placed individuals in the cellular automaton to start recording again.
      */
     public void reset() {
-        VisualResultsRecorder.getInstance().stopRecording();
-        VisualResultsRecorder.getInstance().reset();
         Individual[] individualsCopy = individuals.toArray(new Individual[individuals.size()]);
 
         for (Individual individual : individualsCopy) {
             removeIndividual(individual);
         }
-        //deadIndividuals.clear();
-        //evacuatedIndividuals.clear();
         individuals.clear();
         typeIndividualMap.clear();
 
@@ -809,5 +764,9 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public Collection<Room> getRoomsOnFloor(Integer floorID) {
         return roomsByFloor.get(floorID);
+    }
+
+    protected void recordAction(Action a) {
+        // ignore publishing
     }
 }

@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 import org.zetool.rndutils.RandomUtils;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
         } else { // Individual can't move, it is already moving
             setMoveRuleCompleted(false);
         }
-        VisualResultsRecorder.getInstance().recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(ind));
     }
 
     /**

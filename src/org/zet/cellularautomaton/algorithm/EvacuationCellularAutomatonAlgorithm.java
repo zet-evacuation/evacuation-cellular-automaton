@@ -29,34 +29,44 @@ import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomat
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationCellularAutomatonAlgorithm
-        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell,
-        EvacuationSimulationProblem, EvacuationSimulationResult> {
+        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell, EvacuationSimulationProblem, EvacuationSimulationResult> {
 
-    /** The order in which the individuals are asked for. */
-    public static final Function<List<Individual>,Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
-    /** The distance comparator. */
+    /**
+     * The order in which the individuals are asked for.
+     */
+    public static final Function<List<Individual>, Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
+    /**
+     * The distance comparator.
+     */
     private static final IndividualDistanceComparator DISTANCE_COMPARATOR = new IndividualDistanceComparator<>();
-    /** Sorts the individuals by increasing distance to the exit. */
+    /**
+     * Sorts the individuals by increasing distance to the exit.
+     */
     public static final Function<List<Individual>, Iterator<Individual>> FRONT_TO_BACK = (List<Individual> t) -> {
         List<Individual> copy = new ArrayList<>(t);
         Collections.sort(copy, DISTANCE_COMPARATOR);
         return copy.iterator();
     };
-    /** Sorts the individuals by decreasing distance to the exit. */
+    /**
+     * Sorts the individuals by decreasing distance to the exit.
+     */
     public static final Function<List<Individual>, Iterator<Individual>> BACK_TO_FRONT = (List<Individual> t) -> {
         List<Individual> copy = new ArrayList<>(t);
         Collections.sort(copy, DISTANCE_COMPARATOR);
         Collections.reverse(copy);
         return copy.iterator();
     };
-    /** The ordering used in the evacuation cellular automaton. */
-    private Function<List<Individual>,Iterator<Individual>> reorder;
-    
+    /**
+     * The ordering used in the evacuation cellular automaton.
+     */
+    private Function<List<Individual>, Iterator<Individual>> reorder;
+    EvacuationState es = createEvacuationState();
+
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
     }
 
-    public EvacuationCellularAutomatonAlgorithm(Function<List<Individual>,Iterator<Individual>> reorder) {
+    public EvacuationCellularAutomatonAlgorithm(Function<List<Individual>, Iterator<Individual>> reorder) {
         this.reorder = reorder;
     }
 
@@ -78,77 +88,22 @@ public class EvacuationCellularAutomatonAlgorithm
                 r.execute(c);
             }
         }
-        getProblem().getCellularAutomaton().removeMarkedIndividuals();
+        //getProblem().getCellularAutomaton().removeMarkedIndividuals();
+        es.removeMarkedIndividuals();
     }
 
-    EvacuationState es;
-    /** The minimal number of steps that is needed until all movements are FINISHED. */
+    /**
+     * The minimal number of steps that is needed until all movements are FINISHED.
+     */
     private int neededTime;
+
     public void setNeededTime(int i) {
         neededTime = i;
     }
 
     private void initRulesAndState() {
-        es = new EvacuationState() {
-            private final IndividualState individualState = new IndividualState();
-            public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
-
-            @Override
-            public int getTimeStep() {
-                return getStep();
-            }
-
-            @Override
-            public void setNeededTime(int i) {
-                neededTime = i;
-            }
-
-            @Override
-            public int getNeededTime() {
-                return neededTime;
-            }
-
-            @Override
-            public CAStatisticWriter getStatisticWriter() {
-                return caStatisticWriter;
-            }
-
-            @Override
-            public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void moveIndividual(EvacCell from, EvacCell targetCell) {
-                getCellularAutomaton().moveIndividual(from, targetCell);
-            }
-
-            @Override
-            public void increaseDynamicPotential(EvacCell targetCell) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public EvacuationCellularAutomatonInterface getCellularAutomaton() {
-                return getProblem().getCellularAutomaton();
-            }
-
-            @Override
-            public void markIndividualForRemoval(Individual individual) {
-                getCellularAutomaton().markIndividualForRemoval(individual);
-            }
-
-            @Override
-            public ParameterSet getParameterSet() {
-                return getProblem().getParameterSet();
-            }
-
-            @Override
-            public IndividualState getIndividualState() {
-                return individualState;
-            }
-        };
-        for( EvacuationRule r : getProblem().getRuleSet()) {
+        es = createEvacuationState();
+        for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationSimulationProblem(es);
         }
     }
@@ -158,10 +113,10 @@ public class EvacuationCellularAutomatonAlgorithm
         super.performStep();
         super.increaseStep();
 
-        getProblem().getCellularAutomaton().removeMarkedIndividuals();
+        es.removeMarkedIndividuals();
         getProblem().getCellularAutomaton().updateDynamicPotential(
-        getProblem().getParameterSet().probabilityDynamicIncrease(),
-        getProblem().getParameterSet().probabilityDynamicDecrease());
+                getProblem().getParameterSet().probabilityDynamicIncrease(),
+                getProblem().getParameterSet().probabilityDynamicDecrease());
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
                 getProblem().getCellularAutomaton().getInitialIndividualCount() - getProblem().getCellularAutomaton().getIndividualCount(),
@@ -172,7 +127,7 @@ public class EvacuationCellularAutomatonAlgorithm
     protected final void execute(EvacCell cell) {
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
-        for( EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
+        for (EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
             r.execute(i.getCell());
         }
     }
@@ -180,7 +135,7 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected EvacuationSimulationResult terminate() {
         // let die all individuals which are not already dead and not safe
-        if (getProblem().getCellularAutomaton().getNotSafeIndividualsCount() != 0) {
+        if (es.getIndividualState().getNotSafeIndividualsCount() != 0) {
             Individual[] individualsCopy = getProblem().getCellularAutomaton().getIndividuals().toArray(
                     new Individual[getProblem().getCellularAutomaton().getIndividuals().size()]);
             for (Individual i : individualsCopy) {
@@ -200,17 +155,17 @@ public class EvacuationCellularAutomatonAlgorithm
     public StoredCAStatisticResults getStatisticResults() {
         return es.getStatisticWriter().getStoredCAStatisticResults();
     }
-        
+
     @Override
     protected boolean isFinished() {
         boolean thisFinished = allIndividualsSave() && timeOver();
         return super.isFinished() || thisFinished;
     }
-    
+
     private boolean allIndividualsSave() {
-        return getProblem().getCellularAutomaton().getNotSafeIndividualsCount() == 0;
+        return es.getIndividualState().getNotSafeIndividualsCount() == 0;
     }
-    
+
     private boolean timeOver() {
         return getStep() > neededTime;
     }
@@ -228,7 +183,7 @@ public class EvacuationCellularAutomatonAlgorithm
                 / getProblem().getCellularAutomaton().getInitialIndividualCount());
         return Math.max(individualProgress, timeProgress);
     }
-    
+
     /**
      * An iterator that iterates over all cells of the cellular automaton that contains an individual. The rules of the
      * simulation algorithm are being executed on each of the occupied cells.
@@ -275,6 +230,82 @@ public class EvacuationCellularAutomatonAlgorithm
 
     public EvacuationState getEvacuationState() {
         return es;
+    }
+    
+    private EvacuationState createEvacuationState() {
+        return new EvacuationState() {
+            private final IndividualState individualState = new IndividualState();
+            public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
+
+            @Override
+            public int getTimeStep() {
+                return getStep();
+            }
+
+            @Override
+            public void setNeededTime(int i) {
+                neededTime = i;
+            }
+
+            @Override
+            public int getNeededTime() {
+                return neededTime;
+            }
+
+            @Override
+            public CAStatisticWriter getStatisticWriter() {
+                return caStatisticWriter;
+            }
+
+            @Override
+            public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void moveIndividual(EvacCell from, EvacCell targetCell) {
+                getCellularAutomaton().moveIndividual(from, targetCell);
+            }
+
+            @Override
+            public void increaseDynamicPotential(EvacCell targetCell) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public EvacuationCellularAutomatonInterface getCellularAutomaton() {
+                return getProblem().getCellularAutomaton();
+            }
+
+    /** An {@code ArrayList} marked to be removed. */
+    private final List<Individual> markedForRemoval = new ArrayList<>();
+//    @Override
+//            public void markIndividualForRemoval(Individual individual) {
+//                getCellularAutomaton().markIndividualForRemoval(individual);
+//            }
+
+            @Override
+            public void markIndividualForRemoval(Individual i) {
+                markedForRemoval.add(i);
+            }
+
+            @Override
+            public void removeMarkedIndividuals() {
+                markedForRemoval.stream().forEach(individual -> {individualState.setIndividualEvacuated(individual);
+                getCellularAutomaton().setIndividualEvacuated(individual);});
+                markedForRemoval.clear();
+            }
+
+            @Override
+            public ParameterSet getParameterSet() {
+                return getProblem().getParameterSet();
+            }
+
+            @Override
+            public IndividualState getIndividualState() {
+                return individualState;
+            }
+        };        
     }
 
 }

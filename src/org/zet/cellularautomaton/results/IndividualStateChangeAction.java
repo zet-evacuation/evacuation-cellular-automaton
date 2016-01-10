@@ -52,7 +52,7 @@ public class IndividualStateChangeAction extends Action {
      */
     @Override
     Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        Individual adaptedIndividual = targetCA.getIndividual(individual.getNumber());
+        Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(individual.getNumber());
         if (adaptedIndividual == null) {
             throw new CADoesNotMatchException(this, "Could not find the individual with the unique id " + individual.getNumber());
         }

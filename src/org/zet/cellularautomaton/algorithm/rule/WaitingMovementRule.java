@@ -20,7 +20,6 @@ import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
-import org.zet.cellularautomaton.results.VisualResultsRecorder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,7 +59,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
             setMoveRuleCompleted(true);
             noMove();
         }
-        VisualResultsRecorder.getInstance().recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(ind));
     }
 
     @Override

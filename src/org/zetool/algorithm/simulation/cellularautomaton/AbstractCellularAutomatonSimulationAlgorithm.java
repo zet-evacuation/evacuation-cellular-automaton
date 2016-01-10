@@ -15,9 +15,9 @@
  */
 package org.zetool.algorithm.simulation.cellularautomaton;
 
+import java.util.Iterator;
 import org.zetool.algorithm.simulation.SimulationAlgorithm;
 import org.zetool.simulation.cellularautomaton.Cell;
-import java.util.Iterator;
 import org.zetool.simulation.cellularautomaton.CellularAutomaton;
 
 /**

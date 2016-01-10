@@ -26,9 +26,11 @@ public class IndividualState {
 //    private List<Individual> evacuatedIndividuals;
     private final Set<Individual> evacuatedIndividuals = new HashSet<>();
     private final Map<Individual, DeathCause> deathCause = new HashMap<>();
+    private int notSaveIndividualsCount = 0;
 
     void addIndividual(Individual i) {
         individuals.add(i);
+        notSaveIndividualsCount++;
     }
 
 
@@ -67,6 +69,7 @@ public class IndividualState {
      */
     public void setSafe(Individual i) {
         safeIndividuals.add(i);
+        notSaveIndividualsCount--;
     }
 
     /**
@@ -82,7 +85,7 @@ public class IndividualState {
         }
 
         evacuatedIndividuals.add(i);
-        //notSaveIndividualsCount--;
+        notSaveIndividualsCount--;
     }
 
     /**
@@ -112,6 +115,7 @@ public class IndividualState {
     public void die(Individual i, DeathCause cause) {
         deadIndividuals.add(i);
         deathCause.put(i, cause);
+        notSaveIndividualsCount--;
     }
 
     public boolean isDead(Individual i) {
@@ -152,6 +156,10 @@ public class IndividualState {
         count = getDeadIndividuals().stream().filter(i -> getDeathCause(i) == deathCause).
                 map((_item) -> 1).reduce(count, Integer::sum);
         return count;
+    }
+
+    public int getNotSafeIndividualsCount() {
+        return notSaveIndividualsCount;
     }
 
 }

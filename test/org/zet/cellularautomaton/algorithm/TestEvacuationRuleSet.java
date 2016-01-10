@@ -18,7 +18,7 @@ import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
  * @author Jan-Philipp Kappmeieer
  */
 public class TestEvacuationRuleSet {
-    private static class FakeEvacuationRuleSet extends EvacuationRuleSet {
+    public static class FakeEvacuationRuleSet extends EvacuationRuleSet {
 
         public FakeEvacuationRuleSet() {
         }
