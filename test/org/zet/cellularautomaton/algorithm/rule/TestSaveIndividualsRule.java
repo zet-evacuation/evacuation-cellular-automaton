@@ -1,7 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
@@ -16,7 +16,7 @@ import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.SaveCell;
-import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -68,6 +68,8 @@ public class TestSaveIndividualsRule {
 
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         EvacuationState es = context.mock(EvacuationState.class);
+        TestIndividualState is = new TestIndividualState();
+        is.addIndividual(i);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -75,13 +77,12 @@ public class TestSaveIndividualsRule {
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter()));
                 allowing(es).getIndividualState();
-                will(returnValue(new IndividualState()));
+                will(returnValue(is));
             }
         });
         rule.setEvacuationSimulationProblem(es);
-        es.getIndividualState().setSafe(i);
-
         rule.execute(cell);
+        assertThat(is.isSafe(i), is(true));
         context.assertIsSatisfied();
     }
 
@@ -91,7 +92,7 @@ public class TestSaveIndividualsRule {
 
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         
-        IndividualState is = new IndividualState() {
+        TestIndividualState is = new TestIndividualState() {
             @Override
             public void setSafe(Individual i) {
                 throw new AssertionError("setSafe called!");
@@ -102,6 +103,7 @@ public class TestSaveIndividualsRule {
                 return thisi == i;
             }
         };
+        is.addIndividual(i);
 
         cell.getState().setIndividual(i);
 
