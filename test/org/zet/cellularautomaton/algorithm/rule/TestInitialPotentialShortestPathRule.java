@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -35,7 +36,7 @@ public class TestInitialPotentialShortestPathRule {
     private InitialPotentialShortestPathRule rule;
     private EvacCell cell;
     private Individual i;
-    private IndividualState is;
+    private TestIndividualState is;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
@@ -46,9 +47,10 @@ public class TestInitialPotentialShortestPathRule {
         rule = new InitialPotentialShortestPathRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        is = new IndividualState();
+        is = new TestIndividualState();
         eca = new EvacuationCellularAutomaton();
         i = builder.build();
+        is.addIndividual(i);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -120,7 +122,6 @@ public class TestInitialPotentialShortestPathRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(sp)));
     }
     
@@ -130,7 +131,6 @@ public class TestInitialPotentialShortestPathRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     

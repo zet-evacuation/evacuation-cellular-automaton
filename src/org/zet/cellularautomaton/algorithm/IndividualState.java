@@ -40,7 +40,7 @@ public class IndividualState implements Iterable<Individual> {
         return initialIndividualCount;
     }
 
-    void addIndividual(Individual i) {
+    protected void addIndividual(Individual i) {
         if (individuals.contains(i)) {
             throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
         } else {

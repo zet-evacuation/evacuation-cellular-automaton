@@ -36,9 +36,16 @@ public class TestInitialConcretePotentialRule {
     Individual i;
     EvacuationCellularAutomaton eca;
     EvacuationState es;
-    IndividualState is;
+    TestIndividualState is;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
+    
+    static class TestIndividualState extends IndividualState {
+        @Override
+        protected void addIndividual(Individual i) {
+            super.addIndividual(i);
+        }
+    }
     
     private void init() {
         init(0);
@@ -48,9 +55,10 @@ public class TestInitialConcretePotentialRule {
         rule = new InitialConcretePotentialRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        is = new IndividualState();
+        is = new TestIndividualState();
         eca = new EvacuationCellularAutomaton();
         i = builder.withAge(30).withFamiliarity(familiarity).build();
+        is.addIndividual(i);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -121,7 +129,6 @@ public class TestInitialConcretePotentialRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(sp)));
     }
     
@@ -132,7 +139,6 @@ public class TestInitialConcretePotentialRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
@@ -143,7 +149,6 @@ public class TestInitialConcretePotentialRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
@@ -154,7 +159,6 @@ public class TestInitialConcretePotentialRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
@@ -165,7 +169,6 @@ public class TestInitialConcretePotentialRule {
         
         rule.execute(cell);
         assertThat(is.isDead(i), is(false));
-        assertThat(is.getDeathCause(i), is(nullValue()));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     

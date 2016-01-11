@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -36,7 +37,7 @@ public class TestInitialPotentialFamiliarityRule {
     private EvacCell cell;
     private Individual individual;
     private EvacuationState es;
-    private IndividualState is;
+    private TestIndividualState is;
     private EvacuationCellularAutomaton eca;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
@@ -46,9 +47,10 @@ public class TestInitialPotentialFamiliarityRule {
         rule = new InitialPotentialFamiliarityRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        is = new IndividualState();
+        is = new TestIndividualState();
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
+        is.addIndividual(individual);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -114,7 +116,6 @@ public class TestInitialPotentialFamiliarityRule {
         
         rule.execute(cell);
         assertThat(is.isDead(individual), is(false));
-        assertThat(is.getDeathCause(individual), is(nullValue()));
         assertThat(individual.getStaticPotential(), is(same(sp)));
     }
 

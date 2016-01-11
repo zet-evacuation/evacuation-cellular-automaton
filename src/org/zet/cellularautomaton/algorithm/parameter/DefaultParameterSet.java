@@ -47,14 +47,22 @@ public class DefaultParameterSet extends AbstractParameterSet {
      * Creates a new instance with some static values stored in the {@code PropertyContainer}.
      */
     public DefaultParameterSet() {
-        PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO");
-        SLACKNESS_TO_IDLE_RATIO = PropertyContainer.getGlobal().getAsDouble("algo.ca.SLACKNESS_TO_IDLE_RATIO");
-        PANIC_DECREASE = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_DECREASE");
-        PANIC_INCREASE = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_INCREASE");
-        PANIC_WEIGHT_ON_SPEED = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_WEIGHT_ON_SPEED");
-        PANIC_WEIGHT_ON_POTENTIALS = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_WEIGHT_ON_POTENTIALS");
-        EXHAUSTION_WEIGHT_ON_SPEED = PropertyContainer.getGlobal().getAsDouble("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED");
-        PANIC_THRESHOLD = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_THRESHOLD");
+        PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO = getSafe("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO", 0);
+        SLACKNESS_TO_IDLE_RATIO = getSafe("algo.ca.SLACKNESS_TO_IDLE_RATIO", 0);
+        PANIC_DECREASE = getSafe("algo.ca.PANIC_DECREASE", 0.0);
+        PANIC_INCREASE = getSafe("algo.ca.PANIC_INCREASE", 0.0);
+        PANIC_WEIGHT_ON_SPEED = getSafe("algo.ca.PANIC_WEIGHT_ON_SPEED", 0);
+        PANIC_WEIGHT_ON_POTENTIALS = getSafe("algo.ca.PANIC_WEIGHT_ON_POTENTIALS", 0);
+        EXHAUSTION_WEIGHT_ON_SPEED = getSafe("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED", 0);
+        PANIC_THRESHOLD = getSafe("algo.ca.PANIC_THRESHOLD", 3);
+    }
+    
+    private double getSafe(String parameter, double defaultValue) {
+        if( PropertyContainer.getGlobal().isDefined(parameter)) {
+            return PropertyContainer.getGlobal().getAsDouble(parameter);
+        } else {
+            return defaultValue;
+        }
     }
 
     /**

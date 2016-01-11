@@ -24,6 +24,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -34,7 +35,7 @@ public class TestAbstractMovementRule {
     private final static Direction8 DEFAULT_DIRECTION = Direction8.Top;
     private final static IndividualBuilder builder = new IndividualBuilder();
     private Mockery context = new Mockery();
-    private IndividualState is;
+    private TestIndividualState is;
 
     private class FakeEvacCell extends EvacCell {
         private final boolean isFreeNeighbors;
@@ -103,7 +104,7 @@ public class TestAbstractMovementRule {
             }
         };
         EvacuationState es = context.mock(EvacuationState.class);
-        is = new IndividualState();
+        is = new TestIndividualState();
         context.checking(new Expectations() {
             {
                 allowing(es).getIndividualState();
@@ -131,6 +132,7 @@ public class TestAbstractMovementRule {
     @Test
     public void testSafeNeighbors() {
         Individual i = builder.build();
+        is.addIndividual(i);
         is.setSafe(i);
         i.setDirection(DEFAULT_DIRECTION);
         
@@ -161,6 +163,7 @@ public class TestAbstractMovementRule {
     @Test
     public void testDirections() {
         Individual individual = builder.build();
+        is.addIndividual(individual);
         individual.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new ArrayList<>(Direction8.values().length);

@@ -25,7 +25,7 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -59,8 +59,9 @@ public class TestInitialPotentialExitMappingRuleStrict {
         p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
         EvacuationState es = context.mock(EvacuationState.class);
-        IndividualState is = new IndividualState();
+        TestIndividualState is = new TestIndividualState();
         i = builder.build();
+        is.addIndividual(i);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();

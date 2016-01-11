@@ -133,6 +133,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(individuals));
 
                 allowing(eca).start();
+                allowing(esp).getParameterSet();
+                will(returnValue(context.mock(ParameterSet.class)));
 
                 // primary rules are allowed to be called exactly once for each of the cells
                 exactly(1).of(primary1).execute(with(individuals.get(0).getCell()));
@@ -195,7 +197,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
                 allowing(esp).getEvacuationStepLimit();
-                will(returnValue(0));
+                will(returnValue(300));
                 allowing(eca).start();
 
                 allowing(ps).probabilityDynamicDecrease();
@@ -241,6 +243,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(eca).start();
                 allowing(esp).getIndividuals();                
                 will(returnValue(Collections.emptyList()));
+                allowing(esp).getParameterSet();
+                will(returnValue(context.mock(ParameterSet.class)));
 
                 allowing(eca).stop();
             }
@@ -280,6 +284,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
+                allowing(esp).getParameterSet();
+                will(returnValue(context.mock(ParameterSet.class)));
 
                 allowing(eca).stop();
             }
@@ -361,8 +367,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(maxSteps));
                 allowing(eca).start();
-                allowing(esp).getIndividuals();                
+                allowing(esp).getIndividuals();
                 will(returnValue(Collections.emptyList()));
+                allowing(esp).getParameterSet();
+                will(returnValue(context.mock(ParameterSet.class)));
             }
         });
         algorithm.performStep();
@@ -411,7 +419,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(300));
                 
-                
+                allowing(esp).getParameterSet();
+                will(returnValue(context.mock(ParameterSet.class)));
                 allowing(eca).start();
 
                 allowing(esp).getIndividuals();
@@ -554,9 +563,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             protected void performStep() {
                 super.increaseStep();
                 stepCounter.incrementAndGet();
+                setNeededTime(Integer.MAX_VALUE);
             }
         };
-        algorithm.setNeededTime(Integer.MAX_VALUE);
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
 
@@ -573,6 +582,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(eca).start();
                 allowing(esp).getIndividuals();
                 will(returnValue(Collections.EMPTY_LIST));
+                allowing(esp).getParameterSet();
+                will(returnValue(context.mock(ParameterSet.class)));
                 allowing(eca).stop();
             }
         });

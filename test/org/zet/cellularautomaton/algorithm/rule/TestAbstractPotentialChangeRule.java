@@ -15,15 +15,18 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class TestAbstractPotentialChangeRule {
+
     private final static IndividualBuilder builder = new IndividualBuilder();
-    
-    private static IndividualState is;
+
+    private static TestIndividualState is;
+
     private static class FakeAbstractPotentialChangeRule extends AbstractPotentialChangeRule {
 
         private final boolean wantsToChange;
@@ -33,14 +36,14 @@ public class TestAbstractPotentialChangeRule {
             Mockery context = new Mockery();
             EvacuationState mock = context.mock(EvacuationState.class);
             this.setEvacuationSimulationProblem(mock);
-            is = new IndividualState();
+            is = new TestIndividualState();
             context.checking(new Expectations() {
                 {
                     allowing(es).getIndividualState();
                     will(returnValue(is));
                 }
             });
-            
+
         }
 
         @Override
@@ -53,27 +56,28 @@ public class TestAbstractPotentialChangeRule {
 
         }
     };
-    
+
     private EvacCell createCell(boolean occupied, boolean safe) {
         EvacCell cell = new RoomCell(0, 0);
-        if( occupied ) {
+        if (occupied) {
             Individual i = builder.build();
+            is.addIndividual(i);
             cell.getState().setIndividual(i);
             i.setCell(cell);
-            if( safe) {
+            if (safe) {
                 is.setSafe(i);
             }
         }
         return cell;
     }
-    
+
     @Test
     public void notExecuteableIfNotWillingToChange() {
         AbstractPotentialChangeRule rule = new FakeAbstractPotentialChangeRule(false);
         assertThat(rule, is(not(executeableOn(createCell(true, false)))));
         assertThat(rule, is(not(executeableOn(createCell(false, false)))));
     }
-    
+
     @Test
     public void executeableIfWillingToChange() {
         AbstractPotentialChangeRule rule = new FakeAbstractPotentialChangeRule(true);
@@ -82,5 +86,4 @@ public class TestAbstractPotentialChangeRule {
         assertThat(rule, is(not(executeableOn(createCell(false, false)))));
     }
 
-    
 }
