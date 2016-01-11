@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.LinkedList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
@@ -7,7 +8,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 
 import org.jmock.Mockery;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
@@ -17,7 +20,8 @@ import org.zet.cellularautomaton.IndividualBuilder;
  * @author Jan-Philipp Kappmeier
  */
 public class TestIndividualState {
-
+  @Rule
+  public ExpectedException exception = ExpectedException.none();
     private final Mockery context = new Mockery();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
@@ -27,6 +31,37 @@ public class TestIndividualState {
         assertThat(is.getIndividualCount(), is(equalTo(0)));
         assertThat(is.getIndividuals(), is(empty()));
         assertThat(is.getInitialIndividualCount(), is(equalTo(0)));
+    }
+    
+    @Test
+    public void noAddingTwice() {
+        IndividualState is = new IndividualState();
+        Individual i = builder.build();
+        is.addIndividual(i);
+        exception.expect(IllegalArgumentException.class);
+        is.addIndividual(i);
+    }
+
+    @Test
+    public void iterator() {
+        IndividualState is = new IndividualState();
+        Individual i1 = builder.build();
+        Individual safe = builder.build();
+        Individual evacuated = builder.build();
+        
+        is.addIndividual(i1);
+        is.addIndividual(safe);
+        is.addIndividual(evacuated);
+        
+        is.setSafe(safe);
+        is.setIndividualEvacuated(evacuated);
+        
+        LinkedList<Individual> individualList = new LinkedList<>();
+        for( Individual i : is ) {
+            individualList.add(i);
+        }
+        
+        assertThat(individualList, contains(i1, safe));
     }
 
     @Test
@@ -101,10 +136,31 @@ public class TestIndividualState {
         assertThat(is.getEvacuatedIndividuals(), contains(evacuated1, evacuated2));
         assertThat(is.isDead(evacuated1), is(equalTo(false)));
         assertThat(is.isDead(notEvacuated1), is(equalTo(false)));
+        assertThat(is.evacuatedIndividualsCount(), is(equalTo(2)));
         
         assertThat(is.getIndividualCount(), is(equalTo(2)));
         assertThat(is.getRemainingIndividuals(), contains(notEvacuated1, notEvacuated2));
-        assertThat(is.getNotSafeIndividualsCount(), is(equalTo(0)));
+        assertThat(is.getNotSafeIndividualsCount(), is(equalTo(2)));
+    }
+    
+    @Test
+    public void evacuateSafeIndividual() {
+        Individual normal = builder.build();
+        Individual safe = builder.build();
+        
+        IndividualState is = new IndividualState();
+        is.addIndividual(safe);
+        is.addIndividual(normal);
+        
+        is.setSafe(safe);
+        assertThat(is.isSafe(safe), is(equalTo(true)));
+        
+        is.setIndividualEvacuated(safe);
+        
+        assertThat(is.isSafe(safe), is(equalTo(true)));
+        assertThat(is.isEvacuated(safe), is(equalTo(true)));
+        assertThat(is.getNotSafeIndividualsCount(), is(equalTo(1)));
+        assertThat(is.evacuatedIndividualsCount(), is(equalTo(1)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -158,5 +214,11 @@ public class TestIndividualState {
         IndividualState is = new IndividualState();
         Individual nonExistent = builder.build();        
         is.isDead(nonExistent);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void die() {
+        IndividualState is = new IndividualState();
+        is.die(builder.build(), DeathCause.NOT_ENOUGH_TIME);
     }
 }

@@ -49,7 +49,7 @@ public class IndividualState implements Iterable<Individual> {
 
         notSaveIndividualsCount++;
     }
-
+    
     /**
      * Returns the number of individuals that currently in the cellular automaton.
      *
@@ -109,6 +109,9 @@ public class IndividualState implements Iterable<Individual> {
      * @param i indicates wheather the individual is save or not
      */
     public void setSafe(Individual i) {
+        if( isSafe(i)) {
+            return;
+        }
         safeIndividuals.add(i);
         notSaveIndividualsCount--;
     }
@@ -124,13 +127,10 @@ public class IndividualState implements Iterable<Individual> {
         if (!individuals.contains(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
-        if( !isSafe(i)) {
-            setSafe(i);
-        }
+        setSafe(i);
         individuals.remove(i);
 
         evacuatedIndividuals.add(i);
-        notSaveIndividualsCount--;
     }
 
     /**
@@ -210,7 +210,7 @@ public class IndividualState implements Iterable<Individual> {
     public int getDeadIndividualCount(DeathCause deathCause) {
         int count = 0;
         count = getDeadIndividuals().stream().filter(i -> getDeathCause(i) == deathCause).
-                map((_item) -> 1).reduce(count, Integer::sum);
+                map(_item -> 1).reduce(count, Integer::sum);
         return count;
     }
 

@@ -29,12 +29,12 @@ import org.zet.cellularautomaton.potential.DynamicPotential;
  */
 public abstract class AbstractParameterSet implements ParameterSet {
 
-    final private double DYNAMIC_POTENTIAL_WEIGHT;
-    final private double STATIC_POTENTIAL_WEIGHT;
-    final private double PROB_DYNAMIC_POTENTIAL_INCREASE;
-    final private double PROB_DYNAMIC_POTENTIAL_DECREASE;
-    final private double PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
-    final protected double ABSOLUTE_MAX_SPEED;
+    private final double DYNAMIC_POTENTIAL_WEIGHT;
+    private final double STATIC_POTENTIAL_WEIGHT;
+    private final double PROB_DYNAMIC_POTENTIAL_INCREASE;
+    private final double PROB_DYNAMIC_POTENTIAL_DECREASE;
+    private final double PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
+    protected final double ABSOLUTE_MAX_SPEED;
 
     /**
      * Initializes the default parameter set and loads some constants from the property container.
@@ -48,14 +48,6 @@ public abstract class AbstractParameterSet implements ParameterSet {
         ABSOLUTE_MAX_SPEED = getSafe("algo.ca.ABSOLUTE_MAX_SPEED", 2.1);
     }
 
-    private double getSafe(String parameter, double defaultValue) {
-        if( PropertyContainer.getGlobal().isDefined(parameter)) {
-            return PropertyContainer.getGlobal().getAsDouble(parameter);
-        } else {
-            return defaultValue;
-        }
-    }
-
     public AbstractParameterSet(double dynamicPotentialWeight, double staticPotentialWeight,
             double ProbDynamicPotentialIncrease, double ProbDynamicPotentialDecrease,
             double probFamiliarityOrAttractivityOfExit, double absoluteMaxSpeed) {
@@ -66,8 +58,14 @@ public abstract class AbstractParameterSet implements ParameterSet {
         this.PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT = probFamiliarityOrAttractivityOfExit;
         this.ABSOLUTE_MAX_SPEED = absoluteMaxSpeed;
     }
-    
-    
+
+    private double getSafe(String parameter, double defaultValue) {
+        if( PropertyContainer.getGlobal().isDefined(parameter)) {
+            return PropertyContainer.getGlobal().getAsDouble(parameter);
+        } else {
+            return defaultValue;
+        }
+    }
 
     /**
      * {@inheritDoc}
