@@ -1,8 +1,8 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
@@ -16,7 +16,9 @@ import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.SaveCell;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
+import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -121,5 +123,65 @@ public class TestSaveIndividualsRule {
         });
         rule.setEvacuationSimulationProblem(es);
         rule.execute(cell);
+    }
+    
+    @Test
+    public void exitPotentialSet() {
+        SaveCell cell = new SaveCell(0, 0);
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        i.setStaticPotential(new StaticPotential());
+        cell.getState().setIndividual(i);
+        
+        StaticPotential exitPotential = new StaticPotential();
+        cell.setExitPotential(exitPotential);
+        
+        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
+        TestIndividualState is = new TestIndividualState();
+        is.addIndividual(i);
+        context.checking(new Expectations() {
+            {
+                allowing(es).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(es).getStatisticWriter();
+                will(returnValue(new CAStatisticWriter()));
+                allowing(es).getIndividualState();
+                will(returnValue(is));
+                allowing(es).getTimeStep();
+                will(returnValue(3));
+            }
+        });
+        rule.setEvacuationSimulationProblem(es);
+        rule.execute(cell);
+        assertThat(is.isSafe(i), is(true));
+        assertThat(i.getStaticPotential(), is(sameInstance(exitPotential)));
+    }
+    
+    @Test
+    public void exitPotentialNotSetOnExitCell() {
+        ExitCell cell = new ExitCell(0, 0);
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        StaticPotential sp = new StaticPotential();
+        i.setStaticPotential(sp);
+        cell.getState().setIndividual(i);
+        
+        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        EvacuationState es = context.mock(EvacuationState.class);
+        TestIndividualState is = new TestIndividualState();
+        is.addIndividual(i);
+        context.checking(new Expectations() {
+            {
+                allowing(es).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(es).getStatisticWriter();
+                will(returnValue(new CAStatisticWriter()));
+                allowing(es).getIndividualState();
+                will(returnValue(is));
+            }
+        });
+        rule.setEvacuationSimulationProblem(es);
+        rule.execute(cell);
+        assertThat(is.isSafe(i), is(true));
+        assertThat(i.getStaticPotential(), is(sameInstance(sp)));
     }
 }
