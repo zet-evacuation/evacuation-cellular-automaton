@@ -25,9 +25,7 @@ import java.util.List;
  */
 public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable {
 
-    /**
-     * Keeps a list of all possible targets which are of a specified type T.
-     */
+    /** Keeps a list of all possible targets which are of a specified type {@code T}. */
     protected List<T> teleportTargets;
 
     public BaseTeleportCell(double speedFactor, int x, int y, Room room) {
@@ -53,7 +51,7 @@ public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable 
     }
 
     /**
-     * Returns a door you can enter by using this DoorCell.
+     * Returns a cell you can reach by using this {@code BaseTeleportCell}.
      *
      * @return The door defined by the parameter index.
      * @param index The index which defines the requested DoorCell.
@@ -80,7 +78,7 @@ public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable 
     public abstract void removeTarget(T target);
 
     /**
-     * Removes all next doors from this door cell and notifys the former next doors about the removal.
+     * Calls remove targets on all of the targets.
      */
     public void removeAllTargets() {
         while (teleportTargets.size() > 0) {

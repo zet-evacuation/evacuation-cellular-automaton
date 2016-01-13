@@ -17,10 +17,6 @@ package org.zet.cellularautomaton;
 
 public abstract class TargetCell extends EvacCell {
 
-    public TargetCell(EvacuationCellState state, double speedFactor, int x, int y) {
-        super(state, speedFactor, x, y);
-    }
-
     public TargetCell(EvacuationCellState state, double speedFactor, int x, int y, Room room) {
         super(state, speedFactor, x, y, room);
     }

@@ -22,7 +22,8 @@ import java.util.List;
  * EvacCell. Door-Cells are portals to move between two roomes. Because of that they keep a reference to another
  * Door-EvacCell, which belongs to the room you can enter by using this Door-EvacCell of the current room.
  *
- * @author Marcel Preuß, Jan-Philipp Kappmeier
+ * @author Jan-Philipp Kappmeier
+ * @author Marcel Preuß
  *
  */
 public class DoorCell extends BaseTeleportCell<DoorCell> {

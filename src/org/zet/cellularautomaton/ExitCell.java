@@ -18,9 +18,9 @@ package org.zet.cellularautomaton;
 import java.util.Objects;
 
 /**
- * An Exit-Cell is special type of cell and therefore inherits properties and methods
- * from the abstract class Cell. When an individual enters this special cell,
- * it is evacuated.
+ * An Exit-Cell is special type of cell and therefore inherits properties and methods from the abstract class Cell. When
+ * an individual enters this special cell, it is evacuated.
+ *
  * @author Marcel Preuß
  *
  */
@@ -28,21 +28,22 @@ public class ExitCell extends TargetCell implements Cloneable {
 
     /** Constant defining the standard Speed-Factor of an Exit-Cell, which may be &lt; 1. */
     public static final double STANDARD_EXITCELL_SPEEDFACTOR = 0.8d;
-    /** Attractivity for this ExitCell. */
+    /** * Attractivity for this ExitCell. */
     private int attractivity;
     private String name = "ExitCell";
 
     /**
      * This constructor creates an empty Exit-Cell with the standard Speed-Factor.
+     *
      * @param x x-coordinate of the cell in the room, 0 &lt;= x &lt;= width-1
      * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
-    public ExitCell( int x, int y ) {
-        this( ExitCell.STANDARD_EXITCELL_SPEEDFACTOR, x, y, null );
+    public ExitCell(int x, int y) {
+        this(ExitCell.STANDARD_EXITCELL_SPEEDFACTOR, x, y, null);
     }
 
-    public ExitCell( double speedFactor, int x, int y ) {
-        this( speedFactor, x, y, null );
+    public ExitCell(double speedFactor, int x, int y) {
+        this(speedFactor, x, y, null);
     }
 
     /**
@@ -87,7 +88,7 @@ public class ExitCell extends TargetCell implements Cloneable {
     }
 
     public void setAttractivity(int attractivity) {
-        if( attractivity < 0) {
+        if (attractivity < 0) {
             throw new IllegalArgumentException("Attractivity below 0: " + attractivity);
         }
         this.attractivity = attractivity;
@@ -106,6 +107,5 @@ public class ExitCell extends TargetCell implements Cloneable {
     public boolean isSafe() {
         return true;
     }
-    
-    
+
 }

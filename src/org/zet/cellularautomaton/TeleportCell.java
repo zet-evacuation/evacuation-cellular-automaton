@@ -23,14 +23,6 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
 
     boolean teleportFailed = false;
 
-    public boolean isTeleportFailed() {
-        return teleportFailed;
-    }
-
-    public void setTeleportFailed(boolean teleportFailed) {
-        this.teleportFailed = teleportFailed;
-    }
-
     /**
      * Constructs an empty DoorCell which is NOT connected with any other DoorCell and has the standard Speed-Factor
      * "STANDARD_DOORCELL_SPEEDFACTOR".
@@ -39,7 +31,7 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
      * @param y y-coordinate of the cell in the room, 0 &lt;= y &lt;= height-1
      */
     public TeleportCell(int x, int y) {
-        this(null, DoorCell.STANDARD_DOORCELL_SPEEDFACTOR, x, y);
+        this(new EvacuationCellState(null), DoorCell.STANDARD_DOORCELL_SPEEDFACTOR, x, y);
     }
 
     /**
@@ -77,21 +69,31 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
     /**
      * Adds a TeleportCell which is connected to this TeleportCell.
      *
-     * @param door Defines the reference to the Door-Cell of the room you can enter by using this Door-Cell of the
-     * current room.
+     * @param teleportTarget Defines the reference to the Door-Cell of the room you can enter by using this Door-Cell of
+     * the current room.
      * @throws IllegalArgumentException if the parameter "Door" is null or if "Door" has already been added to the list
      * of doors.
      */
     @Override
-    public void addTarget(TeleportCell door) throws IllegalArgumentException {
+    public void addTarget(TeleportCell teleportTarget) throws IllegalArgumentException {
         if (targetCount() == 0) {
-            addTargetSimple(door);
+            addTargetSimple(teleportTarget);
+        } else {
+            throw new IllegalStateException("Already a target set: " + teleportTarget);
         }
     }
 
     @Override
     public void removeTarget(TeleportCell door) {
         teleportTargets.clear();
+    }
+
+    public boolean isTeleportFailed() {
+        return teleportFailed;
+    }
+
+    public void setTeleportFailed(boolean teleportFailed) {
+        this.teleportFailed = teleportFailed;
     }
 
     /**

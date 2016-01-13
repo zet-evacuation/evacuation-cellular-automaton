@@ -98,6 +98,5 @@ public class SaveCell extends TargetCell implements Cloneable {
     public boolean isSafe() {
         return true;
     }
-    
-    
+
 }

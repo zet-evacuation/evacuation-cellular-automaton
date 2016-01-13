@@ -40,7 +40,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     private Mockery context = new Mockery();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
-    private static class MockEvacCell extends EvacCell {
+    public static class MockEvacCell extends EvacCell {
 
         public MockEvacCell(int x, int y) {
             super(new EvacuationCellState(null), 1, x, y);
