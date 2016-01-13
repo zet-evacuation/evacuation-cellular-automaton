@@ -120,10 +120,10 @@ public class StairCell extends EvacCell implements Cloneable {
      * or equal to 0 and smaller or equal to 1. Otherwise the standard value "STANDARD_STAIRCELL_UP_SPEEDFACTOR" is set.
      */
     public final void setUpSpeedFactor(double speedFactor) {
-        if ((speedFactor >= 0) && (speedFactor <= 1)) {
+        if ((speedFactor > 0) && (speedFactor <= 1)) {
             this.speedFactorUp = speedFactor;
         } else {
-            this.speedFactorUp = StairCell.STANDARD_STAIRCELL_UP_SPEEDFACTOR;
+            throw new IllegalArgumentException("Up speed factor not in ]0, 1]: " + speedFactor);
         }
     }
 
@@ -135,10 +135,10 @@ public class StairCell extends EvacCell implements Cloneable {
      * set.
      */
     public final void setDownSpeedFactor(double speedFactor) {
-        if ((speedFactor >= 0) && (speedFactor <= 1)) {
+        if ((speedFactor > 0) && (speedFactor <= 1)) {
             this.speedFactorDown = speedFactor;
         } else {
-            this.speedFactorDown = StairCell.STANDARD_STAIRCELL_DOWN_SPEEDFACTOR;
+            throw new IllegalArgumentException("Down speed factor not in ]0, 1]: " + speedFactor);
         }
     }
 
