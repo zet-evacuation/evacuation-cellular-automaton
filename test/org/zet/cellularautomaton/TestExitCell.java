@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.zet.cellularautomaton.TestStairCell.assertAssignment;
 
-
 /**
  *
  * @author Jan-Philipp Kappmeier
@@ -22,7 +21,7 @@ public class TestExitCell {
     public void testInitialization() {
         ExitCell cell = new ExitCell(0, 0);
         assertThat(cell.getSpeedFactor(), is(both(greaterThan(0.0)).and(lessThanOrEqualTo(1.0))));
-        assertThat(cell.getSpeedFactor(), is(greaterThanOrEqualTo(0.0)));
+        assertThat(cell.getAttractivity(), is(greaterThanOrEqualTo(0)));
         assertThat(cell.isSafe(), is(true));
     }
     

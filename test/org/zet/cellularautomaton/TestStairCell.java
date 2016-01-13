@@ -6,9 +6,9 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.util.function.Consumer;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import org.junit.Test;
 import org.zetool.common.util.Direction8;
 import org.zetool.common.util.Level;
