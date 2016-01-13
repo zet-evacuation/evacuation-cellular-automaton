@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.function.Consumer;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import org.junit.Test;
 import org.zetool.common.util.Direction8;
 import org.zetool.common.util.Level;
@@ -63,7 +64,7 @@ public class TestStairCell {
     @Test
     public void testFailure() {
         StairCell cell = new StairCell(0, 0);
-        for( Double d : new double[] {0, -0.2} ) {
+        for( Double d : new double[] {0, -0.2, Math.nextDown(0.0), Math.nextUp(1)} ) {
             assertAssignment(cell::setDownSpeedFactor, d, false);
             assertAssignment(cell::setUpSpeedFactor, d, false);
         }
@@ -74,12 +75,19 @@ public class TestStairCell {
     }
     
     public static <T> void assertAssignment(Consumer<T> d , T value, boolean shouldAccept) {
+        assertAssignment(d, value, shouldAccept, IllegalArgumentException.class);
+    }
+    
+    
+    public static <T, E extends Exception> void assertAssignment(Consumer<T> assignmentFunction,
+            T value, boolean shouldAccept, Class<E> exceptionType) {
         try {
-            d.accept(value);
-        } catch(IllegalArgumentException ex) {
+            assignmentFunction.accept(value);
+        } catch(Exception ex) {
             if(shouldAccept) {
                 throw new AssertionError("Should not fail for " + value);
             } else {
+                assertThat(ex, is(instanceOf(exceptionType)));
                 return;
             }
         }
@@ -87,4 +95,5 @@ public class TestStairCell {
             throw new AssertionError("Should fail for " + value);
         }
     }
+
 }

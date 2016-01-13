@@ -15,6 +15,8 @@
  */
 package org.zet.cellularautomaton;
 
+import java.util.Objects;
+
 /**
  * An Exit-Cell is special type of cell and therefore inherits properties and methods
  * from the abstract class Cell. When an individual enters this special cell,
@@ -85,6 +87,9 @@ public class ExitCell extends TargetCell implements Cloneable {
     }
 
     public void setAttractivity(int attractivity) {
+        if( attractivity < 0) {
+            throw new IllegalArgumentException("Attractivity below 0: " + attractivity);
+        }
         this.attractivity = attractivity;
     }
 
@@ -94,7 +99,7 @@ public class ExitCell extends TargetCell implements Cloneable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
     }
 
     @Override
