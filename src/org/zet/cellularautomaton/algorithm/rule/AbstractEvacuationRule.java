@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.Action;
@@ -29,8 +30,8 @@ import org.zet.cellularautomaton.results.Action;
  */
 public abstract class AbstractEvacuationRule implements EvacuationRule {
 
-    //protected EvacuationSimulationProblem esp;
     protected EvacuationState es;
+    protected EvacuationStateControllerInterface ec;
 
     /**
      * Returns if the rule is executable on the cell. The default behavior is, that a rule is executable if an
@@ -56,7 +57,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     protected abstract void onExecute(EvacCell cell);
 
     @Override
-    public void setEvacuationSimulationProblem(EvacuationState es) {
+    public void setEvacuationState(EvacuationState es) {
         if (this.es != null) {
             throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
                     "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
@@ -64,6 +65,18 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         this.es = Objects.requireNonNull(es, CellularAutomatonLocalization.LOC.getString(
                 "algo.ca.rule.CAControllerIsNullException"));
     }
+
+    @Override
+    public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
+        if (this.ec != null) {
+            throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
+                    "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
+        }
+        this.ec = Objects.requireNonNull(ec, CellularAutomatonLocalization.LOC.getString(
+                "algo.ca.rule.CAControllerIsNullException"));
+    }
+    
+    
     
     protected static StaticPotential getNearestExitStaticPotential(Collection<StaticPotential> potentials, EvacCell c) {
         StaticPotential nearestPot = new StaticPotential();

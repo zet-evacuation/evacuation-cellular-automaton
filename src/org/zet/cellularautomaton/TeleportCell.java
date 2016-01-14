@@ -75,7 +75,7 @@ public class TeleportCell extends BaseTeleportCell<TeleportCell> {
      * of doors.
      */
     @Override
-    public void addTarget(TeleportCell teleportTarget) throws IllegalArgumentException {
+    public void addTarget(TeleportCell teleportTarget) {
         if (targetCount() == 0) {
             addTargetSimple(teleportTarget);
         } else {

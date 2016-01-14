@@ -25,6 +25,7 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -43,8 +44,9 @@ public class TestInitialPotentialExitMappingRuleStrict {
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     EvacuationSimulationProblem p;
     ExitCell target;
+    EvacuationState es;
     private final static IndividualBuilder builder = new IndividualBuilder();
-    
+
     private final IndividualToExitMapping exitMapping = (Individual individual) -> {
         if (individual == TestInitialPotentialExitMappingRuleStrict.this.i) {
             return target;
@@ -58,7 +60,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         Room room = context.mock(Room.class);
         p = context.mock(EvacuationSimulationProblem.class);
         eca = new EvacuationCellularAutomaton();
-        EvacuationState es = context.mock(EvacuationState.class);
+        es = context.mock(EvacuationState.class);
         TestIndividualState is = new TestIndividualState();
         i = builder.build();
         is.addIndividual(i);
@@ -74,17 +76,16 @@ public class TestInitialPotentialExitMappingRuleStrict {
                 will(returnValue(statisticWriter));
                 allowing(es).getIndividualState();
                 will(returnValue(is));
-                
             }
         });
         cell = new RoomCell(1, 0, 0, room);
         i.setCell(cell);
         cell.getState().setIndividual(i);
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         eca.addIndividual(cell, i);
 
         target = new ExitCell(1.0, 0, 0, room);
-    
+
     }
 
     @Test
@@ -107,57 +108,69 @@ public class TestInitialPotentialExitMappingRuleStrict {
     @Test
     public void assignedExitsAreAssigned() {
         eca.setIndividualToExitMapping(exitMapping);
-        
+
         StaticPotential sp = new StaticPotential();
         List<ExitCell> spExits = new LinkedList<>();
         spExits.add(target);
         sp.setAssociatedExitCells(spExits);
 
         eca.addStaticPotential(sp);
-        
+
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(sp)));
     }
-
 
     @Test(expected = IllegalStateException.class)
     public void noPotentialForTargetFails() {
         eca.setIndividualToExitMapping(exitMapping);
         rule.execute(cell);
     }
-    
+
     @Test(expected = UnsupportedOperationException.class)
     public void twoPotentialsForOneCellFails() {
         eca.setIndividualToExitMapping(exitMapping);
-        
+
         StaticPotential sp1 = new StaticPotential();
         List<ExitCell> sp1Exits = new LinkedList<>();
         sp1Exits.add(target);
         sp1.setAssociatedExitCells(sp1Exits);
-        
+
         StaticPotential sp2 = new StaticPotential();
         List<ExitCell> sp2Exits = new LinkedList<>();
         sp2Exits.add(target);
         sp2.setAssociatedExitCells(sp2Exits);
-        
+
         eca.addStaticPotential(sp1);
         eca.addStaticPotential(sp2);
-        
+
         rule.execute(cell);
         assertThat(i.getStaticPotential(), is(equalTo(sp2)));
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void failsIfNotAssigned() {
         eca.setIndividualToExitMapping(_unused -> null);
+        context.checking(new Expectations() {{
+                allowing(es).propertyFor(i);
+                will(returnValue(new IndividualProperty()));
+            }});
         rule.execute(cell);
     }
-    
-    @Test()
+
+    @Test
     public void deadIndividualWithoutTarget() {
         eca.setIndividualToExitMapping(_unused -> null);
-        rule.es.getIndividualState().die(i, DeathCause.EXIT_UNREACHABLE);
-        //i.die(DeathCause.EXIT_UNREACHABLE);
+        IndividualProperty ip = new IndividualProperty() {
+
+            @Override
+            public boolean isDead() {
+                return true;
+            }            
+        };
+        context.checking(new Expectations() {{
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
+            }});
         rule.execute(cell);
     }
 

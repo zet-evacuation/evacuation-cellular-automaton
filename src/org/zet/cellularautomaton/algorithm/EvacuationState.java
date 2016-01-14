@@ -47,7 +47,9 @@ public interface EvacuationState {
 
     public ParameterSet getParameterSet();
     
+    public void removeMarkedIndividuals();
+    
     public IndividualState getIndividualState();
     
-    public void removeMarkedIndividuals();
+    public IndividualProperty propertyFor(Individual i);
 }

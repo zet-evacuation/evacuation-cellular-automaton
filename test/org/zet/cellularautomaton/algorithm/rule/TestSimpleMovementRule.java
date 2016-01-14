@@ -107,7 +107,7 @@ public class TestSimpleMovementRule {
             }
         });
         SimpleMovementRule rule = new SimpleMovementRule();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
 
         rule.move(startCell, targetCell);
 
@@ -148,7 +148,7 @@ public class TestSimpleMovementRule {
                 will(returnValue(1.0));
             }
         });
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
 
         EvacCell selectedCell = rule.selectTargetCell(currentCell, targets);
 

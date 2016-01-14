@@ -81,7 +81,7 @@ public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable 
      * Calls remove targets on all of the targets.
      */
     public void removeAllTargets() {
-        while (teleportTargets.size() > 0) {
+        while (!teleportTargets.isEmpty()) {
             this.removeTarget(teleportTargets.get(0));
         }
     }

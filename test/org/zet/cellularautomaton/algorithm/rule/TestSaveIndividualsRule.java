@@ -82,7 +82,7 @@ public class TestSaveIndividualsRule {
                 will(returnValue(is));
             }
         });
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         rule.execute(cell);
         assertThat(is.isSafe(i), is(true));
         context.assertIsSatisfied();
@@ -121,7 +121,7 @@ public class TestSaveIndividualsRule {
                 will(returnValue(is));
             }
         });
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         rule.execute(cell);
     }
     
@@ -151,7 +151,7 @@ public class TestSaveIndividualsRule {
                 will(returnValue(3));
             }
         });
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         rule.execute(cell);
         assertThat(is.isSafe(i), is(true));
         assertThat(i.getStaticPotential(), is(sameInstance(exitPotential)));
@@ -179,7 +179,7 @@ public class TestSaveIndividualsRule {
                 will(returnValue(is));
             }
         });
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         rule.execute(cell);
         assertThat(is.isSafe(i), is(true));
         assertThat(i.getStaticPotential(), is(sameInstance(sp)));

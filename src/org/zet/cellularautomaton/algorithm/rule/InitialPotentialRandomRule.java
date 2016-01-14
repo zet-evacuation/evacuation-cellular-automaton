@@ -36,7 +36,7 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
                 sp -> (sp.getDistance(cell) >= 0)).forEach(sp -> exits.add(sp));
         
         if( exits.isEmpty() ) {
-            es.getIndividualState().die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
+            ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
         } else {
             int numberOfExits = exits.size();
             RandomUtils random = RandomUtils.getInstance();

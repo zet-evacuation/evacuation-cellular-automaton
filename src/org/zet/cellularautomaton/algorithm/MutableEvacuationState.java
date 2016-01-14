@@ -1,7 +1,11 @@
 package org.zet.cellularautomaton.algorithm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
@@ -12,12 +16,15 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class DefaultEvacuationState implements EvacuationState {
+public class MutableEvacuationState implements EvacuationState {
 
     private final IndividualState individualState = new IndividualState();
     public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
     private final ParameterSet parameterSet;
     private final EvacuationCellularAutomatonInterface ca;
+    private final Map<Individual, IndividualProperty> individualProperties;
+    
+    
     /**
      * The minimal number of steps that is needed until all movements are FINISHED.
      */
@@ -28,11 +35,22 @@ public class DefaultEvacuationState implements EvacuationState {
      */
     private final List<Individual> markedForRemoval = new ArrayList<>();
 
-    public DefaultEvacuationState(ParameterSet parameterSet, EvacuationCellularAutomatonInterface ca) {
+    public MutableEvacuationState(ParameterSet parameterSet, EvacuationCellularAutomatonInterface ca,
+            List<Individual> individuals) {
         this.parameterSet = parameterSet;
         this.ca = ca;
+        individualProperties = new HashMap<>();
+        for( Individual i : individuals) {
+            individualProperties.put(i, new IndividualProperty());
+            individualState.addIndividual(i);
+        }        
     }
 
+    @Override
+    public IndividualProperty propertyFor(Individual i) {
+        return Objects.requireNonNull(individualProperties.get(i), "Individual " + i + " not in simulation.");
+    }
+    
     @Override
     public int getTimeStep() {
         return step;
@@ -79,7 +97,7 @@ public class DefaultEvacuationState implements EvacuationState {
 
     @Override
     public void markIndividualForRemoval(Individual i) {
-        if (!individualState.getIndividuals().contains(i)) {
+        if (!individualState.getRemainingIndividuals().contains(i)) {
             throw new IllegalArgumentException("Individual " + i + " not in list!");
         }
         markedForRemoval.add(i);
@@ -103,4 +121,19 @@ public class DefaultEvacuationState implements EvacuationState {
     public IndividualState getIndividualState() {
         return individualState;
     }
+
+
+    /**
+     * Calculates the number of individuals that died by a specified death cause.
+     *
+     * @param deathCause the death cause
+     * @return the number of individuals died by the death cause
+     */
+    public int getDeadIndividualCount(DeathCause deathCause) {
+        int count = 0;
+        count = individualState.getDeadIndividuals().stream().filter(i -> propertyFor(i).getDeathCause() == deathCause).
+                map(_item -> 1).reduce(count, Integer::sum);
+        return count;
+    }
+
 }

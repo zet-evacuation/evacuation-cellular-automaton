@@ -40,7 +40,7 @@ public class TestEvacuateIndividualsRule {
         });
 
         EvacuateIndividualsRule rule = new EvacuateIndividualsRule();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
 
         ExitCell exit = new ExitCell(0, 0);
         Individual toEvacuate = new IndividualBuilder().build();
@@ -82,7 +82,7 @@ public class TestEvacuateIndividualsRule {
         });
 
         EvacuateIndividualsRule rule = new EvacuateIndividualsRule();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
 
         ExitCell exit = new ExitCell(0, 0);
         exit.getState().setIndividual(toEvacuate);

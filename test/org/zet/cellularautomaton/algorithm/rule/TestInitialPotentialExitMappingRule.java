@@ -73,7 +73,7 @@ public class TestInitialPotentialExitMappingRule {
         cell = new RoomCell(1, 0, 0, room);
         i.setCell(cell);
         cell.getState().setIndividual(i);
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         eca.addIndividual(cell, i);
 
         target = new ExitCell(1.0, 0, 0, room);

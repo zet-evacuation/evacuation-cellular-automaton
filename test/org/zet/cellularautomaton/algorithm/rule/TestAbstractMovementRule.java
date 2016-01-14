@@ -111,7 +111,7 @@ public class TestAbstractMovementRule {
                 will(returnValue(is));
             }
         });
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
     }
         
     @Test

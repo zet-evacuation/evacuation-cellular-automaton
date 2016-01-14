@@ -94,11 +94,11 @@ public class TestAbstractEvacuationRule {
             protected void onExecute(EvacCell cell) {
             }
         };
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         assertThat(rule.es, is(equalTo(es)));
 
         exception.expect(RuntimeException.class);
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
     }
     
     @Test(expected = NullPointerException.class)
@@ -109,6 +109,6 @@ public class TestAbstractEvacuationRule {
             protected void onExecute(EvacCell cell) {
             }
         };
-        rule.setEvacuationSimulationProblem(null);
+        rule.setEvacuationState(null);
     }
 }

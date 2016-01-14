@@ -1,11 +1,12 @@
 package org.zet.cellularautomaton;
 
-import java.util.LinkedList;
-import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.Test;
 import org.zet.cellularautomaton.algorithm.TestEvacuationCellularAutomatonAlgorithm.MockEvacCell;
 
@@ -78,6 +79,19 @@ public class TestBaseTeleportCell {
         cell.removeTarget(cell2);
         assertThat(cell.containsTarget(cell2), is(false));
         assertThat(cell.targetCount(), is(equalTo(1)));        
+    }
+    
+    @Test
+    public void noDoubleInsert() {
+        FakeBaseTeleportCell cell = new FakeBaseTeleportCell();
+        MockEvacCell cell1 = new MockEvacCell(0, 0);
+
+        assertThat(cell.targetCount(), is(equalTo(0)));
+        cell.addTargetSimple(cell1);
+        assertThat(cell.targetCount(), is(equalTo(1)));        
+        cell.addTargetSimple(cell1);
+        assertThat(cell.targetCount(), is(equalTo(1)));        
+        
     }
     
     @Test

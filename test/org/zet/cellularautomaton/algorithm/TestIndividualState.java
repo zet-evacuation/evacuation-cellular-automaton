@@ -1,17 +1,17 @@
 package org.zet.cellularautomaton.algorithm;
 
-import java.util.LinkedList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
+import static org.zetool.common.util.Helper.in;
 
+import java.util.LinkedList;
 import org.jmock.Mockery;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 
@@ -28,8 +28,9 @@ public class TestIndividualState {
     @Test
     public void testInitialization() {
         IndividualState is = new IndividualState();
-        assertThat(is.getIndividualCount(), is(equalTo(0)));
-        assertThat(is.getIndividuals(), is(empty()));
+        assertThat(is.getRemainingIndividualCount(), is(equalTo(0)));
+        assertThat(is.getInitialIndividuals(), is(empty()));
+        assertThat(is.getRemainingIndividuals(), is(empty()));
         assertThat(is.getInitialIndividualCount(), is(equalTo(0)));
     }
     
@@ -57,7 +58,7 @@ public class TestIndividualState {
         is.setIndividualEvacuated(evacuated);
         
         LinkedList<Individual> individualList = new LinkedList<>();
-        for( Individual i : is ) {
+        for( Individual i : in(is.getRemainingIndividuals().iterator()) ) {
             individualList.add(i);
         }
         
@@ -79,7 +80,7 @@ public class TestIndividualState {
 
         is.setSafe(saveIndividual);
         is.setIndividualEvacuated(evacuatedIndividual);
-        is.die(deadIndividual, DeathCause.NOT_ENOUGH_TIME);
+        is.die(deadIndividual);
 
         assertThat(is.getRemainingIndividuals(), contains(activeIndividual, saveIndividual));
         assertThat(is.getEvacuatedIndividuals(), contains(evacuatedIndividual));
@@ -99,9 +100,7 @@ public class TestIndividualState {
         
         assertThat(is.isSafe(safe), is(equalTo(true)));
         assertThat(is.isSafe(notSafe), is(equalTo(false)));
-        assertThat(is.isDead(safe), is(equalTo(false)));
-        assertThat(is.isDead(notSafe), is(equalTo(false)));
-        assertThat(is.getIndividualCount(), is(equalTo(2)));
+        assertThat(is.getRemainingIndividualCount(), is(equalTo(2)));
         assertThat(is.getRemainingIndividuals(), contains(safe, notSafe));
         assertThat(is.getNotSafeIndividualsCount(), is(equalTo(1)));    
     }
@@ -134,11 +133,9 @@ public class TestIndividualState {
         assertThat(is.isEvacuated(notEvacuated1), is(false));
         assertThat(is.isEvacuated(notEvacuated2), is(false));
         assertThat(is.getEvacuatedIndividuals(), contains(evacuated1, evacuated2));
-        assertThat(is.isDead(evacuated1), is(equalTo(false)));
-        assertThat(is.isDead(notEvacuated1), is(equalTo(false)));
         assertThat(is.evacuatedIndividualsCount(), is(equalTo(2)));
         
-        assertThat(is.getIndividualCount(), is(equalTo(2)));
+        assertThat(is.getRemainingIndividualCount(), is(equalTo(2)));
         assertThat(is.getRemainingIndividuals(), contains(notEvacuated1, notEvacuated2));
         assertThat(is.getNotSafeIndividualsCount(), is(equalTo(2)));
     }
@@ -183,42 +180,13 @@ public class TestIndividualState {
         is.addIndividual(deadNotEnoughTime2);
         is.addIndividual(deadUnreachable);
 
-        is.die(deadNotEnoughTime1, DeathCause.NOT_ENOUGH_TIME);
-        is.die(deadNotEnoughTime2, DeathCause.NOT_ENOUGH_TIME);
-        is.die(deadUnreachable, DeathCause.EXIT_UNREACHABLE);
+        is.die(deadNotEnoughTime1);
+        is.die(deadNotEnoughTime2);
+        is.die(deadUnreachable);
 
         assertThat(is.deadIndividualsCount(), is(equalTo(3)));
-        assertThat(is.getDeadIndividualCount(DeathCause.EXIT_UNREACHABLE), is(equalTo(1)));
-        assertThat(is.getDeadIndividualCount(DeathCause.NOT_ENOUGH_TIME), is(equalTo(2)));
-        assertThat(is.getIndividualCount(), is(equalTo(1)));
-        assertThat(is.getDeathCause(deadNotEnoughTime1), is(equalTo(DeathCause.NOT_ENOUGH_TIME)));
-        assertThat(is.getDeathCause(deadNotEnoughTime2), is(equalTo(DeathCause.NOT_ENOUGH_TIME)));
-        assertThat(is.getDeathCause(deadUnreachable), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
-        assertThat(is.isDead(alive), is(equalTo(false)));
-        assertThat(is.isDead(deadNotEnoughTime1), is(equalTo(true)));
-        assertThat(is.isDead(deadNotEnoughTime2), is(equalTo(true)));
-        assertThat(is.isDead(deadUnreachable), is(equalTo(true)));
+        assertThat(is.getRemainingIndividualCount(), is(equalTo(1)));
         assertThat(is.getDeadIndividuals(), contains(deadNotEnoughTime1, deadNotEnoughTime2, deadUnreachable));
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void deathCauseFailsForAliveIndividuals() {
-        Individual alive = builder.build();
-        IndividualState is = new IndividualState();
-        is.addIndividual(alive);
-        is.getDeathCause(alive);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void deadFailsForNonExisting() {
-        IndividualState is = new IndividualState();
-        Individual nonExistent = builder.build();        
-        is.isDead(nonExistent);
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void die() {
-        IndividualState is = new IndividualState();
-        is.die(builder.build(), DeathCause.NOT_ENOUGH_TIME);
-    }
 }

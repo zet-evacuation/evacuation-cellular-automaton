@@ -21,6 +21,8 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.EvacuationStateController;
+import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -43,10 +45,10 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
      */
     @Override
     protected void onExecute(EvacCell cell) {
-        assignShortestPathPotential(cell, this.es);
+        assignShortestPathPotential(cell, this.es, this.ec);
     }
 
-    public static void assignShortestPathPotential(EvacCell cell, EvacuationState es) {
+    public static void assignShortestPathPotential(EvacCell cell, EvacuationState es, EvacuationStateControllerInterface ec) {
         Individual individual = cell.getState().getIndividual();
         List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());
@@ -63,7 +65,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (Double.isInfinite(minDistanceToEvacArea)) {
-            es.getIndividualState().die(individual, DeathCause.EXIT_UNREACHABLE);
+            ec.die(individual, DeathCause.EXIT_UNREACHABLE);
         }
 
         individual.setStaticPotential(initialPotential);

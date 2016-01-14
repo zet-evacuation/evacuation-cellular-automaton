@@ -46,7 +46,7 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
     protected void onExecute(EvacCell cell) {
         List<PotentialMemory<StaticPotential>> potentialDistanceMapping = computeDistanceMapping(cell);
         if (potentialDistanceMapping.isEmpty()) {
-            es.getIndividualState().die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
+            ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
         } else {
             selectPotential(potentialDistanceMapping, cell.getState().getIndividual());
         }

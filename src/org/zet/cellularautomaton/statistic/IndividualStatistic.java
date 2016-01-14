@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResultsForIndividuals;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -42,6 +43,7 @@ import org.zet.cellularautomaton.statistic.exception.OneIndNotSafeException;
 public class IndividualStatistic {
 
     private IndividualState is;
+    private IndividualProperty ip;
     HashMap<Individual, Integer> safetyTimes;
     HashMap<Individual, ArrayList<Integer>> changePotentialTimes;
     private Map<Individual, List<List<ExitCell>>> potentials;
@@ -90,7 +92,7 @@ public class IndividualStatistic {
      */
     public double getCoveredDistance(Individual ind, int t) throws OneIndNoPotentialException, IncorrectTimeException {
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot weil eingeschlossen
             throw new OneIndNoPotentialException(ind);
         }
@@ -244,7 +246,7 @@ public class IndividualStatistic {
             }
         }
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot weil eingeschlossen
             throw new OneIndNoPotentialException(ind);
         }
@@ -318,7 +320,7 @@ public class IndividualStatistic {
             }
         }
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot, weil eingeschlossen
             throw new OneIndNoPotentialException(ind);
         }
@@ -387,8 +389,8 @@ public class IndividualStatistic {
 
     /**
      * alter Code: if (is.isSafe(ind)) { int safetyTime=ind.getSafetyTime(); if (to>safetyTime) { to=safetyTime; } } int
-     * time=to-from; if (!( (is.getDeathCause(ind) != null) &&
-     * is.getDeathCause(ind).compareTo(ds.ca.Individual.DeathCause.ExitUnreachable)==0) ) { if (time>0) { double
+     * time=to-from; if (!( (ip.getDeathCause(ind) != null) &&
+     * ip.getDeathCause(ind).compareTo(ds.ca.Individual.DeathCause.ExitUnreachable)==0) ) { if (time>0) { double
      * startCoveredDistance = getCoveredDistance(ind, from); double endCoveredDistance = getCoveredDistance(ind, to);
      * return ((endCoveredDistance-startCoveredDistance)/time); } else { if (time==0) { return 0; } else // time < 0
      * Zeiten falsch throw new IncorrectTimeException(); } } // Ind tot weil eingeschlossen throw new
@@ -437,7 +439,7 @@ public class IndividualStatistic {
             }
         }
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot, weil eingeschlossen
 
             throw new OneIndNoPotentialException(ind);
@@ -892,7 +894,7 @@ public class IndividualStatistic {
             }
         }
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot weil eingeschlossen
             throw new OneIndNoPotentialException(ind);
         }
@@ -983,7 +985,7 @@ public class IndividualStatistic {
         }
 
         if (from < to) {
-            if (!(is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
+            if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (exhaustionTimes.containsKey(ind)) {
                     if (from == 0) {
                         from = 1;
@@ -1068,7 +1070,7 @@ public class IndividualStatistic {
      */
     public double calculateMaxExhaustion(Individual ind, int from, int to) throws OneIndNoPotentialException, IncorrectTimeException {
         if (from < to) {
-            if (!(is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
+            if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (exhaustionTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
                         int safetyTime = ind.getSafetyTime();
@@ -1150,7 +1152,7 @@ public class IndividualStatistic {
      */
     public double calculateMinExhaustionExceptingStartExhaustion(Individual ind, int from, int to) throws OneIndNoPotentialException, IncorrectTimeException {
         if (from < to) {
-            if (!(is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
+            if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (exhaustionTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
                         int safetyTime = ind.getSafetyTime();
@@ -1615,7 +1617,7 @@ public class IndividualStatistic {
             }
         }
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot weil eingeschlossen
             throw new OneIndNoPotentialException(ind);
         }
@@ -1706,7 +1708,7 @@ public class IndividualStatistic {
         }
 
         if (from < to) {
-            if (!(is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
+            if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (panicTimes.containsKey(ind)) {
                     if (from == 0) {
                         from = 1;
@@ -1791,7 +1793,7 @@ public class IndividualStatistic {
      */
     public double calculateMaxPanic(Individual ind, int from, int to) throws OneIndNoPotentialException, IncorrectTimeException {
         if (from < to) {
-            if (!(is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
+            if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (panicTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
                         int safetyTime = ind.getSafetyTime();
@@ -1873,7 +1875,7 @@ public class IndividualStatistic {
      */
     public double calculateMinPanicExceptingStartPanic(Individual ind, int from, int to) throws OneIndNoPotentialException, IncorrectTimeException {
         if (from < to) {
-            if (!(is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
+            if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (panicTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
                         int safetyTime = ind.getSafetyTime();
@@ -2645,7 +2647,7 @@ public class IndividualStatistic {
      */
     public int getWaitedTime(Individual ind, int t) throws OneIndNoPotentialException, IncorrectTimeException {
 
-        if (is.getDeathCause(ind) != null && is.getDeathCause(ind).compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
+        if (ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0) {
             // ind tot weil eingeschlossen
             throw new OneIndNoPotentialException(ind);
         }

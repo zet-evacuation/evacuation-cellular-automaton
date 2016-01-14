@@ -3,6 +3,8 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.algorithm.EvacuationStateController;
+import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
 
 /**
  *
@@ -26,7 +28,11 @@ public class MockRule {
         }
 
         @Override
-        public void setEvacuationSimulationProblem(EvacuationState esp) {
+        public void setEvacuationState(EvacuationState esp) {
+        }
+
+        @Override
+        public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
         }
 
     }
@@ -46,7 +52,11 @@ public class MockRule {
         }
 
         @Override
-        public void setEvacuationSimulationProblem(EvacuationState esp) {
+        public void setEvacuationState(EvacuationState esp) {
+        }
+
+        @Override
+        public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
         }
 
     }

@@ -125,9 +125,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getRuleSet();
                 will(returnValue(rules));
 
-                allowing(primary1).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
-                allowing(primary2).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
-                allowing(loop).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                allowing(primary1).setEvacuationState(with(any(EvacuationState.class)));
+                allowing(primary2).setEvacuationState(with(any(EvacuationState.class)));
+                allowing(loop).setEvacuationState(with(any(EvacuationState.class)));
 
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
@@ -204,12 +204,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(ps).probabilityDynamicIncrease();
                 exactly(1).of(eca).updateDynamicPotential(with(0.0), with(0.0));
 
-                //allowing(eca).getIndividualCount();
+                //allowing(eca).getRemainingIndividualCount();
                 //allowing(eca).getInitialIndividualCount();
 
-                allowing(primary1).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
-                allowing(primary2).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
-                allowing(loop).setEvacuationSimulationProblem(with(any(EvacuationState.class)));
+                allowing(primary1).setEvacuationState(with(any(EvacuationState.class)));
+                allowing(primary2).setEvacuationState(with(any(EvacuationState.class)));
+                allowing(loop).setEvacuationState(with(any(EvacuationState.class)));
 
                 // loop rules are allowed to be called exactly once for each of the cells
                 exactly(1).of(primary1).execute(with(individuals.get(0).getCell()));
@@ -297,9 +297,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         es.getIndividualState().setSafe(individuals.get(1));
 
         EvacuationSimulationResult result = algorithm.terminate();
-        assertThat(es.getIndividualState().isDead(individuals.get(0)), is(true));
-        assertThat(es.getIndividualState().getDeathCause(individuals.get(0)), is(equalTo(DeathCause.NOT_ENOUGH_TIME)));
-        assertThat(es.getIndividualState().isDead(individuals.get(1)), is(false));
+        assertThat(es.propertyFor(individuals.get(0)).isDead(), is(true));
+        assertThat(es.propertyFor(individuals.get(0)).getDeathCause(), is(equalTo(DeathCause.NOT_ENOUGH_TIME)));
+        assertThat(es.propertyFor(individuals.get(1)).isDead(), is(false));
     }
 
     /**

@@ -91,7 +91,7 @@ public class TestReactionRuleAllPersonsInRoom {
                 will(returnValue(eca));
         }});
         ReactionRuleAllPersonsInRoom rule = new ReactionRuleAllPersonsInRoom();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         return rule;
     }
     

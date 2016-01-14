@@ -35,7 +35,7 @@ public class TestAbstractPotentialChangeRule {
             this.wantsToChange = wantsToChange;
             Mockery context = new Mockery();
             EvacuationState mock = context.mock(EvacuationState.class);
-            this.setEvacuationSimulationProblem(mock);
+            this.setEvacuationState(mock);
             is = new TestIndividualState();
             context.checking(new Expectations() {
                 {

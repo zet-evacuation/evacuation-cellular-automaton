@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -39,6 +40,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
     private Individual individual;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
+    private EvacuationStateControllerInterface ec;
     private TestIndividualState is;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
@@ -53,6 +55,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
         is.addIndividual(individual);
+        ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -71,7 +74,8 @@ public class TestInitialPotentialAttractivityOfExitRule {
         individual.setCell(cell);
         cell.getState().setIndividual(individual);
 
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
+        rule.setEvacuationStateController(ec);
         eca.addIndividual(cell, individual);
     }
 
@@ -94,9 +98,11 @@ public class TestInitialPotentialAttractivityOfExitRule {
     
     @Test
     public void testDeadIfNoPotentials() {
+        context.checking(new Expectations() {{
+                exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
+            }});
         rule.execute(cell);
-        assertThat(is.isDead(individual), is(true));
-        assertThat(is.getDeathCause(individual), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        context.assertIsSatisfied();
     }
 
     @Test
@@ -104,9 +110,11 @@ public class TestInitialPotentialAttractivityOfExitRule {
         StaticPotential sp = new StaticPotential();
         eca.addStaticPotential(sp);
 
+        context.checking(new Expectations() {{
+                exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
+            }});
         rule.execute(cell);
-        assertThat(is.isDead(individual), is(true));
-        assertThat(is.getDeathCause(individual), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        context.assertIsSatisfied();
     }
     
     @Test
@@ -116,7 +124,7 @@ public class TestInitialPotentialAttractivityOfExitRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(is.isDead(individual), is(false));
+        //assertThat(is.isDead(individual), is(false));
         assertThat(individual.getStaticPotential(), is(same(sp)));
     }
 

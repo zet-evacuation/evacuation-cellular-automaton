@@ -46,8 +46,6 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  */
 public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements EvacuationCellularAutomatonInterface {
 
-    private boolean recordingStarted;
-
     /**
      * the state of the cellular automaton.
      */
@@ -60,10 +58,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         /** If a simulation is finished. in this case all individuals are removed or in save areas. */
         FINISHED
     }
-    /** An ArrayList of all Individual objects in the cellular automaton. */
-    //private List<Individual> individuals;
-    /** An ArrayList of all Individual objects, which are marked as "dead". */
-    //private List<Individual> deadIndividuals;
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
     private List<ExitCell> exits;
     /** A map of rooms to identification numbers. */
@@ -85,7 +79,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private double absoluteMaxSpeed;
     private double secondsPerStep;
     private double stepsPerSecond;
-    private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
     /** A {@code TreeMap} of all StaticPotentials. */
     private final HashMap<Integer, StaticPotential> staticPotentials;
     /** The safe potential*/
@@ -109,7 +102,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         stepsPerSecond = 1;
         state = State.READY;
         floorNames = new LinkedList<>();
-        recordingStarted = false;
         staticPotentials = new HashMap<>();
         dynamicPotential = new DynamicPotential();
         safePotential = new StaticPotential();

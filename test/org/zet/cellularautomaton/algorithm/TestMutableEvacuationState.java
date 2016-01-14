@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.LinkedList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,7 +16,7 @@ import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestDefaultEvacuationState {
+public class TestMutableEvacuationState {
     private final Mockery context = new Mockery();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
@@ -23,20 +24,22 @@ public class TestDefaultEvacuationState {
     public void testRemoveIndividuals() {
         ParameterSet ps = context.mock(ParameterSet.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
-        EvacuationState es = new DefaultEvacuationState(ps, eca);
         Individual toEvacuate = builder.build();
         Individual notToEvacuate = builder.build();
         
+        LinkedList<Individual> individuals = new LinkedList<>();
+        individuals.add(toEvacuate);
+        individuals.add(notToEvacuate);
+        
+        EvacuationState es = new MutableEvacuationState(ps, eca, individuals);
+
         context.checking(new Expectations() {{
             allowing(eca).setIndividualEvacuated(toEvacuate);
         }});
         
-        es.getIndividualState().addIndividual(toEvacuate);
-        es.getIndividualState().addIndividual(notToEvacuate);
-
         es.markIndividualForRemoval(toEvacuate);
         es.removeMarkedIndividuals();
-        assertThat(es.getIndividualState().getIndividuals(), not(hasItem(toEvacuate)));
-        assertThat(es.getIndividualState().getIndividuals(), hasItem(notToEvacuate));
+        assertThat(es.getIndividualState().getRemainingIndividuals(), not(hasItem(toEvacuate)));
+        assertThat(es.getIndividualState().getRemainingIndividuals(), hasItem(notToEvacuate));
     }
 }

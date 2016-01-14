@@ -1,16 +1,12 @@
 package org.zet.cellularautomaton.algorithm;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -22,69 +18,67 @@ public class IndividualState implements Iterable<Individual> {
 
     private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
 
-    private final List<Individual> individuals = new LinkedList<>();
+    private final List<Individual> initialIndividuals = new LinkedList<>();
+    private final List<Individual> remainingIndividuals = new LinkedList<>();
     private final Set<Individual> deadIndividuals = new HashSet<>();
     private final Set<Individual> safeIndividuals = new HashSet<>();
     /** An ArrayList of all Individual objects, which are already out of the simulation because they are evacuated. */
     private final Set<Individual> evacuatedIndividuals = new HashSet<>();
-    private final Map<Individual, DeathCause> deathCause = new HashMap<>();
+    //private final Map<Individual, DeathCause> deathCause = new HashMap<>();
     private int notSaveIndividualsCount = 0;
     private int initialIndividualCount;
 
     /**
-     * Returns the number of individuals that were in the cellular automaton when the simulation starts.
+     * Returns the number of initialIndividuals that were in the cellular automaton when the simulation starts.
      *
-     * @return the number of individuals
+     * @return the number of initialIndividuals
      */
     public int getInitialIndividualCount() {
         return initialIndividualCount;
     }
 
     protected void addIndividual(Individual i) {
-        if (individuals.contains(i)) {
+        if (initialIndividuals.contains(i)) {
             throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
         } else {
-            individuals.add(i);
+            initialIndividuals.add(i);
+            remainingIndividuals.add(i);
         }
 
         notSaveIndividualsCount++;
     }
     
     /**
-     * Returns the number of individuals that currently in the cellular automaton.
+     * Returns the number of initialIndividuals that currently in the cellular automaton.
      *
-     * @return the number of individuals in the cellular automaton
+     * @return the number of initialIndividuals in the cellular automaton
      */
-    public int getIndividualCount() {
-        return individuals.size();
+    public int getRemainingIndividualCount() {
+        return remainingIndividuals.size();
     }
 
     /**
-     * Returns a list of all individuals that are active in the simulation. The list does not contain individuals which
-     * are dead or evacuated. Safe individuals are contained in the list.
+     * Returns a list of all initialIndividuals that are active in the simulation. The list does not contain
+     * individuals which are dead or evacuated. Safe initialIndividuals are contained in the list.
      *
-     * @return list of active individuals
+     * @return list of active initialIndividuals
      */
     public List<Individual> getRemainingIndividuals() {
-        List<Individual> remaining = new ArrayList<>(individuals.size() - evacuatedIndividuals.size());
-
-        individuals.stream().filter(i -> !(isEvacuated(i) || isDead(i))).forEach(i -> remaining.add(i));
-
-        return Collections.unmodifiableList(remaining);
+        return Collections.unmodifiableList(remainingIndividuals);
     }
 
     /**
-     * Returns a view of all individuals.
+     * Returns a view of all initialIndividuals.
      *
      * @return the view
      */
-    public List<Individual> getIndividuals() {
-        return Collections.unmodifiableList(individuals);
+    public List<Individual> getInitialIndividuals() {
+        return Collections.unmodifiableList(initialIndividuals);
     }
 
     @Override
     public Iterator<Individual> iterator() {
-        return individuals.iterator();
+        return initialIndividuals.iterator();
     }
 
     /**
@@ -97,7 +91,7 @@ public class IndividualState implements Iterable<Individual> {
      * @return if the individual is already safe
      */
     public boolean isSafe(Individual i) {
-        if (!(individuals.contains(i) || safeIndividuals.contains(i))) {
+        if (!(initialIndividuals.contains(i) || safeIndividuals.contains(i))) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
         return safeIndividuals.contains(i);
@@ -117,18 +111,18 @@ public class IndividualState implements Iterable<Individual> {
     }
 
     /**
-     * Removes an individual from the list of all individuals of the building and adds it to the list of individuals,
-     * which are out of the simulation because the are evacuated.
+     * Removes an individual from the list of all initialIndividuals of the building and adds it to the list of initialIndividuals,
+ which are out of the simulation because the are evacuated.
      *
-     * @throws java.lang.IllegalArgumentException if the the specific individual does not exist in the list individuals
+     * @throws java.lang.IllegalArgumentException if the the specific individual does not exist in the list initialIndividuals
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      */
     public void setIndividualEvacuated(Individual i) {
-        if (!individuals.contains(i)) {
+        if (!initialIndividuals.contains(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
         setSafe(i);
-        individuals.remove(i);
+        remainingIndividuals.remove(i);
 
         evacuatedIndividuals.add(i);
     }
@@ -140,14 +134,14 @@ public class IndividualState implements Iterable<Individual> {
      * @return the evacuation status
      */
     public boolean isEvacuated(Individual i) {
-        if (!(individuals.contains(i) || evacuatedIndividuals.contains(i))) {
+        if (!(initialIndividuals.contains(i) || evacuatedIndividuals.contains(i))) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
         return evacuatedIndividuals.contains(i);
     }
 
     /**
-     * Returns a view of all evacuated individuals.
+     * Returns a view of all evacuated initialIndividuals.
      *
      * @return the view
      */
@@ -159,33 +153,13 @@ public class IndividualState implements Iterable<Individual> {
         return evacuatedIndividuals.size();
     }
 
-    public void die(Individual i, DeathCause cause) {
-        if (!individuals.remove(i)) {
+    public void die(Individual i) {
+        if (!remainingIndividuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
         deadIndividuals.add(i);
-        deathCause.put(i, cause);
+        
         notSaveIndividualsCount--;
-    }
-
-    public boolean isDead(Individual i) {
-        if(!(individuals.contains(i) || deadIndividuals.contains(i) || safeIndividuals.contains(i))) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-        }
-        return deadIndividuals.contains(i);        
-    }
-
-    /**
-     * Returns the {@link DeathCause} of an individual.
-     *
-     * @param i the individual
-     * @return the cause
-     */
-    public DeathCause getDeathCause(Individual i) {
-        if( !isDead(i)) {
-            throw new IllegalArgumentException("Individual " + i + " is not dead.");
-        }
-        return deathCause.get(i);
     }
 
     public int deadIndividualsCount() {
@@ -193,25 +167,12 @@ public class IndividualState implements Iterable<Individual> {
     }
 
     /**
-     * Returns a view of all dead individuals.
+     * Returns a view of all dead initialIndividuals.
      *
      * @return the view
      */
     public Collection<Individual> getDeadIndividuals() {
         return Collections.unmodifiableSet(deadIndividuals);
-    }
-
-    /**
-     * Calculates the number of individuals that died by a specified death cause.
-     *
-     * @param deathCause the death cause
-     * @return the number of individuals died by the death cause
-     */
-    public int getDeadIndividualCount(DeathCause deathCause) {
-        int count = 0;
-        count = getDeadIndividuals().stream().filter(i -> getDeathCause(i) == deathCause).
-                map(_item -> 1).reduce(count, Integer::sum);
-        return count;
     }
 
     public int getNotSafeIndividualsCount() {

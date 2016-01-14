@@ -98,6 +98,6 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * @param cell the cell the rule is executed on, containing an individual
      */
     protected void handleWithoutTarget(EvacCell cell) {
-        InitialPotentialShortestPathRule.assignShortestPathPotential(cell, this.es);
+        InitialPotentialShortestPathRule.assignShortestPathPotential(cell, this.es, this.ec);
     }
 }

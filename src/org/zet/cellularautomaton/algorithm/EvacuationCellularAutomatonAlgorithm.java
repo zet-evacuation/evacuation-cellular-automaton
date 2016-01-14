@@ -61,7 +61,9 @@ public class EvacuationCellularAutomatonAlgorithm
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<Collection<Individual>, Iterator<Individual>> reorder;
-    EvacuationState es = new DefaultEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton());
+    EvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
+            Collections.EMPTY_LIST);
+    EvacuationStateController ec = null;
 
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
@@ -74,17 +76,13 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected void initialize() {
         initRulesAndState();
-        
-        for( Individual i : getProblem().getIndividuals()) {
-            es.getIndividualState().addIndividual(i);
-        }
-        
+
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
 
         getProblem().getCellularAutomaton().start();
-        Individual[] individualsCopy = es.getIndividualState().getIndividuals().toArray(
-                new Individual[es.getIndividualState().getIndividuals().size()]);
+        Individual[] individualsCopy = es.getIndividualState().getInitialIndividuals().toArray(
+                new Individual[es.getIndividualState().getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
             Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
             EvacCell c = i.getCell();
@@ -96,15 +94,16 @@ public class EvacuationCellularAutomatonAlgorithm
         es.removeMarkedIndividuals();
     }
 
-
     public void setNeededTime(int i) {
         es.setNeededTime(i);
     }
 
     private void initRulesAndState() {
-        es = new DefaultEvacuationState(getProblem().getParameterSet(), getProblem().getCellularAutomaton());
+        es = new MutableEvacuationState(getProblem().getParameterSet(), getProblem().getCellularAutomaton(),
+                getProblem().getIndividuals());
+        ec = new EvacuationStateController((MutableEvacuationState) es);
         for (EvacuationRule r : getProblem().getRuleSet()) {
-            r.setEvacuationSimulationProblem(es);
+            r.setEvacuationState(es);
         }
     }
 
@@ -119,7 +118,7 @@ public class EvacuationCellularAutomatonAlgorithm
                 getProblem().getParameterSet().probabilityDynamicDecrease());
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
-                es.getIndividualState().getInitialIndividualCount() - es.getIndividualState().getIndividualCount(),
+                es.getIndividualState().getInitialIndividualCount() - es.getIndividualState().getRemainingIndividualCount(),
                 es.getIndividualState().getInitialIndividualCount()));
     }
 
@@ -136,11 +135,11 @@ public class EvacuationCellularAutomatonAlgorithm
     protected EvacuationSimulationResult terminate() {
         // let die all individuals which are not already dead and not safe
         if (es.getIndividualState().getNotSafeIndividualsCount() != 0) {
-            Individual[] individualsCopy = es.getIndividualState().getIndividuals().toArray(
-                    new Individual[es.getIndividualState().getIndividuals().size()]);
+            Individual[] individualsCopy = es.getIndividualState().getRemainingIndividuals().toArray(
+                    new Individual[es.getIndividualState().getRemainingIndividuals().size()]);
             for (Individual i : individualsCopy) {
                 if (!es.getIndividualState().isSafe(i.getCell().getState().getIndividual())) {
-                    es.getIndividualState().die(i, DeathCause.NOT_ENOUGH_TIME);
+                    ec.die(i, DeathCause.NOT_ENOUGH_TIME);
                 }
             }
         }
@@ -179,7 +178,7 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected final double getProgress() {
         double timeProgress = super.getProgress();
-        double individualProgress = 1.0 - ((double) es.getIndividualState().getIndividualCount()
+        double individualProgress = 1.0 - ((double) es.getIndividualState().getRemainingIndividualCount()
                 / getProblem().getIndividuals().size());
         return Math.max(individualProgress, timeProgress);
     }
@@ -192,7 +191,7 @@ public class EvacuationCellularAutomatonAlgorithm
      */
     @Override
     public final Iterator<EvacCell> iterator() {
-        return new CellIterator(reorder.apply(es.getIndividualState().getIndividuals()));
+        return new CellIterator(reorder.apply(es.getIndividualState().getRemainingIndividuals()));
     }
 
     /**

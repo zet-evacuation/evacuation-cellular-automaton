@@ -77,7 +77,7 @@ public class TestReactionRuleCompleteRoom {
             }
         });
         ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
         return rule;
     }
     

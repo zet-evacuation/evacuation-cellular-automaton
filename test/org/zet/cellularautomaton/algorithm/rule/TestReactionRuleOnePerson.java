@@ -28,7 +28,7 @@ public class TestReactionRuleOnePerson {
     @Test
     public void alertsImmediately() {
         ReactionRuleOnePerson rule = new ReactionRuleOnePerson();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
 
         RoomCell cell = new RoomCell(0, 0);
         Individual i = builder.build();
@@ -46,7 +46,7 @@ public class TestReactionRuleOnePerson {
     @Test
     public void alertLate() {
         ReactionRuleOnePerson rule = new ReactionRuleOnePerson();
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
 
         RoomCell cell = new RoomCell(0, 0);
         Individual evacuee = builder.withAge(0).withReactionTime(7).buildAndReset();

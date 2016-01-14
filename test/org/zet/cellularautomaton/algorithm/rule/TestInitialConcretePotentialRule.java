@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,6 +19,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -29,27 +29,30 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * @author Jan-Philipp Kappmeier
  */
 public class TestInitialConcretePotentialRule {
+
     private final Mockery context = new Mockery();
     InitialConcretePotentialRule rule;
     EvacCell cell;
     Individual i;
     EvacuationCellularAutomaton eca;
     EvacuationState es;
+    EvacuationStateControllerInterface ec;
     TestIndividualState is;
     private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
-    
+
     static class TestIndividualState extends IndividualState {
+
         @Override
         protected void addIndividual(Individual i) {
             super.addIndividual(i);
         }
     }
-    
+
     private void init() {
         init(0);
     }
-    
+
     private void init(double familiarity) {
         rule = new InitialConcretePotentialRule();
         Room room = context.mock(Room.class);
@@ -58,6 +61,7 @@ public class TestInitialConcretePotentialRule {
         eca = new EvacuationCellularAutomaton();
         i = builder.withAge(30).withFamiliarity(familiarity).build();
         is.addIndividual(i);
+        ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -76,10 +80,11 @@ public class TestInitialConcretePotentialRule {
         i.setCell(cell);
         cell.getState().setIndividual(i);
 
-        rule.setEvacuationSimulationProblem(es);
+        rule.setEvacuationState(es);
+        rule.setEvacuationStateController(ec);
         eca.addIndividual(cell, i);
     }
-    
+
     @Test
     public void testAppliccableIfNotEmpty() {
         init();
@@ -89,7 +94,7 @@ public class TestInitialConcretePotentialRule {
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }
-    
+
     @Test
     public void testNotApplicableIfPotentialSet() {
         init();
@@ -97,26 +102,32 @@ public class TestInitialConcretePotentialRule {
         i.setStaticPotential(sp);
         assertThat(rule, is(not(executeableOn(cell))));
     }
-    
+
     @Test
     public void testDeadIfNoPotentials() {
         init();
+        context.checking(new Expectations() {{
+                exactly(1).of(ec).die(i, DeathCause.EXIT_UNREACHABLE);
+            }});
         rule.execute(cell);
-        assertThat(is.isDead(i), is(true));
-        assertThat(is.getDeathCause(i), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        context.assertIsSatisfied();
     }
-    
+
     @Test
     public void testDeadIfPotentialsBad() {
         init();
         StaticPotential sp = new StaticPotential();
-
         eca.addStaticPotential(sp);
+
+        context.checking(new Expectations() {
+            {
+                exactly(1).of(ec).die(i, DeathCause.EXIT_UNREACHABLE);
+            }
+        });
         rule.execute(cell);
-        assertThat(is.isDead(i), is(true));
-        assertThat(is.getDeathCause(i), is(equalTo(DeathCause.EXIT_UNREACHABLE)));        
+        context.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSinglePotentialTaken() {
         init();
@@ -124,52 +135,51 @@ public class TestInitialConcretePotentialRule {
         sp.setPotential(cell, 1);
 
         eca.addStaticPotential(sp);
-        
+
         rule.execute(cell);
-        assertThat(is.isDead(i), is(false));
         assertThat(i.getStaticPotential(), is(same(sp)));
     }
-    
+
     @Test
     public void testHighFamiliarityChoosesBest() {
         init(1);
         StaticPotential targetPotential = initFamiliarPotential();
-        
+
         rule.execute(cell);
-        assertThat(is.isDead(i), is(false));
+//        assertThat(is.isDead(i), is(false));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
-    
+
     @Test
     public void testLowFamiliarityChoosesAttractive() {
         init(0);
         StaticPotential targetPotential = initUnfamiliarPotential();
-        
+
         rule.execute(cell);
-        assertThat(is.isDead(i), is(false));
+//        assertThat(is.isDead(i), is(false));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
-    
+
     @Test
     public void testMediumFamiliarity() {
         init(0.5);
         StaticPotential targetPotential = initMediumPotential();
-        
+
         rule.execute(cell);
-        assertThat(is.isDead(i), is(false));
+//        assertThat(is.isDead(i), is(false));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
-    
+
     @Test
     public void testAttractivePotentialShort() {
         init(0.5);
         StaticPotential targetPotential = initAttractiveShortPotential();
-        
+
         rule.execute(cell);
-        assertThat(is.isDead(i), is(false));
+//        assertThat(is.isDead(i), is(false));
         assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
-    
+
     private StaticPotential initFamiliarPotential() {
         StaticPotential shortDistance = new StaticPotential();
         StaticPotential mediumDistance = new StaticPotential();
@@ -177,7 +187,7 @@ public class TestInitialConcretePotentialRule {
         shortDistance.setPotential(cell, 1);
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
-        
+
         shortDistance.setAttractivity(10);
         mediumDistance.setAttractivity(50);
         longDistance.setAttractivity(100);
