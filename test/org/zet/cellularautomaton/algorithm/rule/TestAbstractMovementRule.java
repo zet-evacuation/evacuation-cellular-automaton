@@ -23,7 +23,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zetool.common.util.Direction8;
 
@@ -36,6 +36,8 @@ public class TestAbstractMovementRule {
     private final static IndividualBuilder builder = new IndividualBuilder();
     private Mockery context = new Mockery();
     private TestIndividualState is;
+    private Individual individual;
+    private IndividualProperty ip;
 
     private class FakeEvacCell extends EvacCell {
         private final boolean isFreeNeighbors;
@@ -105,10 +107,14 @@ public class TestAbstractMovementRule {
         };
         EvacuationState es = context.mock(EvacuationState.class);
         is = new TestIndividualState();
+        individual = builder.build();
+        ip = new IndividualProperty(individual);
         context.checking(new Expectations() {
             {
                 allowing(es).getIndividualState();
                 will(returnValue(is));
+                allowing(es).propertyFor(with(individual));
+                will(returnValue(ip));
             }
         });
         rule.setEvacuationState(es);
@@ -116,25 +122,22 @@ public class TestAbstractMovementRule {
         
     @Test
     public void testPossibleTargetsNeighbors() {
-        Individual i = builder.withAge(0).build();
-
         EvacCell cell = new FakeEvacCell(true);
-        cell.getState().setIndividual(i);
+        cell.getState().setIndividual(individual);
         
         assertThat(rule.computePossibleTargets(cell, true), is(empty()));
 
         cell = new FakeEvacCell(false);
-        cell.getState().setIndividual(i);
+        cell.getState().setIndividual(individual);
         
         assertThat(rule.computePossibleTargets(cell, false), is(empty()));
     }
     
     @Test
     public void testSafeNeighbors() {
-        Individual i = builder.build();
-        is.addIndividual(i);
-        is.setSafe(i);
-        i.setDirection(DEFAULT_DIRECTION);
+        is.addIndividual(individual);
+        is.setSafe(individual);
+        ip.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new LinkedList<>();
         
@@ -150,7 +153,7 @@ public class TestAbstractMovementRule {
         cellList.add(n4);
         
         FakeEvacCell cell = new FakeEvacCell();
-        cell.getState().setIndividual(i);
+        cell.getState().setIndividual(individual);
         cell.neighbors = cellList;
         
         
@@ -162,9 +165,8 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testDirections() {
-        Individual individual = builder.build();
         is.addIndividual(individual);
-        individual.setDirection(DEFAULT_DIRECTION);
+        ip.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new ArrayList<>(Direction8.values().length);
 
@@ -205,8 +207,7 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testSway() {
-        Individual individual = builder.build();
-        individual.setDirection(DEFAULT_DIRECTION);
+        ip.setDirection(DEFAULT_DIRECTION);
         assertThat(rule.getSwayDelay(individual, Direction8.Top), is(closeTo(0, 10e-8)));
         assertThat(rule.getSwayDelay(individual, Direction8.TopLeft), is(closeTo(0.5, 10e-8)));
         assertThat(rule.getSwayDelay(individual, Direction8.TopRight), is(closeTo(0.5, 10e-8)));
@@ -229,10 +230,9 @@ public class TestAbstractMovementRule {
             }
         });        
         
-        Individual i = builder.build();
-        rule.setStepEndTime(i, 2.68);
+        rule.setStepEndTime(individual, 2.68);
 
-        assertThat(i.getStepEndTime(), is(closeTo(2.68, 10e-8)));
+        assertThat(ip.getStepEndTime(), is(closeTo(2.68, 10e-8)));
     }
     
     @Test

@@ -53,7 +53,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         possibleTargets = new ArrayList<>();
         List<EvacCell> neighbors = onlyFreeNeighbours ? fromCell.getFreeNeighbours() : fromCell.getNeighbours();
 
-        Direction8 dir = fromCell.getState().getIndividual().getDirection();
+        Direction8 dir = es.propertyFor(fromCell.getState().getIndividual()).getDirection();
 
         for (EvacCell c : neighbors) {
             if (es.getIndividualState().isSafe(fromCell.getState().getIndividual()) && !c.isSafe()) {
@@ -114,13 +114,13 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      * @return
      */
     protected double getSwayDelay(Individual ind, Direction8 direction) {
-        if (ind.getDirection() == direction) {
+        if (es.propertyFor(ind).getDirection() == direction) {
             return 0;
-        } else if (ind.getDirection() == direction.getClockwise()
-                || ind.getDirection() == direction.getCounterClockwise()) {
+        } else if (es.propertyFor(ind).getDirection() == direction.getClockwise()
+                || es.propertyFor(ind).getDirection() == direction.getCounterClockwise()) {
             return 0.5;
-        } else if (ind.getDirection() == direction.getClockwise().getClockwise()
-                || ind.getDirection() == direction.getCounterClockwise().getCounterClockwise()) {
+        } else if (es.propertyFor(ind).getDirection() == direction.getClockwise().getClockwise()
+                || es.propertyFor(ind).getDirection() == direction.getCounterClockwise().getCounterClockwise()) {
             return 1;
         } else {
             return 2;
@@ -136,7 +136,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      * @param d the (real) time when the movement is over
      */
     protected void setStepEndTime(Individual i, double d) {
-        i.setStepEndTime(d);
+        es.propertyFor(i).setStepEndTime(d);
         es.setNeededTime((int) Math.ceil(d));
     }
 

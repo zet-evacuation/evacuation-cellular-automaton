@@ -79,6 +79,6 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
                 mostAttractivePotential = sp;
             }
         }
-        cell.getState().getIndividual().setStaticPotential(mostAttractivePotential);
+        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(mostAttractivePotential);
     }
 }

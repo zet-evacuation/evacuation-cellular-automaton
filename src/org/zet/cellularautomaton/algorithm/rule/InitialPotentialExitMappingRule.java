@@ -90,7 +90,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         if (potential == null) {
             throw new IllegalStateException("The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
         }
-        cell.getState().getIndividual().setStaticPotential(potential);
+        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(potential);
     }
 
     /**

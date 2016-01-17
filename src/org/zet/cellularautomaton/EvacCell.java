@@ -98,8 +98,9 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         }
         c1.getState().setIndividual(c2i);
         c2.getState().setIndividual(c1i);
-        c1i.setCell(c2);
-        c2i.setCell(c1);
+        //c1i.setCell(c2);
+        //c2i.setCell(c1);
+        throw new IllegalStateException("Fix individual change");
     }
 
     /**
@@ -442,7 +443,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
 
         if (cloneIndividual && this.getState().getIndividual() != null) {
             aClone.getState().setIndividual(new Individual(this.getState().getIndividual()));
-            aClone.getState().getIndividual().setCell(aClone);
+            //aClone.getState().getIndividual().setCell(aClone);
         } else {
             aClone.getState().setIndividual(this.getState().getIndividual());
         }

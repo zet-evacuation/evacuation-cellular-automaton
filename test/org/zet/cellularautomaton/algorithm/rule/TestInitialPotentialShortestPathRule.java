@@ -21,6 +21,7 @@ import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -34,11 +35,11 @@ public class TestInitialPotentialShortestPathRule {
     private InitialPotentialShortestPathRule rule;
     private EvacCell cell;
     private Individual individual;
+    private IndividualProperty ip;
     private TestIndividualState is;
     private EvacuationStateControllerInterface ec;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
-    private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
     
     @Before
@@ -50,6 +51,7 @@ public class TestInitialPotentialShortestPathRule {
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
         is.addIndividual(individual);
+        ip = new IndividualProperty(individual);                
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
             {
@@ -60,13 +62,15 @@ public class TestInitialPotentialShortestPathRule {
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(individual));
                 allowing(room).removeIndividual(with(individual));
                 allowing(es).getStatisticWriter();
-                will(returnValue(statisticWriter));
+                will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).getIndividualState();
                 will(returnValue(is));
+                allowing(es).propertyFor(individual);
+                will(returnValue(ip));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        individual.setCell(cell);
+        ip.setCell(cell);
         cell.getState().setIndividual(individual);
 
         rule.setEvacuationState(es);
@@ -80,6 +84,12 @@ public class TestInitialPotentialShortestPathRule {
         assertThat(rule, is(not(executeableOn(cell))));
 
         individual = builder.build();
+        context.checking(new Expectations() {
+            {
+                allowing(es).propertyFor(individual);
+                will(returnValue(ip));
+            }
+        });
         cell.getState().setIndividual(individual);
         assertThat(rule, is(executeableOn(cell)));
     }
@@ -87,7 +97,7 @@ public class TestInitialPotentialShortestPathRule {
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
-        individual.setStaticPotential(sp);
+        ip.setStaticPotential(sp);
         assertThat(rule, is(not(executeableOn(cell))));
     }
     
@@ -120,7 +130,7 @@ public class TestInitialPotentialShortestPathRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(individual.getStaticPotential(), is(same(sp)));
+        assertThat(ip.getStaticPotential(), is(same(sp)));
     }
     
     @Test
@@ -128,7 +138,7 @@ public class TestInitialPotentialShortestPathRule {
         StaticPotential targetPotential = initPotential();
         
         rule.execute(cell);
-        assertThat(individual.getStaticPotential(), is(same(targetPotential)));
+        assertThat(ip.getStaticPotential(), is(same(targetPotential)));
     }
     
     private StaticPotential initPotential() {

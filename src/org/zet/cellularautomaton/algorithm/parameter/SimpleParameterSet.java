@@ -19,13 +19,16 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.Collection;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * @author Jan-Philipp Kappmeier
  */
 public class SimpleParameterSet extends AbstractParameterSet {
-
+    PropertyAccess es;
+    
     public SimpleParameterSet() {
         super(0, 1, 0, 0, 0, 4);
     }
@@ -46,7 +49,7 @@ public class SimpleParameterSet extends AbstractParameterSet {
      */
     @Override
     public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
-        StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
+        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
         final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
         return statPotlDiff;
     }
@@ -58,8 +61,8 @@ public class SimpleParameterSet extends AbstractParameterSet {
 
     @Override
     public double movementThreshold(Individual i) {
-        double individualSpeed = i.getRelativeSpeed();
-        double cellSpeed = i.getCell().getSpeedFactor();
+        double individualSpeed = es.propertyFor(i).getRelativeSpeed();
+        double cellSpeed = es.propertyFor(i).getCell().getSpeedFactor();
         return individualSpeed * cellSpeed;
     }
 

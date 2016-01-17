@@ -60,7 +60,6 @@ public class TestSimpleMovementRule {
         assertThat(rule, is(not(executeableOn(cell))));
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         cell.getState().setIndividual(i);
-        i.setCell(cell);
         assertThat(rule, is(executeableOn(cell)));
     }
 

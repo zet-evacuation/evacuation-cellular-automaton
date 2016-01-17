@@ -21,6 +21,7 @@ import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zetool.rndutils.RandomUtils;
@@ -42,7 +43,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
     final private double PANIC_THRESHOLD;
     final private double MINIMUM_PANIC = 0.0d;
     final private double MAXIMUM_PANIC = 1.0d;
-
+    protected PropertyAccess es;
     /**
      * Creates a new instance with some static values stored in the {@code PropertyContainer}.
      */
@@ -74,7 +75,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
      */
     @Override
     public double changePotentialThreshold(Individual i) {
-        return i.getPanic() * panicToProbOfPotentialChangeRatio();
+        return es.propertyFor(i).getPanic() * panicToProbOfPotentialChangeRatio();
     }
 
     /**
@@ -96,8 +97,8 @@ public class DefaultParameterSet extends AbstractParameterSet {
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
         }
-        final double panic = referenceCell.getState().getIndividual().getPanic();
-        StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
+        final double panic = es.propertyFor(referenceCell.getState().getIndividual()).getPanic();
+        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
 
         if (dynamicPotential != null) {
             final double dynPotDiff = (-1) * (dynamicPotential.getPotential(referenceCell) - dynamicPotential.getPotential(targetCell));
@@ -128,9 +129,9 @@ public class DefaultParameterSet extends AbstractParameterSet {
     // das ist in der NonWaitingMovementRule nicht der Fall
     @Override
     public double movementThreshold(Individual i) {
-        double individualSpeed = i.getRelativeSpeed();
-        double cellSpeed = i.getCell().getSpeedFactor();
-        // double exhaustion = i.getExhaustion();  brauchen wir nur wenn wir in
+        double individualSpeed = es.propertyFor(i).getRelativeSpeed();
+        double cellSpeed = es.propertyFor(i).getCell().getSpeedFactor();
+        // double exhaustion = es.propertyFor(i).getExhaustion();  brauchen wir nur wenn wir in
         //currentspeed exhaustion nicht einrechenen
         return individualSpeed * cellSpeed;
     }
@@ -151,12 +152,12 @@ public class DefaultParameterSet extends AbstractParameterSet {
         final double MIN_EXHAUSTION = 0d;
         final double MAX_EXHAUSTION = 0.99d;
         double newExhaustion;
-        if (individual.getCell().equals(targetCell)) {
+        if (es.propertyFor(individual).getCell().equals(targetCell)) {
             newExhaustion = (0 / individual.getMaxSpeed() - 0.5) * individual.getExhaustionFactor()
-                    + individual.getExhaustion();
+                    + es.propertyFor(individual).getExhaustion();
         } else {
-            newExhaustion = (individual.getRelativeSpeed() / individual.getMaxSpeed() - 0.5)
-                    * individual.getExhaustionFactor() + individual.getExhaustion();
+            newExhaustion = (es.propertyFor(individual).getRelativeSpeed() / individual.getMaxSpeed() - 0.5)
+                    * individual.getExhaustionFactor() + es.propertyFor(individual).getExhaustion();
         }
 
         if (newExhaustion < MIN_EXHAUSTION) {
@@ -164,22 +165,22 @@ public class DefaultParameterSet extends AbstractParameterSet {
         } else if (newExhaustion > MAX_EXHAUSTION) {
             newExhaustion = MAX_EXHAUSTION;
         }
-        individual.setExhaustion(newExhaustion);
+        es.propertyFor(individual).setExhaustion(newExhaustion);
 
         return newExhaustion;
     }
 
     @Override
     public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
-        List<EvacCell> possibleNeighbours = individual.getCell().getNeighbours();
+        List<EvacCell> possibleNeighbours = es.propertyFor(individual).getCell().getNeighbours();
         if (possibleNeighbours.isEmpty()) {
-            return individual.getPanic();
+            return es.propertyFor(individual).getPanic();
         }
 
         double[] potentials = new double[possibleNeighbours.size()];
         int idx = 0;
         for (EvacCell cell : possibleNeighbours) {
-            double potentialDifference = individual.getStaticPotential().getPotential(individual.getCell()) - individual.getStaticPotential().getPotential(cell);
+            double potentialDifference = es.propertyFor(individual).getStaticPotential().getPotential(es.propertyFor(individual).getCell()) - es.propertyFor(individual).getStaticPotential().getPotential(cell);
             potentials[idx] = Math.exp(potentialDifference);
             idx++;
         }
@@ -193,7 +194,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
             chosenNeighbour = RandomUtils.getInstance().chooseRandomlyAbsolute(potentials);
         }
 
-        double newPanic = individual.getPanic();
+        double newPanic = es.propertyFor(individual).getPanic();
         if (failures < PANIC_THRESHOLD) {
             newPanic = newPanic - individual.getPanicFactor() * getPanicDecrease() * (PANIC_THRESHOLD - failures);
         } else {
@@ -203,14 +204,14 @@ public class DefaultParameterSet extends AbstractParameterSet {
         newPanic = Math.max(MINIMUM_PANIC, newPanic);
         newPanic = Math.min(MAXIMUM_PANIC, newPanic);
 
-        individual.setPanic(newPanic);
+        es.propertyFor(individual).setPanic(newPanic);
         return newPanic;
 
         /* alter Code */
 //            // update panic only if the individual is not standing on a savecell or an exitcell
-//            if (! ( (individual.getCell() instanceof ds.ca.SaveCell) || (individual.getCell() instanceof ds.ca.ExitCell) )) {
+//            if (! ( (es.propertyFor(individual).getCell() instanceof ds.ca.SaveCell) || (es.propertyFor(individual).getCell() instanceof ds.ca.ExitCell) )) {
 //
-//                double panic = individual.getPanic();
+//                double panic = es.propertyFor(individual).getPanic();
 //
 //                //person will gar nicht laufen (slack usw.)
 //                if( preferedCells.size() == 0 )
@@ -218,10 +219,10 @@ public class DefaultParameterSet extends AbstractParameterSet {
 //
 //                Iterator<Cell> it = preferedCells.iterator();
 //                EvacCell neighbour = it.next();
-//                double panicFactor = individual.getPanicFactor();
-//                if(individual.getCell() != targetCell){
+//                double panicFactor = es.propertyFor(individual).getPanicFactor();
+//                if(es.propertyFor(individual).getCell() != targetCell){
 //                    individual.setPanic(Math.max(panic - getPanicDecrease()*0.17, MINIMUM_PANIC));
-//                    return individual.getPanic();
+//                    return es.propertyFor(individual).getPanic();
 //                }
 //
 //                int skippedCells = 0;
@@ -235,7 +236,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
 //
 //                individual.setPanic( Math.min(panic, MAXIMUM_PANIC));
 //                }
-//                return individual.getPanic();
+//                return es.propertyFor(individual).getPanic();
             /* Ende alter Code */
     }
 
@@ -245,16 +246,16 @@ public class DefaultParameterSet extends AbstractParameterSet {
      */
     @Override
     public double updatePreferredSpeed(Individual i) {
-        //double oldSpeed = i.getRelativeSpeed();
+        //double oldSpeed = es.propertyFor(i).getRelativeSpeed();
         double maxSpeed = i.getMaxSpeed();
-        double newSpeed = maxSpeed + ((i.getPanic() * panicWeightOnSpeed()) - (i.getExhaustion() * exhaustionWeightOnSpeed()));
-        i.setRelativeSpeed(Math.max(0.0001, Math.min(maxSpeed, newSpeed)));
+        double newSpeed = maxSpeed + ((es.propertyFor(i).getPanic() * panicWeightOnSpeed()) - (es.propertyFor(i).getExhaustion() * exhaustionWeightOnSpeed()));
+        es.propertyFor(i).setRelativeSpeed(Math.max(0.0001, Math.min(maxSpeed, newSpeed)));
 
-        //        if( i.getMaxSpeed() < newSpeed )
-//            i.setRelativeSpeed( i.getMaxSpeed() );
+        //        if( es.propertyFor(i).getMaxSpeed() < newSpeed )
+//            i.setRelativeSpeed( es.propertyFor(i).getMaxSpeed() );
 //        else
 //            i.setRelativeSpeed( newSpeed );
-        return i.getRelativeSpeed();
+        return es.propertyFor(i).getRelativeSpeed();
     }
 
     protected double slacknessToIdleRatio() {

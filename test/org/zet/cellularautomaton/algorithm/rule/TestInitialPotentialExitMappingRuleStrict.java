@@ -13,9 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.States;
 import org.junit.Before;
 import org.junit.Test;
-import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
@@ -35,13 +35,13 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * @author Jan-Philipp Kappmeier
  */
 public class TestInitialPotentialExitMappingRuleStrict {
-
+    States test;
     private final Mockery context = new Mockery();
     InitialPotentialExitMappingRuleStrict rule;
     EvacCell cell;
     Individual i;
+    private IndividualProperty ip;
     EvacuationCellularAutomaton eca;
-    private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     EvacuationSimulationProblem p;
     ExitCell target;
     EvacuationState es;
@@ -63,7 +63,11 @@ public class TestInitialPotentialExitMappingRuleStrict {
         es = context.mock(EvacuationState.class);
         TestIndividualState is = new TestIndividualState();
         i = builder.build();
+        ip = new IndividualProperty(i);
         is.addIndividual(i);
+        test = context.states("normal-test");
+        test.become("normal-test");
+
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -73,13 +77,15 @@ public class TestInitialPotentialExitMappingRuleStrict {
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
-                will(returnValue(statisticWriter));
+                will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).getIndividualState();
                 will(returnValue(is));
+                allowing(es).propertyFor(i); when(test.is("normal-test"));
+                will(returnValue(ip));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        i.setCell(cell);
+        ip.setCell(cell);
         cell.getState().setIndividual(i);
         rule.setEvacuationState(es);
         eca.addIndividual(cell, i);
@@ -91,7 +97,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
     @Test
     public void executableEvenIfPotentialAssigned() {
         StaticPotential sp = new StaticPotential();
-        i.setStaticPotential(sp);
+        ip.setStaticPotential(sp);
         assertThat(rule, is(executeableOn(cell)));
     }
 
@@ -117,7 +123,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         eca.addStaticPotential(sp);
 
         rule.execute(cell);
-        assertThat(i.getStaticPotential(), is(equalTo(sp)));
+        assertThat(ip.getStaticPotential(), is(equalTo(sp)));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -144,7 +150,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
         eca.addStaticPotential(sp2);
 
         rule.execute(cell);
-        assertThat(i.getStaticPotential(), is(equalTo(sp2)));
+        assertThat(ip.getStaticPotential(), is(equalTo(sp2)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -152,23 +158,25 @@ public class TestInitialPotentialExitMappingRuleStrict {
         eca.setIndividualToExitMapping(_unused -> null);
         context.checking(new Expectations() {{
                 allowing(es).propertyFor(i);
-                will(returnValue(new IndividualProperty()));
+                will(returnValue(new IndividualProperty(i)));
             }});
         rule.execute(cell);
     }
 
     @Test
     public void deadIndividualWithoutTarget() {
+        test.become("special-case");
         eca.setIndividualToExitMapping(_unused -> null);
-        IndividualProperty ip = new IndividualProperty() {
+        IndividualProperty ip = new IndividualProperty(i) {
 
             @Override
             public boolean isDead() {
                 return true;
             }            
         };
+        
         context.checking(new Expectations() {{
-                allowing(es).propertyFor(i);
+                allowing(es).propertyFor(i); when(test.is("special-case"));
                 will(returnValue(ip));
             }});
         rule.execute(cell);

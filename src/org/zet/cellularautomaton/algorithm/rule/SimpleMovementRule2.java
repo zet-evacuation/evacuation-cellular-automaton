@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class SimpleMovementRule2 extends AbstractMovementRule {
 
-    Individual ind;
+    Individual individual;
 
     /**
      * Decides whether the rule can be applied to the current cell. Returns {@code true} if the cell is occupied by an
@@ -54,9 +54,9 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 
     @Override
     protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
-        ind = cell.getState().getIndividual();
-        if (ind.isAlarmed()) {
-            if (canMove(ind)) {
+        individual = cell.getState().getIndividual();
+        if (es.propertyFor(individual).isAlarmed()) {
+            if (canMove(individual)) {
                 if (isDirectExecute()) { // we are in a "normal" simulation
                     EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                     setMoveRuleCompleted(true);
@@ -73,14 +73,14 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
             noMove();
         }
 
-        recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(individual, es));
     }
 
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
-        if (ind.getCell().equals(targetCell)) {
+        if (es.propertyFor(individual).getCell().equals(targetCell)) {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
-                    .addWaitedTimeToStatistic(ind, es.getTimeStep());
+                    .addWaitedTimeToStatistic(individual, es.getTimeStep());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
                     .addCellToWaitingStatistic(targetCell, es.getTimeStep());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
@@ -100,13 +100,13 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * step bevore it can move again. But, even if the individual does not move, the view direction may be changed.
      */
     protected void noMove() {
-        ind.setStepStartTime(ind.getStepEndTime());
-        setStepEndTime(ind, ind.getStepEndTime() + 1);
-        es.moveIndividual(ind.getCell(), ind.getCell());
+        es.propertyFor(individual).setStepStartTime(es.propertyFor(individual).getStepEndTime());
+        setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + 1);
+        es.moveIndividual(es.propertyFor(individual).getCell(), es.propertyFor(individual).getCell());
 
-        ind.setDirection(getDirection());
+        es.propertyFor(individual).setDirection(getDirection());
         setMoveRuleCompleted(false);
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(ind, es.getTimeStep(), 0);
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), 0);
     }
 
     /**
@@ -115,7 +115,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @return
      */
     protected Direction8 getDirection() {
-        Direction8 current = ind.getDirection();
+        Direction8 current = es.propertyFor(individual).getDirection();
         Direction8[] possible = {current.getClockwise().getClockwise(),
             current.getClockwise(),
             current,
@@ -125,11 +125,11 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         int randomDirection = rnd.nextInt(5);
         Direction8 ret = possible[randomDirection];
         int minDistance = Integer.MAX_VALUE;
-        EvacCell cell = ind.getCell();
+        EvacCell cell = es.propertyFor(individual).getCell();
         for (Direction8 dir : possible) {
             EvacCell target = cell.getNeighbor(dir);
             if (target != null && !target.isOccupied()) {
-                StaticPotential staticPotential = ind.getStaticPotential();
+                StaticPotential staticPotential = es.propertyFor(individual).getStaticPotential();
                 int cellDistance = staticPotential.getPotential(cell);
                 if (cellDistance < minDistance) {
                     minDistance = cellDistance;
@@ -154,19 +154,19 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * updated.
      */
     private void initializeMove(EvacCell from, EvacCell targetCell) {
-        Individual ind = from.getState().getIndividual();
-        if (ind == null) {
+        Individual individual = from.getState().getIndividual();
+        if (individual == null) {
             throw new IllegalStateException("No Individual on from cell " + from);
         }
         this.es.increaseDynamicPotential(targetCell);
 
         if (from instanceof DoorCell && targetCell instanceof DoorCell) {
-            if (es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
-                speed = es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed());
+            if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
+                speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed());
                 speed *= targetCell.getSpeedFactor() * 1;
-                ind.setStepStartTime(Math.max(ind.getCell().getOccupiedUntil(), ind.getStepEndTime()));
-                setStepEndTime(ind, ind.getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
-                ind.setDirection(ind.getDirection());
+                es.propertyFor(individual).setStepStartTime(Math.max(es.propertyFor(individual).getCell().getOccupiedUntil(), es.propertyFor(individual).getStepEndTime()));
+                setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
+                es.propertyFor(individual).setDirection(es.propertyFor(individual).getDirection());
             } else {
                 throw new IllegalStateException("Individuum has no speed.");
             }
@@ -176,16 +176,16 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
 
             double stairSpeedFactor = targetCell instanceof StairCell ? ((StairCell) targetCell).getStairSpeedFactor(direction) * 1.1 : 1;
             dist = direction.distance() * 0.4; // calculate distance
-            double add = getSwayDelay(ind, direction); // add a delay if the person is changing direction
+            double add = getSwayDelay(individual, direction); // add a delay if the person is changing direction
 
-            if (es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
-                speed = es.getCellularAutomaton().absoluteSpeed(ind.getRelativeSpeed());
+            if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
+                speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed());
                 double factor = targetCell.getSpeedFactor() * stairSpeedFactor;
                 //System.out.println( "Speed factor: " + factor + " stairspeed: " + stairSpeedFactor );
                 speed *= factor;
-                ind.setStepStartTime(Math.max(from.getOccupiedUntil(), ind.getStepEndTime()));
-                setStepEndTime(ind, ind.getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + add * es.getCellularAutomaton().getStepsPerSecond());
-                ind.setDirection(direction);
+                es.propertyFor(individual).setStepStartTime(Math.max(from.getOccupiedUntil(), es.propertyFor(individual).getStepEndTime()));
+                setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + add * es.getCellularAutomaton().getStepsPerSecond());
+                es.propertyFor(individual).setDirection(direction);
             } else {
                 throw new IllegalStateException("Individuum has no speed.");
             }
@@ -199,12 +199,12 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @param targetCell
      */
     protected void performMove(EvacCell from, EvacCell targetCell) {
-        Individual ind = from.getState().getIndividual();
+        Individual individual = from.getState().getIndividual();
 
-        from.setOccupiedUntil(ind.getStepEndTime());
+        from.setOccupiedUntil(es.propertyFor(individual).getStepEndTime());
         es.moveIndividual(from, targetCell);
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(ind, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(ind, (int) Math.ceil(ind.getStepEndTime()), dist);
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(individual, (int) Math.ceil(es.propertyFor(individual).getStepEndTime()), dist);
     }
 
     /**
@@ -228,14 +228,14 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     }
 
     /**
-     * Decides, if an individual can move in this step. This is possible, when the last move was already finished at a
+     * Decides, if an individual can move in individual step. This is possible, when the last move was already finished at a
      * time earlier than this time step.
      *
-     * @param i An individual with a given parameterSet
+     * @param individual An individual with a given parameterSet
      * @return {@code true} if the individual moves or {@code false} otherwise.
      */
-    protected boolean canMove(Individual i) {
-        return es.getTimeStep() >= i.getStepEndTime();
+    protected boolean canMove(Individual individual) {
+        return es.getTimeStep() >= es.propertyFor(individual).getStepEndTime();
     }
 
     @Override
@@ -249,9 +249,9 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         if (cell1.equals(cell2)) {
             throw new IllegalArgumentException("The cells are equal. Can't swap on equal cells.");
         }
-        ind = cell1.getState().getIndividual();
+        individual = cell1.getState().getIndividual();
         initializeMove(cell1, cell2);
-        ind = cell2.getState().getIndividual();
+        individual = cell2.getState().getIndividual();
         initializeMove(cell2, cell1); // do not actually move!
         es.swapIndividuals(cell1, cell2);
     }

@@ -22,6 +22,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -35,11 +36,11 @@ public class TestInitialPotentialRandomRule {
     private InitialPotentialRandomRule rule;
     private EvacCell cell;
     private Individual individual;
+    private IndividualProperty ip;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
     private EvacuationStateControllerInterface ec;
     private TestIndividualState is;
-    private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Before
@@ -51,6 +52,7 @@ public class TestInitialPotentialRandomRule {
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
         is.addIndividual(individual);
+        ip = new IndividualProperty(individual);
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
             {
@@ -61,13 +63,15 @@ public class TestInitialPotentialRandomRule {
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(individual));
                 allowing(room).removeIndividual(with(individual));
                 allowing(es).getStatisticWriter();
-                will(returnValue(statisticWriter));
+                will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).getIndividualState();
                 will(returnValue(is));
+                allowing(es).propertyFor(individual);
+                will(returnValue(ip));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        individual.setCell(cell);
+        ip.setCell(cell);
         cell.getState().setIndividual(individual);
 
         rule.setEvacuationState(es);
@@ -81,6 +85,12 @@ public class TestInitialPotentialRandomRule {
         assertThat(rule, is(not(executeableOn(cell))));
 
         individual = builder.build();
+        context.checking(new Expectations() {
+            {
+                allowing(es).propertyFor(individual);
+                will(returnValue(ip));
+            }
+        });
         cell.getState().setIndividual(individual);
         assertThat(rule, is(executeableOn(cell)));
     }
@@ -88,7 +98,7 @@ public class TestInitialPotentialRandomRule {
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
-        individual.setStaticPotential(sp);
+        ip.setStaticPotential(sp);
         assertThat(rule, is(not(executeableOn(cell))));
     }
     
@@ -121,7 +131,7 @@ public class TestInitialPotentialRandomRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(individual.getStaticPotential(), is(same(sp)));
+        assertThat(ip.getStaticPotential(), is(same(sp)));
     }
     
     @Test

@@ -3,6 +3,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jmock.AbstractExpectations.returnValue;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import org.jmock.Expectations;
@@ -15,7 +16,9 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import sun.security.ec.ECKeyFactory;
 
 /**
  *
@@ -44,11 +47,19 @@ public class TestEvacuateIndividualsRule {
 
         ExitCell exit = new ExitCell(0, 0);
         Individual toEvacuate = new IndividualBuilder().build();
+        Individual notToEvacuate = new IndividualBuilder().build();
+        context.checking(new Expectations() {
+            {
+                allowing(es).propertyFor(toEvacuate);
+                will(returnValue(new IndividualProperty(toEvacuate)));
+                allowing(es).propertyFor(notToEvacuate);
+                will(returnValue(new IndividualProperty(notToEvacuate)));
+            }
+        });
         exit.getState().setIndividual(toEvacuate);
         assertThat(rule, is(executeableOn(exit)));
 
         RoomCell other = new RoomCell(1, 1);
-        Individual notToEvacuate = new IndividualBuilder().build();
         other.getState().setIndividual(notToEvacuate);
         assertThat(rule, is(not(executeableOn(other))));
     }
@@ -71,7 +82,7 @@ public class TestEvacuateIndividualsRule {
         context.checking(new Expectations() {
             {
                 allowing(es).getStatisticWriter();
-                will(returnValue(new CAStatisticWriter()));
+                will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).getTimeStep();
                 will(returnValue(0));
                 allowing(es).getCellularAutomaton();

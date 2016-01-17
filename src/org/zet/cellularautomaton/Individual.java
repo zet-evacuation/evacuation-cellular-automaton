@@ -15,9 +15,7 @@
  */
 package org.zet.cellularautomaton;
 
-import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zetool.common.util.Direction8;
 import org.zetool.container.mapping.Identifiable;
 
 /**
@@ -27,8 +25,7 @@ import org.zetool.container.mapping.Identifiable;
  * {@link StaticPotential}, which guides the person to an exit.
  */
 public class Individual implements Identifiable {
-    
-    // read only properties
+
     private final int age;
     private final double familiarity;
     private final double panicFactor;
@@ -38,28 +35,6 @@ public class Individual implements Identifiable {
     /** The number of the individual. Each Individual of an CA should have a unique identifier. */
     private final int number;
     private final double reactionTime;
-    
-    private double panic = 0.0001;
-    private double exhaustion = 0;
-    private double relativeSpeed;
-    private boolean alarmed;
-    private EvacCell cell;
-    private StaticPotential staticPotential;
-    /**
-     * The (accurate) time when the moving of the individual is over. Initializes with 0 as step 0 is the first cellular
-     * automaton step.
-     */
-    private double stepEndTime = 0;
-    /** The (accurate) time when the first moving of the individual starts. Initializes invalid. */
-    private double stepStartTime = -1;
-    /** The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells). */
-    private int safetyTime;
-    private boolean isEvacuated = false;
-    private PotentialMemory potentialMemoryStart;
-    private PotentialMemory potentialMemoryEnd;
-    private int memoryIndex;
-    int cellCountToChange;
-    Direction8 dir = Direction8.Top;
 
     public Individual(int number, int age, double familiarity, double panicFactor, double slackness, double exhaustionFactor, double relativeMaxSpeed, double reactionTime) {
         this.number = number;
@@ -71,99 +46,11 @@ public class Individual implements Identifiable {
         this.relativeMaxSpeed = relativeMaxSpeed;
         this.reactionTime = reactionTime;
 
-        // Simulation state variables
-        this.relativeSpeed = relativeMaxSpeed;
-        this.alarmed = false;
-        this.cell = null;
-        this.staticPotential = null;
-        safetyTime = -1;
-
-        /**
-         * Calibratingfactor - The bigger {@code cellCountToChange}, the longer an individual moves before a possible
-         * potential change
-         */
-        cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
-        potentialMemoryStart = new PotentialMemory<>();
-        potentialMemoryEnd = new PotentialMemory<>();
-        memoryIndex = 0;
     }
 
     Individual(Individual individual) {
         this(individual.number, individual.age, individual.familiarity, individual.panicFactor, individual.slackness,
                 individual.exhaustionFactor, individual.relativeMaxSpeed, individual.reactionTime);
-    }
-
-    public PotentialMemory getPotentialMemoryStart() {
-        return potentialMemoryStart;
-    }
-
-    public PotentialMemory getPotentialMemoryEnd() {
-        return potentialMemoryEnd;
-    }
-
-    public void setPotentialMemoryStart(PotentialMemory start) {
-        potentialMemoryStart = start;
-    }
-
-    public void setPotentialMemoryEnd(PotentialMemory end) {
-        potentialMemoryEnd = end;
-    }
-
-    public int getCellCountToChange() {
-        return cellCountToChange;
-    }
-
-    /**
-     * Used for some potential change rule...
-     *
-     * @return
-     */
-    public int getMemoryIndex() {
-        return memoryIndex;
-    }
-
-    /**
-     * Used for some potential change rule...
-     *
-     * @param index
-     */
-    public void setMemoryIndex(int index) {
-        memoryIndex = index;
-    }
-
-    public double getStepEndTime() {
-        return stepEndTime;
-    }
-
-    public void setStepEndTime(double stepEndTime) {
-        this.stepEndTime = stepEndTime;
-    }
-
-    public double getStepStartTime() {
-        return stepStartTime;
-    }
-
-    public void setStepStartTime(double stepStartTime) {
-        this.stepStartTime = stepStartTime;
-    }
-
-
-    /**
-     * Returns the time when the individual is safe.
-     *
-     * @return The time when the individual is safe.
-     */
-    public int getSafetyTime() {
-        return safetyTime;
-    }
-
-    /**
-     * Sets the time when the individual is evacuated.
-     *
-     * @param time The time when the individual is evacuated.
-     */
-    public void setSafetyTime(int time) {
-        safetyTime = time;
     }
 
     /**
@@ -182,42 +69,6 @@ public class Individual implements Identifiable {
      */
     public double getReactionTime() {
         return reactionTime;
-    }
-
-    /**
-     * Alarms the Individual and also alarms the room of the cell of the individual.
-     *
-     * @param alarmed decides wheather the individual is alarmed, or if it is stopped being alarmed
-     */
-    public void setAlarmed(boolean alarmed) {
-        this.alarmed = alarmed;
-    }
-
-    /**
-     * Get the setAlarmed status of the individual.
-     *
-     * @return true if the individual is alarmed, false otherwise
-     */
-    public boolean isAlarmed() {
-        return alarmed;
-    }
-
-    /**
-     * Get the exhaustion of the individual.
-     *
-     * @return The exhaustion
-     */
-    public double getExhaustion() {
-        return exhaustion;
-    }
-
-    /**
-     * Set the exhaustion of the Individual to a specified value.
-     *
-     * @param val the exhaustion
-     */
-    public void setExhaustion(double val) {
-        this.exhaustion = val;
     }
 
     /**
@@ -257,27 +108,6 @@ public class Individual implements Identifiable {
         return number;
     }
 
-    public Direction8 getDirection() {
-        return dir;
-    }
-
-    public void setDirection(Direction8 dir) {
-        this.dir = dir;
-    }
-
-    /**
-     * Get the panic of the individual.
-     *
-     * @return The panic
-     */
-    public double getPanic() {
-        return panic;
-    }
-
-    public void setPanic(double val) {
-        this.panic = val;
-    }
-
     public double getPanicFactor() {
         return panicFactor;
     }
@@ -301,61 +131,6 @@ public class Individual implements Identifiable {
     }
 
     /**
-     * Set the current relative speed of the individual. The relative speed is a percentage of the maximum speed .
-     *
-     * @param relativeSpeed the new speed
-     */
-    public void setRelativeSpeed(double relativeSpeed) {
-        this.relativeSpeed = relativeSpeed;
-    }
-
-    /**
-     * Returns the current relative speed of the individual. The relativity is with respect to the individuals max
-     * speed.
-     *
-     * @return the current speed
-     */
-    public double getRelativeSpeed() {
-        return relativeSpeed;
-    }
-
-    /**
-     * Set the {@link ds.ca.EvacCell} on which the {@code Individual} stands.
-     *
-     * @param c the cell
-     */
-    public void setCell(EvacCell c) {
-        this.cell = c;
-    }
-
-    /**
-     * Returns the {@link ds.ca.EvacCell} on which the {@code Individual} stands.
-     *
-     * @return The EvacCell
-     */
-    public EvacCell getCell() {
-        return cell;
-    }
-
-    /**
-     * Set the staticPotential of the individual.
-     *
-     * @param sp
-     */
-    public void setStaticPotential(StaticPotential sp) {
-        this.staticPotential = sp;
-    }
-
-    /**
-     * Get the staticPotential of the individual.
-     *
-     * @return The staticPotential
-     */
-    public StaticPotential getStaticPotential() {
-        return staticPotential;
-    }
-
-    /**
      * Returns a string "Individual" and the id number of the individual.
      *
      * @return the string representation
@@ -372,10 +147,8 @@ public class Individual implements Identifiable {
      */
     public String toStringProperties() {
         return "Familiarity: " + familiarity + "\n"
-                + "Panic: " + panic + "\n"
                 + "Panic factor: " + panicFactor + "\n"
                 + "Slackness: " + slackness + "\n"
-                + "Exhaustion: " + exhaustion + "\n"
                 + "Exhaustion factor: " + exhaustionFactor + "\n"
                 + "MaxSpeed: " + relativeMaxSpeed;
     }

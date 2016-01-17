@@ -37,9 +37,9 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
      */
     @Override
     protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
-        ind = cell.getState().getIndividual();
+        individual = cell.getState().getIndividual();
 
-        if (canMove(ind)) {
+        if (canMove(individual)) {
             if (isDirectExecute()) {
                 EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                 setMoveRuleCompleted(true);
@@ -51,7 +51,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
         } else { // Individual can't move, it is already moving
             setMoveRuleCompleted(false);
         }
-        recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(individual, es));
     }
 
     /**

@@ -36,11 +36,11 @@ public class ReactionRuleCompleteRoom extends AbstractReactionRule {
     @Override
     protected void onExecute(EvacCell cell) {
         final Individual individual = cell.getState().getIndividual();
-        if (!individual.isAlarmed()) {
-            if (individual.getCell().getRoom().isAlarmed()) {
-                individual.setAlarmed(true);
+        if (!es.propertyFor(individual).isAlarmed()) {
+            if (es.propertyFor(individual).getCell().getRoom().isAlarmed()) {
+                es.propertyFor(individual).setAlarmed(true);
             } else if (es.getTimeStep() >= individual.getReactionTime() * es.getCellularAutomaton().getStepsPerSecond()) {
-                individual.setAlarmed(true);
+                es.propertyFor(individual).setAlarmed(true);
                 cell.getRoom().setAlarmstatus(true);
             }
         }

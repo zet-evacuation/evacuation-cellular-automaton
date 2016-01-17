@@ -19,7 +19,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 public class MutableEvacuationState implements EvacuationState {
 
     private final IndividualState individualState = new IndividualState();
-    public CAStatisticWriter caStatisticWriter = new CAStatisticWriter();
+    public CAStatisticWriter caStatisticWriter;
     private final ParameterSet parameterSet;
     private final EvacuationCellularAutomatonInterface ca;
     private final Map<Individual, IndividualProperty> individualProperties;
@@ -41,7 +41,7 @@ public class MutableEvacuationState implements EvacuationState {
         this.ca = ca;
         individualProperties = new HashMap<>();
         for( Individual i : individuals) {
-            individualProperties.put(i, new IndividualProperty());
+            individualProperties.put(i, new IndividualProperty(i));
             individualState.addIndividual(i);
         }        
     }

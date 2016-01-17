@@ -29,6 +29,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 
 import java.util.LinkedList;
 import org.zet.cellularautomaton.RoomImpl;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 
 /**
  * This class helps you to store all the parts of a simulation that are
@@ -55,7 +56,7 @@ import org.zet.cellularautomaton.RoomImpl;
  *
  */
 public class VisualResultsRecorder {
-
+    static PropertyAccess es;
     /** 
      * The current simulation time. Serves as a time stamp for the
      * storage of actions.
@@ -309,8 +310,8 @@ public class VisualResultsRecorder {
                     EvacCell cell = room.getCell(x, y);
                     if (cell != null && cell.getState().getIndividual() != null) {
                         EvacCell clonedCell = cellMapping.get(cell);
-                        StaticPotential origPot = cell.getState().getIndividual().getStaticPotential();
-                        clonedCell.getState().getIndividual().setStaticPotential(potentialMapping.get(origPot));
+                        StaticPotential origPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
+                        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(potentialMapping.get(origPot));
                     }
                 }
             }

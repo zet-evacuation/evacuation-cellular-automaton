@@ -24,6 +24,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResultsForIndividuals;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.exception.GroupOfIndividualsException;
@@ -60,6 +61,7 @@ public class IndividualStatistic {
     private HashMap<Individual, ArrayList<Double>> exhaustion;
     HashMap<Individual, ArrayList<Integer>> currentSpeedTimes;
     private HashMap<Individual, ArrayList<Double>> currentSpeed;
+    PropertyAccess es;
 
     public IndividualStatistic(StoredCAStatisticResultsForIndividuals stored) {
         safetyTimes = stored.getHashMapSafetyTimes();
@@ -241,7 +243,7 @@ public class IndividualStatistic {
      */
     public double getCurrentSpeed(Individual ind, int t) throws OneIndNoValueBecauseAlreadySafeException, OneIndNoPotentialException, IncorrectTimeException, MissingStoredValueException {
         if (is.isSafe(ind)) {
-            if (t > ind.getSafetyTime()) {
+            if (t > es.propertyFor(ind).getSafetyTime()) {
                 throw new OneIndNoValueBecauseAlreadySafeException(ind);
             }
         }
@@ -315,7 +317,7 @@ public class IndividualStatistic {
      */
     public double calculateAverageSpeed(Individual ind, int from, int to) throws MissingStoredValueException, OneIndNoValueBecauseAlreadySafeException, OneIndNoPotentialException, IncorrectTimeException {
         if (is.isSafe(ind)) {
-            if (from >= ind.getSafetyTime()) {
+            if (from >= es.propertyFor(ind).getSafetyTime()) {
                 throw new OneIndNoValueBecauseAlreadySafeException(ind);
             }
         }
@@ -335,7 +337,7 @@ public class IndividualStatistic {
         }
 
         if (is.isSafe(ind)) {
-            int safetyTime = ind.getSafetyTime();
+            int safetyTime = es.propertyFor(ind).getSafetyTime();
             if (to > safetyTime) {
                 to = safetyTime;
             }
@@ -434,7 +436,7 @@ public class IndividualStatistic {
     public double calculateMaxSpeed(Individual ind, int from, int to) throws MissingStoredValueException, OneIndNoValueBecauseAlreadySafeException, OneIndNoPotentialException, IncorrectTimeException {
 
         if (is.isSafe(ind)) {
-            if (from >= ind.getSafetyTime()) {
+            if (from >= es.propertyFor(ind).getSafetyTime()) {
                 throw new OneIndNoValueBecauseAlreadySafeException(ind);
             }
         }
@@ -455,7 +457,7 @@ public class IndividualStatistic {
         }
 
         if (is.isSafe(ind)) {
-            int safetyTime = ind.getSafetyTime();
+            int safetyTime = es.propertyFor(ind).getSafetyTime();
             if (to > safetyTime) {
                 to = safetyTime;
             }
@@ -889,7 +891,7 @@ public class IndividualStatistic {
      */
     public double getExhaustion(Individual ind, int t) throws OneIndNoValueBecauseAlreadySafeException, OneIndNoPotentialException, IncorrectTimeException {
         if (is.isSafe(ind)) {
-            if (t > ind.getSafetyTime()) {
+            if (t > es.propertyFor(ind).getSafetyTime()) {
                 throw new OneIndNoValueBecauseAlreadySafeException(ind);
             }
         }
@@ -975,7 +977,7 @@ public class IndividualStatistic {
      */
     public double calculateAverageExhaustion(Individual ind, int from, int to) throws OneIndNoPotentialException, IncorrectTimeException {
         if (is.isSafe(ind)) {
-            int safetyTime = ind.getSafetyTime();
+            int safetyTime = es.propertyFor(ind).getSafetyTime();
             if (to > safetyTime) {
                 to = safetyTime;
             }
@@ -1073,7 +1075,7 @@ public class IndividualStatistic {
             if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (exhaustionTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
-                        int safetyTime = ind.getSafetyTime();
+                        int safetyTime = es.propertyFor(ind).getSafetyTime();
                         if (to > safetyTime) {
                             to = safetyTime;
                         }
@@ -1155,7 +1157,7 @@ public class IndividualStatistic {
             if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (exhaustionTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
-                        int safetyTime = ind.getSafetyTime();
+                        int safetyTime = es.propertyFor(ind).getSafetyTime();
                         if (to > safetyTime) {
                             to = safetyTime;
                         }
@@ -1612,7 +1614,7 @@ public class IndividualStatistic {
      */
     public double getPanic(Individual ind, int t) throws OneIndNoValueBecauseAlreadySafeException, OneIndNoPotentialException, IncorrectTimeException {
         if (is.isSafe(ind)) {
-            if (t > ind.getSafetyTime()) {
+            if (t > es.propertyFor(ind).getSafetyTime()) {
                 throw new OneIndNoValueBecauseAlreadySafeException(ind);
             }
         }
@@ -1698,7 +1700,7 @@ public class IndividualStatistic {
      */
     public double calculateAveragePanic(Individual ind, int from, int to) throws OneIndNoPotentialException, IncorrectTimeException {
         if (is.isSafe(ind)) {
-            int safetyTime = ind.getSafetyTime();
+            int safetyTime = es.propertyFor(ind).getSafetyTime();
             if (to > safetyTime) {
                 to = safetyTime;
             }
@@ -1796,7 +1798,7 @@ public class IndividualStatistic {
             if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (panicTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
-                        int safetyTime = ind.getSafetyTime();
+                        int safetyTime = es.propertyFor(ind).getSafetyTime();
                         if (to > safetyTime) {
                             to = safetyTime;
                         }
@@ -1878,7 +1880,7 @@ public class IndividualStatistic {
             if (!(ip.getDeathCause() != null && ip.getDeathCause().compareTo(org.zet.cellularautomaton.DeathCause.EXIT_UNREACHABLE) == 0)) {
                 if (panicTimes.containsKey(ind)) {
                     if (is.isSafe(ind)) {
-                        int safetyTime = ind.getSafetyTime();
+                        int safetyTime = es.propertyFor(ind).getSafetyTime();
                         if (to > safetyTime) {
                             to = safetyTime;
                         }
@@ -2506,7 +2508,7 @@ public class IndividualStatistic {
             throw new IncorrectTimeException();
         }
         if (is.isSafe(ind)) {
-            return (ind.getSafetyTime() <= time);
+            return (es.propertyFor(ind).getSafetyTime() <= time);
         } else {
             return false;
         }

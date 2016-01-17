@@ -37,7 +37,7 @@ public class ICEM09EvacuateIndividualsRule extends AbstractEvacuationRule {
         Individual i = cell.getState().getIndividual();
         boolean testval = false;
         if( (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell)) {
-            testval = i.getStepEndTime() < es.getTimeStep() + 1;
+            testval = es.propertyFor(i).getStepEndTime() < es.getTimeStep() + 1;
         }
         return (i != null) && (cell instanceof org.zet.cellularautomaton.ExitCell) && testval;
     }

@@ -52,12 +52,12 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
         double minDistanceToEvacArea = Double.MAX_VALUE;
         double distanceToEvacArea;
         for (StaticPotential sp : staticPotentials) {
-            distanceToEvacArea = sp.getDistance(individual.getCell());
+            distanceToEvacArea = sp.getDistance(es.propertyFor(individual).getCell());
             if (distanceToEvacArea >= 0 && distanceToEvacArea <= minDistanceToEvacArea) {
-                minDistanceToEvacArea = sp.getDistance(individual.getCell());
+                minDistanceToEvacArea = sp.getDistance(es.propertyFor(individual).getCell());
             }
-            if (sp.getDistance(individual.getCell()) >= 0) {// if this StaticPotential can lead the individual to an ExitCell
-                potentialToLengthOfWayMapper.add(new PotentialMemory<>(individual.getCell(), sp));
+            if (sp.getDistance(es.propertyFor(individual).getCell()) >= 0) {// if this StaticPotential can lead the individual to an ExitCell
+                potentialToLengthOfWayMapper.add(new PotentialMemory<>(es.propertyFor(individual).getCell(), sp));
             }
         }
         
@@ -78,11 +78,11 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
                     best = i;
                 }
             }
-            individual.setStaticPotential(potentialToLengthOfWayMapper.get(best).getStaticPotential());
+            es.propertyFor(individual).setStaticPotential(potentialToLengthOfWayMapper.get(best).getStaticPotential());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic(individual, minDistanceToEvacArea, potentialToLengthOfWayMapper.get(best).getStaticPotential().getDistance(cell));
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, 0);
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, individual.getExhaustion());
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, individual.getPanic());
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, es.propertyFor(individual).getExhaustion());
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, es.propertyFor(individual).getPanic());
         }
     }
 }

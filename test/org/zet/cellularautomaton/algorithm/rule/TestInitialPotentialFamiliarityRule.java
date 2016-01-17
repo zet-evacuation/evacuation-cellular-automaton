@@ -1,10 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
@@ -22,8 +19,9 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -37,11 +35,11 @@ public class TestInitialPotentialFamiliarityRule {
     private InitialPotentialFamiliarityRule rule;
     private EvacCell cell;
     private Individual individual;
+    private IndividualProperty ip;
     private EvacuationState es;
     private EvacuationStateControllerInterface ec;
     private TestIndividualState is;
     private EvacuationCellularAutomaton eca;
-    private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Before
@@ -52,6 +50,7 @@ public class TestInitialPotentialFamiliarityRule {
         is = new TestIndividualState();
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
+        ip = new IndividualProperty(individual);
         is.addIndividual(individual);
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
@@ -63,13 +62,15 @@ public class TestInitialPotentialFamiliarityRule {
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(individual));
                 allowing(room).removeIndividual(with(individual));
                 allowing(es).getStatisticWriter();
-                will(returnValue(statisticWriter));
+                will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).getIndividualState();
                 will(returnValue(is));
+                allowing(es).propertyFor(individual);
+                will(returnValue(ip));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        individual.setCell(cell);
+        ip.setCell(cell);
         cell.getState().setIndividual(individual);
 
         rule.setEvacuationState(es);
@@ -83,6 +84,12 @@ public class TestInitialPotentialFamiliarityRule {
         assertThat(rule, is(not(executeableOn(cell))));
 
         individual = builder.build();
+        context.checking(new Expectations() {
+            {
+                allowing(es).propertyFor(individual);
+                will(returnValue(ip));
+            }
+        });
         cell.getState().setIndividual(individual);
         assertThat(rule, is(executeableOn(cell)));
     }
@@ -90,7 +97,7 @@ public class TestInitialPotentialFamiliarityRule {
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
-        individual.setStaticPotential(sp);
+        ip.setStaticPotential(sp);
         assertThat(rule, is(not(executeableOn(cell))));
     }
     
@@ -123,7 +130,7 @@ public class TestInitialPotentialFamiliarityRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(individual.getStaticPotential(), is(same(sp)));
+        assertThat(ip.getStaticPotential(), is(same(sp)));
     }
 
     @Test
@@ -142,7 +149,7 @@ public class TestInitialPotentialFamiliarityRule {
         //individual.setFamiliarity(0.667);
         
         rule.execute(cell);
-        assertThat(individual.getStaticPotential(), is(same(shortestPotential)));
+        assertThat(ip.getStaticPotential(), is(same(shortestPotential)));
     }
     
 }

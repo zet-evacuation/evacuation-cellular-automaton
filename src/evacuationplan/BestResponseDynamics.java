@@ -13,6 +13,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 
 /**
  * The class {@code BestResponseDynamics} ...
@@ -24,6 +25,7 @@ public class BestResponseDynamics {
 
     private static final double QUEUEING_TIME_WEIGHT_FACTOR = 0.5;
     private static final double MOVING_TIME_WEIGHT_FACTOR = 0.5;
+    private EvacuationState es;
 
     /**
      * Creates a new instance of {@code BestResponseDynamics}.
@@ -38,7 +40,7 @@ public class BestResponseDynamics {
             c++;
             int swapped = 0;
             for (Individual i : individuals) {
-                swapped += computePotential(i.getCell(), ca);
+                swapped += computePotential(es.propertyFor(i).getCell(), ca);
             }
             System.out.println("Swapped in iteration " + c + ": " + swapped);
             if (swapped == 0) {
@@ -51,7 +53,7 @@ public class BestResponseDynamics {
     public int computePotential(EvacCell cell, EvacuationCellularAutomatonInterface ca) {
         ArrayList<StaticPotential> exits = new ArrayList<>();
         exits.addAll(ca.getStaticPotentials());
-        StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
+        StaticPotential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
         double response = Double.MAX_VALUE;
         for (StaticPotential pot : exits) {
             if (getResponse(ca, cell, pot) < response) {
@@ -60,8 +62,8 @@ public class BestResponseDynamics {
             }
         }
 
-        StaticPotential oldPot = cell.getState().getIndividual().getStaticPotential();
-        cell.getState().getIndividual().setStaticPotential(newPot);
+        StaticPotential oldPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
+        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(newPot);
         if (!oldPot.equals(newPot)) {
             return 1;
         } else {
@@ -73,7 +75,7 @@ public class BestResponseDynamics {
 
         // Constants
         Individual ind = cell.getState().getIndividual();
-        double speed = ind.getRelativeSpeed();
+        double speed = es.propertyFor(ind).getRelativeSpeed();
 
         // Exit dependant values
         double distance = Double.MAX_VALUE;
@@ -99,9 +101,9 @@ public class BestResponseDynamics {
         int queueLength = 0;
         for (Individual otherInd : otherInds) {
             if (!otherInd.equals(ind)) {
-                if (otherInd.getStaticPotential() == pot) {
-                    if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) >= 0) {
-                        if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) < distance) {
+                if (es.propertyFor(otherInd).getStaticPotential() == pot) {
+                    if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) >= 0) {
+                        if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) < distance) {
                             queueLength++;
                         }
                     }

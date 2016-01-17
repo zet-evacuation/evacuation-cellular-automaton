@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.algorithm;
 
 import java.util.List;
+import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
@@ -24,5 +25,7 @@ public interface EvacuationSimulationProblem extends CellularAutomatonSimulation
      * @return the maximal time linit in seconds
      */
     public int getEvacuationStepLimit();
+    
+    public Map<Individual, EvacCell> individualStartPositions();
     
 }

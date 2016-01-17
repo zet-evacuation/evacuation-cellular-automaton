@@ -15,9 +15,11 @@
  */
 package org.zet.cellularautomaton.statistic.results;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
+
 /**
  *
- * @author Sylvie
+ * @author Sylvie Temme
  */
 public class StoredCAStatisticResults {
     
@@ -26,8 +28,8 @@ public class StoredCAStatisticResults {
 
 
     
-    public StoredCAStatisticResults() {
-        storedCAStatisticResultsForIndividuals=new StoredCAStatisticResultsForIndividuals();
+    public StoredCAStatisticResults(EvacuationState es) {
+        storedCAStatisticResultsForIndividuals=new StoredCAStatisticResultsForIndividuals(es);
         storedCAStatisticResultsForCells=new StoredCAStatisticResultsForCells();
     }
     

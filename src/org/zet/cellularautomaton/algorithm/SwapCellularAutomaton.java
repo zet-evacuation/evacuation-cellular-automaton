@@ -21,7 +21,6 @@ import org.zetool.common.util.Direction8;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,7 +39,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
         super(new RandomOrdering());
     }
 
-    public SwapCellularAutomaton(Function<Collection<Individual>, Iterator<Individual>> reorder) {
+    public SwapCellularAutomaton(Function<List<Individual>, Iterator<Individual>> reorder) {
         super(reorder);
     }
 
@@ -97,7 +96,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                 }
 
                 individualPossibleMapping.put(cell.getState().getIndividual(), movement.getPossibleTargets());
-                //movement.move( i, movement.selectTargetCell( i.getCell(), movement.getPossibleTargets() ) );
+                //movement.move( i, movement.selectTargetCell( es.propertyFor(i).getCell(), movement.getPossibleTargets() ) );
             } else {
                 // perform the other rules because this individual has finished its movement for this round
                 while (loop.hasNext()) {
@@ -117,25 +116,25 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                 continue;
             }
             List<EvacCell> possibleTargets = individualPossibleMapping.get(i);
-            EvacCell target = movement.selectTargetCell(i.getCell(), possibleTargets);
+            EvacCell target = movement.selectTargetCell(es.propertyFor(i).getCell(), possibleTargets);
 
             try {
-                if (i.getCell() != target) {
-                    Direction8 dir = i.getCell().getRelative(target);
+                if (es.propertyFor(i).getCell() != target) {
+                    Direction8 dir = es.propertyFor(i).getCell().getRelative(target);
 
                 }
             } catch (AssertionError e) {
                 System.out.println(e);
-                EvacCell target2 = movement.selectTargetCell(i.getCell(), possibleTargets);
+                EvacCell target2 = movement.selectTargetCell(es.propertyFor(i).getCell(), possibleTargets);
             }
 
             if (target.getState().isEmpty()) {
                 // Klappt alles
-                movement.move(i.getCell(), target);
+                movement.move(es.propertyFor(i).getCell(), target);
                 //individualSwapped.add( i );
                 unfinished2.add(i);
             } else {
-                if (target.equals(i.getCell())) {
+                if (target.equals(es.propertyFor(i).getCell())) {
                     unfinished2.add(i);
                 } else {
                     // steht ein individual drauf.
@@ -148,11 +147,11 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                             // das andere individual hat wohl seinen weg ausgeführt!
                             unfinished2.add(i);
                         } else {
-                            EvacCell target2 = movement.selectTargetCell(i2.getCell(), possibleTargets2);
-                            if (i.getCell().equals(target2) && i2.getCell().equals(target)) {
+                            EvacCell target2 = movement.selectTargetCell(es.propertyFor(i2).getCell(), possibleTargets2);
+                            if (es.propertyFor(i).getCell().equals(target2) && es.propertyFor(i2).getCell().equals(target)) {
                                 //if( util.DebugFlags.CA_SWAP )
                                 System.out.println("SWAP Individual " + i.id() + " und Individual " + i2.id());
-                                movement.swap(i.getCell(), i2.getCell());
+                                movement.swap(es.propertyFor(i).getCell(), es.propertyFor(i2).getCell());
                                 individualSwapped.add(i2);
                                 individualSwapped.add(i);
                                 if (unfinished2.contains(i2)) {
@@ -165,7 +164,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                                     if (r instanceof AbstractMovementRule) {
                                         movementFound = true;
                                     } else if (movementFound) {
-                                        r.execute(i.getCell());
+                                        r.execute(es.propertyFor(i).getCell());
                                     }
                                 }
                                 // perform last rules for them
@@ -176,7 +175,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                                     if (r instanceof AbstractMovementRule) {
                                         movementFound = true;
                                     } else if (movementFound) {
-                                        r.execute(i2.getCell());
+                                        r.execute(es.propertyFor(i2).getCell());
                                     }
                                 }
                             } else {
@@ -196,10 +195,10 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
             while (loop.hasNext()) {
                 EvacuationRule r = loop.next();
                 if (r instanceof AbstractMovementRule) {
-                    r.execute(i.getCell());
+                    r.execute(es.propertyFor(i).getCell());
                     movementFound = true;
                 } else if (movementFound) {
-                    r.execute(i.getCell());
+                    r.execute(es.propertyFor(i).getCell());
                 }
             }
         }

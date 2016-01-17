@@ -83,7 +83,7 @@ public class TestEvacuationCellularAutomaton {
         }});
         
         eca.addIndividual(cell, toEvacuate);
-        toEvacuate.setCell(cell);
+        //toEvacuate.setCell(cell);
 
         eca.addIndividual(cell2, notToEvacuate);
     }
@@ -114,10 +114,10 @@ public class TestEvacuationCellularAutomaton {
         RoomCell cell4 = new RoomCell(1, 0, 4, room);
         eca.addIndividual(cell4, deadIndividual);
         
-        eca.setIndividualSave(saveIndividual);
-        evacuatedIndividual.setCell(cell2);
-        eca.setIndividualEvacuated(evacuatedIndividual);
-        deadIndividual.setCell(cell4);
-        eca.setIndividualDead(deadIndividual, DeathCause.NOT_ENOUGH_TIME);
+        //eca.setIndividualSave(saveIndividual);
+        //evacuatedIndividual.setCell(cell2);
+        //eca.setIndividualEvacuated(evacuatedIndividual);
+        //deadIndividual.setCell(cell4);
+        //eca.setIndividualDead(deadIndividual, DeathCause.NOT_ENOUGH_TIME);
     }
 }

@@ -35,14 +35,14 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
      */
     @Override
     protected boolean wantsToChange(Individual individual) {
-        StaticPotential sp = individual.getStaticPotential();
-        int cellCountToChange = individual.getCellCountToChange();
-        int memoryIndex = individual.getMemoryIndex();
-        EvacCell cell = individual.getCell();
+        StaticPotential sp = es.propertyFor(individual).getStaticPotential();
+        int cellCountToChange = es.propertyFor(individual).getCellCountToChange();
+        int memoryIndex = es.propertyFor(individual).getMemoryIndex();
+        EvacCell cell = es.propertyFor(individual).getCell();
 
         // Update the {@code potentialMemory}
         if (memoryIndex == 0) {
-            individual.setPotentialMemoryStart(new PotentialMemory<>(cell, sp));
+            es.propertyFor(individual).setPotentialMemoryStart(new PotentialMemory<>(cell, sp));
         }
         
         boolean retVal = false;
@@ -50,7 +50,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
             retVal = true;
         }
         memoryIndex = (memoryIndex + 1) % cellCountToChange;
-        individual.setMemoryIndex(memoryIndex);
+        es.propertyFor(individual).setMemoryIndex(memoryIndex);
         return retVal;
     }
     
@@ -63,17 +63,17 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
     protected void onExecute(EvacCell cell) {
         // Get the potential of the individual on the {@code cell} as well as some other concerning constants of the individual
         Individual individual = cell.getState().getIndividual();
-        StaticPotential sp = individual.getStaticPotential();
+        StaticPotential sp = es.propertyFor(individual).getStaticPotential();
 
         /**
          * Calibratingfactor - The smaller {@code epsilon}, the lower the probability of a potential-change
          */
         int epsilon = 10;
 
-        individual.setPotentialMemoryEnd(new PotentialMemory<>(cell, sp));
+        es.propertyFor(individual).setPotentialMemoryEnd(new PotentialMemory<>(cell, sp));
 
-        int potentialDifference = individual.getPotentialMemoryStart().getLengthOfWay() - individual.getPotentialMemoryEnd().getLengthOfWay();
-        if ((potentialDifference < epsilon) && (sp == individual.getPotentialMemoryStart().getStaticPotential())) {
+        int potentialDifference = es.propertyFor(individual).getPotentialMemoryStart().getLengthOfWay() - es.propertyFor(individual).getPotentialMemoryEnd().getLengthOfWay();
+        if ((potentialDifference < epsilon) && (sp == es.propertyFor(individual).getPotentialMemoryStart().getStaticPotential())) {
 
             // Calculate the second best Potential and the associated potential value on the {@code cell}
             List<StaticPotential> staticPotentials = new ArrayList<>();
@@ -103,7 +103,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
             }
 
             if (promisingNeighbours > CHANGE_THRESHOLD) {
-                individual.setStaticPotential(minWayLengthPotential);
+                es.propertyFor(individual).setStaticPotential(minWayLengthPotential);
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, es.getTimeStep());
             }
         }

@@ -13,7 +13,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package org.zet.cellularautomaton.algorithm.parameter;
 
 import org.zet.cellularautomaton.EvacCell;
@@ -21,86 +20,86 @@ import org.zet.cellularautomaton.Individual;
 import java.util.Collection;
 
 /**
- * A {@link ParameterSet} that sets the parameter of the simulation to values
- * that allow passing the RIMEA tests.
+ * A {@link ParameterSet} that sets the parameter of the simulation to values that allow passing the RIMEA tests.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class RimeaParameterSet extends DefaultParameterSet {
 
-	public RimeaParameterSet() {
-		super();
-	}
+    public RimeaParameterSet() {
+        super();
+    }
 
-	/**
-	 * Updates the exhaustion. Disabled for rimea parameter set.
-	 * @param individual
-	 * @param targetCell
-	 * @return
-	 */
-	@Override
-	public double updateExhaustion( Individual individual, EvacCell targetCell ) {
-		individual.setExhaustion( 0 );
-		return 0;
-	}
+    /**
+     * Updates the exhaustion. Disabled for rimea parameter set.
+     *
+     * @param individual
+     * @param targetCell
+     * @return
+     */
+    @Override
+    public double updateExhaustion(Individual individual, EvacCell targetCell) {
+        es.propertyFor(individual).setExhaustion(0);
+        return 0;
+    }
 
-	/**
-	 * Updates the panic. Disabled for rimea parameter set.
-	 * @param individual
-	 * @param targetCell
-	 * @param preferedCells
-	 * @return
-	 */
-	@Override
-	public double updatePanic( Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells ) {
-		individual.setPanic( 0 );
-		return 0;
-	}
+    /**
+     * Updates the panic. Disabled for rimea parameter set.
+     *
+     * @param individual
+     * @param targetCell
+     * @param preferedCells
+     * @return
+     */
+    @Override
+    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
+        es.propertyFor(individual).setPanic(0);
+        return 0;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 * @param i
-	 * @return
-	 */
-	@Override
-	public double updatePreferredSpeed( Individual i ) {
-		i.setRelativeSpeed( i.getMaxSpeed() );
-		return i.getMaxSpeed();
-	}
+    /**
+     * {@inheritDoc }
+     *
+     * @param i
+     * @return
+     */
+    @Override
+    public double updatePreferredSpeed(Individual i) {
+        es.propertyFor(i).setRelativeSpeed(i.getMaxSpeed());
+        return i.getMaxSpeed();
+    }
 
-	/**
-	 * Sets the reaction time depending from age. This is disabled in rimea
-	 * profile, the reaction time is set by the default individual reaction time
-	 * distribution instead.
-	 * @param age
-	 * @return
-	 */
-	@Override
-	public double getReactionTimeFromAge( double age ) {
-		throw new IllegalStateException( "ReactionTimeFromAge not allowed in Rimea Parameter set." );
-	}
+    /**
+     * Sets the reaction time depending from age. This is disabled in rimea profile, the reaction time is set by the
+     * default individual reaction time distribution instead.
+     *
+     * @param age
+     * @return
+     */
+    @Override
+    public double getReactionTimeFromAge(double age) {
+        throw new IllegalStateException("ReactionTimeFromAge not allowed in Rimea Parameter set.");
+    }
 
-
-	/**
-	 * Disable idling in RiMEA test suite.
-	 * @param individual
-	 * @return
-	 */
+    /**
+     * Disable idling in RiMEA test suite.
+     *
+     * @param individual
+     * @return
+     */
 //	@Override
 //	public double idleThreshold(Individual individual) {
 //		return 0;
 //	}
-
-	/**
-	 * Compute the speed according to the recommendation of the rimea guidelines.
-	 * The probability of an individual of beeing male or female is 50% each.
-	 *
-	 * @param pAge
-	 * @return
-	 */
+    /**
+     * Compute the speed according to the recommendation of the rimea guidelines. The probability of an individual of
+     * beeing male or female is 50% each.
+     *
+     * @param pAge
+     * @return
+     */
 //	@Override
 //	public double getSpeedFromAge( double pAge ) {
 //		return super.getSpeedFromAge( pAge );
 //	}
-
-
 }

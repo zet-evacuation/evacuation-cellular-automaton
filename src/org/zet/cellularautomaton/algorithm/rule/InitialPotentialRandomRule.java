@@ -41,7 +41,7 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
             int numberOfExits = exits.size();
             RandomUtils random = RandomUtils.getInstance();
             int randomExitNumber = random.getRandomGenerator().nextInt(numberOfExits);
-            cell.getState().getIndividual().setStaticPotential(exits.get(randomExitNumber));
+            es.propertyFor(cell.getState().getIndividual()).setStaticPotential(exits.get(randomExitNumber));
         }
     }
 }

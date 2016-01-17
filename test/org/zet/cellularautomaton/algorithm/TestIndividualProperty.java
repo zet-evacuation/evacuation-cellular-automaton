@@ -19,7 +19,7 @@ public class TestIndividualProperty {
 
     @Test
     public void deadIndividuals() {
-        IndividualProperty property = new IndividualProperty();
+        IndividualProperty property = new IndividualProperty(builder.build());
         assertThat(property.isDead(), is(false));
         property.setDeathCause(DeathCause.EXIT_UNREACHABLE);
         assertThat(property.isDead(), is(true));
@@ -28,8 +28,15 @@ public class TestIndividualProperty {
 
     @Test(expected = IllegalStateException.class)
     public void deathCauseFailsForAliveIndividuals() {
-        IndividualProperty is = new IndividualProperty();
+        IndividualProperty is = new IndividualProperty(builder.build());
         is.getDeathCause();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void deathCauseOnlyOnce() {
+        IndividualProperty is = new IndividualProperty(builder.build());
+        is.setDeathCause(DeathCause.EXIT_UNREACHABLE);
+        is.setDeathCause(DeathCause.EXIT_UNREACHABLE);
     }
 
 }

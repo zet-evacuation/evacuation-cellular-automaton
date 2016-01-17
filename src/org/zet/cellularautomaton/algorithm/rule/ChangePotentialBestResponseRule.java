@@ -41,7 +41,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
     private double getResponse(EvacCell cell, StaticPotential pot) {
         // Constants
         Individual ind = cell.getState().getIndividual();
-        double speed = ind.getRelativeSpeed();
+        double speed = es.propertyFor(ind).getRelativeSpeed();
 
         // Exit dependant values                                    
         double distance = Double.MAX_VALUE;
@@ -65,9 +65,9 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
         if (otherInds != null) {
             for (Individual otherInd : otherInds) {
                 if (!otherInd.equals(ind)) {
-                    if (otherInd.getStaticPotential() == pot) {
-                        if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) > 0) {
-                            if (otherInd.getStaticPotential().getDistance(otherInd.getCell()) < distance) {
+                    if (es.propertyFor(otherInd).getStaticPotential() == pot) {
+                        if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) > 0) {
+                            if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) < distance) {
                                 queueLength++;
                             }
                         }
@@ -79,7 +79,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
         int wrongDirectedNeighbours = 0;
         for (EvacCell neighbour : cell.getDirectNeighbors()) {
             if (!neighbour.getState().isEmpty()) {
-                if (neighbour.getState().getIndividual().getStaticPotential() != pot) {
+                if (es.propertyFor(neighbour.getState().getIndividual()).getStaticPotential() != pot) {
                     wrongDirectedNeighbours++;
                 }
             }
@@ -111,7 +111,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
 
         ArrayList<StaticPotential> exits = new ArrayList<>();
         exits.addAll(es.getCellularAutomaton().getStaticPotentials());
-        StaticPotential newPot = cell.getState().getIndividual().getStaticPotential();
+        StaticPotential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
         double response = Double.MAX_VALUE;
         for (StaticPotential pot : exits) {
             if (getResponse(cell, pot) < response) {
@@ -119,7 +119,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
                 newPot = pot;
             }
         }
-        cell.getState().getIndividual().setStaticPotential(newPot);
+        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(newPot);
 
     }
 }

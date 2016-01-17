@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 
 /**
  * This abstract class represents an action on the cellular automaton. The action is performed by an individual and
@@ -27,6 +28,8 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
  */
 public abstract class Action implements Cloneable {
 
+    protected PropertyAccess es;
+    
     protected class CADoesNotMatchException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;

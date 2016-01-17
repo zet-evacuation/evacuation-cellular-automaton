@@ -5,15 +5,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
 
-import java.util.UUID;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.zet.algo.ca.util.IndividualDistanceComparator;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 
 /**
  *
@@ -32,15 +33,18 @@ public class TestReactionRuleOnePerson {
 
         RoomCell cell = new RoomCell(0, 0);
         Individual i = builder.build();
+        IndividualProperty ip = new IndividualProperty(i);
         cell.getState().setIndividual(i);
 
-        assertThat(i.isAlarmed(), is(false));
+        assertThat(ip.isAlarmed(), is(false));
         context.checking(new Expectations() {{
                 exactly(1).of(es).getTimeStep();
                 will(returnValue(0));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
         }});
         rule.execute(cell);
-        assertThat(i.isAlarmed(), is(true));
+        assertThat(ip.isAlarmed(), is(true));
     }
     
     @Test
@@ -50,15 +54,18 @@ public class TestReactionRuleOnePerson {
 
         RoomCell cell = new RoomCell(0, 0);
         Individual evacuee = builder.withAge(0).withReactionTime(7).buildAndReset();
+        IndividualProperty ip = new IndividualProperty(evacuee);
         cell.getState().setIndividual(evacuee);
         
-        assertThat(evacuee.isAlarmed(), is(false));
+        assertThat(ip.isAlarmed(), is(false));
         context.checking(new Expectations() {{
                 exactly(1).of(es).getTimeStep();
                 will(returnValue(0));
+                allowing(es).propertyFor(evacuee);
+                will(returnValue(ip));
         }});
         rule.execute(cell);
-        assertThat(evacuee.isAlarmed(), is(false));
+        assertThat(ip.isAlarmed(), is(false));
         
         eca.setAbsoluteMaxSpeed(0.41);
         
@@ -74,7 +81,7 @@ public class TestReactionRuleOnePerson {
                     will(returnValue(result));
             }});
             rule.execute(cell);
-            assertThat(evacuee.isAlarmed(), is(false));        
+            assertThat(ip.isAlarmed(), is(false));        
         }
         // Individuals reaction time is 7 
         // one additional time steps sets time to 7.175
@@ -83,7 +90,7 @@ public class TestReactionRuleOnePerson {
                 will(returnValue(8));
         }});
         rule.execute(cell);
-        assertThat(evacuee.isAlarmed(), is(true));
+        assertThat(ip.isAlarmed(), is(true));
     }
 
     @Before

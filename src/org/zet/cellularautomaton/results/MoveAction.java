@@ -18,6 +18,7 @@ package org.zet.cellularautomaton.results;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 
 /**
  * Represents the fact that an individual moves from one cell to another.
@@ -50,8 +51,8 @@ public class MoveAction extends Action {
      * @param to The cell where the individual arrives
      * @param individual the individual that is moved
      */
-    public MoveAction(EvacCell from, EvacCell to, Individual individual) {
-        this(from, to, individual.getStepEndTime(), individual.getStepStartTime(), individual.getNumber());
+    public MoveAction(EvacCell from, EvacCell to, Individual individual, PropertyAccess es) {
+        this(from, to, es.propertyFor(individual).getStepEndTime(), es.propertyFor(individual).getStepStartTime(), individual.getNumber());
         if (from.getState().isEmpty()) {
             throw new IllegalArgumentException("The starting cell must not be empty!");
         }

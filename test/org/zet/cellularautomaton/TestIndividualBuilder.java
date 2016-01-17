@@ -45,7 +45,6 @@ public class TestIndividualBuilder {
         assertThat(i.getFamiliarity(), is(closeTo(familiarity, 10e-6)));
         assertThat(i.getPanicFactor(), is(closeTo(panicFactor, 10e-6)));
         assertThat(i.getReactionTime(), is(closeTo(reactionTime, 10e-6)));
-        assertThat(i.getRelativeSpeed(), is(closeTo(relativeMaxSpeed, 10e-6)));
         assertThat(i.getSlackness(), is(closeTo(slackness, 10e-6)));
 
         Individual i2 = b.build();
@@ -72,7 +71,6 @@ public class TestIndividualBuilder {
         assertThat(i2.getFamiliarity(), is(equalTo(i.getFamiliarity())));
         assertThat(i2.getPanicFactor(), is(equalTo(i.getPanicFactor())));
         assertThat(i2.getReactionTime(), is(equalTo(i.getReactionTime())));
-        assertThat(i2.getRelativeSpeed(), is(equalTo(i.getRelativeSpeed())));
-        assertThat(i2.getSlackness(), is(equalTo(i.getSlackness())));        
+        assertThat(i2.getSlackness(), is(equalTo(i.getSlackness())));
     }
 }

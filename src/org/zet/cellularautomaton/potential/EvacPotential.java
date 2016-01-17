@@ -17,11 +17,13 @@ package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 
 public class EvacPotential extends StaticPotential {
 
     Individual ind;
     CellularAutomatonDirectionChecker checker;
+    PropertyAccess es;
 
     public EvacPotential(Individual ind, CellularAutomatonDirectionChecker checker) {
         super();
@@ -34,7 +36,7 @@ public class EvacPotential extends StaticPotential {
         if (cell != null) {
             Double newPotential = this.potential.get(cell);
             if (newPotential != null) {
-                if (checker.canPass(ind, ind.getCell(), cell)) {
+                if (checker.canPass(ind, es.propertyFor(ind).getCell(), cell)) {
                     return (int) Math.round(newPotential);
                 } else {
                     return Integer.MAX_VALUE;

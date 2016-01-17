@@ -77,6 +77,6 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
         int randomPotentialNumber = rnd.nextInt(nrOfPossiblePotentials);
 
         StaticPotential potential = distanceMapping.get(randomPotentialNumber).getStaticPotential();
-        individual.setStaticPotential(potential);            
+        es.propertyFor(individual).setStaticPotential(potential);            
     }
 }

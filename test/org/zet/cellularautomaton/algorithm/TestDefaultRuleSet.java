@@ -1,17 +1,18 @@
 package org.zet.cellularautomaton.algorithm;
 
-import ds.PropertyContainer;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
-import org.jmock.Mockery;
 import static org.junit.Assert.assertThat;
+
+import ds.PropertyContainer;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;

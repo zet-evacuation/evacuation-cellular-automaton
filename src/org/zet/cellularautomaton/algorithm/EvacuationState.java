@@ -11,7 +11,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * 
  * @author Jan-Philipp Kappmeier
  */
-public interface EvacuationState {
+public interface EvacuationState extends PropertyAccess {
     /**
      * Returns the current time step of the evacuation simulation.
      * 
@@ -51,5 +51,6 @@ public interface EvacuationState {
     
     public IndividualState getIndividualState();
     
+    @Override
     public IndividualProperty propertyFor(Individual i);
 }

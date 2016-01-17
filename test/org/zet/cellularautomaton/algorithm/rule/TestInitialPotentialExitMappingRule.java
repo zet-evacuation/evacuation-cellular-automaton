@@ -24,6 +24,7 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -37,8 +38,8 @@ public class TestInitialPotentialExitMappingRule {
     InitialPotentialExitMappingRule rule;
     EvacCell cell;
     Individual i;
+    private IndividualProperty ip;
     EvacuationCellularAutomaton eca;
-    private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     EvacuationSimulationProblem esp;
     ExitCell target;
     private final static IndividualBuilder builder = new IndividualBuilder();
@@ -58,6 +59,7 @@ public class TestInitialPotentialExitMappingRule {
         EvacuationState es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         i = builder.build();
+        ip = new IndividualProperty(i);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -67,11 +69,13 @@ public class TestInitialPotentialExitMappingRule {
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
-                will(returnValue(statisticWriter));
+                will(returnValue(new CAStatisticWriter(es)));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        i.setCell(cell);
+        ip.setCell(cell);
         cell.getState().setIndividual(i);
         rule.setEvacuationState(es);
         eca.addIndividual(cell, i);
@@ -83,7 +87,7 @@ public class TestInitialPotentialExitMappingRule {
     @Test
     public void executableEvenIfPotentialAssigned() {
         StaticPotential sp = new StaticPotential();
-        i.setStaticPotential(sp);
+        ip.setStaticPotential(sp);
         assertThat(rule, is(executeableOn(cell)));
     }
 
@@ -109,7 +113,7 @@ public class TestInitialPotentialExitMappingRule {
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(i.getStaticPotential(), is(equalTo(sp)));
+        assertThat(ip.getStaticPotential(), is(equalTo(sp)));
     }
 
 
@@ -137,7 +141,7 @@ public class TestInitialPotentialExitMappingRule {
         eca.addStaticPotential(sp2);
         
         rule.execute(cell);
-        assertThat(i.getStaticPotential(), is(equalTo(sp2)));
+        assertThat(ip.getStaticPotential(), is(equalTo(sp2)));
     }
     
     @Test
@@ -154,7 +158,7 @@ public class TestInitialPotentialExitMappingRule {
         eca.addStaticPotential(shortDistance);
         
         rule.execute(cell);
-        assertThat(i.getStaticPotential(), is(equalTo(shortDistance)));
+        assertThat(ip.getStaticPotential(), is(equalTo(shortDistance)));
     }
 
 }

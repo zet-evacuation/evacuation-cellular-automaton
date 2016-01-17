@@ -320,11 +320,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         int currentMin = -1;
         for (StaticPotential sp : getStaticPotentials()) {
             if (currentMin == -1) {
-                i.setStaticPotential(sp);
+                //i.setStaticPotential(sp);
                 currentMin = sp.getPotential(c);
             } else if (sp.getPotential(c) > -1 && sp.getPotential(c) < currentMin) {
                 currentMin = sp.getPotential(c);
-                i.setStaticPotential(sp);
+                //i.setStaticPotential(sp);
             }
         }
     }
@@ -356,14 +356,14 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
         }
         if (from.equals(to)) {
-            recordAction(new MoveAction(from, from, from.getState().getIndividual()));
+            recordAction(new MoveAction(from, from, from.getState().getIndividual(), null));
             return;
         }
         if (!to.getState().isEmpty()) {
             throw new IllegalArgumentException("Individual " + to.getState().getIndividual() + " already standing on the ''to''-Cell!");
         }
 
-        recordAction(new MoveAction(from, to, from.getState().getIndividual()));
+        recordAction(new MoveAction(from, to, from.getState().getIndividual(), null));
         if (from.getRoom().equals(to.getRoom())) {
             from.getRoom().moveIndividual(from, to);
         } else {
@@ -384,7 +384,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         if (cell1.equals(cell2)) {
             throw new IllegalArgumentException("The cells are equal. Can't swap on equal cells.");
         }
-        recordAction(new SwapAction(cell1, cell2));
+        recordAction(new SwapAction(cell1, cell2, null));
         if (cell1.getRoom().equals(cell2.getRoom())) {
             cell1.getRoom().swapIndividuals(cell1, cell2);
         } else {
@@ -406,11 +406,12 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     @Override
     public void setIndividualEvacuated(Individual i) {
-        recordAction(new ExitAction((ExitCell) i.getCell()));
-        EvacCell evacCell = i.getCell();
+        //recordAction(new ExitAction((ExitCell) i.getCell()));
+        //EvacCell evacCell = i.getCell();
 
-        i.getCell().getRoom().removeIndividual(i);
-        i.setCell(evacCell);
+        //i.getCell().getRoom().removeIndividual(i);
+        //i.setCell(evacCell);
+        throw new IllegalStateException("Fix individual change");        
     }
 
     /**
@@ -420,7 +421,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     @Override
     public void setIndividualSave(Individual i) {
-        i.setSafetyTime((int) Math.ceil(i.getStepEndTime()));
+        //i.setSafetyTime((int) Math.ceil(i.getStepEndTime()));
+        throw new IllegalStateException("Fix individual change");
     }
 
     /**
@@ -433,10 +435,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     @Override
     public void setIndividualDead(Individual i, DeathCause cause) {
-        recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
-        EvacCell c = i.getCell();
-        c.getRoom().removeIndividual(i);
-        i.setCell(c);
+        //recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
+        //EvacCell c = i.getCell();
+//        c.getRoom().removeIndividual(i);
+        //i.setCell(c);
+        throw new IllegalStateException("Fix individual change");
     }
 
     /*

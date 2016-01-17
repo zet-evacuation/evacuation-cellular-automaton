@@ -17,6 +17,8 @@ package org.zet.cellularautomaton.algorithm;
 
 import ds.PropertyContainer;
 import java.util.List;
+import java.util.Map;
+import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
@@ -33,10 +35,12 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
     private final List<Individual> individuals;
+    private Map<Individual, EvacCell> individualStartPositions;
 
-    public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca, List<Individual> individuals) {
+    public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca, List<Individual> individuals, Map<Individual,EvacCell> individualStartPositions) {
         this.ca = ca;
         this.individuals = individuals;
+        this.individualStartPositions = individualStartPositions;
 
         PropertyContainer props = PropertyContainer.getGlobal();
 
@@ -75,4 +79,11 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     public void setEvacuationTimeLimit(double seconds) {
         this.seconds = seconds;
     }
+
+    @Override
+    public Map<Individual, EvacCell> individualStartPositions() {
+        return this.individualStartPositions;
+    }
+    
+    
 }

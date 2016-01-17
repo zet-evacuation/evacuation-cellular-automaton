@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 
 /**
  *
@@ -49,11 +50,11 @@ public class SwapAction extends Action {
      * @param cell1 The cell from where one individual starts to move
      * @param cell2 The cell from where the other individual starts to move
      */
-    public SwapAction(EvacCell cell1, EvacCell cell2) {
-        this(cell1, cell2, cell1.getState().getIndividual().getStepEndTime(), cell1.getState().getIndividual().getStepStartTime(),
+    public SwapAction(EvacCell cell1, EvacCell cell2, PropertyAccess es) {
+        this(cell1, cell2, es.propertyFor(cell1.getState().getIndividual()).getStepEndTime(), es.propertyFor(cell1.getState().getIndividual()).getStepStartTime(),
                 cell1.getState().getIndividual().getNumber(),
-                cell2.getState().getIndividual().getStepEndTime(),
-                cell2.getState().getIndividual().getStepStartTime(),
+                es.propertyFor(cell2.getState().getIndividual()).getStepEndTime(),
+                es.propertyFor(cell2.getState().getIndividual()).getStepStartTime(),
                 cell2.getState().getIndividual().getNumber());
         if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("The starting cell must not be empty!");

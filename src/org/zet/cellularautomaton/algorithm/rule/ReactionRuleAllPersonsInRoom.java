@@ -40,6 +40,6 @@ public class ReactionRuleAllPersonsInRoom extends AbstractReactionRule {
                 return;
             }
         }
-        cell.getRoom().getIndividuals().stream().forEach(individual -> individual.setAlarmed(true));
+        cell.getRoom().getIndividuals().stream().forEach(individual -> es.propertyFor(individual).setAlarmed(true));
     }
 }

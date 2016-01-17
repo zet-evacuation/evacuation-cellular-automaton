@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 
 /**
  * @author Daniel R. Schmidt
@@ -29,12 +30,12 @@ public class IndividualStateChangeAction extends Action {
     private double currentSpeed;
     private boolean isAlarmed;
 
-    public IndividualStateChangeAction(Individual individual) {
+    public IndividualStateChangeAction(Individual individual, PropertyAccess es) {
         this(individual,
-                individual.getPanic(),
-                individual.getExhaustion(),
-                individual.getRelativeSpeed(),
-                individual.isAlarmed());
+                es.propertyFor(individual).getPanic(),
+                es.propertyFor(individual).getExhaustion(),
+                es.propertyFor(individual).getRelativeSpeed(),
+                es.propertyFor(individual).isAlarmed());
     }
 
     protected IndividualStateChangeAction(Individual individual, double panic, double exhaustion, double currentSpeed, boolean isAlarmed) {
@@ -52,7 +53,7 @@ public class IndividualStateChangeAction extends Action {
      */
     @Override
     Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(individual.getNumber());
+        Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(es.propertyFor(individual).getNumber());
         if (adaptedIndividual == null) {
             throw new CADoesNotMatchException(this, "Could not find the individual with the unique id " + individual.getNumber());
         }
@@ -68,11 +69,11 @@ public class IndividualStateChangeAction extends Action {
      */
     @Override
     public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
-        individual.setPanic(panic);
-        individual.setExhaustion(exhaustion);
-        individual.setRelativeSpeed(currentSpeed);
-        if (isAlarmed && !individual.isAlarmed()) {
-            individual.setAlarmed(true);
+        es.propertyFor(individual).setPanic(panic);
+        es.propertyFor(individual).setExhaustion(exhaustion);
+        es.propertyFor(individual).setRelativeSpeed(currentSpeed);
+        if (isAlarmed && !es.propertyFor(individual).isAlarmed()) {
+            es.propertyFor(individual).setAlarmed(true);
         }
     }
 

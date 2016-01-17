@@ -64,7 +64,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         {
             setMoveRuleCompleted(false);
         }
-        recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(ind, es));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         {
             targetCell = from;
         }
-        if (ind.getCell().equals(targetCell)) {
+        if (es.propertyFor(ind).getCell().equals(targetCell)) {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addWaitedTimeToStatistic(ind, es.getTimeStep());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells().addCellToWaitingStatistic(targetCell, es.getTimeStep());
         }
@@ -86,12 +86,12 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     }
 
     private void doMove(Individual i, EvacCell targetCell) {
-        if (i.getCell().equals(targetCell)) {
-            i.setStepStartTime(i.getStepEndTime());
-            setStepEndTime(i, i.getStepEndTime() + 1);
-			//i.setStepEndTime( i.getStepEndTime() + 1 );
-            //i.getCell().getRoom().moveIndividual( targetCell, targetCell );
-            es.moveIndividual(i.getCell(), targetCell);
+        if (es.propertyFor(i).getCell().equals(targetCell)) {
+            es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
+            setStepEndTime(i, es.propertyFor(i).getStepEndTime() + 1);
+            //i.setStepEndTime( i.getStepEndTime() + 1 );
+            //es.propertyFor(i).getCell().getRoom().moveIndividual( targetCell, targetCell );
+            es.moveIndividual(es.propertyFor(i).getCell(), targetCell);
             setMoveRuleCompleted(false);
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), 0);
             return;
@@ -103,15 +103,15 @@ public class BestResponseMovementRule extends AbstractMovementRule {
 
     private void doMoveWithDecision(Individual i, EvacCell targetCell, boolean performMove) {
         es.increaseDynamicPotential(targetCell);
-		// Calculate a factor that is later multiplied with the speed,
+        // Calculate a factor that is later multiplied with the speed,
         // this factor is only != 1 for stair cells to
         // give different velocities for going a stair up or down.
         double stairSpeedFactor = 1;
         if (targetCell instanceof StairCell) {
 
             StairCell stairCell = (StairCell) targetCell;
-            int x = targetCell.getX() - i.getCell().getX();
-            int y = targetCell.getY() - i.getCell().getY();
+            int x = targetCell.getX() - es.propertyFor(i).getCell().getX();
+            int y = targetCell.getY() - es.propertyFor(i).getCell().getY();
             Direction8 direction = Direction8.getDirection(x, y);
             Level lvl = stairCell.getLevel(direction);
             if (lvl == Level.Higher) {
@@ -121,44 +121,44 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             }
         }
 
-		// TODO check if this big stuff is really necessery! maybe easier!
+        // TODO check if this big stuff is really necessery! maybe easier!
         // calculate distance
         double dist;
         final double sqrt2 = Math.sqrt(2) * 0.4;
-        if (!targetCell.getRoom().equals(i.getCell().getRoom())) {
-            if (i.getCell().getX() + i.getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() && i.getCell().getY() + i.getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
+        if (!targetCell.getRoom().equals(es.propertyFor(i).getCell().getRoom())) {
+            if (es.propertyFor(i).getCell().getX() + es.propertyFor(i).getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() && es.propertyFor(i).getCell().getY() + es.propertyFor(i).getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
                 System.err.println("SelfCell reached or Stockwerkwechsel!");
                 dist = 0.4;
-            } else if (i.getCell().getX() + i.getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() | i.getCell().getY() + i.getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
+            } else if (es.propertyFor(i).getCell().getX() + es.propertyFor(i).getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() | es.propertyFor(i).getCell().getY() + es.propertyFor(i).getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
                 dist = 0.4;
             } else {
                 dist = sqrt2;
             }
-        } else if (i.getCell().getX() == targetCell.getX() && i.getCell().getY() == targetCell.getY()) {
+        } else if (es.propertyFor(i).getCell().getX() == targetCell.getX() && es.propertyFor(i).getCell().getY() == targetCell.getY()) {
             dist = 0;
-        } else if (i.getCell().getX() == targetCell.getX() | i.getCell().getY() == targetCell.getY()) {
+        } else if (es.propertyFor(i).getCell().getX() == targetCell.getX() | es.propertyFor(i).getCell().getY() == targetCell.getY()) {
             dist = 0.4;
         } else {
             dist = sqrt2;
         }
 
-		// Perform Movement if the individual changes the room!
-        //if( i.getCell().getRoom() != targetCell.getRoom() )
-        //	i.getCell().getRoom().moveIndividual( i.getCell(), targetCell );
+        // Perform Movement if the individual changes the room!
+        //if( es.propertyFor(i).getCell().getRoom() != targetCell.getRoom() )
+        //	es.propertyFor(i).getCell().getRoom().moveIndividual( i.getCell(), targetCell );
         // update times
-        if (es.getCellularAutomaton().absoluteSpeed(i.getRelativeSpeed()) >= 0.0001) {
-            double speed = es.getCellularAutomaton().absoluteSpeed(i.getRelativeSpeed());
+        if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(i).getRelativeSpeed()) >= 0.0001) {
+            double speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(i).getRelativeSpeed());
             speed *= targetCell.getSpeedFactor() * stairSpeedFactor;
-			//System.out.println( "Speed ist " + speed );
+            //System.out.println( "Speed ist " + speed );
             // zu diesem zeitpunkt ist die StepEndtime aktualisiert, falls ein individual vorher geslackt hat
             // oder sich nicht bewegen konnte.
-            i.setStepStartTime(i.getStepEndTime());
-            setStepEndTime(i, i.getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond());
+            es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
+            setStepEndTime(i, es.propertyFor(i).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond());
             if (performMove) {
-                //i.getCell().getRoom().moveIndividual( i.getCell(), targetCell );
-                es.moveIndividual(i.getCell(), targetCell);
+                //es.propertyFor(i).getCell().getRoom().moveIndividual( i.getCell(), targetCell );
+                es.moveIndividual(es.propertyFor(i).getCell(), targetCell);
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
-                es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(i, (int) Math.ceil(i.getStepEndTime()), dist);
+                es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(i, (int) Math.ceil(es.propertyFor(i).getStepEndTime()), dist);
             }
         } else {
             throw new IllegalStateException("Individuum has no speed.");
@@ -196,7 +196,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
      */
     //gibt true wieder, wenn geschwindigkeit von zelle und individuel (wkeit darueber) bewegung bedeuten
     protected boolean canMove(Individual i) {
-        if (es.getTimeStep() >= i.getStepEndTime()) {
+        if (es.getTimeStep() >= es.propertyFor(i).getStepEndTime()) {
             return true;
         }
         return false;

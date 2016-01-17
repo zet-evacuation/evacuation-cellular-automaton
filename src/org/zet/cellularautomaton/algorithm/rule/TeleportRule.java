@@ -31,9 +31,9 @@ public class TeleportRule extends AbstractEvacuationRule {
             double targetFreeAt = tc.getTarget(0).getOccupiedUntil();
 
             if (tc.getTarget(0).getState().getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < es.getTimeStep()) {
-                double moveTime = Math.max(targetFreeAt, cell.getState().getIndividual().getStepEndTime());
+                double moveTime = Math.max(targetFreeAt, es.propertyFor(cell.getState().getIndividual()).getStepEndTime());
                 //cell.getIndividual().setStepStartTime( cell.getIndividual().getStepEndTime() );
-                cell.getState().getIndividual().setStepStartTime(moveTime);
+                es.propertyFor(cell.getState().getIndividual()).setStepStartTime(moveTime);
                 es.moveIndividual(cell, tc.getTarget(0));
                 tc.setTeleportFailed(false);
                 counter++;
@@ -55,7 +55,7 @@ public class TeleportRule extends AbstractEvacuationRule {
      */
     //gibt true wieder, wenn geschwindigkeit von zelle und individuel (wkeit darueber) bewegung bedeuten
     protected boolean canMove(Individual i) {
-        return es.getTimeStep() > i.getStepEndTime();
+        return es.getTimeStep() > es.propertyFor(i).getStepEndTime();
     }
 
 }

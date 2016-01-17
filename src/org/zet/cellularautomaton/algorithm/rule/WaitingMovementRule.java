@@ -33,11 +33,11 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
     @Override
     protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
-        ind = cell.getState().getIndividual();
-        if (ind.isAlarmed() == true) {
-            if (canMove(ind)) {
-                if (slack(ind)) {
-                    updateExhaustion(ind, cell);
+        individual = cell.getState().getIndividual();
+        if (es.propertyFor(individual).isAlarmed() == true) {
+            if (canMove(individual)) {
+                if (slack(individual)) {
+                    updateExhaustion(individual, cell);
                     setMoveRuleCompleted(true);
                     noMove();
                 } else {
@@ -50,7 +50,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
                         setMoveRuleCompleted(true);
                     }
                 }
-                this.updateSpeed(ind);
+                this.updateSpeed(individual);
             } else {
                 // Individual can't move, it is already moving
                 setMoveRuleCompleted(false);
@@ -59,7 +59,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
             setMoveRuleCompleted(true);
             noMove();
         }
-        recordAction(new IndividualStateChangeAction(ind));
+        recordAction(new IndividualStateChangeAction(individual, es));
     }
 
     @Override
@@ -70,11 +70,11 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         super.move(from, targetCell);
     }
 
-    protected void updatePanic(Individual i, EvacCell targetCell) {
-        double oldPanic = i.getPanic();
-        es.getParameterSet().updatePanic(i, targetCell, this.neighboursByPriority(i.getCell()));
-        if (oldPanic != i.getPanic()) {
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(i, es.getTimeStep(), i.getPanic());
+    protected void updatePanic(Individual individual, EvacCell targetCell) {
+        double oldPanic = es.propertyFor(individual).getPanic();
+        es.getParameterSet().updatePanic(individual, targetCell, this.neighboursByPriority(es.propertyFor(individual).getCell()));
+        if (oldPanic != es.propertyFor(individual).getPanic()) {
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, es.getTimeStep(), es.propertyFor(individual).getPanic());
         }
     }
 
@@ -160,8 +160,8 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         if (inSameRoom) {
             EvacCell mostProbableTarget = targets.get(max_index);
 
-            Individual i = cell.getState().getIndividual();
-            Direction8 oldDir = i.getDirection();
+            Individual individual = cell.getState().getIndividual();
+            Direction8 oldDir = es.propertyFor(individual).getDirection();
             Direction8 newDir = cell.equals(mostProbableTarget) ? oldDir : cell.getRelative(mostProbableTarget);
 
             if (oldDir.equals(newDir)) {
@@ -188,14 +188,14 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
     /**
      * Updates the exhaustion for the individual and updates the statistic.
      *
-     * @param i
+     * @param individual
      * @param targetCell
      */
-    protected void updateExhaustion(Individual i, EvacCell targetCell) {
-        double oldExhaustion = i.getExhaustion();
-        es.getParameterSet().updateExhaustion(i, targetCell);
-        if (oldExhaustion != i.getExhaustion()) {
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(i, es.getTimeStep(), i.getExhaustion());
+    protected void updateExhaustion(Individual individual, EvacCell targetCell) {
+        double oldExhaustion = es.propertyFor(individual).getExhaustion();
+        es.getParameterSet().updateExhaustion(individual, targetCell);
+        if (oldExhaustion != es.propertyFor(individual).getExhaustion()) {
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, es.getTimeStep(), es.propertyFor(individual).getExhaustion());
         }
     }
 

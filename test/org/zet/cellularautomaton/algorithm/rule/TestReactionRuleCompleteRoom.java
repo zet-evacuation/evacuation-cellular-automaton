@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
 
 import java.util.Objects;
-import java.util.UUID;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -16,6 +15,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 
 /**
  *
@@ -29,42 +29,54 @@ public class TestReactionRuleCompleteRoom {
     @Test
     public void roomAlerted() {
         Individual i = builder.build();
+        IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i, false, 1);
-        RoomCell cell = generateCell(room, i);
+        RoomCell cell = generateCell(room, i, ip);
         
         ReactionRuleCompleteRoom rule = generateReactionRule();
         context.checking(new Expectations() {{
                 exactly(1).of(es).getTimeStep();
                 will(returnValue(0));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
         }});
         rule.execute(cell);
-        assertThat(i.isAlarmed(), is(true));
+        assertThat(ip.isAlarmed(), is(true));
     }
     
     @Test
     public void roomNotAlerted() {
         Individual i = builder.withAge(0).withReactionTime(7).buildAndReset();
+        IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i, false, 0);
-        RoomCell cell = generateCell(room, i);
+        RoomCell cell = generateCell(room, i, ip);
         
         ReactionRuleCompleteRoom rule = generateReactionRule();
         context.checking(new Expectations() {{
                 exactly(1).of(es).getTimeStep();
                 will(returnValue(0));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
         }});
         rule.execute(cell);
-        assertThat(i.isAlarmed(), is(false));
+        assertThat(ip.isAlarmed(), is(false));
     }
     
     @Test
     public void alertedByRoom() {
         Individual i = builder.withAge(0).withReactionTime(7).build();
+        IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i, true, 0);
-        RoomCell cell = generateCell(room, i);
-        
+        RoomCell cell = generateCell(room, i, ip);
+
         ReactionRuleCompleteRoom rule = generateReactionRule();
+        context.checking(new Expectations() {{
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
+        }});
+
         rule.execute(cell);
-        assertThat(i.isAlarmed(), is(true));
+        assertThat(ip.isAlarmed(), is(true));
     }
 
     private ReactionRuleCompleteRoom generateReactionRule() {
@@ -94,10 +106,10 @@ public class TestReactionRuleCompleteRoom {
         return room;
     }
     
-    private RoomCell generateCell(Room room, Individual i) {
+    private RoomCell generateCell(Room room, Individual i, IndividualProperty ip) {
         RoomCell cell = new RoomCell(1, 0, 0, Objects.requireNonNull(room));
         cell.getState().setIndividual(Objects.requireNonNull(i));
-        i.setCell(cell);
+        ip.setCell(cell);
         return cell;
     }
     

@@ -1,12 +1,17 @@
 package org.zet.cellularautomaton.algorithm;
 
 import java.util.Collections;
+import java.util.HashMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 
 import java.util.List;
+import java.util.Map;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
+import org.zet.cellularautomaton.EvacCell;
 
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
@@ -63,10 +68,6 @@ public class TestEvacuationCellularAutomatonRun {
         }
         
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        //eca.addIndividual(rightCell, i);
-        
-        
-        
         
         EvacuationCellularAutomatonAlgorithm caAlgorithm = new EvacuationCellularAutomatonAlgorithm();
 
@@ -75,14 +76,16 @@ public class TestEvacuationCellularAutomatonRun {
         ds.PropertyContainer.getGlobal().define("algo.ca.ruleSet", String.class, ruleSet);
         ds.PropertyContainer.getGlobal().define("algo.ca.parameterSet", String.class, "SimpleParameterSet");
         
-        EvacuationSimulationProblem esp = new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i));
+        Map<Individual, EvacCell> individualStartPositions = new HashMap<>();
+        individualStartPositions.put(i, rightCell);
+        
+        EvacuationSimulationProblem esp = new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i), individualStartPositions);
         
         caAlgorithm.setProblem(esp);
         
         caAlgorithm.runAlgorithm();
         
-//        EvacuationSimulationResult result = caAlgorithm.getSolution();
-//        
-//        assertThat(result.getSteps(), is(equalTo(2)));
+        //EvacuationSimulationResult result = caAlgorithm.getSolution();
+        //assertThat(result.getSteps(), is(equalTo(2)));
     }
 }

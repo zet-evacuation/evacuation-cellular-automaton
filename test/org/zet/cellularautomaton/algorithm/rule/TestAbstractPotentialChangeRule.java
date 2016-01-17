@@ -14,7 +14,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
-import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 
 /**
@@ -61,9 +61,10 @@ public class TestAbstractPotentialChangeRule {
         EvacCell cell = new RoomCell(0, 0);
         if (occupied) {
             Individual i = builder.build();
+            IndividualProperty ip = new IndividualProperty(i);
             is.addIndividual(i);
             cell.getState().setIndividual(i);
-            i.setCell(cell);
+            ip.setCell(cell);
             if (safe) {
                 is.setSafe(i);
             }

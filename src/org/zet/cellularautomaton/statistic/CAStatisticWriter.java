@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.statistic;
 
+import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 
 /**
@@ -25,8 +26,8 @@ public class CAStatisticWriter {
 
   private StoredCAStatisticResults storedCAStatisticResults;
 
-  public CAStatisticWriter() {
-    storedCAStatisticResults = new StoredCAStatisticResults();
+  public CAStatisticWriter(EvacuationState es) {
+    storedCAStatisticResults = new StoredCAStatisticResults(es);
   }
 
   public StoredCAStatisticResults getStoredCAStatisticResults() {

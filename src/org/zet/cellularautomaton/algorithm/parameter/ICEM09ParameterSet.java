@@ -19,6 +19,7 @@ import ds.PropertyContainer;
 import java.util.Collection;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.potential.DynamicPotential;
@@ -44,6 +45,7 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
     final protected double PANIC_WEIGHT_ON_POTENTIALS;
     final protected double EXHAUSTION_WEIGHT_ON_SPEED;
     final protected double PANIC_THRESHOLD;
+    private PropertyAccess es;
 
     /**
      * Initializes the default parameter set and loads some constants from the property container.
@@ -123,7 +125,7 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
         }
-        StaticPotential staticPotential = referenceCell.getState().getIndividual().getStaticPotential();
+        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
         final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
         return statPotlDiff;
     }

@@ -20,6 +20,7 @@ import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationState;
 import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
@@ -34,11 +35,11 @@ public class TestInitialConcretePotentialRule {
     InitialConcretePotentialRule rule;
     EvacCell cell;
     Individual i;
+    IndividualProperty ip;
     EvacuationCellularAutomaton eca;
     EvacuationState es;
     EvacuationStateControllerInterface ec;
     TestIndividualState is;
-    private final static CAStatisticWriter statisticWriter = new CAStatisticWriter();
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     static class TestIndividualState extends IndividualState {
@@ -61,6 +62,7 @@ public class TestInitialConcretePotentialRule {
         eca = new EvacuationCellularAutomaton();
         i = builder.withAge(30).withFamiliarity(familiarity).build();
         is.addIndividual(i);
+        ip = new IndividualProperty(i);
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
             {
@@ -71,13 +73,15 @@ public class TestInitialConcretePotentialRule {
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
-                will(returnValue(statisticWriter));
+                will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).getIndividualState();
                 will(returnValue(is));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
-        i.setCell(cell);
+        ip.setCell(cell);
         cell.getState().setIndividual(i);
 
         rule.setEvacuationState(es);
@@ -99,16 +103,18 @@ public class TestInitialConcretePotentialRule {
     public void testNotApplicableIfPotentialSet() {
         init();
         StaticPotential sp = new StaticPotential();
-        i.setStaticPotential(sp);
+        ip.setStaticPotential(sp);
         assertThat(rule, is(not(executeableOn(cell))));
     }
 
     @Test
     public void testDeadIfNoPotentials() {
         init();
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
                 exactly(1).of(ec).die(i, DeathCause.EXIT_UNREACHABLE);
-            }});
+            }
+        });
         rule.execute(cell);
         context.assertIsSatisfied();
     }
@@ -137,7 +143,7 @@ public class TestInitialConcretePotentialRule {
         eca.addStaticPotential(sp);
 
         rule.execute(cell);
-        assertThat(i.getStaticPotential(), is(same(sp)));
+        assertThat(ip.getStaticPotential(), is(same(sp)));
     }
 
     @Test
@@ -146,8 +152,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initFamiliarPotential();
 
         rule.execute(cell);
-//        assertThat(is.isDead(i), is(false));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+        assertThat(ip.isDead(), is(false));
+        assertThat(ip.getStaticPotential(), is(same(targetPotential)));
     }
 
     @Test
@@ -156,8 +162,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initUnfamiliarPotential();
 
         rule.execute(cell);
-//        assertThat(is.isDead(i), is(false));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+        assertThat(ip.isDead(), is(false));
+        assertThat(ip.getStaticPotential(), is(same(targetPotential)));
     }
 
     @Test
@@ -166,8 +172,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initMediumPotential();
 
         rule.execute(cell);
-//        assertThat(is.isDead(i), is(false));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+        assertThat(ip.isDead(), is(false));
+        assertThat(ip.getStaticPotential(), is(same(targetPotential)));
     }
 
     @Test
@@ -176,8 +182,8 @@ public class TestInitialConcretePotentialRule {
         StaticPotential targetPotential = initAttractiveShortPotential();
 
         rule.execute(cell);
-//        assertThat(is.isDead(i), is(false));
-        assertThat(i.getStaticPotential(), is(same(targetPotential)));
+        assertThat(ip.isDead(), is(false));
+        assertThat(ip.getStaticPotential(), is(same(targetPotential)));
     }
 
     private StaticPotential initFamiliarPotential() {

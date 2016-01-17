@@ -56,9 +56,9 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
         double distanceToEvacArea;
         for (StaticPotential sp : staticPotentials) {
-            distanceToEvacArea = sp.getDistance(individual.getCell());
+            distanceToEvacArea = sp.getDistance(es.propertyFor(individual).getCell());
             if (distanceToEvacArea >= 0 && distanceToEvacArea <= minDistanceToEvacArea) {
-                minDistanceToEvacArea = sp.getDistance(individual.getCell());
+                minDistanceToEvacArea = sp.getDistance(es.propertyFor(individual).getCell());
                 initialPotential = sp;
             }
         }
@@ -68,10 +68,10 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
             ec.die(individual, DeathCause.EXIT_UNREACHABLE);
         }
 
-        individual.setStaticPotential(initialPotential);
+        es.propertyFor(individual).setStaticPotential(initialPotential);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic(individual, minDistanceToEvacArea, initialPotential.getDistance(cell));
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, 0);
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, individual.getExhaustion());
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, individual.getPanic());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, es.propertyFor(individual).getExhaustion());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, es.propertyFor(individual).getPanic());
     }
 }

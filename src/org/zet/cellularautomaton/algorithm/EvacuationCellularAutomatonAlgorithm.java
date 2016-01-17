@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -35,32 +36,76 @@ public class EvacuationCellularAutomatonAlgorithm
     /**
      * The order in which the individuals are asked for.
      */
-    public static final Function<Collection<Individual>, Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
+    public static final Function<List<Individual>, Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
+
     /**
      * The distance comparator.
      */
-    private static final IndividualDistanceComparator DISTANCE_COMPARATOR = new IndividualDistanceComparator<>();
+    private final IndividualDistanceComparator DISTANCE_COMPARATOR = new IndividualDistanceComparator<>();
     /**
      * Sorts the individuals by increasing distance to the exit.
      */
-    public static final Function<List<Individual>, Iterator<Individual>> FRONT_TO_BACK = (List<Individual> t) -> {
-        List<Individual> copy = new ArrayList<>(t);
-        Collections.sort(copy, DISTANCE_COMPARATOR);
-        return copy.iterator();
-    };
+//    public static final Function<List<Individual>, Iterator<Individual>> FRONT_TO_BACK = (List<Individual> t) -> {
+//        List<Individual> copy = new ArrayList<>(t);
+//        Collections.sort(copy, DISTANCE_COMPARATOR);
+//        return copy.iterator();
+//    };
+
+    private static Function<List<Individual>, Iterator<Individual>> getFrontToBack(IndividualDistanceComparator c) {
+        return (List<Individual> t) -> {
+            List<Individual> copy = new ArrayList<>(t);
+            Collections.sort(copy, c);
+            return copy.iterator();
+        };
+    }
+
     /**
      * Sorts the individuals by decreasing distance to the exit.
      */
-    public static final Function<List<Individual>, Iterator<Individual>> BACK_TO_FRONT = (List<Individual> t) -> {
-        List<Individual> copy = new ArrayList<>(t);
-        Collections.sort(copy, DISTANCE_COMPARATOR);
-        Collections.reverse(copy);
-        return copy.iterator();
-    };
+//    public static final Function<List<Individual>, Iterator<Individual>> BACK_TO_FRONT = (List<Individual> t) -> {
+//        List<Individual> copy = new ArrayList<>(t);
+//        Collections.sort(copy, DISTANCE_COMPARATOR);
+//        Collections.reverse(copy);
+//        return copy.iterator();
+//    };
+
+    private static Function<List<Individual>, Iterator<Individual>> getBackToFront(IndividualDistanceComparator c) {
+        return (List<Individual> t) -> {
+            List<Individual> copy = new ArrayList<>(t);
+            Collections.sort(copy, c);
+            Collections.reverse(copy);
+            return copy.iterator();
+        };
+    }
+    
+    private static class MIndividualDistanceComparator extends IndividualDistanceComparator<Individual> {
+        EvacuationCellularAutomatonAlgorithm algo;
+
+        @Override
+        public int compare(Individual i1, Individual i2) {
+            setEs(algo.es);
+            return super.compare(i1, i2);
+        }
+    }
+    
+    public static EvacuationCellularAutomatonAlgorithm getBackToFrontAlgorithm() {
+        MIndividualDistanceComparator comparator = new MIndividualDistanceComparator();
+        EvacuationCellularAutomatonAlgorithm algo = new EvacuationCellularAutomatonAlgorithm(getBackToFront(comparator));
+        comparator.algo = algo;
+        return algo;
+    }
+    
+    public static EvacuationCellularAutomatonAlgorithm getFrontToBackAlgorithm() {
+        MIndividualDistanceComparator comparator = new MIndividualDistanceComparator();
+        EvacuationCellularAutomatonAlgorithm algo = new EvacuationCellularAutomatonAlgorithm(getFrontToBack(comparator));
+        comparator.algo = algo;
+        return algo;
+    }
+
     /**
      * The ordering used in the evacuation cellular automaton.
      */
-    private Function<Collection<Individual>, Iterator<Individual>> reorder;
+    private Function<List<Individual>, Iterator<Individual>> reorder;
     EvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
             Collections.EMPTY_LIST);
     EvacuationStateController ec = null;
@@ -69,13 +114,14 @@ public class EvacuationCellularAutomatonAlgorithm
         this(DEFAULT_ORDER);
     }
 
-    public EvacuationCellularAutomatonAlgorithm(Function<Collection<Individual>, Iterator<Individual>> reorder) {
+    public EvacuationCellularAutomatonAlgorithm(Function<List<Individual>, Iterator<Individual>> reorder) {
         this.reorder = reorder;
     }
 
     @Override
     protected void initialize() {
         initRulesAndState();
+        DISTANCE_COMPARATOR.setEs(es);
 
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
@@ -85,7 +131,7 @@ public class EvacuationCellularAutomatonAlgorithm
                 new Individual[es.getIndividualState().getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
             Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
-            EvacCell c = i.getCell();
+            EvacCell c = es.propertyFor(i).getCell();
             while (primary.hasNext()) {
                 EvacuationRule r = primary.next();
                 r.execute(c);
@@ -101,6 +147,9 @@ public class EvacuationCellularAutomatonAlgorithm
     private void initRulesAndState() {
         es = new MutableEvacuationState(getProblem().getParameterSet(), getProblem().getCellularAutomaton(),
                 getProblem().getIndividuals());
+        for (Map.Entry<Individual, EvacCell> e : getProblem().individualStartPositions().entrySet()) {
+            es.propertyFor(e.getKey()).setCell(e.getValue());
+        }
         ec = new EvacuationStateController((MutableEvacuationState) es);
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationState(es);
@@ -127,7 +176,7 @@ public class EvacuationCellularAutomatonAlgorithm
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
         for (EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
-            r.execute(i.getCell());
+            r.execute(es.propertyFor(i).getCell());
         }
     }
 
@@ -138,7 +187,7 @@ public class EvacuationCellularAutomatonAlgorithm
             Individual[] individualsCopy = es.getIndividualState().getRemainingIndividuals().toArray(
                     new Individual[es.getIndividualState().getRemainingIndividuals().size()]);
             for (Individual i : individualsCopy) {
-                if (!es.getIndividualState().isSafe(i.getCell().getState().getIndividual())) {
+                if (!es.getIndividualState().isSafe(es.propertyFor(i).getCell().getState().getIndividual())) {
                     ec.die(i, DeathCause.NOT_ENOUGH_TIME);
                 }
             }
@@ -191,7 +240,7 @@ public class EvacuationCellularAutomatonAlgorithm
      */
     @Override
     public final Iterator<EvacCell> iterator() {
-        return new CellIterator(reorder.apply(es.getIndividualState().getRemainingIndividuals()));
+        return new CellIterator(reorder.apply(es.getIndividualState().getRemainingIndividuals()), es);
     }
 
     /**
@@ -201,14 +250,16 @@ public class EvacuationCellularAutomatonAlgorithm
     private static class CellIterator implements Iterator<EvacCell> {
 
         private final Iterator<Individual> individuals;
+        private final EvacuationState es;
 
         /**
          * Initializes the object with a list of individuals whose cells are iterated over.
          *
          * @param individuals the individuals
          */
-        private CellIterator(Iterator<Individual> individuals) {
+        private CellIterator(Iterator<Individual> individuals, EvacuationState es) {
             this.individuals = Objects.requireNonNull(individuals, "Individuals list must not be null.");
+            this.es = es;
         }
 
         @Override
@@ -218,7 +269,7 @@ public class EvacuationCellularAutomatonAlgorithm
 
         @Override
         public EvacCell next() {
-            return individuals.next().getCell();
+            return es.propertyFor(individuals.next()).getCell();
         }
 
         @Override

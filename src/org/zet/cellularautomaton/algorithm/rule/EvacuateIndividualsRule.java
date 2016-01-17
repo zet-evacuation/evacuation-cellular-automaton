@@ -53,6 +53,6 @@ public class EvacuateIndividualsRule extends AbstractEvacuationRule {
     public boolean executableOn(EvacCell cell) {
         return cell instanceof ExitCell &&
                 cell.isOccupied() &&
-                cell.getState().getIndividual().getStepEndTime() < es.getTimeStep() + 1;
+                es.propertyFor(cell.getState().getIndividual()).getStepEndTime() < es.getTimeStep() + 1;
     }
 }

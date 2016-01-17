@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -27,7 +29,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
  * @author Sylvie Temme
  */
 public class StoredCAStatisticResultsForIndividuals {
-
+    PropertyAccess es;
     HashMap<Individual, Integer> safetyTimes;
     HashMap<Individual, ArrayList<Integer>> changePotentialTimes;
     private final HashMap<Individual, List<List<ExitCell>>> potentials;
@@ -45,7 +47,8 @@ public class StoredCAStatisticResultsForIndividuals {
     HashMap<Individual, ArrayList<Integer>> currentSpeedTimes;
     private final HashMap<Individual, ArrayList<Double>> currentSpeed;
 
-    public StoredCAStatisticResultsForIndividuals() {
+    public StoredCAStatisticResultsForIndividuals(EvacuationState es) {
+        this.es = es;
         safetyTimes = new HashMap<>();
         changePotentialTimes = new HashMap<>();
         potentials = new HashMap<>();
@@ -67,7 +70,7 @@ public class StoredCAStatisticResultsForIndividuals {
     public void addSafeIndividualToStatistic(Individual ind) {
 
         if (!(safetyTimes.containsKey(ind))) {
-            safetyTimes.put(ind, ind.getSafetyTime());
+            safetyTimes.put(ind, es.propertyFor(ind).getSafetyTime());
         }
     }
 
@@ -77,7 +80,7 @@ public class StoredCAStatisticResultsForIndividuals {
             potentials.put(ind, new ArrayList<>());
         }
         changePotentialTimes.get(ind).add(t);
-        potentials.get(ind).add(ind.getStaticPotential().getAssociatedExitCells());
+        potentials.get(ind).add(es.propertyFor(ind).getStaticPotential().getAssociatedExitCells());
     }
 
     public void addCoveredDistanceToStatistic(Individual ind, int t, double distance) {
