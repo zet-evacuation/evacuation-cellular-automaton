@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.statistic;
 
-import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 
 /**

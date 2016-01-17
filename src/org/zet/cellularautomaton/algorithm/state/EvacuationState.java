@@ -1,4 +1,4 @@
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;

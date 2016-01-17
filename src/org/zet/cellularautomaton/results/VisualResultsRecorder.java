@@ -29,7 +29,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 
 import java.util.LinkedList;
 import org.zet.cellularautomaton.RoomImpl;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * This class helps you to store all the parts of a simulation that are

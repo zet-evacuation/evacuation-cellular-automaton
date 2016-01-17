@@ -1,4 +1,4 @@
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.algorithm.state;
 
 import java.util.ArrayList;
 import java.util.HashMap;

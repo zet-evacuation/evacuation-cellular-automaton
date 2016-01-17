@@ -1,5 +1,6 @@
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.algorithm.state;
 
+import org.zet.cellularautomaton.algorithm.state.IndividualState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;

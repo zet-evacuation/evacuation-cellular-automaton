@@ -1,4 +1,4 @@
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.Individual;

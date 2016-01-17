@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * This abstract class represents an action on the cellular automaton. The action is performed by an individual and

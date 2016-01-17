@@ -1,9 +1,8 @@
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 
@@ -35,13 +34,6 @@ public class IndividualProperty {
     private boolean isEvacuated = false;
     Direction8 dir = Direction8.Top;
 
-
-    // Non-general properties. Move to somewhere else
-    private int memoryIndex;
-    private PotentialMemory potentialMemoryStart;
-    private PotentialMemory potentialMemoryEnd;
-    int cellCountToChange;
-
     // outdated and to delete?
     private EvacCell cell;
 
@@ -53,18 +45,8 @@ public class IndividualProperty {
         this.staticPotential = null;
         safetyTime = -1;
 
-        /**
-         * Calibratingfactor - The bigger {@code cellCountToChange}, the longer an individual moves before a possible
-         * potential change
-         */
-        cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
-        potentialMemoryStart = new PotentialMemory<>();
-        potentialMemoryEnd = new PotentialMemory<>();
-        memoryIndex = 0;
     }
 
-    
-    
     public DeathCause getDeathCause() {
         if(!isDead()) {
             throw new IllegalStateException("Individual not dead");
@@ -83,44 +65,6 @@ public class IndividualProperty {
         return deathCause != null;
     }
     
-    public PotentialMemory getPotentialMemoryStart() {
-        return potentialMemoryStart;
-    }
-
-    public PotentialMemory getPotentialMemoryEnd() {
-        return potentialMemoryEnd;
-    }
-
-    public void setPotentialMemoryStart(PotentialMemory start) {
-        potentialMemoryStart = start;
-    }
-
-    public void setPotentialMemoryEnd(PotentialMemory end) {
-        potentialMemoryEnd = end;
-    }
-
-    public int getCellCountToChange() {
-        return cellCountToChange;
-    }
-
-    /**
-     * Used for some potential change rule...
-     *
-     * @return
-     */
-    public int getMemoryIndex() {
-        return memoryIndex;
-    }
-
-    /**
-     * Used for some potential change rule...
-     *
-     * @param index
-     */
-    public void setMemoryIndex(int index) {
-        memoryIndex = index;
-    }
-
     public double getStepEndTime() {
         return stepEndTime;
     }

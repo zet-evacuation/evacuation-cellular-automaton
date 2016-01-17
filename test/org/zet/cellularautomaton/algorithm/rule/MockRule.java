@@ -1,10 +1,10 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.algorithm.EvacuationStateController;
-import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
 /**
  *

@@ -15,9 +15,9 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zetool.algorithm.simulation.cellularautomaton.Rule;
 
 /**

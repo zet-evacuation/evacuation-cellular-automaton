@@ -18,10 +18,10 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
-import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.algorithm.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.IndividualState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.algorithm.state.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -45,7 +45,7 @@ public class TestInitialConcretePotentialRule {
     static class TestIndividualState extends IndividualState {
 
         @Override
-        protected void addIndividual(Individual i) {
+        public void addIndividual(Individual i) {
             super.addIndividual(i);
         }
     }

@@ -18,7 +18,7 @@ package org.zet.cellularautomaton.results;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * Represents the fact that an individual moves from one cell to another.

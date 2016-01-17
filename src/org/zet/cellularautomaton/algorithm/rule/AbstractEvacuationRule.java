@@ -15,12 +15,12 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.algorithm.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.Action;

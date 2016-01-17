@@ -1,4 +1,4 @@
-package org.zet.cellularautomaton.algorithm;
+package org.zet.cellularautomaton.algorithm.state;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,7 +37,8 @@ public class IndividualState implements Iterable<Individual> {
         return initialIndividualCount;
     }
 
-    protected void addIndividual(Individual i) {
+    //TODO: move to evacuation controller
+    public void addIndividual(Individual i) {
         if (initialIndividuals.contains(i)) {
             throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
         } else {

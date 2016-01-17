@@ -15,8 +15,8 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
-import org.zet.cellularautomaton.algorithm.IndividualProperty;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import sun.security.ec.ECKeyFactory;
 

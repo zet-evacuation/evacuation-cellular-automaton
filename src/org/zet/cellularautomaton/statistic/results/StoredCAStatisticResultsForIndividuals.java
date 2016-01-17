@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**

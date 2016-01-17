@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * @author Daniel R. Schmidt

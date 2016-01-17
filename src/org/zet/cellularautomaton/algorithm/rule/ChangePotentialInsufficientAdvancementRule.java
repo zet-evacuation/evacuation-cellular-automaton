@@ -17,7 +17,9 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.potential.PotentialMemory;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -29,6 +31,64 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentialChangeRule {
 
     private static final int CHANGE_THRESHOLD = 3;
+    //private final int cellCountToChange;
+    private final Map< Individual, Integer> memoryIndex;
+    private final Map<Individual, PotentialMemory> potentialMemoryStart;
+    private final Map<Individual, PotentialMemory> potentialMemoryEnd;
+
+    public ChangePotentialInsufficientAdvancementRule() {
+        //cellCountToChange = new HashMap<>();
+        memoryIndex = new HashMap<>();
+        potentialMemoryStart = new HashMap<>();
+        potentialMemoryEnd = new HashMap<>();
+        /**
+         * Calibratingfactor - The bigger {@code cellCountToChange}, the longer an individual moves before a possible
+         * potential change
+         */
+        //cellCountToChange = (int) Math.round(relativeSpeed * 15 / 0.4);
+        //memoryIndex = 0;
+    }
+
+    public PotentialMemory getPotentialMemoryStart(Individual i) {
+        return potentialMemoryStart.get(i);
+    }
+
+    public PotentialMemory getPotentialMemoryEnd(Individual i) {
+        return potentialMemoryEnd.get(i);
+    }
+    
+    public void setPotentialMemoryStart(Individual i, PotentialMemory start) {
+        potentialMemoryStart.put(i, start);
+    }
+
+    public void setPotentialMemoryEnd(Individual i, PotentialMemory end) {
+        potentialMemoryEnd.put(i, end);
+    }
+
+    public int getCellCountToChange(Individual i) {
+        return (int) Math.round(es.propertyFor(i).getRelativeSpeed() * 15 / 0.4);
+    }
+
+    /**
+     * Used for some potential change rule...
+     *
+     * @return
+     */
+    public int getMemoryIndex(Individual i) {
+        return memoryIndex.get(i);
+    }
+
+    /**
+     * Used for some potential change rule...
+     *
+     * @param index
+     */
+    public void setMemoryIndex(Individual i, int index) {
+        memoryIndex.put(i, index);
+    }
+
+
+    
 
     /**
      * Change potential, if not enough advancement to the designated exit cell has been made
@@ -36,13 +96,13 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
     @Override
     protected boolean wantsToChange(Individual individual) {
         StaticPotential sp = es.propertyFor(individual).getStaticPotential();
-        int cellCountToChange = es.propertyFor(individual).getCellCountToChange();
-        int memoryIndex = es.propertyFor(individual).getMemoryIndex();
+        int cellCountToChange = getCellCountToChange(individual);
+        int memoryIndex = getMemoryIndex(individual);
         EvacCell cell = es.propertyFor(individual).getCell();
 
         // Update the {@code potentialMemory}
         if (memoryIndex == 0) {
-            es.propertyFor(individual).setPotentialMemoryStart(new PotentialMemory<>(cell, sp));
+            setPotentialMemoryStart(individual, new PotentialMemory<>(cell, sp));
         }
         
         boolean retVal = false;
@@ -50,7 +110,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
             retVal = true;
         }
         memoryIndex = (memoryIndex + 1) % cellCountToChange;
-        es.propertyFor(individual).setMemoryIndex(memoryIndex);
+        setMemoryIndex(individual, memoryIndex);
         return retVal;
     }
     
@@ -70,10 +130,10 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
          */
         int epsilon = 10;
 
-        es.propertyFor(individual).setPotentialMemoryEnd(new PotentialMemory<>(cell, sp));
+        setPotentialMemoryEnd(individual, new PotentialMemory<>(cell, sp));
 
-        int potentialDifference = es.propertyFor(individual).getPotentialMemoryStart().getLengthOfWay() - es.propertyFor(individual).getPotentialMemoryEnd().getLengthOfWay();
-        if ((potentialDifference < epsilon) && (sp == es.propertyFor(individual).getPotentialMemoryStart().getStaticPotential())) {
+        int potentialDifference = getPotentialMemoryStart(individual).getLengthOfWay() - getPotentialMemoryEnd(individual).getLengthOfWay();
+        if ((potentialDifference < epsilon) && (sp == getPotentialMemoryStart(individual).getStaticPotential())) {
 
             // Calculate the second best Potential and the associated potential value on the {@code cell}
             List<StaticPotential> staticPotentials = new ArrayList<>();

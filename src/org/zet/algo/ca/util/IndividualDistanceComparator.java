@@ -2,8 +2,8 @@ package org.zet.algo.ca.util;
 
 import org.zet.cellularautomaton.Individual;
 import java.util.Comparator;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * The class {@code IndividualDistanceComparator} compares two individuals in means of their distance to the exit using

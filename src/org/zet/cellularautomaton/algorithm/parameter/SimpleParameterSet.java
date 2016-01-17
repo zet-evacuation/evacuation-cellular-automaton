@@ -19,8 +19,8 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.Collection;
-import org.zet.cellularautomaton.algorithm.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**

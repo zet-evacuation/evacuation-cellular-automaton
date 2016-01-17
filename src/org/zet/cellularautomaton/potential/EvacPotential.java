@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.algorithm.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 public class EvacPotential extends StaticPotential {
 

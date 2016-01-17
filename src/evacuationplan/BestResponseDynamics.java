@@ -13,7 +13,7 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
-import org.zet.cellularautomaton.algorithm.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 
 /**
  * The class {@code BestResponseDynamics} ...

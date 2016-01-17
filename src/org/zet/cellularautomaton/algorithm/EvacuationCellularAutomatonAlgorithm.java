@@ -1,5 +1,8 @@
 package org.zet.cellularautomaton.algorithm;
 
+import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import static org.zetool.common.util.Helper.in;
 
 import java.util.ArrayList;
