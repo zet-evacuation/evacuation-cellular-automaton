@@ -1,13 +1,10 @@
 package org.zet.cellularautomaton.algorithm;
 
-import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import static org.zetool.common.util.Helper.in;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +15,12 @@ import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.algo.ca.util.IndividualDistanceComparator;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.parameter.DefaultParameterSet;
+import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 
@@ -42,76 +41,12 @@ public class EvacuationCellularAutomatonAlgorithm
     public static final Function<List<Individual>, Iterator<Individual>> DEFAULT_ORDER = x -> x.iterator();
 
     /**
-     * The distance comparator.
-     */
-    private final IndividualDistanceComparator DISTANCE_COMPARATOR = new IndividualDistanceComparator<>();
-    /**
-     * Sorts the individuals by increasing distance to the exit.
-     */
-//    public static final Function<List<Individual>, Iterator<Individual>> FRONT_TO_BACK = (List<Individual> t) -> {
-//        List<Individual> copy = new ArrayList<>(t);
-//        Collections.sort(copy, DISTANCE_COMPARATOR);
-//        return copy.iterator();
-//    };
-
-    private static Function<List<Individual>, Iterator<Individual>> getFrontToBack(IndividualDistanceComparator c) {
-        return (List<Individual> t) -> {
-            List<Individual> copy = new ArrayList<>(t);
-            Collections.sort(copy, c);
-            return copy.iterator();
-        };
-    }
-
-    /**
-     * Sorts the individuals by decreasing distance to the exit.
-     */
-//    public static final Function<List<Individual>, Iterator<Individual>> BACK_TO_FRONT = (List<Individual> t) -> {
-//        List<Individual> copy = new ArrayList<>(t);
-//        Collections.sort(copy, DISTANCE_COMPARATOR);
-//        Collections.reverse(copy);
-//        return copy.iterator();
-//    };
-
-    private static Function<List<Individual>, Iterator<Individual>> getBackToFront(IndividualDistanceComparator c) {
-        return (List<Individual> t) -> {
-            List<Individual> copy = new ArrayList<>(t);
-            Collections.sort(copy, c);
-            Collections.reverse(copy);
-            return copy.iterator();
-        };
-    }
-    
-    private static class MIndividualDistanceComparator extends IndividualDistanceComparator<Individual> {
-        EvacuationCellularAutomatonAlgorithm algo;
-
-        @Override
-        public int compare(Individual i1, Individual i2) {
-            setEs(algo.es);
-            return super.compare(i1, i2);
-        }
-    }
-    
-    public static EvacuationCellularAutomatonAlgorithm getBackToFrontAlgorithm() {
-        MIndividualDistanceComparator comparator = new MIndividualDistanceComparator();
-        EvacuationCellularAutomatonAlgorithm algo = new EvacuationCellularAutomatonAlgorithm(getBackToFront(comparator));
-        comparator.algo = algo;
-        return algo;
-    }
-    
-    public static EvacuationCellularAutomatonAlgorithm getFrontToBackAlgorithm() {
-        MIndividualDistanceComparator comparator = new MIndividualDistanceComparator();
-        EvacuationCellularAutomatonAlgorithm algo = new EvacuationCellularAutomatonAlgorithm(getFrontToBack(comparator));
-        comparator.algo = algo;
-        return algo;
-    }
-
-    /**
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<List<Individual>, Iterator<Individual>> reorder;
-    EvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
-            Collections.EMPTY_LIST);
-    EvacuationStateController ec = null;
+    protected EvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
+            Collections.emptyList());
+    private EvacuationStateController ec = null;
 
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
@@ -124,7 +59,6 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected void initialize() {
         initRulesAndState();
-        DISTANCE_COMPARATOR.setEs(es);
 
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
@@ -285,4 +219,93 @@ public class EvacuationCellularAutomatonAlgorithm
         return es;
     }
 
+    /**
+     * Iterates the individuals by increasing distance to the exit.
+     *
+     * @return returns a instance of the algorithm
+     */
+    public static EvacuationCellularAutomatonAlgorithm getFrontToBackAlgorithm() {
+        IndividualDistanceComparator comparator = new IndividualDistanceComparator();
+        EvacuationCellularAutomatonAlgorithm algo = new EvacuationCellularAutomatonAlgorithm(getFrontToBack(comparator));
+        comparator.algorithm = algo;
+        return algo;
+    }
+
+    private static Function<List<Individual>, Iterator<Individual>> getFrontToBack(IndividualDistanceComparator c) {
+        return (List<Individual> t) -> {
+            List<Individual> copy = new ArrayList<>(t);
+            Collections.sort(copy, c);
+            return copy.iterator();
+        };
+    }
+
+    /**
+     * Iterates the individuals by decreasing distance to the exit.
+     *
+     * @return returns an instance of the algorithm
+     */
+    public static EvacuationCellularAutomatonAlgorithm getBackToFrontAlgorithm() {
+        IndividualDistanceComparator comparator = new IndividualDistanceComparator();
+        EvacuationCellularAutomatonAlgorithm algo = new EvacuationCellularAutomatonAlgorithm(getBackToFront(comparator));
+        comparator.algorithm = algo;
+        return algo;
+    }
+
+    private static Function<List<Individual>, Iterator<Individual>> getBackToFront(IndividualDistanceComparator c) {
+        return (List<Individual> t) -> {
+            List<Individual> copy = new ArrayList<>(t);
+            Collections.sort(copy, c);
+            Collections.reverse(copy);
+            return copy.iterator();
+        };
+    }
+
+    /**
+     * The class {@code IndividualDistanceComparator} compares two individuals in means of their distance to the exit
+     * using their currently selected potential field.
+     *
+     * @param <E> the compared object class, that must extend {@link ds.ca.Individual}
+     * @author Jan-Philipp Kappmeier
+     */
+    private static class IndividualDistanceComparator<E extends Individual> implements Comparator<E> {
+
+        EvacuationCellularAutomatonAlgorithm algorithm;
+
+        /**
+         * Creates a new instance of {@code IndividualDistanceComparator}. No initialization is needed.
+         */
+        public IndividualDistanceComparator() {
+
+        }
+
+        /**
+         * Compares two individuals in means of the distance. The distance is the value of the potantial of the cell on
+         * which the individual stands.
+         *
+         * An example:
+         *
+         * Individual 1 has a distance of 20 and individual 2 has a distance of 100. Then individual 1 is nearer to the
+         * exit than individual 2. The returned value is (20 - 100) and thus negative.
+         *
+         * @param i1 the first individual
+         * @param i2 the second individual
+         * @return the difference in distance between the two individauls
+         */
+        @Override
+        public int compare(Individual i1, Individual i2) {
+            EvacuationState es = algorithm.es;
+            return es.propertyFor(i1).getStaticPotential().getPotential(es.propertyFor(i1).getCell())
+                    - es.propertyFor(i2).getStaticPotential().getPotential(es.propertyFor(i2).getCell());
+        }
+
+        /**
+         * Returns the name of the class.
+         *
+         * @return the name of the class
+         */
+        @Override
+        public String toString() {
+            return "IndividualDistanceComparator";
+        }
+    }
 }
