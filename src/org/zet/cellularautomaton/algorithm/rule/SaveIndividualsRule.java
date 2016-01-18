@@ -33,14 +33,14 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     @Override
     protected void onExecute(EvacCell cell) {
         Individual savedIndividual = cell.getState().getIndividual();
-        if (!(es.getIndividualState().isSafe(savedIndividual))) {
-            es.getIndividualState().setSafe(savedIndividual);
+        if (!(es.propertyFor(savedIndividual).isSafe())) {
+            ec.setSafe(savedIndividual);
             es.propertyFor(savedIndividual).setPanic(0);
 
             if (cell instanceof SaveCell) {
                 setExitPotential((SaveCell) cell, savedIndividual);
             }
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
+            //es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
     }
 

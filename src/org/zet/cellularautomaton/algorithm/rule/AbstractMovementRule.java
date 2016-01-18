@@ -56,7 +56,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         Direction8 dir = es.propertyFor(fromCell.getState().getIndividual()).getDirection();
 
         for (EvacCell c : neighbors) {
-            if (es.getIndividualState().isSafe(fromCell.getState().getIndividual()) && !c.isSafe()) {
+            if (es.propertyFor(fromCell.getState().getIndividual()).isSafe() && !c.isSafe()) {
                 continue; // ignore all moves that would mean walking out of safe areas
             }
             if (fromCell instanceof DoorCell && c instanceof DoorCell) {

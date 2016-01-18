@@ -1,7 +1,6 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -12,12 +11,6 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
  * @author Jan-Philipp Kappmeier
  */
 public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<EvacCell> {
-
-    //public List<Individual> getIndividuals();
-
-    //public int getIndividualCount();
-
-    //public int getInitialIndividualCount();
 
     public void setIndividualDead(Individual i, DeathCause cause);
 
@@ -43,6 +36,8 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
     public DynamicPotential getDynamicPotential();
 
     public StaticPotential getSafePotential();
+
+    public StaticPotential minPotentialFor(EvacCell c);
 
     // TODO: remove these
     public void start();

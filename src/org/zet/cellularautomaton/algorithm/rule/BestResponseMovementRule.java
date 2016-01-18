@@ -71,7 +71,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     public void move(EvacCell from, EvacCell targetCell) {
         Individual ind = from.getState().getIndividual();
         //public void move( EvacCell targetCell ) {
-        if (es.getIndividualState().isSafe(ind) && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell))) // Rauslaufen aus sicheren Bereichen ist nicht erlaubt
+        if (es.propertyFor(ind).isSafe() && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell))) // Rauslaufen aus sicheren Bereichen ist nicht erlaubt
         {
             targetCell = from;
         }

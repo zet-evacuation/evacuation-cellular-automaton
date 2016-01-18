@@ -4,10 +4,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
@@ -15,7 +16,6 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 
 /**
  *
@@ -24,25 +24,21 @@ import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule
 public class TestAbstractPotentialChangeRule {
 
     private final static IndividualBuilder builder = new IndividualBuilder();
+    private final Mockery context = new Mockery();
+    private EvacuationState es;
 
-    private static TestIndividualState is;
+    @Before
+    public void initState() {
+        es = context.mock(EvacuationState.class);
+    }
 
-    private static class FakeAbstractPotentialChangeRule extends AbstractPotentialChangeRule {
+    private class FakeAbstractPotentialChangeRule extends AbstractPotentialChangeRule {
 
         private final boolean wantsToChange;
 
-        public FakeAbstractPotentialChangeRule(boolean wantsToChange) {
+        public FakeAbstractPotentialChangeRule(EvacuationState es, boolean wantsToChange) {
             this.wantsToChange = wantsToChange;
-            Mockery context = new Mockery();
-            EvacuationState mock = context.mock(EvacuationState.class);
-            this.setEvacuationState(mock);
-            is = new TestIndividualState();
-            context.checking(new Expectations() {
-                {
-                    allowing(es).getIndividualState();
-                    will(returnValue(is));
-                }
-            });
+            this.setEvacuationState(es);
 
         }
 
@@ -62,11 +58,15 @@ public class TestAbstractPotentialChangeRule {
         if (occupied) {
             Individual i = builder.build();
             IndividualProperty ip = new IndividualProperty(i);
-            is.addIndividual(i);
+            context.checking(new Expectations() {
+                {
+                    allowing(es).propertyFor(i);
+                    will(returnValue(ip));
+                }
+            });
             cell.getState().setIndividual(i);
             ip.setCell(cell);
             if (safe) {
-                is.setSafe(i);
             }
         }
         return cell;
@@ -74,14 +74,14 @@ public class TestAbstractPotentialChangeRule {
 
     @Test
     public void notExecuteableIfNotWillingToChange() {
-        AbstractPotentialChangeRule rule = new FakeAbstractPotentialChangeRule(false);
+        AbstractPotentialChangeRule rule = new FakeAbstractPotentialChangeRule(es, false);
         assertThat(rule, is(not(executeableOn(createCell(true, false)))));
         assertThat(rule, is(not(executeableOn(createCell(false, false)))));
     }
 
     @Test
     public void executeableIfWillingToChange() {
-        AbstractPotentialChangeRule rule = new FakeAbstractPotentialChangeRule(true);
+        AbstractPotentialChangeRule rule = new FakeAbstractPotentialChangeRule(es, true);
 
         assertThat(rule, is(executeableOn(createCell(true, false))));
         assertThat(rule, is(not(executeableOn(createCell(false, false)))));

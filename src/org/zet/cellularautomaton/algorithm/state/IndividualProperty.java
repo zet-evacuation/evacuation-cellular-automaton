@@ -5,6 +5,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
+import org.zetool.common.util.Helper;
 
 /**
  * Stores the mutable {@link Individual} properties during a simulation run. Instances of the class are created in
@@ -15,7 +16,8 @@ import org.zetool.common.util.Direction8;
 public class IndividualProperty {
     private DeathCause deathCause = null;
     /** The time, when the individual has last entered an area, where it is safe ( = area of save- and exitcells). */
-    private int safetyTime;
+    private int safetyTime = -1;
+    private int evacuationTime = -1;
 
     // General properties
     private double panic = 0.0001;
@@ -31,7 +33,6 @@ public class IndividualProperty {
     private double stepEndTime = 0;
     /** The (accurate) time when the first moving of the individual starts. Initializes invalid. */
     private double stepStartTime = -1;
-    private boolean isEvacuated = false;
     Direction8 dir = Direction8.Top;
 
     // outdated and to delete?
@@ -43,8 +44,6 @@ public class IndividualProperty {
         this.alarmed = false;
         this.cell = null;
         this.staticPotential = null;
-        safetyTime = -1;
-
     }
 
     public DeathCause getDeathCause() {
@@ -65,6 +64,76 @@ public class IndividualProperty {
         return deathCause != null;
     }
     
+    /**
+     * Returns the time when the individual is safe.
+     *
+     * @return The time when the individual is safe.
+     */
+    public int getSafetyTime() {
+        if(!isSafe()) {
+            throw new IllegalStateException("Individual is not safe.");
+        }
+        return safetyTime;
+    }
+
+    /**
+     * Sets the time when the individual is evacuated.
+     *
+     * @param time The time when the individual is evacuated.
+     */
+    void setSafetyTime(int time) {
+        if(isSafe() && time != safetyTime) {
+            throw new IllegalStateException("Individual already safe: " + safetyTime);
+        }
+        safetyTime = Helper.requireNonNegative(time);
+    }
+    
+    public boolean isSafe() {
+        return safetyTime >= 0;
+    }
+
+    /**
+     * Returns the time when the individual is safe.
+     *
+     * @return The time when the individual is safe.
+     */
+    public int getEvacuationTime() {
+        if(!isEvacuated()) {
+            throw new IllegalStateException("Individual is not evacuated.");
+        }
+        return evacuationTime;
+    }
+
+    /**
+     * Sets the time when the individual is evacuated.
+     *
+     * @param time The time when the individual is evacuated.
+     */
+    void setEvacuationTime(int time) {
+        if(isEvacuated()) {
+            throw new IllegalStateException("Individual already evacuated at " + evacuationTime);
+        }
+        if( isSafe() && getSafetyTime() > time ) {
+            throw new IllegalArgumentException("Individual safe at time: " + getSafetyTime());
+        }
+        evacuationTime = Helper.requireNonNegative(time);
+        if( !isSafe()) {
+            setSafetyTime(time);
+        }
+    }
+    
+    public boolean isEvacuated() {
+        return evacuationTime >= 0;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
     public double getStepEndTime() {
         return stepEndTime;
     }
@@ -82,24 +151,6 @@ public class IndividualProperty {
     }
 
 
-    /**
-     * Returns the time when the individual is safe.
-     *
-     * @return The time when the individual is safe.
-     */
-    public int getSafetyTime() {
-        return safetyTime;
-    }
-
-    /**
-     * Sets the time when the individual is evacuated.
-     *
-     * @param time The time when the individual is evacuated.
-     */
-    public void setSafetyTime(int time) {
-        safetyTime = time;
-    }
-    
     /**
      * Alarms the Individual and also alarms the room of the cell of the individual.
      *

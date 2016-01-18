@@ -10,5 +10,6 @@ import org.zet.cellularautomaton.Individual;
 public interface EvacuationStateControllerInterface {
 
     public void die(Individual i, DeathCause cause);
+    public void setSafe(Individual i);
 
 }

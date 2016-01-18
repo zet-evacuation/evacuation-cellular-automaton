@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.closeTo;
@@ -23,8 +22,8 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -35,13 +34,13 @@ public class TestAbstractMovementRule {
     private final static Direction8 DEFAULT_DIRECTION = Direction8.Top;
     private final static IndividualBuilder builder = new IndividualBuilder();
     private Mockery context = new Mockery();
-    private TestIndividualState is;
     private Individual individual;
-    private IndividualProperty ip;
+    private FakeIndividualProperty ip;
+    private AbstractMovementRule rule;
 
-    private class FakeEvacCell extends EvacCell {
+    private static class FakeEvacCell extends EvacCell {
         private final boolean isFreeNeighbors;
-        private List<EvacCell> neighbors = Collections.EMPTY_LIST;
+        private List<EvacCell> neighbors = Collections.emptyList();
         boolean safe;
         Direction8 direction = DEFAULT_DIRECTION;
         public FakeEvacCell() {
@@ -87,7 +86,20 @@ public class TestAbstractMovementRule {
         }
     }
 
-    AbstractMovementRule rule;
+    private static class FakeIndividualProperty extends IndividualProperty {
+
+        boolean safe = false;
+
+        public FakeIndividualProperty(Individual i) {
+            super(i);
+        }
+
+        @Override
+        public boolean isSafe() {
+            return safe;
+        }
+
+    }
     
     @Before
     public void initRule() {
@@ -106,13 +118,10 @@ public class TestAbstractMovementRule {
             }
         };
         EvacuationState es = context.mock(EvacuationState.class);
-        is = new TestIndividualState();
         individual = builder.build();
-        ip = new IndividualProperty(individual);
+        ip = new FakeIndividualProperty(individual);
         context.checking(new Expectations() {
             {
-                allowing(es).getIndividualState();
-                will(returnValue(is));
                 allowing(es).propertyFor(with(individual));
                 will(returnValue(ip));
             }
@@ -135,9 +144,8 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testSafeNeighbors() {
-        is.addIndividual(individual);
-        is.setSafe(individual);
         ip.setDirection(DEFAULT_DIRECTION);
+        ip.safe = true;
         
         List<EvacCell> cellList = new LinkedList<>();
         
@@ -156,7 +164,6 @@ public class TestAbstractMovementRule {
         cell.getState().setIndividual(individual);
         cell.neighbors = cellList;
         
-        
         List<EvacCell> result = rule.computePossibleTargets(cell, false);
         assertThat(result, hasSize(2));
         assertThat(result, Matchers.hasItem(n2));
@@ -165,7 +172,6 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testDirections() {
-        is.addIndividual(individual);
         ip.setDirection(DEFAULT_DIRECTION);
         
         List<EvacCell> cellList = new ArrayList<>(Direction8.values().length);
@@ -202,7 +208,7 @@ public class TestAbstractMovementRule {
     
     @Test(expected = IllegalArgumentException.class)
     public void testTargetSelectionRequiresNonEmptyList() {
-        rule.selectTargetCell(new FakeEvacCell(), Collections.EMPTY_LIST);
+        rule.selectTargetCell(new FakeEvacCell(), Collections.emptyList());
     }
     
     @Test

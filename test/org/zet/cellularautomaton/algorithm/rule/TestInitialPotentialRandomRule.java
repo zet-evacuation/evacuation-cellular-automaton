@@ -1,7 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,9 +19,9 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -40,7 +38,6 @@ public class TestInitialPotentialRandomRule {
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
     private EvacuationStateControllerInterface ec;
-    private TestIndividualState is;
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Before
@@ -48,10 +45,8 @@ public class TestInitialPotentialRandomRule {
         rule = new InitialPotentialRandomRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        is = new TestIndividualState();
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
-        is.addIndividual(individual);
         ip = new IndividualProperty(individual);
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
@@ -64,8 +59,6 @@ public class TestInitialPotentialRandomRule {
                 allowing(room).removeIndividual(with(individual));
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter(es)));
-                allowing(es).getIndividualState();
-                will(returnValue(is));
                 allowing(es).propertyFor(individual);
                 will(returnValue(ip));
             }

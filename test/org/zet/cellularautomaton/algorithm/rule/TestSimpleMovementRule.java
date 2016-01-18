@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -19,6 +18,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**

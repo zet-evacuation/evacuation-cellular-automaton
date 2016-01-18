@@ -1,12 +1,10 @@
 package org.zet.cellularautomaton.algorithm.state;
 
-import org.zet.cellularautomaton.algorithm.state.IndividualState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
-import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
@@ -37,11 +35,9 @@ public class TestEvacuationStateController {
         ec.die(deadNotEnoughTime2, DeathCause.NOT_ENOUGH_TIME);
         ec.die(deadUnreachable, DeathCause.EXIT_UNREACHABLE);
 
-        IndividualState is = es.getIndividualState();
-        
-        assertThat(is.deadIndividualsCount(), is(equalTo(3)));
-        assertThat(is.getRemainingIndividualCount(), is(equalTo(1)));
-        assertThat(is.getDeadIndividuals(), contains(deadNotEnoughTime1, deadNotEnoughTime2, deadUnreachable));
+        assertThat(es.deadIndividualsCount(), is(equalTo(3)));
+        assertThat(es.getRemainingIndividualCount(), is(equalTo(1)));
+        assertThat(es.getDeadIndividuals(), contains(deadNotEnoughTime1, deadNotEnoughTime2, deadUnreachable));
 
         assertThat(es.getDeadIndividualCount(DeathCause.EXIT_UNREACHABLE), is(equalTo(1)));
         assertThat(es.getDeadIndividualCount(DeathCause.NOT_ENOUGH_TIME), is(equalTo(2)));

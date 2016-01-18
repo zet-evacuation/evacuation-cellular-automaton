@@ -9,6 +9,7 @@ import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executea
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.States;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
@@ -17,8 +18,8 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.SaveCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.rule.TestInitialConcretePotentialRule.TestIndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -28,12 +29,39 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  */
 public class TestSaveIndividualsRule {
 
-    private SaveIndividualsRule rule;
     private final Mockery context = new Mockery();
+    private final States test = context.states("normal-test");
+    private SaveIndividualsRule rule;
+    private EvacuationStateControllerInterface ec;
+    private EvacuationState es;
+    private Individual i;
+    private IndividualProperty ip;
+    private SaveCell cell;
 
     @Before
     public void init() {
+        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         rule = new SaveIndividualsRule();
+        ec = context.mock(EvacuationStateControllerInterface.class);
+        rule.setEvacuationStateController(ec);
+        es = context.mock(EvacuationState.class);
+        rule.setEvacuationState(es);
+        i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        ip = new IndividualProperty(i);
+        cell = new SaveCell(0, 0);
+        cell.getState().setIndividual(i);
+        test.become("normal-test");
+        context.checking(new Expectations() {
+            {
+                allowing(es).getCellularAutomaton();
+                will(returnValue(eca));
+                allowing(es).getStatisticWriter();
+                will(returnValue(new CAStatisticWriter(es)));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip)); when(test.is("normal-test"));
+            }
+        });
+        
     }
 
     @Test
@@ -42,7 +70,6 @@ public class TestSaveIndividualsRule {
         ExitCell exitCell = new ExitCell(0, 1);
         RoomCell other = new RoomCell(1, 1);
 
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         saveCell.getState().setIndividual(i);
         exitCell.getState().setIndividual(i);
         other.getState().setIndividual(i);
@@ -65,133 +92,64 @@ public class TestSaveIndividualsRule {
 
     @Test
     public void unsaveIndividualsSaved() {
-        SaveCell cell = new SaveCell(0, 0);
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        IndividualProperty ip = new IndividualProperty(i);
-        cell.getState().setIndividual(i);
-
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        EvacuationState es = context.mock(EvacuationState.class);
-        TestIndividualState is = new TestIndividualState();
-        is.addIndividual(i);
-        context.checking(new Expectations() {
-            {
-                allowing(es).getCellularAutomaton();
-                will(returnValue(eca));
-                allowing(es).getStatisticWriter();
-                will(returnValue(new CAStatisticWriter(es)));
-                allowing(es).getIndividualState();
-                will(returnValue(is));
+        context.checking(new Expectations() {{
                 allowing(es).propertyFor(i);
                 will(returnValue(ip));
-            }
-        });
-        rule.setEvacuationState(es);
+                exactly(1).of(ec).setSafe(with(i));
+            }});
         rule.execute(cell);
-        assertThat(is.isSafe(i), is(true));
         context.assertIsSatisfied();
     }
 
     @Test
     public void saveIndividualNotSaved() {
-        SaveCell cell = new SaveCell(0, 0);
-
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        
-        TestIndividualState is = new TestIndividualState() {
-            @Override
-            public void setSafe(Individual i) {
-                throw new AssertionError("setSafe called!");
-            }
+        IndividualProperty safeIndividualProperty = new IndividualProperty(i) {
 
             @Override
-            public boolean isSafe(Individual thisi) {
-                return thisi == i;
+            public boolean isSafe() {
+                return true;
             }
         };
-        is.addIndividual(i);
 
-        cell.getState().setIndividual(i);
-
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        EvacuationState es = context.mock(EvacuationState.class);
-        context.checking(new Expectations() {
-            {
-                allowing(es).getCellularAutomaton();
-                will(returnValue(eca));
-                allowing(es).getStatisticWriter();
-                will(returnValue(new CAStatisticWriter(es)));
-                allowing(es).getIndividualState();
-                will(returnValue(is));
-            }
-        });
-        rule.setEvacuationState(es);
+        test.become("special-property");
+        context.checking(new Expectations() {{
+                allowing(es).propertyFor(i);
+                will(returnValue(safeIndividualProperty)); when(test.is("special-property"));
+                never(ec).setSafe(with(any(Individual.class)));
+            }});
         rule.execute(cell);
+        context.assertIsSatisfied();
     }
     
     @Test
     public void exitPotentialSet() {
-        SaveCell cell = new SaveCell(0, 0);
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        IndividualProperty ip = new IndividualProperty(i);
         ip.setStaticPotential(new StaticPotential());
-        cell.getState().setIndividual(i);
         
         StaticPotential exitPotential = new StaticPotential();
         cell.setExitPotential(exitPotential);
         
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        EvacuationState es = context.mock(EvacuationState.class);
-        TestIndividualState is = new TestIndividualState();
-        is.addIndividual(i);
-        context.checking(new Expectations() {
-            {
-                allowing(es).getCellularAutomaton();
-                will(returnValue(eca));
-                allowing(es).getStatisticWriter();
-                will(returnValue(new CAStatisticWriter(es)));
-                allowing(es).getIndividualState();
-                will(returnValue(is));
+        context.checking(new Expectations() {{
                 allowing(es).getTimeStep();
                 will(returnValue(3));
-                allowing(es).propertyFor(i);
-                will(returnValue(ip));
-            }
-        });
-        rule.setEvacuationState(es);
+                exactly(1).of(ec).setSafe(with(i));
+            }});
         rule.execute(cell);
-        assertThat(is.isSafe(i), is(true));
         assertThat(ip.getStaticPotential(), is(sameInstance(exitPotential)));
+        context.assertIsSatisfied();
     }
     
     @Test
     public void exitPotentialNotSetOnExitCell() {
-        ExitCell cell = new ExitCell(0, 0);
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        IndividualProperty ip = new IndividualProperty(i);
+        ExitCell exitCell = new ExitCell(0, 0);
+        exitCell.getState().setIndividual(i);
+        
         StaticPotential sp = new StaticPotential();
         ip.setStaticPotential(sp);
-        cell.getState().setIndividual(i);
         
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        EvacuationState es = context.mock(EvacuationState.class);
-        TestIndividualState is = new TestIndividualState();
-        is.addIndividual(i);
-        context.checking(new Expectations() {
-            {
-                allowing(es).getCellularAutomaton();
-                will(returnValue(eca));
-                allowing(es).getStatisticWriter();
-                will(returnValue(new CAStatisticWriter(es)));
-                allowing(es).getIndividualState();
-                will(returnValue(is));
-                allowing(es).propertyFor(i);
-                will(returnValue(ip));
-            }
-        });
-        rule.setEvacuationState(es);
-        rule.execute(cell);
-        assertThat(is.isSafe(i), is(true));
-        assertThat(ip.getStaticPotential(), is(sameInstance(sp)));
+        context.checking(new Expectations() {{
+                exactly(1).of(ec).setSafe(with(i));
+            }});
+        rule.execute(exitCell);
+        context.assertIsSatisfied();
     }
 }

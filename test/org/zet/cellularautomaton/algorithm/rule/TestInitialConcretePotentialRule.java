@@ -21,7 +21,6 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.state.IndividualState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -39,16 +38,7 @@ public class TestInitialConcretePotentialRule {
     EvacuationCellularAutomaton eca;
     EvacuationState es;
     EvacuationStateControllerInterface ec;
-    TestIndividualState is;
     private final static IndividualBuilder builder = new IndividualBuilder();
-
-    static class TestIndividualState extends IndividualState {
-
-        @Override
-        public void addIndividual(Individual i) {
-            super.addIndividual(i);
-        }
-    }
 
     private void init() {
         init(0);
@@ -58,10 +48,8 @@ public class TestInitialConcretePotentialRule {
         rule = new InitialConcretePotentialRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        is = new TestIndividualState();
         eca = new EvacuationCellularAutomaton();
         i = builder.withAge(30).withFamiliarity(familiarity).build();
-        is.addIndividual(i);
         ip = new IndividualProperty(i);
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
@@ -74,8 +62,6 @@ public class TestInitialConcretePotentialRule {
                 allowing(room).removeIndividual(with(i));
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter(es)));
-                allowing(es).getIndividualState();
-                will(returnValue(is));
                 allowing(es).propertyFor(i);
                 will(returnValue(ip));
             }

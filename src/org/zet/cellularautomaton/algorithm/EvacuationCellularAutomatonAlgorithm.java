@@ -21,6 +21,7 @@ import org.zet.cellularautomaton.algorithm.parameter.DefaultParameterSet;
 import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 
@@ -44,7 +45,7 @@ public class EvacuationCellularAutomatonAlgorithm
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<List<Individual>, Iterator<Individual>> reorder;
-    protected EvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
+    protected MutableEvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
             Collections.emptyList());
     private EvacuationStateController ec = null;
 
@@ -64,8 +65,8 @@ public class EvacuationCellularAutomatonAlgorithm
         log.log(Level.INFO, "{0} is executed. ", toString());
 
         getProblem().getCellularAutomaton().start();
-        Individual[] individualsCopy = es.getIndividualState().getInitialIndividuals().toArray(
-                new Individual[es.getIndividualState().getInitialIndividuals().size()]);
+        Individual[] individualsCopy = es.getInitialIndividuals().toArray(
+                new Individual[es.getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
             Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
             EvacCell c = es.propertyFor(i).getCell();
@@ -84,8 +85,10 @@ public class EvacuationCellularAutomatonAlgorithm
     private void initRulesAndState() {
         es = new MutableEvacuationState(getProblem().getParameterSet(), getProblem().getCellularAutomaton(),
                 getProblem().getIndividuals());
+        EvacuationCellularAutomatonInterface eca = getProblem().getCellularAutomaton();
         for (Map.Entry<Individual, EvacCell> e : getProblem().individualStartPositions().entrySet()) {
             es.propertyFor(e.getKey()).setCell(e.getValue());
+            es.propertyFor(e.getKey()).setStaticPotential(eca.minPotentialFor(e.getValue()));
         }
         ec = new EvacuationStateController((MutableEvacuationState) es);
         for (EvacuationRule r : getProblem().getRuleSet()) {
@@ -104,8 +107,8 @@ public class EvacuationCellularAutomatonAlgorithm
                 getProblem().getParameterSet().probabilityDynamicDecrease());
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
-                es.getIndividualState().getInitialIndividualCount() - es.getIndividualState().getRemainingIndividualCount(),
-                es.getIndividualState().getInitialIndividualCount()));
+                es.getInitialIndividualCount() - es.getRemainingIndividualCount(),
+                es.getInitialIndividualCount()));
     }
 
     @Override
@@ -120,11 +123,11 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected EvacuationSimulationResult terminate() {
         // let die all individuals which are not already dead and not safe
-        if (es.getIndividualState().getNotSafeIndividualsCount() != 0) {
-            Individual[] individualsCopy = es.getIndividualState().getRemainingIndividuals().toArray(
-                    new Individual[es.getIndividualState().getRemainingIndividuals().size()]);
+        if (es.getNotSafeIndividualsCount() != 0) {
+            Individual[] individualsCopy = es.getRemainingIndividuals().toArray(
+                    new Individual[es.getRemainingIndividuals().size()]);
             for (Individual i : individualsCopy) {
-                if (!es.getIndividualState().isSafe(es.propertyFor(i).getCell().getState().getIndividual())) {
+                if (!es.propertyFor(i).isSafe()) {
                     ec.die(i, DeathCause.NOT_ENOUGH_TIME);
                 }
             }
@@ -148,7 +151,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private boolean allIndividualsSave() {
-        return es.getIndividualState().getNotSafeIndividualsCount() == 0;
+        return es.getNotSafeIndividualsCount() == 0;
     }
 
     private boolean timeOver() {
@@ -164,7 +167,7 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected final double getProgress() {
         double timeProgress = super.getProgress();
-        double individualProgress = 1.0 - ((double) es.getIndividualState().getRemainingIndividualCount()
+        double individualProgress = 1.0 - ((double) es.getRemainingIndividualCount()
                 / getProblem().getIndividuals().size());
         return Math.max(individualProgress, timeProgress);
     }
@@ -177,7 +180,7 @@ public class EvacuationCellularAutomatonAlgorithm
      */
     @Override
     public final Iterator<EvacCell> iterator() {
-        return new CellIterator(reorder.apply(es.getIndividualState().getRemainingIndividuals()), es);
+        return new CellIterator(reorder.apply(es.getRemainingIndividuals()), es);
     }
 
     /**
@@ -217,6 +220,10 @@ public class EvacuationCellularAutomatonAlgorithm
 
     public EvacuationState getEvacuationState() {
         return es;
+    }
+    
+    protected EvacuationStateControllerInterface getEvacuationController() {
+        return ec;
     }
 
     /**

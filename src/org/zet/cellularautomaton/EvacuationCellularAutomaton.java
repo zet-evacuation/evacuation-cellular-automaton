@@ -27,8 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.CAStateChangedAction;
-import org.zet.cellularautomaton.results.DieAction;
-import org.zet.cellularautomaton.results.ExitAction;
 import org.zet.cellularautomaton.results.MoveAction;
 import org.zet.cellularautomaton.results.SwapAction;
 import org.zet.cellularautomaton.potential.DynamicPotential;
@@ -66,7 +64,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private List<String> floorNames;
     /** A mapping floor <-> rooms. */
     private List<ArrayList<Room>> roomsByFloor;
-    /** HashMap mapping UUIDs of AssignmentTypes to Individuals. */
+    /** Map mapping UUIDs of AssignmentTypes to Individuals. */
     private Map<UUID, HashSet<Individual>> typeIndividualMap;
     /** Maps name of an assignment types to its unique id. */
     private Map<String, UUID> assignmentTypes;
@@ -80,7 +78,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private double secondsPerStep;
     private double stepsPerSecond;
     /** A {@code TreeMap} of all StaticPotentials. */
-    private final HashMap<Integer, StaticPotential> staticPotentials;
+    private final Map<Integer, StaticPotential> staticPotentials;
     /** The safe potential*/
     private StaticPotential safePotential;
     /** The single DynamicPotential. */
@@ -91,7 +89,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      */
     public EvacuationCellularAutomaton() {
         super(null);
-        //individuals = new ArrayList<>();
         exits = new ArrayList<>();
         rooms = new HashMap<>();
         assignmentTypes = new HashMap<>();
@@ -152,17 +149,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         return count;
     }
 
-//    public void startRecording() {
-//        recordingStarted = true;
-//        VisualResultsRecorder.getInstance().setInitialConfiguration(new InitialConfiguration(floorNames, rooms.values(), getStaticPotentials(), getDynamicPotential(), absoluteMaxSpeed));
-//        VisualResultsRecorder.getInstance().startRecording();
-//    }
-//
-//    public final void stopRecording() {
-//        recordingStarted = false;
-//        VisualResultsRecorder.getInstance().stopRecording();
-//    }
-//
     /**
      * Assigns the UUID to the name of the assignment type
      *
@@ -205,9 +191,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         this.absoluteMaxSpeed = absoluteMaxSpeed;
         this.stepsPerSecond = absoluteMaxSpeed / 0.4;
         this.secondsPerStep = 0.4 / absoluteMaxSpeed;
-//        if (recordingStarted) {
-//            VisualResultsRecorder.getInstance().getInitialConfiguration().setAbsoluteMaxSpeed(absoluteMaxSpeed);
-//        }
     }
 
     /**
@@ -309,38 +292,31 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws IllegalArgumentException if the the specific individual exits already in the list individuals
      * @throws IllegalStateException if an individual is added after the simulation has been startet.
      */
-    public final void addIndividual(EvacCell c, Individual i) throws IllegalArgumentException {
+    public final void addIndividual(EvacCell c, Individual i)  {
         if (this.state != State.READY) {
             throw new IllegalStateException("Individual added after simulation has started.");
         }
 
         c.getRoom().addIndividual(c, i);
 
+    }
+    
+    @Override
+    public StaticPotential minPotentialFor(EvacCell c) {
         // assign shortest path potential to individual, so it is not null.
         int currentMin = -1;
+        StaticPotential ret = null;
         for (StaticPotential sp : getStaticPotentials()) {
-            if (currentMin == -1) {
-                //i.setStaticPotential(sp);
+            if (sp.getPotential(c) > -1 && sp.getPotential(c) < currentMin) {
                 currentMin = sp.getPotential(c);
-            } else if (sp.getPotential(c) > -1 && sp.getPotential(c) < currentMin) {
-                currentMin = sp.getPotential(c);
-                //i.setStaticPotential(sp);
+                ret = sp;
             }
         }
+        if(ret != null) {
+            throw new IllegalArgumentException("No valid potential for cell " + c);
+        }
+        return ret;
     }
-
-    /**
-     * Removes an individual from the list of all individuals of the building
-     *
-     * @param i specifies the Individual object which has to be removed from the list
-     * @throws IllegalArgumentException if the the specific individual does not exist in the list individuals
-     */
-//    private void removeIndividual(Individual i) {
-//        i.getCell().getState().removeIndividual();
-//        if (!individuals.remove(i)) {
-//            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-//        }
-//    }
 
     /**
      * Move the individual standing on the "from"-EvacCell to the "to"-EvacCell.
