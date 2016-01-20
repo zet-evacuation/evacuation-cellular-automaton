@@ -79,7 +79,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     public void setNeededTime(int i) {
-        es.setNeededTime(i);
+        es.setNecessaryTime(i);
     }
 
     private void initRulesAndState() {
@@ -155,7 +155,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private boolean timeOver() {
-        return getStep() > es.getNeededTime();
+        return getStep() > es.getNecessaryTime();
     }
 
     /**

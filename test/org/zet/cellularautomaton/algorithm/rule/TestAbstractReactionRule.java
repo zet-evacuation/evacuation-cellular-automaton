@@ -45,11 +45,11 @@ public class TestAbstractReactionRule {
             }
         });
         cell.getState().setIndividual(i);
-        ip.setAlarmed(false);
+        ip.alarm(false);
         rule.setEvacuationState(es);
         assertThat(rule, is(executeableOn(cell)));
         
-        ip.setAlarmed(true);
+        ip.alarm(true);
         
         assertThat(rule, is(not(executeableOn(cell))));
     }

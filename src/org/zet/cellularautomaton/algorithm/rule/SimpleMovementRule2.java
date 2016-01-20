@@ -102,7 +102,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     protected void noMove() {
         es.propertyFor(individual).setStepStartTime(es.propertyFor(individual).getStepEndTime());
         setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + 1);
-        es.moveIndividual(es.propertyFor(individual).getCell(), es.propertyFor(individual).getCell());
+        ec.move(es.propertyFor(individual).getCell(), es.propertyFor(individual).getCell());
 
         es.propertyFor(individual).setDirection(getDirection());
         setMoveRuleCompleted(false);
@@ -202,7 +202,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         Individual individual = from.getState().getIndividual();
 
         from.setOccupiedUntil(es.propertyFor(individual).getStepEndTime());
-        es.moveIndividual(from, targetCell);
+        ec.move(from, targetCell);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(individual, (int) Math.ceil(es.propertyFor(individual).getStepEndTime()), dist);
     }
@@ -253,7 +253,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         initializeMove(cell1, cell2);
         individual = cell2.getState().getIndividual();
         initializeMove(cell2, cell1); // do not actually move!
-        es.swapIndividuals(cell1, cell2);
+        ec.swap(cell1, cell2);
     }
 
     /**

@@ -18,12 +18,19 @@ public class EvacuationStateController implements EvacuationStateControllerInter
         this.evacuationState = evacuationState;
     }
     
+    void add(Individual i, EvacCell cell) {
+        evacuationState.propertyFor(i).setCell(cell);
+        cell.getState().setIndividual(i);
+    } 
+
+    @Override
     public void move(EvacCell from, EvacCell to) {
         Individual i = from.getState().getIndividual();
         remove(i);
         add(i, to);
     }
-    
+
+    @Override
     public void swap(EvacCell from, EvacCell to) {
         Individual i1 = from.getState().getIndividual();
         Individual i2 = from.getState().getIndividual();
@@ -32,18 +39,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
         add(i2, from);
         add(i1, to);
     }
-    
-    void add(Individual i, EvacCell cell) {
-        evacuationState.propertyFor(i).setCell(cell);
-        cell.getState().setIndividual(i);
-    } 
 
-    /**
-     * Sets an individual dead. The individual is taken out of the simulation.
-     * 
-     * @param i an individual
-     * @param cause the reason why the individual dies.
-     */
     @Override
     public void die(Individual i, DeathCause cause) {
         evacuationState.die(i);
@@ -57,6 +53,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
         evacuationState.setSafe(i);
     }
     
+    @Override
     public void evacuate(Individual i) {
         evacuationState.propertyFor(i).setEvacuationTime(evacuationState.getStep());
         remove(i);

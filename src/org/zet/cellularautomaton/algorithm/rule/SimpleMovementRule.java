@@ -58,7 +58,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
     @Override
     public void move(EvacCell from, EvacCell targetCell) {
         Logger.getGlobal().log(Level.INFO, "Move from {0} to {1}", new Object[]{from, targetCell});
-        es.moveIndividual(from, targetCell);
+        ec.move(from, targetCell);        
     }
 
     @Override
@@ -77,6 +77,6 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public void swap(EvacCell cell1, EvacCell cell2) {
-        es.swapIndividuals(cell1, cell2);
+        ec.swap(cell1, cell2);
     }
 }

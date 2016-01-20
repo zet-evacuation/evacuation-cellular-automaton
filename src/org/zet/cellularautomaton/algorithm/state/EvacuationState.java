@@ -12,6 +12,8 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * @author Jan-Philipp Kappmeier
  */
 public interface EvacuationState extends PropertyAccess, Iterable<Individual>{
+    @Override
+    public IndividualProperty propertyFor(Individual i);
     /**
      * Returns the current time step of the evacuation simulation.
      * 
@@ -20,35 +22,23 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual>{
     public int getTimeStep();
 
     /**
-     * Sets a new minimal number of time steps that are necessary to finish all (virtually non discrete) movements.
-     *
-     * @param neededTime the time step
-     */
-    public void setNeededTime(int neededTime);
-
-    /**
      * Gets the minimal number of time steps that are necessary to finish all (virtually not discrete) movements.
      *
-     * @return the time
+     * @return the time necessary to complete the simulation at least
      */
-    public int getNeededTime();
+    public int getNecessaryTime();
 
-    public CAStatisticWriter getStatisticWriter();
-
-    public void swapIndividuals(EvacCell cell1, EvacCell cell2);
-
-    public void moveIndividual(EvacCell from, EvacCell targetCell);
-
+    // only necessary in concrete implementation?
+    public void markIndividualForRemoval(Individual individual);
+    
+    public void removeMarkedIndividuals();    
+    
+    // to be moved
     public void increaseDynamicPotential(EvacCell targetCell);
 
+    // To be removed from the interface completely:
+    public CAStatisticWriter getStatisticWriter();
     public EvacuationCellularAutomatonInterface getCellularAutomaton();
-
-    public void markIndividualForRemoval(Individual individual);
-
     public ParameterSet getParameterSet();
-    
-    public void removeMarkedIndividuals();
-    
-    @Override
-    public IndividualProperty propertyFor(Individual i);
+
 }

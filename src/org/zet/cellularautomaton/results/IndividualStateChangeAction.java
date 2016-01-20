@@ -73,7 +73,7 @@ public class IndividualStateChangeAction extends Action {
         es.propertyFor(individual).setExhaustion(exhaustion);
         es.propertyFor(individual).setRelativeSpeed(currentSpeed);
         if (isAlarmed && !es.propertyFor(individual).isAlarmed()) {
-            es.propertyFor(individual).setAlarmed(true);
+            es.propertyFor(individual).setAlarmed();
         }
     }
 

@@ -137,7 +137,6 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      */
     protected void setStepEndTime(Individual i, double d) {
         es.propertyFor(i).setStepEndTime(d);
-        es.setNeededTime((int) Math.ceil(d));
     }
 
     public boolean isDirectExecute() {

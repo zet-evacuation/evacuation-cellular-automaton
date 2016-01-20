@@ -19,32 +19,45 @@ import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
- *
+ * The current state of the simulation run.
+ * 
  * @author Jan-Philipp Kappmeier
  */
 public class MutableEvacuationState implements EvacuationState {
 
+    /** Generic error message. */
     private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
+    
+    /** The cellular automaton of the simulation run. */
+    private final EvacuationCellularAutomatonInterface ca;
+    /** The parameter set of the simulation run. */
+    private final ParameterSet parameterSet;
+
+    /** Mapping of individuals to their dynamic properties. */
+    private final Map<Individual, IndividualProperty> individualProperties;
+    
+    /** The individuals initially in the simulation. */
     private final List<Individual> initialIndividuals = new LinkedList<>();
+    /** The individuals that are still active in the simulation, i.e. living, unsafe. */
     private final List<Individual> remainingIndividuals = new LinkedList<>();
+    /** The individuals that are already dead. */
     private final Set<Individual> deadIndividuals = new HashSet<>();
+    /** The individuals that are safe, but not necessarily evacuated. */
     private final Set<Individual> safeIndividuals = new HashSet<>();
-    /**
-     * An ArrayList of all Individual objects, which are already out of the simulation because they are evacuated.
-     */
+    /** The individuals which are already out of the simulation because they are evacuated. */
     private final Set<Individual> evacuatedIndividuals = new HashSet<>();
+    /** The number of individuals that are active but not yet safe. */
     private int notSaveIndividualsCount = 0;
 
-    public CAStatisticWriter caStatisticWriter;
-    private final ParameterSet parameterSet;
-    private final EvacuationCellularAutomatonInterface ca;
-    private final Map<Individual, IndividualProperty> individualProperties;
-
     /** The minimal number of steps that is needed until all movements are FINISHED. */
-    private int neededTime;
-    int step = 0;
-    /** An {@code ArrayList} marked to be removed. */
+    private int necessaryTime;
+    /** The current simulation step. */
+    int currentStep = 0;
+    /** The individuals that are to be removed at the end of the current step. */
     private final List<Individual> markedForRemoval = new ArrayList<>();
+
+    /** Statistics writer. TODO: remove */
+    public CAStatisticWriter caStatisticWriter;
 
     public MutableEvacuationState(ParameterSet parameterSet, EvacuationCellularAutomatonInterface ca,
             List<Individual> individuals) {
@@ -64,21 +77,34 @@ public class MutableEvacuationState implements EvacuationState {
 
     @Override
     public int getTimeStep() {
-        return step;
+        return currentStep;
     }
 
     public void increaseStep() {
+        currentStep++;
+        updateNecessaryTime();
+    }
+    
+    private void updateNecessaryTime() {
+        double tempTime = necessaryTime;
+        for( Individual i : remainingIndividuals ) {
+            tempTime = Math.max(necessaryTime, propertyFor(i).getStepEndTime());
+        }
+        necessaryTime = (int)Math.ceil(tempTime);        
+    }
 
+    /**
+     * Sets a new minimal number of time steps that are necessary to finish all (virtually non discrete) movements.
+     *
+     * @param necessaryTime the time step until which the simulation has to continue at least
+     */
+    public void setNecessaryTime(int necessaryTime) {
+        this.necessaryTime = necessaryTime;
     }
 
     @Override
-    public void setNeededTime(int i) {
-        neededTime = i;
-    }
-
-    @Override
-    public int getNeededTime() {
-        return neededTime;
+    public int getNecessaryTime() {
+        return necessaryTime;
     }
 
     @Override
@@ -87,18 +113,8 @@ public class MutableEvacuationState implements EvacuationState {
     }
 
     @Override
-    public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void moveIndividual(EvacCell from, EvacCell targetCell) {
-        getCellularAutomaton().moveIndividual(from, targetCell);
-    }
-
-    @Override
     public void increaseDynamicPotential(EvacCell targetCell) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -297,7 +313,7 @@ public class MutableEvacuationState implements EvacuationState {
     }
 
     int getStep() {
-        return step;
+        return currentStep;
     }
 
 }

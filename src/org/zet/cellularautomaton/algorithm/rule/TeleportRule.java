@@ -34,7 +34,7 @@ public class TeleportRule extends AbstractEvacuationRule {
                 double moveTime = Math.max(targetFreeAt, es.propertyFor(cell.getState().getIndividual()).getStepEndTime());
                 //cell.getIndividual().setStepStartTime( cell.getIndividual().getStepEndTime() );
                 es.propertyFor(cell.getState().getIndividual()).setStepStartTime(moveTime);
-                es.moveIndividual(cell, tc.getTarget(0));
+                ec.move(cell, tc.getTarget(0));
                 tc.setTeleportFailed(false);
                 counter++;
                 //System.out.println( "Teleportiert: " + counter );

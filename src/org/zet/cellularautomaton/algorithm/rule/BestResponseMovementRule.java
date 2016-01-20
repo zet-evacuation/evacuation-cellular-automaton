@@ -87,11 +87,8 @@ public class BestResponseMovementRule extends AbstractMovementRule {
 
     private void doMove(Individual i, EvacCell targetCell) {
         if (es.propertyFor(i).getCell().equals(targetCell)) {
-            es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
             setStepEndTime(i, es.propertyFor(i).getStepEndTime() + 1);
-            //i.setStepEndTime( i.getStepEndTime() + 1 );
-            //es.propertyFor(i).getCell().getRoom().moveIndividual( targetCell, targetCell );
-            es.moveIndividual(es.propertyFor(i).getCell(), targetCell);
+            ec.move(es.propertyFor(i).getCell(), targetCell);
             setMoveRuleCompleted(false);
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), 0);
             return;
@@ -155,8 +152,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
             setStepEndTime(i, es.propertyFor(i).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond());
             if (performMove) {
-                //es.propertyFor(i).getCell().getRoom().moveIndividual( i.getCell(), targetCell );
-                es.moveIndividual(es.propertyFor(i).getCell(), targetCell);
+                ec.move(es.propertyFor(i).getCell(), targetCell);
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(i, (int) Math.ceil(es.propertyFor(i).getStepEndTime()), dist);
             }
@@ -215,8 +211,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         }
         doMoveWithDecision(cell1.getState().getIndividual(), cell2, false);
         doMoveWithDecision(cell2.getState().getIndividual(), cell1, false);
-        //cell1.getRoom().swapIndividuals( cell1, cell2 );
-        es.swapIndividuals(cell1, cell2);
+        ec.swap(cell1, cell2);
     }
 
     /**
