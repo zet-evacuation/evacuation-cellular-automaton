@@ -4,24 +4,24 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
+import static org.zetool.common.util.Helper.in;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import static org.hamcrest.Matchers.contains;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import static org.zetool.common.util.Helper.in;
 
 /**
  *
@@ -30,6 +30,7 @@ import static org.zetool.common.util.Helper.in;
 public class TestMutableEvacuationState {
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
     private final Mockery context = new Mockery();
     private final static IndividualBuilder builder = new IndividualBuilder();
     private ParameterSet ps;
@@ -51,7 +52,6 @@ public class TestMutableEvacuationState {
         assertThat(es.getInitialIndividualCount(), is(equalTo(0)));
     }
 
-
     @Test
     public void iterator() {
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
@@ -64,8 +64,11 @@ public class TestMutableEvacuationState {
         es.addIndividual(safe);
         es.addIndividual(evacuated);
         
-        es.setSafe(safe);
-        es.setIndividualEvacuated(evacuated);
+        es.propertyFor(safe).setSafetyTime(0);
+        es.propertyFor(evacuated).setEvacuationTime(0);
+        
+        es.addToSafe(safe);
+        es.addToEvacuated(evacuated);
         
         LinkedList<Individual> individualList = new LinkedList<>();
         for( Individual i : in(es.getRemainingIndividuals().iterator()) ) {
@@ -98,7 +101,7 @@ public class TestMutableEvacuationState {
         context.checking(new Expectations() {{
             allowing(eca).setIndividualEvacuated(toEvacuate);
         }});
-        
+
         es.markIndividualForRemoval(toEvacuate);
         es.removeMarkedIndividuals();
         
@@ -110,20 +113,24 @@ public class TestMutableEvacuationState {
     public void remainingIndividuals() {
         Individual activeIndividual = builder.build();
         Individual evacuatedIndividual = builder.build();
-        Individual saveIndividual = builder.build();
+        Individual safeIndividual = builder.build();
         Individual deadIndividual = builder.build();
 
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
         es.addIndividual(activeIndividual);
         es.addIndividual(evacuatedIndividual);
-        es.addIndividual(saveIndividual);
+        es.addIndividual(safeIndividual);
         es.addIndividual(deadIndividual);
 
-        es.setSafe(saveIndividual);
-        es.setIndividualEvacuated(evacuatedIndividual);
-        es.die(deadIndividual);
+        es.propertyFor(safeIndividual).setSafetyTime(0);
+        es.propertyFor(evacuatedIndividual).setEvacuationTime(0);
+        es.propertyFor(deadIndividual).setDeathCause(DeathCause.EXIT_UNREACHABLE);
 
-        assertThat(es.getRemainingIndividuals(), contains(activeIndividual, saveIndividual));
+        es.addToSafe(safeIndividual);
+        es.addToEvacuated(evacuatedIndividual);
+        es.addToDead(deadIndividual);
+
+        assertThat(es.getRemainingIndividuals(), contains(activeIndividual, safeIndividual));
         assertThat(es.getEvacuatedIndividuals(), contains(evacuatedIndividual));
         assertThat(es.getDeadIndividuals(), contains(deadIndividual));
     }
@@ -136,23 +143,24 @@ public class TestMutableEvacuationState {
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
         es.addIndividual(safe);
         es.addIndividual(notSafe);
+
+        es.propertyFor(safe).setSafetyTime(0);
         
-        es.setSafe(safe);
+        es.addToSafe(safe);
         
-        //assertThat(es.isSafe(safe), is(equalTo(true)));
-        //assertThat(es.isSafe(notSafe), is(equalTo(false)));
         assertThat(es.getRemainingIndividualCount(), is(equalTo(2)));
         assertThat(es.getRemainingIndividuals(), contains(safe, notSafe));
         assertThat(es.getNotSafeIndividualsCount(), is(equalTo(1)));    
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
-    public void safeFailsForNonExisting() {
+    public void safeFailsIfPropertyNotSet() {
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
-        Individual nonExistent = builder.build();        
-        //es.isSafe(nonExistent);
+        Individual failIndividual = builder.build();
+        es.addIndividual(failIndividual);
+        es.addToSafe(failIndividual);
     }
-    
+
     @Test
     public void evacuateIndividuals() {
         Individual evacuated1 = builder.build();
@@ -165,17 +173,16 @@ public class TestMutableEvacuationState {
         es.addIndividual(evacuated2);
         es.addIndividual(notEvacuated1);
         es.addIndividual(notEvacuated2);
-        
-        es.setIndividualEvacuated(evacuated1);
-        es.setIndividualEvacuated(evacuated2);
-        
-        assertThat(es.isEvacuated(evacuated1), is(true));
-        assertThat(es.isEvacuated(evacuated2), is(true));
-        assertThat(es.isEvacuated(notEvacuated1), is(false));
-        assertThat(es.isEvacuated(notEvacuated2), is(false));
+
+        es.propertyFor(evacuated1).setEvacuationTime(0);
+        es.propertyFor(evacuated2).setEvacuationTime(0);
+
+        es.addToEvacuated(evacuated1);
+        es.addToEvacuated(evacuated2);
+
         assertThat(es.getEvacuatedIndividuals(), contains(evacuated1, evacuated2));
         assertThat(es.evacuatedIndividualsCount(), is(equalTo(2)));
-        
+
         assertThat(es.getRemainingIndividualCount(), is(equalTo(2)));
         assertThat(es.getRemainingIndividuals(), contains(notEvacuated1, notEvacuated2));
         assertThat(es.getNotSafeIndividualsCount(), is(equalTo(2)));
@@ -184,28 +191,36 @@ public class TestMutableEvacuationState {
     @Test
     public void evacuateSafeIndividual() {
         Individual normal = builder.build();
-        Individual safe = builder.build();
-        
+        Individual safeFirst = builder.build();
+
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
-        es.addIndividual(safe);
+        es.addIndividual(safeFirst);
         es.addIndividual(normal);
-        
-        es.setSafe(safe);
-        //assertThat(es.isSafe(safe), is(equalTo(true)));
-        
-        es.setIndividualEvacuated(safe);
-        
-        //assertThat(es.isSafe(safe), is(equalTo(true)));
-        assertThat(es.isEvacuated(safe), is(equalTo(true)));
+
+        es.propertyFor(safeFirst).setSafetyTime(0);        
+        es.addToSafe(safeFirst);
+
+        es.propertyFor(safeFirst).setEvacuationTime(0);
+        es.addToEvacuated(safeFirst);
+
         assertThat(es.getNotSafeIndividualsCount(), is(equalTo(1)));
         assertThat(es.evacuatedIndividualsCount(), is(equalTo(1)));
+        assertThat(es.getEvacuatedIndividuals(), contains(safeFirst));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void evacuateFailsForNonExisting() {
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
         Individual nonExistent = builder.build();        
-        es.isEvacuated(nonExistent);
+        es.addToEvacuated(nonExistent);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void evacuateFailsIfPropertyNotSet() {
+        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        Individual failIndividual = builder.build();
+        es.addIndividual(failIndividual);
+        es.addToEvacuated(failIndividual);
     }
 
     @Test
@@ -220,14 +235,32 @@ public class TestMutableEvacuationState {
         es.addIndividual(deadNotEnoughTime1);
         es.addIndividual(deadNotEnoughTime2);
         es.addIndividual(deadUnreachable);
+        
+        es.propertyFor(deadNotEnoughTime1).setDeathCause(DeathCause.NOT_ENOUGH_TIME);
+        es.propertyFor(deadNotEnoughTime2).setDeathCause(DeathCause.NOT_ENOUGH_TIME);
+        es.propertyFor(deadUnreachable).setDeathCause(DeathCause.EXIT_UNREACHABLE);
 
-        es.die(deadNotEnoughTime1);
-        es.die(deadNotEnoughTime2);
-        es.die(deadUnreachable);
+        es.addToDead(deadNotEnoughTime1);
+        es.addToDead(deadNotEnoughTime2);
+        es.addToDead(deadUnreachable);
 
         assertThat(es.deadIndividualsCount(), is(equalTo(3)));
         assertThat(es.getRemainingIndividualCount(), is(equalTo(1)));
         assertThat(es.getDeadIndividuals(), contains(deadNotEnoughTime1, deadNotEnoughTime2, deadUnreachable));
     }
-        
+
+    @Test(expected = IllegalArgumentException.class)
+    public void dieFailsForNonExisting() {
+        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        Individual failIndividual = builder.build();
+        es.addToDead(failIndividual);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void dieFailsIfPropertyNotSet() {
+        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        Individual failIndividual = builder.build();        
+        es.addIndividual(failIndividual);
+        es.addToDead(failIndividual);
+    }
 }

@@ -66,7 +66,6 @@ public class MutableEvacuationState implements EvacuationState {
         individualProperties = new HashMap<>();
         for (Individual i : individuals) {
             addIndividualInt(i);
-            individualProperties.put(i, new IndividualProperty(i));
         }
     }
 
@@ -133,7 +132,10 @@ public class MutableEvacuationState implements EvacuationState {
     @Override
     public void removeMarkedIndividuals() {
         markedForRemoval.stream().forEach(individual -> {
-            setIndividualEvacuated(individual);
+            if(!propertyFor(individual).isEvacuated()) {
+                propertyFor(individual).setEvacuationTime(currentStep);
+            }
+            addToEvacuated(individual);
             getCellularAutomaton().setIndividualEvacuated(individual);
         });
         markedForRemoval.clear();
@@ -160,6 +162,7 @@ public class MutableEvacuationState implements EvacuationState {
         if (initialIndividuals.contains(i)) {
             throw new IllegalArgumentException("Individual with id " + i.id() + " exists already in list individuals.");
         } else {
+            individualProperties.put(i, new IndividualProperty(i));
             initialIndividuals.add(i);
             remainingIndividuals.add(i);
         }
@@ -201,30 +204,19 @@ public class MutableEvacuationState implements EvacuationState {
     }
 
     /**
-     * Indicates, if the individual is already safe; that means: on save or exit cells.
-     */
-    /**
-     * Returns, if the individual is already safe; that means: on save- oder exit cells.
-     *
-     * @param i indicates wheather the individual is save or not
-     * @return if the individual is already safe
-     */
-//    public boolean isSafe(Individual i) {
-//        if (!(initialIndividuals.contains(i) || safeIndividuals.contains(i))) {
-//            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-//        }
-//        return safeIndividuals.contains(i);
-//    }
-
-    /**
-     * Sets the safe-status of the individual.
+     * Adds a saved individual to the list of safe individuals.
      *
      * @param i indicates wheather the individual is save or not
      */
-    public void setSafe(Individual i) {
+    public void addToSafe(Individual i) {
         if (safeIndividuals.contains(i)) {
             return;
         }
+
+        if(!propertyFor(i).isSafe()) {
+            throw new IllegalArgumentException("Individual " + i + " not safe." );
+        }
+
         safeIndividuals.add(i);
         notSaveIndividualsCount--;
     }
@@ -237,27 +229,17 @@ public class MutableEvacuationState implements EvacuationState {
      * initialIndividuals
      * @param i specifies the Individual object which has to be removed from the list and added to the other list
      */
-    public void setIndividualEvacuated(Individual i) {
+    public void addToEvacuated(Individual i) {
         if (!initialIndividuals.contains(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
         }
-        setSafe(i);
+        if(!propertyFor(i).isEvacuated()) {
+            throw new IllegalArgumentException("Individual " + i + " not evacuated." );
+        }
+        addToSafe(i);
         remainingIndividuals.remove(i);
 
         evacuatedIndividuals.add(i);
-    }
-
-    /**
-     * Returns true, if the person is evacuated, false elsewise.
-     *
-     * @param i the individual
-     * @return the evacuation status
-     */
-    public boolean isEvacuated(Individual i) {
-        if (!(initialIndividuals.contains(i) || evacuatedIndividuals.contains(i))) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
-        }
-        return evacuatedIndividuals.contains(i);
     }
 
     /**
@@ -273,9 +255,12 @@ public class MutableEvacuationState implements EvacuationState {
         return evacuatedIndividuals.size();
     }
 
-    public void die(Individual i) {
+    public void addToDead(Individual i) {
         if (!remainingIndividuals.remove(i)) {
             throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+        }
+        if(!propertyFor(i).isDead()) {
+            throw new IllegalArgumentException("Individual " + i + " not dead." );
         }
         deadIndividuals.add(i);
 

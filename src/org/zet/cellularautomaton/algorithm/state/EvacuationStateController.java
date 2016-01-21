@@ -42,15 +42,15 @@ public class EvacuationStateController implements EvacuationStateControllerInter
 
     @Override
     public void die(Individual i, DeathCause cause) {
-        evacuationState.die(i);
         evacuationState.propertyFor(i).setDeathCause(cause);
+        evacuationState.addToDead(i);
         remove(i);
     }
     
     @Override
     public void setSafe(Individual i) {
         evacuationState.propertyFor(i).setSafetyTime(evacuationState.getStep());
-        evacuationState.setSafe(i);
+        evacuationState.addToSafe(i);
     }
     
     @Override

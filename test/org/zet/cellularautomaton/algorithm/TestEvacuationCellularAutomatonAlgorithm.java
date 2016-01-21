@@ -634,7 +634,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             @Override
             protected void initialize() {
                 super.initialize();
-                es.setIndividualEvacuated(dead);
+                es.addToEvacuated(dead);
             }
             
             @Override
