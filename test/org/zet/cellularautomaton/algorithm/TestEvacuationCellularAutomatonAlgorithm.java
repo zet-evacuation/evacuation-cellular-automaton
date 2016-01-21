@@ -149,7 +149,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).individualStartPositions();
                 will(returnValue(isp));
 
-                allowing(eca).start();
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
                 allowing(esp).getParameterSet();
@@ -222,7 +221,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(isp));
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(300));
-                allowing(eca).start();
 
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
@@ -263,15 +261,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(new TestEvacuationRuleSet.FakeEvacuationRuleSet()));
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(300));
-                allowing(eca).start();
                 allowing(esp).getIndividuals();                
                 will(returnValue(Collections.emptyList()));
                 allowing(esp).getParameterSet();
                 will(returnValue(context.mock(ParameterSet.class)));
                 allowing(esp).individualStartPositions();
                 will(returnValue(Collections.EMPTY_MAP));
-
-                allowing(eca).stop();
             }});
         algorithm.addAlgorithmListener(event -> {
             if (event instanceof AlgorithmProgressEvent) {
@@ -305,7 +300,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).individualStartPositions();
                 will(returnValue(isp));
                 allowing(esp).getEvacuationStepLimit();
-                allowing(eca).start();
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
 
@@ -313,8 +307,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(individuals));
                 allowing(esp).getParameterSet();
                 will(returnValue(context.mock(ParameterSet.class)));
-
-                allowing(eca).stop();
             }});
         algorithm.setProblem(esp);
         algorithm.initialize();
@@ -402,7 +394,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(new TestEvacuationRuleSet.FakeEvacuationRuleSet()));
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(maxSteps));
-                allowing(eca).start();
                 allowing(esp).getIndividuals();
                 will(returnValue(Collections.emptyList()));
                 allowing(esp).individualStartPositions();
@@ -457,7 +448,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
                 allowing(esp).getParameterSet();
                 will(returnValue(context.mock(ParameterSet.class)));
-                allowing(eca).start();
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
 
@@ -500,7 +490,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
-                allowing(eca).start();
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
 
@@ -545,7 +534,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
-                allowing(eca).start();
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
 
@@ -666,7 +654,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(new TestEvacuationRuleSet.FakeEvacuationRuleSet()));
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(300));
-                allowing(eca).start();
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
                 allowing(esp).individualStartPositions();
@@ -718,14 +705,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(new EvacuationRuleSet() {
                 }));
 
-                allowing(eca).start();
                 allowing(esp).getIndividuals();
                 will(returnValue(Collections.EMPTY_LIST));
                 allowing(esp).individualStartPositions();
                 will(returnValue(Collections.EMPTY_MAP));
                 allowing(esp).getParameterSet();
                 will(returnValue(context.mock(ParameterSet.class)));
-                allowing(eca).stop();
             }});
 
         algorithm.setProblem(esp);

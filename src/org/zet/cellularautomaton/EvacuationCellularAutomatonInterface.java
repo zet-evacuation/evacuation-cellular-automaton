@@ -40,14 +40,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
     public StaticPotential minPotentialFor(EvacCell c);
 
     // TODO: remove these
-    public void start();
-
-    public void stop();
-
-    //public void removeMarkedIndividuals(); // marking should probably be stored in the algorithm, or an additional current-step datastructure
-
-    //public void markIndividualForRemoval(Individual i);
-    
     public void setIndividualEvacuated(Individual i);
 
     public IndividualToExitMapping getIndividualToExitMapping(); // this should be only stored for the best response?

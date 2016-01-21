@@ -64,7 +64,6 @@ public class EvacuationCellularAutomatonAlgorithm
         setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
 
-        getProblem().getCellularAutomaton().start();
         Individual[] individualsCopy = es.getInitialIndividuals().toArray(
                 new Individual[es.getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
@@ -135,7 +134,6 @@ public class EvacuationCellularAutomatonAlgorithm
         fireProgressEvent(1, "Simulation complete.");
 
         EvacuationSimulationProblem p = getProblem();
-        p.getCellularAutomaton().stop();
         log("Time steps: " + getStep());
         return new EvacuationSimulationResult(getStep());
     }

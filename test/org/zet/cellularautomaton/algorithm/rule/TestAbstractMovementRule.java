@@ -232,7 +232,6 @@ public class TestAbstractMovementRule {
             {
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
-                allowing(rule.es).setNeededTime(with(3));
             }
         });        
         

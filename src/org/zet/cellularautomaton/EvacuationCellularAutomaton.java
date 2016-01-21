@@ -630,16 +630,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         recordAction(new CAStateChangedAction(state));
     }
 
-    @Override
-    public void start() {
-        setState(State.RUNNING);
-        //initialIndividualCount = individuals.size();
-    }
-
-    public void stop() {
-        setState(State.FINISHED);
-    }
-
     /**
      * Resets the cellular automaton in order to let it run again. All individuals are deleted, timestamp and lists are
  reseted and the status is set to READY. The recording of actions is stopped; Call {@code startRecording()} after

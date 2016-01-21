@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
@@ -96,18 +97,18 @@ public class TestSimpleMovementRule {
     @Test
     public void moveCallsCellularAutomaton() {
         Mockery context = new Mockery();
-        EvacuationState es = context.mock(EvacuationState.class);
+        EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
         EvacCell startCell = new RoomCell(0, 0);
         EvacCell targetCell = new RoomCell(0, 0);
 
         context.checking(new Expectations() {
             {
-                exactly(1).of(es).moveIndividual(with(startCell), with(targetCell));
+                exactly(1).of(ec).move(with(startCell), with(targetCell));
             }
         });
         SimpleMovementRule rule = new SimpleMovementRule();
-        rule.setEvacuationState(es);
 
+        rule.setEvacuationStateController(ec);
         rule.move(startCell, targetCell);
 
         context.assertIsSatisfied();
