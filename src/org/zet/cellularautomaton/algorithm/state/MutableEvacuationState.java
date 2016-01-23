@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.state;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +27,11 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 public class MutableEvacuationState implements EvacuationState {
 
     /** Generic error message. */
-    private static final String ERROR_NOT_IN_LIST = "Specified individual is not in list individuals.";
+    private static final MessageFormat ERROR_NOT_IN_LIST = new MessageFormat("Individual {0} not in list!");
+    private static final MessageFormat ERROR_NOT_DEAD = new MessageFormat("Individual {0} not dead.");
+    private static final MessageFormat ERROR_NOT_IN_SIMULATION = new MessageFormat("Individual {0} not in simulation.");
+    private static final MessageFormat ERROR_NOT_SAFE = new MessageFormat("Individual {0} not safe.");
+    private static final MessageFormat ERROR_NOT_EVACUATED = new MessageFormat("Individual {0} not evacuated.");
     
     /** The cellular automaton of the simulation run. */
     private final EvacuationCellularAutomatonInterface ca;
@@ -71,7 +76,7 @@ public class MutableEvacuationState implements EvacuationState {
 
     @Override
     public IndividualProperty propertyFor(Individual i) {
-        return Objects.requireNonNull(individualProperties.get(i), "Individual " + i + " not in simulation.");
+        return Objects.requireNonNull(individualProperties.get(i), ERROR_NOT_IN_SIMULATION.format(i));
     }
 
     @Override
@@ -124,7 +129,7 @@ public class MutableEvacuationState implements EvacuationState {
     @Override
     public void markIndividualForRemoval(Individual i) {
         if (!getRemainingIndividuals().contains(i)) {
-            throw new IllegalArgumentException("Individual " + i + " not in list!");
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
         }
         markedForRemoval.add(i);
     }
@@ -214,7 +219,7 @@ public class MutableEvacuationState implements EvacuationState {
         }
 
         if(!propertyFor(i).isSafe()) {
-            throw new IllegalArgumentException("Individual " + i + " not safe." );
+            throw new IllegalArgumentException(ERROR_NOT_SAFE.format(i));
         }
 
         safeIndividuals.add(i);
@@ -231,10 +236,10 @@ public class MutableEvacuationState implements EvacuationState {
      */
     public void addToEvacuated(Individual i) {
         if (!initialIndividuals.contains(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
         }
         if(!propertyFor(i).isEvacuated()) {
-            throw new IllegalArgumentException("Individual " + i + " not evacuated." );
+            throw new IllegalArgumentException(ERROR_NOT_EVACUATED.format(i));
         }
         addToSafe(i);
         remainingIndividuals.remove(i);
@@ -257,10 +262,10 @@ public class MutableEvacuationState implements EvacuationState {
 
     public void addToDead(Individual i) {
         if (!remainingIndividuals.remove(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST);
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
         }
         if(!propertyFor(i).isDead()) {
-            throw new IllegalArgumentException("Individual " + i + " not dead." );
+            throw new IllegalArgumentException(ERROR_NOT_DEAD.format(i));
         }
         deadIndividuals.add(i);
 
