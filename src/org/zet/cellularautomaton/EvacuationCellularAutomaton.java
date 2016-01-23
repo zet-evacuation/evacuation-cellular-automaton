@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zet.cellularautomaton.results.CAStateChangedAction;
 import org.zet.cellularautomaton.results.MoveAction;
 import org.zet.cellularautomaton.results.SwapAction;
 import org.zet.cellularautomaton.potential.DynamicPotential;
@@ -43,19 +42,7 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  * @author Matthias Woste
  */
 public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements EvacuationCellularAutomatonInterface {
-
-    /**
-     * the state of the cellular automaton.
-     */
-    public enum State {
-
-        /** If all values and individuals are set, the simulation can be executed. */
-        READY,
-        /** If a simulation is running. */
-        RUNNING,
-        /** If a simulation is finished. in this case all individuals are removed or in save areas. */
-        FINISHED
-    }
+    private static final double CELL_SIZE = 0.4;
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
     private List<ExitCell> exits;
     /** A map of rooms to identification numbers. */
@@ -72,8 +59,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     private IndividualToExitMapping individualToExitMapping;
     /** A mapping that maps exits to their capacity. */
     private Map<StaticPotential, Double> exitToCapacityMapping;
-    /** The current state of the cellular automaton, e.g. RUNNING, stopped, ... */
-    private State state;
     private double absoluteMaxSpeed;
     private double secondsPerStep;
     private double stepsPerSecond;
@@ -97,7 +82,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         absoluteMaxSpeed = 1;
         secondsPerStep = 1;
         stepsPerSecond = 1;
-        state = State.READY;
         floorNames = new LinkedList<>();
         staticPotentials = new HashMap<>();
         dynamicPotential = new DynamicPotential();
@@ -189,8 +173,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
             throw new java.lang.IllegalArgumentException("Maximal speed must be greater than zero!");
         }
         this.absoluteMaxSpeed = absoluteMaxSpeed;
-        this.stepsPerSecond = absoluteMaxSpeed / 0.4;
-        this.secondsPerStep = 0.4 / absoluteMaxSpeed;
+        this.stepsPerSecond = absoluteMaxSpeed / CELL_SIZE;
+        this.secondsPerStep =  CELL_SIZE / absoluteMaxSpeed;
     }
 
     /**
@@ -293,12 +277,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @throws IllegalStateException if an individual is added after the simulation has been startet.
      */
     public final void addIndividual(EvacCell c, Individual i)  {
-        if (this.state != State.READY) {
-            throw new IllegalStateException("Individual added after simulation has started.");
-        }
-
         c.getRoom().addIndividual(c, i);
-
     }
     
     @Override
@@ -610,25 +589,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     public void setsafePotential(StaticPotential potential) {
         safePotential = potential;
     }
-   
-    /**
-     * Returns the current state of the cellular automaton.
-     *
-     * @return the state
-     */
-    public State getState() {
-        return state;
-    }
-
-    /**
-     * Sets the current state of the cellular automaton.
-     *
-     * @param state the new state
-     */
-    public void setState(State state) {
-        this.state = state;
-        recordAction(new CAStateChangedAction(state));
-    }
 
     /**
      * Resets the cellular automaton in order to let it run again. All individuals are deleted, timestamp and lists are
@@ -643,8 +603,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         //}
         //individuals.clear();
         typeIndividualMap.clear();
-
-        state = State.READY;
     }
 
     public Room getRoom(int id) {

@@ -97,8 +97,8 @@ public class SmoothingTuple {
     }
 
     /**
-     * Applies the smoothing-algorithm to this tuple. It's based on the formula: potential =
- Math.round((3*potential+sumOfValuesOfParents)/(3+numberOfParents))
+     * Applies the smoothing-algorithm to this tuple. It's based on the formula:
+     * potential = Math.round((3*potential+sumOfValuesOfParents)/(3+numberOfParents))
      */
     public void applySmoothing() {
         potential = (SMOOTHING_FACTOR * potential + sumOfPorentialsOfParents) / (SMOOTHING_FACTOR + numberOfParents);

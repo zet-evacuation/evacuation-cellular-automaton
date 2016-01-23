@@ -20,12 +20,8 @@ package org.zet.cellularautomaton;
  */
 public enum DeathCause {
 
-    /**
-     * If no exit is reachable. Happens if a person is captured by barriers or does not have a valid potential.
-     */
+    /** If no exit is reachable. Happens if a person is captured by barriers or does not have a valid potential. */
     EXIT_UNREACHABLE,
-    /**
-     * If the {@code Individual} is inside the building when the maximum evacuation time is over.
-     */
+    /** If the {@code Individual} is inside the building when the maximum evacuation time is over. */
     NOT_ENOUGH_TIME;
 }

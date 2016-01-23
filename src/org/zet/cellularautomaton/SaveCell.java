@@ -23,7 +23,6 @@ import org.zet.cellularautomaton.potential.StaticPotential;
  * this cell immediately. They wait until they become evacuated.
  *
  * @author Marcel Preuß
- *
  */
 public class SaveCell extends TargetCell implements Cloneable {
 

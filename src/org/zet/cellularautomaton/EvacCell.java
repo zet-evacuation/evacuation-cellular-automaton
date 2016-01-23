@@ -34,7 +34,6 @@ import java.util.Set;
  *
  * @author Marcel Preuß
  * @author Jan-Philipp Kappmeier
- *
  */
 public abstract class EvacCell extends SquareCell<EvacuationCellState> implements Comparable<EvacCell> {
 

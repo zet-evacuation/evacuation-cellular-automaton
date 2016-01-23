@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.empty;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.junit.Assert.assertThat;
+
 import java.util.Collections;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -25,8 +26,6 @@ public class TestEvacuationCellularAutomaton {
         assertThat(ca.getDimension(), is(equalTo(2)));
         assertThat(ca.getFloors(), is(empty()));
         assertThat(ca.getRooms(), is(empty()));
-        assertThat(ca.getState(), is(equalTo(EvacuationCellularAutomaton.State.READY)));
-        //assertThat(ca.getTimeStep(), is(equalTo(0)));
         assertThat(ca.graphicalToString(), is(equalTo("")));
     }
     
