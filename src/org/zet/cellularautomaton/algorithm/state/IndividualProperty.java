@@ -231,7 +231,7 @@ public class IndividualProperty {
      *
      * @param time The time when the individual is evacuated.
      */
-    void setEvacuationTime(int time) {
+    public void setEvacuationTime(int time) {
         if (isEvacuated()) {
             throw new IllegalStateException("Individual already evacuated at " + evacuationTime);
         }

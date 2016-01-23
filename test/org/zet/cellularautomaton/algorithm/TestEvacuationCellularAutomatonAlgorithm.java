@@ -62,7 +62,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
         boolean finished;
         final boolean specialFinishHandler;
-        private EvacuationState specialEs = null;
+        private final EvacuationState specialEs = null;
 
         public MockEvacuationCellularAutomatonAlgorithm() {
             specialFinishHandler = false;
@@ -623,7 +623,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         IndividualBuilder b = new IndividualBuilder();
         individuals.add(b.build());
         individuals.add(b.build());
-        Individual dead = individuals.get(0);
+        final Individual dead = individuals.get(0);
         
         Individual i2 = individuals.get(1);
         EvacCell cell1 = new MockEvacCell(0, 0);
@@ -634,6 +634,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             @Override
             protected void initialize() {
                 super.initialize();
+                es.propertyFor(dead).setEvacuationTime(0);
                 es.addToEvacuated(dead);
             }
             
