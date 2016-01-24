@@ -127,7 +127,7 @@ public class MutableEvacuationState implements EvacuationState {
     @Override
     public void markIndividualForRemoval(Individual i) {
         if (!getRemainingIndividuals().contains(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
         }
         markedForRemoval.add(i);
     }
@@ -217,7 +217,7 @@ public class MutableEvacuationState implements EvacuationState {
         }
 
         if(!propertyFor(i).isSafe()) {
-            throw new IllegalArgumentException(ERROR_NOT_SAFE.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_SAFE.format(new Object[] {i}));
         }
 
         safeIndividuals.add(i);
@@ -234,10 +234,10 @@ public class MutableEvacuationState implements EvacuationState {
      */
     public void addToEvacuated(Individual i) {
         if (!initialIndividuals.contains(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
         }
         if(!propertyFor(i).isEvacuated()) {
-            throw new IllegalArgumentException(ERROR_NOT_EVACUATED.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_EVACUATED.format(new Object[] {i}));
         }
         addToSafe(i);
         remainingIndividuals.remove(i);
@@ -260,10 +260,10 @@ public class MutableEvacuationState implements EvacuationState {
 
     public void addToDead(Individual i) {
         if (!remainingIndividuals.remove(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
         }
         if(!propertyFor(i).isDead()) {
-            throw new IllegalArgumentException(ERROR_NOT_DEAD.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_DEAD.format(new Object[] {i}));
         }
         deadIndividuals.add(i);
 
