@@ -13,34 +13,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton.potential;
+package evacuationplan;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
+/**
+ * A copy of a static potential that excludes some possible paths.
+ * 
+ * @author Jan-Philipp Kappmeier
+ */
 public class EvacPotential extends StaticPotential {
 
     Individual ind;
     CellularAutomatonDirectionChecker checker;
     PropertyAccess es;
 
-    public EvacPotential(Individual ind, CellularAutomatonDirectionChecker checker) {
-        super();
-        this.ind = ind;
+    public EvacPotential(StaticPotential sp, Individual i, CellularAutomatonDirectionChecker checker) {
+        this.ind = i;
         this.checker = checker;
+        sp.getMappedCells().stream().forEach(c -> setPotential(c, sp.getPotential(c)));
+        setAssociatedExitCells(sp.getAssociatedExitCells());
+        setAttractivity(sp.getAttractivity());
+        setName(sp.getName());
+        id = sp.getID();
+    }
+
+    public void setPropertyAccess(PropertyAccess es) {
+        this.es = es;
     }
 
     @Override
     public int getPotential(EvacCell cell) {
-        if (cell != null) {
-            Double newPotential = this.potential.get(cell);
-            if (newPotential != null) {
-                if (checker.canPass(ind, es.propertyFor(ind).getCell(), cell)) {
-                    return (int) Math.round(newPotential);
-                } else {
-                    return Integer.MAX_VALUE;
-                }
+        if (hasValidPotential(cell)) {
+            if (checker.canPass(ind, es.propertyFor(ind).getCell(), cell)) {
+                return (int) Math.round(super.getPotential(cell));
             } else {
                 return Integer.MAX_VALUE;
             }

@@ -18,7 +18,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.EvacCell;
 import java.util.Iterator;
 import java.util.List;
-import org.zet.cellularautomaton.potential.CellularAutomatonDirectionChecker;
+import evacuationplan.CellularAutomatonDirectionChecker;
 
 public class EvacuationPlanMovementRule extends WaitingMovementRule {
 

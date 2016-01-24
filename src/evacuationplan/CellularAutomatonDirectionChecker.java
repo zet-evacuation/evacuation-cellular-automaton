@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package org.zet.cellularautomaton.potential;
+package evacuationplan;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;

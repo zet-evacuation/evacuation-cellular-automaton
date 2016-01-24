@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.ExitCell;
-import org.zet.cellularautomaton.Individual;
 
 /**
  * A StaticPotential is special type of {@link AbstractPotential}, of which exist several in one {@link PotentialManager}.
@@ -46,7 +45,7 @@ public class StaticPotential extends AbstractPotential {
     /** contains the associated ExitCells. */
     private List<ExitCell> associatedExitCells;
     /** A map from cells to their potential value. */
-    private Map<EvacCell, Double> distance;
+    private final Map<EvacCell, Double> distance;
 
     /**
      * Creates a StaticPotential with a automatic generated unique ID, that can not be changed.
@@ -160,18 +159,4 @@ public class StaticPotential extends AbstractPotential {
     public void setName(String name) {
         this.name = name;
     }
-
-    public EvacPotential getAsEvacPotential(Individual i, CellularAutomatonDirectionChecker checker) {
-        EvacPotential evacPotential = new EvacPotential(i, checker);
-        for( EvacCell c : getMappedCells()) {
-            evacPotential.setPotential(c, getPotential(c));
-        }
-        evacPotential.setAssociatedExitCells(this.associatedExitCells);
-        evacPotential.setAttractivity(this.attractivity);
-        evacPotential.potential = this.potential;
-        evacPotential.setName(this.name);
-        evacPotential.id = this.id;
-        return evacPotential;
-    }
-
 }
