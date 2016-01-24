@@ -577,7 +577,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         for( Individual i : original) {
             IndividualProperty ip = algorithm.getEvacuationState().propertyFor(i);
             EvacCell cell = ip.getCell();
-            StaticPotential sp = new StaticPotential();
+            sp = new StaticPotential();
             sp.setPotential(cell, distance[index]);
             ip.setStaticPotential(sp);
             index++;            

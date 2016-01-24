@@ -69,14 +69,12 @@ public class MutableEvacuationState implements EvacuationState {
         this.parameterSet = parameterSet;
         this.ca = ca;
         individualProperties = new HashMap<>();
-        for (Individual i : individuals) {
-            addIndividualInt(i);
-        }
+        individuals.stream().forEach(i -> addIndividualInt(i));
     }
 
     @Override
     public IndividualProperty propertyFor(Individual i) {
-        return Objects.requireNonNull(individualProperties.get(i), ERROR_NOT_IN_SIMULATION.format(i));
+        return Objects.requireNonNull(individualProperties.get(i), ERROR_NOT_IN_SIMULATION.format(new Object[] {i}));
     }
 
     @Override
