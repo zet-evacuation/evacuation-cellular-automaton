@@ -49,7 +49,7 @@ public class EvacPotential extends StaticPotential {
     public int getPotential(EvacCell cell) {
         if (hasValidPotential(cell)) {
             if (checker.canPass(ind, es.propertyFor(ind).getCell(), cell)) {
-                return (int) Math.round(super.getPotential(cell));
+                return super.getPotential(cell);
             } else {
                 return Integer.MAX_VALUE;
             }
