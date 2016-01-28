@@ -20,17 +20,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.MoveAction;
 import org.zet.cellularautomaton.results.SwapAction;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.results.Action;
-import org.zetool.simulation.cellularautomaton.SquareCellularAutomaton;
+import org.zetool.simulation.cellularautomaton.Neighborhood;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
@@ -41,16 +40,22 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  * @author Jan-Philipp Kappmeier
  * @author Matthias Woste
  */
-public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCell> implements EvacuationCellularAutomatonInterface {
+public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonInterface {
     private static final double CELL_SIZE = 0.4;
+
+    /** The room collection for each floor. */
+    private final Map<String, RoomCollection> roomCollections;
+    /** The neighborhood. */
+    private final Neighborhood<EvacCell> neighborhood;
+
+    private final Map<Integer, String> floorById;
+    
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
     private List<ExitCell> exits;
     /** A map of rooms to identification numbers. */
     private Map<Integer, Room> rooms;
-    /** A mapping floor-id <-> floor-name. */
-    private List<String> floorNames;
     /** A mapping floor <-> rooms. */
-    private List<ArrayList<Room>> roomsByFloor;
+    //private List<ArrayList<Room>> roomsByFloor;
     /** Map mapping UUIDs of AssignmentTypes to Individuals. */
     private Map<UUID, HashSet<Individual>> typeIndividualMap;
     /** Maps name of an assignment types to its unique id. */
@@ -73,16 +78,19 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
      */
     public EvacuationCellularAutomaton() {
-        super(null);
+        this.roomCollections = new HashMap<>();
+        neighborhood = null;
+        floorById = new HashMap<>();
+        
         exits = new ArrayList<>();
         rooms = new HashMap<>();
         assignmentTypes = new HashMap<>();
         typeIndividualMap = new HashMap<>();
-        roomsByFloor = new LinkedList<>();
+        //roomsByFloor = new LinkedList<>();
         absoluteMaxSpeed = 1;
         secondsPerStep = 1;
         stepsPerSecond = 1;
-        floorNames = new LinkedList<>();
+
         staticPotentials = new HashMap<>();
         dynamicPotential = new DynamicPotential();
         safePotential = new StaticPotential();
@@ -98,8 +106,11 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
         this();
         
         // set up floors and rooms
-        initialConfiguration.getFloors().stream().forEach(floor -> addFloor(floor));
-        initialConfiguration.getRooms().stream().forEach(room -> addRoom(room));
+        int i = 0;
+        for( String floor : initialConfiguration.getFloors()) {
+            addFloor(i++, floor);
+        }
+        initialConfiguration.getRooms().stream().forEach(room -> addRoom((RoomImpl)room));
 
         for (Room room : initialConfiguration.getRooms()) {
             for (EvacCell cell : room.getAllCells()) {
@@ -118,10 +129,70 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     @Override
+    public Neighborhood<EvacCell> getNeighborhood() {
+        return neighborhood;
+    }
+
+    @Override
     public int getDimension() {
         return 2;
     }
 
+    /**
+     * Adds a new floor.
+     * @param name
+     */
+    public final void addFloor(int index, String name) {
+        if( roomCollections.containsKey(name)) {
+            throw new IllegalArgumentException("Floor " + name + " already exists.");
+        }
+        floorById.put(index, name);
+        roomCollections.put(name, new RoomCollection());
+        //roomsByFloor.add(new ArrayList<>());
+    }
+
+    /**
+     * Adds a room to the List of all rooms of the building
+     *
+     * @param room the Room object to be added
+     * @throws IllegalArgumentException Is thrown if the the specific room exists already in the list rooms
+     */
+    final public void addRoom(Room room) {
+        if (rooms.containsKey(room.getID())) {
+            throw new IllegalArgumentException("Specified room exists already in list rooms.");
+        } else {
+            rooms.put(room.getID(), room);
+            Integer floorID = room.getFloorID();
+            if (!floorById.containsKey(floorID)) {
+                throw new IllegalStateException("No Floor with id " + floorID + " has been added before.");
+            }
+            String floor = floorById.get(floorID);
+            
+            RoomCollection roomCollection = roomCollections.get(floor);
+            roomCollection.addMatrix(room);
+            addExits(room);
+        }
+    }
+    
+    /**
+     * Adds the in the given room into the list of exits. Throws an exception if any of the exits is already known,
+     * as any exit can only be in one room.
+     * @param room 
+     */
+    private void addExits(Room room) {
+        for (EvacCell cell : room.getAllCells()) {
+            if (cell instanceof ExitCell) {
+                if (exits.contains((ExitCell)cell)) {
+                    throw new IllegalArgumentException("Specified exit exists already in list exits.");
+                } else {
+                    exits.add((ExitCell) cell);
+                }
+            }
+        }
+    }
+
+    
+    
     /**
      * Returns the number of cells in the whole cellular automaton
      *
@@ -230,7 +301,7 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
     }
 
     /**
-     * Returns an ArrayList of all rooms of the building
+     * Returns an ArrayList of all rooms of the cellular automaton
      *
      * @return the ArrayList of rooms
      */
@@ -395,51 +466,6 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
 //        c.getRoom().removeIndividual(i);
         //i.setCell(c);
         throw new IllegalStateException("Fix individual change");
-    }
-
-    /*
-     * Adds a new floor.
-     */
-    public final void addFloor(String name) {
-        floorNames.add(name);
-        roomsByFloor.add(new ArrayList<>());
-    }
-
-    /**
-     * Adds a room to the List of all rooms of the building
-     *
-     * @param room the Room object to be added
-     * @throws IllegalArgumentException Is thrown if the the specific room exists already in the list rooms
-     */
-    final public void addRoom(Room room) {
-        if (rooms.containsKey(room.getID())) {
-            throw new IllegalArgumentException("Specified room exists already in list rooms.");
-        } else {
-            rooms.put(room.getID(), room);
-            Integer floorID = room.getFloorID();
-            if (roomsByFloor.size() < floorID + 1) {
-                throw new IllegalStateException("No Floor with id " + floorID + " has been added before.");
-            }
-            roomsByFloor.get(floorID).add(room);
-            addExits(room);
-        }
-    }
-    
-    /**
-     * Adds the in the given room into the list of exits. Throws an exception if any of the exits is already known,
-     * as any exit can only be in one room.
-     * @param room 
-     */
-    private void addExits(Room room) {
-        for (EvacCell cell : room.getAllCells()) {
-            if (cell instanceof ExitCell) {
-                if (exits.contains((ExitCell)cell)) {
-                    throw new IllegalArgumentException("Specified exit exists already in list exits.");
-                } else {
-                    exits.add((ExitCell) cell);
-                }
-            }
-        }
     }
 
     /**
@@ -614,8 +640,8 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      *
      * @return the collection of floor ids
      */
-    public List<String> getFloors() {
-        return Collections.unmodifiableList(floorNames);
+    public Collection<String> getFloors() {
+        return Collections.unmodifiableCollection(floorById.values());
     }
 
     /**
@@ -625,20 +651,21 @@ public class EvacuationCellularAutomaton extends SquareCellularAutomaton<EvacCel
      * @return the floors name
      */
     public String getFloorName(int id) {
-        return floorNames.get(id);
+        return floorById.get(id);
     }
 
     /**
      * Returns a collection of all rooms on a specified floor.
      *
-     * @param floorID the floor id
+     * @param floor the floor
      * @return the collection of rooms
      */
-    public Collection<Room> getRoomsOnFloor(Integer floorID) {
-        return roomsByFloor.get(floorID);
+    public Collection<? super Room> getRoomsOnFloor(String floor) {
+        return roomCollections.get(floor).getRooms();
     }
 
     protected void recordAction(Action a) {
         // ignore publishing
     }
+
 }

@@ -1,21 +1,23 @@
 package org.zet.cellularautomaton;
 
 import java.util.List;
-import org.zetool.simulation.cellularautomaton.CellMatrix;
+import org.zetool.simulation.cellularautomaton.LocatedCellMatrix;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
-public interface Room extends CellMatrix<EvacCell> {
+public interface Room extends LocatedCellMatrix<EvacCell> {
 
     // Overridden from interface and specialized returns
     @Override
     public List<EvacCell> getAllCells();
 
     // multi-matrix cellular automata
+    @Override
     public int getXOffset();
 
+    @Override
     public int getYOffset();
     
     // necessary, but probably bad name?

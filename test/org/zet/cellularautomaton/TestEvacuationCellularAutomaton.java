@@ -32,7 +32,7 @@ public class TestEvacuationCellularAutomaton {
     @Test
     public void testSingleRoom() {
         EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
-        ca.addFloor("floor1");
+        ca.addFloor(0, "floor1");
 
         Room room = context.mock(Room.class, "room1");
         roomExpectations(room, 1, 3);
@@ -51,6 +51,10 @@ public class TestEvacuationCellularAutomaton {
                 //debugger throws error on the line below.
                 atLeast(1).of(room).getCellCount(false);
                 will(returnValue(cells));
+                allowing(room).getXOffset();
+                allowing(room).getYOffset();
+                allowing(room).getWidth();
+                allowing(room).getHeight();
                 allowing(room).getID();
                 will(returnValue(id));
                 allowing(room).getFloorID();
@@ -66,7 +70,7 @@ public class TestEvacuationCellularAutomaton {
         Individual toEvacuate = builder.build();
         Individual notToEvacuate = builder.build();
         
-        eca.addFloor("floor1");
+        eca.addFloor(0, "floor1");
         Room room = context.mock(Room.class, "room1");
         roomExpectations(room, 1, 3);
         eca.addRoom(room);

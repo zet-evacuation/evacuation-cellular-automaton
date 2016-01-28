@@ -1,18 +1,16 @@
 package org.zet.cellularautomaton.algorithm;
 
-import java.util.Collections;
-import java.util.HashMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
-import org.zet.cellularautomaton.EvacCell;
 
+import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
@@ -40,7 +38,7 @@ public class TestEvacuationCellularAutomatonRun {
     public void run() {
         EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
         
-        eca.addFloor("floor");
+        eca.addFloor(0, "floor");
         
         RoomImpl r = new RoomImpl(3, 1, 0, 0, 0);
         

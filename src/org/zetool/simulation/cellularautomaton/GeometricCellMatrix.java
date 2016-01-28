@@ -10,9 +10,9 @@ import org.zetool.common.function.IntBiFunction;
  * @param <E> the type of cells stored in the matrix
  * @author Jan-Philipp Kappmeier
  */
-public class GeometricCellMatrix <E extends Cell> extends FiniteCellMatrix<E> {
-    private int xOffset;
-    private int yOffset;
+public class GeometricCellMatrix <E extends Cell> extends FiniteCellMatrix<E> implements LocatedCellMatrix<E> {
+    private final int xOffset;
+    private final int yOffset;
 
     public GeometricCellMatrix(int width, int height, int xOffset, int yOffset) {
         super(width, height);
@@ -26,10 +26,12 @@ public class GeometricCellMatrix <E extends Cell> extends FiniteCellMatrix<E> {
         this.yOffset = yOffset;
     }
     
+    @Override
     public int getXOffset() {
         return xOffset;
     }
 
+    @Override
     public int getYOffset() {
         return yOffset;
     }
