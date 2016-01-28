@@ -46,7 +46,7 @@ public class ExitAction extends Action {
         if (exit.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException("Could not evacuate an individual from cell " + exit + "(" + exit.hashCode() + ") because there was none.");
         }
-        onCA.setIndividualEvacuated(exit.getState().getIndividual());
+        //onCA.setIndividualEvacuated(exit.getState().getIndividual());
     }
 
     @Override

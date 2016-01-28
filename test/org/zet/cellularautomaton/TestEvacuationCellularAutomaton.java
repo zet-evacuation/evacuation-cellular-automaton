@@ -39,11 +39,20 @@ public class TestEvacuationCellularAutomaton {
         Room room2 = context.mock(Room.class, "room2");
         roomExpectations(room2, 2, 2);
 
-        ca.addRoom(room);
+        ca.addRoom(0, room);
         assertThat(ca.getCellCount(), is(equalTo(3)));
         
-        ca.addRoom(room2);
+        ca.addRoom(0, room2);
         assertThat(ca.getCellCount(), is(equalTo(5)));
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void addWithoutFloorFails() {
+        EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
+        ca.addFloor(0, "floor1");
+        Room room = context.mock(Room.class);
+        roomExpectations(room, 1, 1);
+        ca.addRoom(1, room);
     }
     
     private void roomExpectations(Room room, int id, int cells) {
@@ -73,7 +82,7 @@ public class TestEvacuationCellularAutomaton {
         eca.addFloor(0, "floor1");
         Room room = context.mock(Room.class, "room1");
         roomExpectations(room, 1, 3);
-        eca.addRoom(room);
+        eca.addRoom(0, room);
 
         ExitCell cell = new ExitCell(0, 0);
         cell.setRoom(room);

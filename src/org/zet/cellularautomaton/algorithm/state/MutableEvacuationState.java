@@ -139,7 +139,6 @@ public class MutableEvacuationState implements EvacuationState {
                 propertyFor(individual).setEvacuationTime(currentStep);
             }
             addToEvacuated(individual);
-            getCellularAutomaton().setIndividualEvacuated(individual);
         });
         markedForRemoval.clear();
     }

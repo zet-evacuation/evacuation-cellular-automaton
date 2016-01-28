@@ -44,29 +44,25 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     private static final double CELL_SIZE = 0.4;
 
     /** The room collection for each floor. */
-    private final Map<String, RoomCollection> roomCollections;
+    private final Map<Integer, RoomCollection> roomCollections;
     /** The neighborhood. */
     private final Neighborhood<EvacCell> neighborhood;
 
-    private final Map<Integer, String> floorById;
+    /** The names of floors. */
+    private final Map<Integer, String> floorNames;
     
     /** An ArrayList of all ExitCell objects (i.e. all exits) of the building. */
     private List<ExitCell> exits;
     /** A map of rooms to identification numbers. */
     private Map<Integer, Room> rooms;
-    /** A mapping floor <-> rooms. */
-    //private List<ArrayList<Room>> roomsByFloor;
-    /** Map mapping UUIDs of AssignmentTypes to Individuals. */
-    private Map<UUID, HashSet<Individual>> typeIndividualMap;
-    /** Maps name of an assignment types to its unique id. */
-    private Map<String, UUID> assignmentTypes;
+
     /** A mapping that maps individuals to exits. */
     private IndividualToExitMapping individualToExitMapping;
+    
     /** A mapping that maps exits to their capacity. */
     private Map<StaticPotential, Double> exitToCapacityMapping;
-    private double absoluteMaxSpeed;
-    private double secondsPerStep;
-    private double stepsPerSecond;
+
+
     /** A {@code TreeMap} of all StaticPotentials. */
     private final Map<Integer, StaticPotential> staticPotentials;
     /** The safe potential*/
@@ -74,13 +70,27 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     /** The single DynamicPotential. */
     private DynamicPotential dynamicPotential;
 
+    
+    // Move this to algorithm
+    private double absoluteMaxSpeed;
+    private double secondsPerStep;
+    private double stepsPerSecond;
+
+    
+    // Delete these from simulation
+    /** A mapping floor <-> rooms. */
+    //private List<ArrayList<Room>> roomsByFloor;
+    /** Map mapping UUIDs of AssignmentTypes to Individuals. */
+    private Map<UUID, HashSet<Individual>> typeIndividualMap;
+    /** Maps name of an assignment types to its unique id. */
+    private Map<String, UUID> assignmentTypes;
     /**
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
      */
     public EvacuationCellularAutomaton() {
         this.roomCollections = new HashMap<>();
         neighborhood = null;
-        floorById = new HashMap<>();
+        floorNames = new HashMap<>();
         
         exits = new ArrayList<>();
         rooms = new HashMap<>();
@@ -110,7 +120,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         for( String floor : initialConfiguration.getFloors()) {
             addFloor(i++, floor);
         }
-        initialConfiguration.getRooms().stream().forEach(room -> addRoom((RoomImpl)room));
+        initialConfiguration.getRooms().stream().forEach(room -> addRoom(0, (Room)room));
 
         for (Room room : initialConfiguration.getRooms()) {
             for (EvacCell cell : room.getAllCells()) {
@@ -140,37 +150,34 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
 
     /**
      * Adds a new floor.
-     * @param name
+     * @param index the floor's index
+     * @param name the floor name
      */
     public final void addFloor(int index, String name) {
-        if( roomCollections.containsKey(name)) {
+        if (roomCollections.containsKey(index)) {
             throw new IllegalArgumentException("Floor " + name + " already exists.");
         }
-        floorById.put(index, name);
-        roomCollections.put(name, new RoomCollection());
-        //roomsByFloor.add(new ArrayList<>());
+        floorNames.put(index, name);
+        roomCollections.put(index, new RoomCollection());
     }
 
     /**
-     * Adds a room to the List of all rooms of the building
+     * Adds a room to the List of all rooms of the building.
      *
+     * @param floor the floor to which the room is added
      * @param room the Room object to be added
-     * @throws IllegalArgumentException Is thrown if the the specific room exists already in the list rooms
+     * @throws IllegalArgumentException if the the specific room exists already in the list rooms
      */
-    final public void addRoom(Room room) {
+    final public void addRoom(int floor, Room room) {
         if (rooms.containsKey(room.getID())) {
             throw new IllegalArgumentException("Specified room exists already in list rooms.");
         } else {
             rooms.put(room.getID(), room);
-            Integer floorID = room.getFloorID();
-            if (!floorById.containsKey(floorID)) {
-                throw new IllegalStateException("No Floor with id " + floorID + " has been added before.");
+            if (!roomCollections.containsKey(floor)) {
+                throw new IllegalStateException("No Floor with id " + floor + " has been added before.");
             }
-            String floor = floorById.get(floorID);
-            
-            RoomCollection roomCollection = roomCollections.get(floor);
-            roomCollection.addMatrix(room);
-            addExits(room);
+            roomCollections.get(floor).addMatrix(room);
+            computeAndAddExits(room);
         }
     }
     
@@ -179,7 +186,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * as any exit can only be in one room.
      * @param room 
      */
-    private void addExits(Room room) {
+    private void computeAndAddExits(Room room) {
         for (EvacCell cell : room.getAllCells()) {
             if (cell instanceof ExitCell) {
                 if (exits.contains((ExitCell)cell)) {
@@ -190,8 +197,15 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
             }
         }
     }
-
     
+    /**
+     * Returns an ArrayList of all exists of the building.
+     *
+     * @return the ArrayList of exits
+     */
+    public List<ExitCell> getExitCluster() {
+        return Collections.unmodifiableList(exits);
+    }
     
     /**
      * Returns the number of cells in the whole cellular automaton
@@ -205,31 +219,77 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     }
 
     /**
-     * Assigns the UUID to the name of the assignment type
+     * Returns an ArrayList of all rooms of the cellular automaton
      *
-     * @param uid UUID of the assignment type
-     * @param s name of the assignment type
+     * @return the ArrayList of rooms
      */
-    public void setAssignmentType(String s, UUID uid) {
-        assignmentTypes.put(s, uid);
+    @Override
+    public Collection<Room> getRooms() {
+        return Collections.unmodifiableCollection(rooms.values());
+    }
+    @Override
+    public Map<StaticPotential, Double> getExitToCapacityMapping() {
+        return exitToCapacityMapping;
+    }
+
+    public void setExitToCapacityMapping(Map<StaticPotential, Double> exitToCapacityMapping) {
+        this.exitToCapacityMapping = exitToCapacityMapping;
+    }
+    @Override
+    public StaticPotential minPotentialFor(EvacCell c) {
+        // assign shortest path potential to individual, so it is not null.
+        int currentMin = -1;
+        StaticPotential ret = null;
+        for (StaticPotential sp : getStaticPotentials()) {
+            if (sp.getPotential(c) > -1 && sp.getPotential(c) < currentMin) {
+                currentMin = sp.getPotential(c);
+                ret = sp;
+            }
+        }
+        if(ret != null) {
+            throw new IllegalArgumentException("No valid potential for cell " + c);
+        }
+        return ret;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void setDynamicPotential(EvacCell cell, double value) {
+        getDynamicPotential().setPotential(cell, value);
+    }
+
+    @Override
+    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
+        dynamicPotential.update(probabilityDynamicIncrease, probabilityDynamicDecrease);
     }
 
     /**
-     * Returns UUID of the assignment type with the given name
+     * Set the dynamicPotential.
      *
-     * @param name of the assignment type
-     * @return uid UUID of the assignment type
+     * @param potential The DynamicPotential you want to set.
      */
-    public UUID getAssignmentUUIS(String name) {
-        return assignmentTypes.get(name);
+    public void setDynamicPotential(DynamicPotential potential) {
+        dynamicPotential = potential;
+    }
+
+    /**
+     * Get the dynamicPotential. Returns null if the DynamicPotential not exists.
+     *
+     * @return The DynamicPotential
+     */
+    @Override
+    public DynamicPotential getDynamicPotential() {
+        return dynamicPotential;
     }
 
     public double getAbsoluteMaxSpeed() {
         return absoluteMaxSpeed;
-    }
-
-    public Map<String, UUID> getAssignmentTypes() {
-        return assignmentTypes;
     }
 
     /**
@@ -247,7 +307,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         this.stepsPerSecond = absoluteMaxSpeed / CELL_SIZE;
         this.secondsPerStep =  CELL_SIZE / absoluteMaxSpeed;
     }
-
     /**
      * Returns the seconds one step needs.
      *
@@ -257,7 +316,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     public double getSecondsPerStep() {
         return secondsPerStep;
     }
-
     /**
      * Returns the number of steps performed by the cellular automaton within one second. The time depends of the
      * absolute max speed and is set if {@link #setAbsoluteMaxSpeed(double)} is called.
@@ -280,36 +338,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     public double absoluteSpeed(double relativeSpeed) {
         return absoluteMaxSpeed * relativeSpeed;
     }
-
-    /**
-     * Returns an ArrayList of all exists of the building
-     *
-     * @return the ArrayList of exits
-     */
-    public List<ExitCell> getExits() {
-        return Collections.unmodifiableList(exits);
-    }
-
-    /**
-     * Returns all Individuals in the given AssignmentType
-     *
-     * @param id UUID of AssignmentType
-     * @return a set of of Individuals
-     */
-    public Set<Individual> getIndividualsInAssignmentType(UUID id) {
-        return typeIndividualMap.get(id);
-    }
-
-    /**
-     * Returns an ArrayList of all rooms of the cellular automaton
-     *
-     * @return the ArrayList of rooms
-     */
-    @Override
-    public Collection<Room> getRooms() {
-        return Collections.unmodifiableCollection(rooms.values());
-    }
-
     /**
      * Returns the mapping between individuals and exit cells.
      *
@@ -329,13 +357,48 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         this.individualToExitMapping = individualToExitMapping;
     }
 
-    @Override
-    public Map<StaticPotential, Double> getExitToCapacityMapping() {
-        return exitToCapacityMapping;
+
+
+    
+    
+    
+    
+    
+    /**
+     * Assigns the UUID to the name of the assignment type
+     *
+     * @param uid UUID of the assignment type
+     * @param s name of the assignment type
+     */
+    public void setAssignmentType(String s, UUID uid) {
+        assignmentTypes.put(s, uid);
     }
 
-    public void setExitToCapacityMapping(Map<StaticPotential, Double> exitToCapacityMapping) {
-        this.exitToCapacityMapping = exitToCapacityMapping;
+    /**
+     * Returns UUID of the assignment type with the given name
+     *
+     * @param name of the assignment type
+     * @return uid UUID of the assignment type
+     */
+    public UUID getAssignmentUUIS(String name) {
+        return assignmentTypes.get(name);
+    }
+
+    public Map<String, UUID> getAssignmentTypes() {
+        return assignmentTypes;
+    }
+
+
+
+
+    /**
+     * Returns all Individuals in the given AssignmentType
+     *
+     * @param id UUID of AssignmentType
+     * @return a set of of Individuals
+     */
+    public Set<Individual> getIndividualsInAssignmentType(UUID id) {
+        return typeIndividualMap.get(id);
     }
 
     /**
@@ -351,22 +414,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         c.getRoom().addIndividual(c, i);
     }
     
-    @Override
-    public StaticPotential minPotentialFor(EvacCell c) {
-        // assign shortest path potential to individual, so it is not null.
-        int currentMin = -1;
-        StaticPotential ret = null;
-        for (StaticPotential sp : getStaticPotentials()) {
-            if (sp.getPotential(c) > -1 && sp.getPotential(c) < currentMin) {
-                currentMin = sp.getPotential(c);
-                ret = sp;
-            }
-        }
-        if(ret != null) {
-            throw new IllegalArgumentException("No valid potential for cell " + c);
-        }
-        return ret;
-    }
+
 
     /**
      * Move the individual standing on the "from"-EvacCell to the "to"-EvacCell.
@@ -382,14 +430,12 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
             throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
         }
         if (from.equals(to)) {
-            recordAction(new MoveAction(from, from, from.getState().getIndividual(), null));
             return;
         }
         if (!to.getState().isEmpty()) {
             throw new IllegalArgumentException("Individual " + to.getState().getIndividual() + " already standing on the ''to''-Cell!");
         }
 
-        recordAction(new MoveAction(from, to, from.getState().getIndividual(), null));
         if (from.getRoom().equals(to.getRoom())) {
             from.getRoom().moveIndividual(from, to);
         } else {
@@ -410,7 +456,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         if (cell1.equals(cell2)) {
             throw new IllegalArgumentException("The cells are equal. Can't swap on equal cells.");
         }
-        recordAction(new SwapAction(cell1, cell2, null));
         if (cell1.getRoom().equals(cell2.getRoom())) {
             cell1.getRoom().swapIndividuals(cell1, cell2);
         } else {
@@ -424,51 +469,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     }
 
     /**
-     * Removes an individual from the list of all individuals of the building and adds it to the list of individuals,
-     * which are out of the simulation because the are evacuated.
-     *
-     * @throws java.lang.IllegalArgumentException if the the specific individual does not exist in the list individuals
-     * @param i specifies the Individual object which has to be removed from the list and added to the other list
-     */
-    @Override
-    public void setIndividualEvacuated(Individual i) {
-        //recordAction(new ExitAction((ExitCell) i.getCell()));
-        //EvacCell evacCell = i.getCell();
-
-        //i.getCell().getRoom().removeIndividual(i);
-        //i.setCell(evacCell);
-        throw new IllegalStateException("Fix individual change");        
-    }
-
-    /**
-     * Sets the specified individual to the status safe and sets the correct safety time.
-     *
-     * @param i
-     */
-    @Override
-    public void setIndividualSave(Individual i) {
-        //i.setSafetyTime((int) Math.ceil(i.getStepEndTime()));
-        throw new IllegalStateException("Fix individual change");
-    }
-
-    /**
-     * Removes an individual from the list of all individuals of the building and adds it to the list of individuals,
-     * which are "dead".
-     *
-     * @throws java.lang.IllegalArgumentException if the the specific individual does not exist in the list individuals
-     * @param i specifies the Individual object which has to be removed from the list and added to the other list
-     * @param cause the dead cause of the individual
-     */
-    @Override
-    public void setIndividualDead(Individual i, DeathCause cause) {
-        //recordAction(new DieAction(i.getCell(), cause, i.getNumber()));
-        //EvacCell c = i.getCell();
-//        c.getRoom().removeIndividual(i);
-        //i.setCell(c);
-        throw new IllegalStateException("Fix individual change");
-    }
-
-    /**
      * Removes a room from the list of all rooms of the building
      *
      * @param room specifies the Room object which has to be removed from the list
@@ -479,6 +479,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
             throw new IllegalArgumentException("Specified room is not in list rooms.");
         }
         rooms.remove(room.getID());
+        throw new UnsupportedOperationException("Rooms not removed from floor!");
     }
 
     /**
@@ -490,7 +491,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     public List<List<ExitCell>> clusterExitCells() {
         Set<ExitCell> alreadySeen = new HashSet<>();
         List<List<ExitCell>> allClusters = new ArrayList<>();
-        List<ExitCell> allExitCells = this.getExits();
+        List<ExitCell> allExitCells = this.getExitCluster();
         for (ExitCell e : allExitCells) {
             if (!alreadySeen.contains(e)) {
                 List<ExitCell> singleCluster = new ArrayList<>();
@@ -539,15 +540,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         return representation.toString();
     }
 
-    public void setDynamicPotential(EvacCell cell, double value) {
-        getDynamicPotential().setPotential(cell, value);
-    }
-
-    @Override
-    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
-        dynamicPotential.update(probabilityDynamicIncrease, probabilityDynamicDecrease);
-    }
-
     /**
      * Get a Collection of all staticPotentials.
      *
@@ -588,25 +580,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         return staticPotentials.get(id);
     }
 
-    /**
-     * Set the dynamicPotential.
-     *
-     * @param potential The DynamicPotential you want to set.
-     */
-    public void setDynamicPotential(DynamicPotential potential) {
-        dynamicPotential = potential;
-    }
-
-    /**
-     * Get the dynamicPotential. Returns null if the DynamicPotential not exists.
-     *
-     * @return The DynamicPotential
-     */
-    @Override
-    public DynamicPotential getDynamicPotential() {
-        return dynamicPotential;
-    }
-
     @Override
     public StaticPotential getSafePotential() {
         return safePotential;
@@ -616,21 +589,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         safePotential = potential;
     }
 
-    /**
-     * Resets the cellular automaton in order to let it run again. All individuals are deleted, timestamp and lists are
- reseted and the status is set to READY. The recording of actions is stopped; Call {@code startRecording()} after
-     * you placed individuals in the cellular automaton to start recording again.
-     */
-    public void reset() {
-        //Individual[] individualsCopy = individuals.toArray(new Individual[individuals.size()]);
-
-        //for (Individual individual : individualsCopy) {
-        //    removeIndividual(individual);
-        //}
-        //individuals.clear();
-        typeIndividualMap.clear();
-    }
-
+    
     public Room getRoom(int id) {
         return rooms.get(id);
     }
@@ -641,17 +600,18 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * @return the collection of floor ids
      */
     public Collection<String> getFloors() {
-        return Collections.unmodifiableCollection(floorById.values());
+        return Collections.unmodifiableCollection(floorNames.values());
     }
 
     /**
-     * Returns the name of the floor with a specified id. The id corresponds to the floor numbers in the z-format.
+     * Returns the name of the floor with a specified id. The id corresponds to the floor numbers
+     * in the z-format.
      *
      * @param id the floor id
      * @return the floors name
      */
     public String getFloorName(int id) {
-        return floorById.get(id);
+        return floorNames.get(id);
     }
 
     /**
@@ -660,12 +620,23 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * @param floor the floor
      * @return the collection of rooms
      */
-    public Collection<? super Room> getRoomsOnFloor(String floor) {
+    public Collection<? super Room> getRoomsOnFloor(int floor) {
         return roomCollections.get(floor).getRooms();
     }
-
-    protected void recordAction(Action a) {
-        // ignore publishing
+    
+    /**
+     * Returns the id of the floor containing the room. If no floor contains the room an exception
+     * is thrown.
+     * 
+     * @param room
+     * @return the id of the floor
+     */
+    public int getFloorId(Room room) {
+        for( int i : roomCollections.keySet()) {
+            if( getRoomsOnFloor(i).contains(room)) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("Room not in cellular automaton.");
     }
-
 }

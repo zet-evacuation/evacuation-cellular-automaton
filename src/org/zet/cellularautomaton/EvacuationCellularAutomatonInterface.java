@@ -12,10 +12,6 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
  */
 public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<EvacCell> {
 
-    public void setIndividualDead(Individual i, DeathCause cause);
-
-    public void setIndividualSave(Individual i);
-
     public double getStepsPerSecond();
 
     public double absoluteSpeed(double relativeSpeed);
@@ -40,8 +36,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
     public StaticPotential minPotentialFor(EvacCell c);
 
     // TODO: remove these
-    public void setIndividualEvacuated(Individual i);
-
     public IndividualToExitMapping getIndividualToExitMapping(); // this should be only stored for the best response?
 
     public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);

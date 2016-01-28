@@ -48,7 +48,7 @@ public class TestEvacuationCellularAutomatonRun {
         r.setCell(middleCell);
         RoomCell rightCell = new RoomCell(1, 2, 0, r);
         r.setCell(rightCell);
-        eca.addRoom(r);
+        eca.addRoom(0, r);
         
         List<List<ExitCell>> exitClusters = eca.clusterExitCells();
         assertThat(exitClusters, hasSize(1));

@@ -9,7 +9,7 @@ import org.zetool.simulation.cellularautomaton.CompositeCellMatrix;
  */
 public class RoomCollection extends CompositeCellMatrix<Room, EvacCell> {
 
-    List<? super Room> getRooms() {
+    List<Room> getRooms() {
         return super.getMatrices();
     }
 
