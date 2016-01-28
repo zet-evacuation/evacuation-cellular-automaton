@@ -16,6 +16,7 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -60,6 +61,9 @@ public class MutableEvacuationState implements EvacuationState {
     int currentStep = 0;
     /** The individuals that are to be removed at the end of the current step. */
     private final List<Individual> markedForRemoval = new ArrayList<>();
+
+    /** A mapping that maps individuals to exits. */
+    private IndividualToExitMapping individualToExitMapping;
 
     /** Statistics writer. TODO: remove */
     public CAStatisticWriter caStatisticWriter;
@@ -303,4 +307,21 @@ public class MutableEvacuationState implements EvacuationState {
         return currentStep;
     }
 
-}
+    /**
+     * Returns the mapping between individuals and exit cells.
+     *
+     * @return the mapping between individuals and exit cells
+     */
+    @Override
+    public IndividualToExitMapping getIndividualToExitMapping() {
+        return individualToExitMapping;
+    }
+
+    /**
+     * Sets a mapping between individuals and exit cells.
+     *
+     * @param individualToExitMapping the mapping
+     */
+    public void setIndividualToExitMapping(IndividualToExitMapping individualToExitMapping) {
+        this.individualToExitMapping = individualToExitMapping;
+    }}

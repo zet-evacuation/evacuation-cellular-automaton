@@ -26,9 +26,6 @@ import java.util.Set;
 import java.util.UUID;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zet.cellularautomaton.results.MoveAction;
-import org.zet.cellularautomaton.results.SwapAction;
-import org.zet.cellularautomaton.results.Action;
 import org.zetool.simulation.cellularautomaton.Neighborhood;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
@@ -56,8 +53,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     /** A map of rooms to identification numbers. */
     private Map<Integer, Room> rooms;
 
-    /** A mapping that maps individuals to exits. */
-    private IndividualToExitMapping individualToExitMapping;
     
     /** A mapping that maps exits to their capacity. */
     private Map<StaticPotential, Double> exitToCapacityMapping;
@@ -338,68 +333,11 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     public double absoluteSpeed(double relativeSpeed) {
         return absoluteMaxSpeed * relativeSpeed;
     }
-    /**
-     * Returns the mapping between individuals and exit cells.
-     *
-     * @return the mapping between individuals and exit cells
-     */
-    @Override
-    public IndividualToExitMapping getIndividualToExitMapping() {
-        return individualToExitMapping;
-    }
-
-    /**
-     * Sets a mapping between individuals and exit cells.
-     *
-     * @param individualToExitMapping the mapping
-     */
-    public void setIndividualToExitMapping(IndividualToExitMapping individualToExitMapping) {
-        this.individualToExitMapping = individualToExitMapping;
-    }
-
-
-
-    
-    
-    
-    
-    
-    /**
-     * Assigns the UUID to the name of the assignment type
-     *
-     * @param uid UUID of the assignment type
-     * @param s name of the assignment type
-     */
-    public void setAssignmentType(String s, UUID uid) {
-        assignmentTypes.put(s, uid);
-    }
-
-    /**
-     * Returns UUID of the assignment type with the given name
-     *
-     * @param name of the assignment type
-     * @return uid UUID of the assignment type
-     */
-    public UUID getAssignmentUUIS(String name) {
-        return assignmentTypes.get(name);
-    }
-
-    public Map<String, UUID> getAssignmentTypes() {
-        return assignmentTypes;
-    }
 
 
 
 
-    /**
-     * Returns all Individuals in the given AssignmentType
-     *
-     * @param id UUID of AssignmentType
-     * @return a set of of Individuals
-     */
-    public Set<Individual> getIndividualsInAssignmentType(UUID id) {
-        return typeIndividualMap.get(id);
-    }
+
 
     /**
      * Adds an Individual object to the List of all individuals of the cellular automaton and puts this individual into
@@ -484,9 +422,9 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
 
     /**
      * This method recognizes clusters of neighbouring ExitCells (that means ExitCells lying next to another ExitCell)
-     * and returns an ArrayList, which contains one ArrayList of ExitCells for each Cluster of ExitCells.
+     * and returns a list containing another list of {@link ExitCell}s for each cluster of {@link ExitCell}s.
      *
-     * @return An ArrayList, which contains one ArrayList of ExitCells for each Cluster of ExitCells.
+     * @return a list of exit clusters
      */
     public List<List<ExitCell>> clusterExitCells() {
         Set<ExitCell> alreadySeen = new HashSet<>();

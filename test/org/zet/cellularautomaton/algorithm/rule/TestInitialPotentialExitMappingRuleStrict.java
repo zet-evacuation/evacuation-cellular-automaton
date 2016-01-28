@@ -34,16 +34,16 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * @author Jan-Philipp Kappmeier
  */
 public class TestInitialPotentialExitMappingRuleStrict {
-    States test;
+    private States test;
     private final Mockery context = new Mockery();
-    InitialPotentialExitMappingRuleStrict rule;
-    EvacCell cell;
-    Individual i;
+    private InitialPotentialExitMappingRuleStrict rule;
+    private EvacCell cell;
+    private Individual i;
     private IndividualProperty ip;
-    EvacuationCellularAutomaton eca;
-    EvacuationSimulationProblem p;
-    ExitCell target;
-    EvacuationState es;
+    private EvacuationCellularAutomaton eca;
+    private EvacuationSimulationProblem p;
+    private ExitCell target;
+    private EvacuationState es;
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     private final IndividualToExitMapping exitMapping = (Individual individual) -> {
@@ -77,6 +77,8 @@ public class TestInitialPotentialExitMappingRuleStrict {
                 will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).propertyFor(i); when(test.is("normal-test"));
                 will(returnValue(ip));
+                allowing(es).getIndividualToExitMapping(); when(test.is("normal-test"));
+                will(returnValue(exitMapping));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
@@ -108,8 +110,6 @@ public class TestInitialPotentialExitMappingRuleStrict {
 
     @Test
     public void assignedExitsAreAssigned() {
-        eca.setIndividualToExitMapping(exitMapping);
-
         StaticPotential sp = new StaticPotential();
         List<ExitCell> spExits = new LinkedList<>();
         spExits.add(target);
@@ -123,14 +123,11 @@ public class TestInitialPotentialExitMappingRuleStrict {
 
     @Test(expected = IllegalStateException.class)
     public void noPotentialForTargetFails() {
-        eca.setIndividualToExitMapping(exitMapping);
         rule.execute(cell);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void twoPotentialsForOneCellFails() {
-        eca.setIndividualToExitMapping(exitMapping);
-
         StaticPotential sp1 = new StaticPotential();
         List<ExitCell> sp1Exits = new LinkedList<>();
         sp1Exits.add(target);
@@ -150,10 +147,13 @@ public class TestInitialPotentialExitMappingRuleStrict {
 
     @Test(expected = IllegalArgumentException.class)
     public void failsIfNotAssigned() {
-        eca.setIndividualToExitMapping(_unused -> null);
+        test.become("special-case");
         context.checking(new Expectations() {{
                 allowing(es).propertyFor(i);
                 will(returnValue(new IndividualProperty(i)));
+                IndividualToExitMapping mapping = _unused -> null;
+                allowing(es).getIndividualToExitMapping(); when(test.is("special-case"));
+                will(returnValue(mapping));
             }});
         rule.execute(cell);
     }
@@ -161,7 +161,6 @@ public class TestInitialPotentialExitMappingRuleStrict {
     @Test
     public void deadIndividualWithoutTarget() {
         test.become("special-case");
-        eca.setIndividualToExitMapping(_unused -> null);
         IndividualProperty ip = new IndividualProperty(i) {
 
             @Override
@@ -173,6 +172,9 @@ public class TestInitialPotentialExitMappingRuleStrict {
         context.checking(new Expectations() {{
                 allowing(es).propertyFor(i); when(test.is("special-case"));
                 will(returnValue(ip));
+                IndividualToExitMapping mapping = _unused -> null;
+                allowing(es).getIndividualToExitMapping(); when(test.is("special-case"));
+                will(returnValue(mapping));
             }});
         rule.execute(cell);
     }

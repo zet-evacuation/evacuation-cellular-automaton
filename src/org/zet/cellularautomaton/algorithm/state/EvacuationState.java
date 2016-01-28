@@ -3,6 +3,7 @@ package org.zet.cellularautomaton.algorithm.state;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -41,4 +42,19 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual>{
     public EvacuationCellularAutomatonInterface getCellularAutomaton();
     public ParameterSet getParameterSet();
 
+
+    
+    /**
+     * Returns the mapping between individuals and exit cells.
+     *
+     * @return the mapping between individuals and exit cells
+     */
+    public IndividualToExitMapping getIndividualToExitMapping();
+
+    /**
+     * Sets a mapping between individuals and exit cells.
+     *
+     * @param individualToExitMapping the mapping
+     */
+    public void setIndividualToExitMapping(IndividualToExitMapping individualToExitMapping);
 }

@@ -26,7 +26,7 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public Collection<Room> getRooms();
 
-// new
+    // new
     public Collection<StaticPotential> getStaticPotentials();
 
     public DynamicPotential getDynamicPotential();
@@ -36,8 +36,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
     public StaticPotential minPotentialFor(EvacCell c);
 
     // TODO: remove these
-    public IndividualToExitMapping getIndividualToExitMapping(); // this should be only stored for the best response?
-
     public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);
 
 }
