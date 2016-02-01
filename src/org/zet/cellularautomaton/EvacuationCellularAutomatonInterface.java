@@ -29,13 +29,8 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
     // new
     public Collection<StaticPotential> getStaticPotentials();
 
-    public DynamicPotential getDynamicPotential();
-
     public StaticPotential getSafePotential();
 
     public StaticPotential minPotentialFor(EvacCell c);
-
-    // TODO: remove these
-    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);
 
 }

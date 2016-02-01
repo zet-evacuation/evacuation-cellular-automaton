@@ -66,5 +66,17 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     void remove(Individual i) {
         
     }
+
+    @Override
+    public void increaseDynamicPotential(EvacCell c) {
+        evacuationState.increaseDynamicPotential(c);
+    }
+
+    @Override
+    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
+        evacuationState.updateDynamicPotential(probabilityDynamicIncrease, probabilityDynamicDecrease);
+    }
+    
+    
     
 }

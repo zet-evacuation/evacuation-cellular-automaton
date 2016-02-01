@@ -41,16 +41,12 @@ public class DynamicPotentialChangeAction extends Action {
     @Override
     public void execute(EvacuationCellularAutomaton onCA)
             throws InconsistentPlaybackStateException {
-        onCA.setDynamicPotential(affectedCell, newPotential);
+        //onCA.setDynamicPotential(affectedCell, newPotential);
     }
 
     @Override
     public String toString() {
-        return "The dynamic potential of cell "
-                + affectedCell
-                + " ist set to "
-                + newPotential
-                + ".";
+        return "The dynamic potential of cell " + affectedCell + " ist set to " + newPotential + ".";
     }
 
     public long getNewPotentialValue() {

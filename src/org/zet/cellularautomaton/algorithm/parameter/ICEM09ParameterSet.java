@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.algorithm.parameter;
 
 import ds.PropertyContainer;
 import java.util.Collection;
+import java.util.function.Function;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
@@ -121,7 +122,7 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
     }
 
     @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
+    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, Function<EvacCell,Double> dynamicPotential) {
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
         }

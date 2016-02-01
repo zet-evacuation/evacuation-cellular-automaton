@@ -99,7 +99,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     }
 
     private void doMoveWithDecision(Individual i, EvacCell targetCell, boolean performMove) {
-        es.increaseDynamicPotential(targetCell);
+        ec.increaseDynamicPotential(targetCell);
         // Calculate a factor that is later multiplied with the speed,
         // this factor is only != 1 for stair cells to
         // give different velocities for going a stair up or down.
@@ -177,7 +177,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         double p[] = new double[targets.size()];
 
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(es.getParameterSet().effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(es.getParameterSet().effectivePotential(cell, targets.get(i), es::getDynamicPotential));
         }
 
         int number = RandomUtils.getInstance().chooseRandomlyAbsolute(p);

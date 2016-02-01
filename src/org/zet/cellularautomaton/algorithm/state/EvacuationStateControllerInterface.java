@@ -20,7 +20,7 @@ public interface EvacuationStateControllerInterface {
      * @param from the origin cell
      * @param to the target cell
      */
-    public void move(EvacCell from, EvacCell to);
+    void move(EvacCell from, EvacCell to);
 
     /**
      * Swaps the positions of two individuals between two cells. Both cells, {@code cell1} and
@@ -29,7 +29,7 @@ public interface EvacuationStateControllerInterface {
      * @param cell1 the first cell with an individual
      * @param cell2 the second cell with an individual
      */
-    public void swap(EvacCell cell1, EvacCell cell2);
+    void swap(EvacCell cell1, EvacCell cell2);
 
     /**
      * Sets an individual to be dead. The reason is stored and the individual is taken out of the
@@ -38,7 +38,7 @@ public interface EvacuationStateControllerInterface {
      * @param individual the individual that dies
      * @param cause the reason
      */
-    public void die(Individual individual, DeathCause cause);
+    void die(Individual individual, DeathCause cause);
 
     /**
      * Sets an individual to be safe. An individual can be safe but not yet evacuated. It can not
@@ -46,7 +46,7 @@ public interface EvacuationStateControllerInterface {
      * 
      * @param individual the saved individual
      */
-    public void setSafe(Individual individual);
+    void setSafe(Individual individual);
 
     /**
      * Sets an individual evacuated. This automatically also sets the individual safe. When an
@@ -54,5 +54,9 @@ public interface EvacuationStateControllerInterface {
      * 
      * @param individual the evacuated individual
      */
-    public void evacuate(Individual individual);
+    void evacuate(Individual individual);
+    
+    void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);
+    
+    void increaseDynamicPotential(EvacCell c);
 }

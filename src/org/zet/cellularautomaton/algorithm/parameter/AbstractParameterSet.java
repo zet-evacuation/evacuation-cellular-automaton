@@ -21,7 +21,7 @@ import ds.PropertyContainer;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.lang.reflect.InvocationTargetException;
-import org.zet.cellularautomaton.potential.DynamicPotential;
+import java.util.function.Function;
 
 /**
  * @author Daniel R. Schmidt
@@ -108,7 +108,7 @@ public abstract class AbstractParameterSet implements ParameterSet {
     public abstract double changePotentialThreshold(Individual individual);
 
     @Override
-    public abstract double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential);
+    public abstract double effectivePotential(EvacCell referenceCell, EvacCell targetCell, Function<EvacCell,Double> dynamicPotential);
 
     @Override
     public abstract double idleThreshold(Individual individual);

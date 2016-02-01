@@ -62,8 +62,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     private final Map<Integer, StaticPotential> staticPotentials;
     /** The safe potential*/
     private StaticPotential safePotential;
-    /** The single DynamicPotential. */
-    private DynamicPotential dynamicPotential;
 
     
     // Move this to algorithm
@@ -97,7 +95,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         stepsPerSecond = 1;
 
         staticPotentials = new HashMap<>();
-        dynamicPotential = new DynamicPotential();
         safePotential = new StaticPotential();
     }
 
@@ -129,7 +126,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
             addStaticPotential(staticPot);
         }
 
-        setDynamicPotential(initialConfiguration.getDynamicPotential());
         setAbsoluteMaxSpeed(initialConfiguration.getAbsoluteMaxSpeed());
     }
 
@@ -163,7 +159,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * @param room the Room object to be added
      * @throws IllegalArgumentException if the the specific room exists already in the list rooms
      */
-    final public void addRoom(int floor, Room room) {
+    public final void addRoom(int floor, Room room) {
         if (rooms.containsKey(room.getID())) {
             throw new IllegalArgumentException("Specified room exists already in list rooms.");
         } else {
@@ -255,33 +251,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     
     
     
-    public void setDynamicPotential(EvacCell cell, double value) {
-        getDynamicPotential().setPotential(cell, value);
-    }
-
-    @Override
-    public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
-        dynamicPotential.update(probabilityDynamicIncrease, probabilityDynamicDecrease);
-    }
-
-    /**
-     * Set the dynamicPotential.
-     *
-     * @param potential The DynamicPotential you want to set.
-     */
-    public void setDynamicPotential(DynamicPotential potential) {
-        dynamicPotential = potential;
-    }
-
-    /**
-     * Get the dynamicPotential. Returns null if the DynamicPotential not exists.
-     *
-     * @return The DynamicPotential
-     */
-    @Override
-    public DynamicPotential getDynamicPotential() {
-        return dynamicPotential;
-    }
 
     public double getAbsoluteMaxSpeed() {
         return absoluteMaxSpeed;
@@ -495,7 +464,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * @param potential The StaticPotential you want to add to the List.
      * @throws IllegalArgumentException if the {@code StaticPotential} already exists
      */
-    public void addStaticPotential(StaticPotential potential) throws IllegalArgumentException {
+    public void addStaticPotential(StaticPotential potential) {
         if (staticPotentials.containsKey(potential.getID())) {
             throw new IllegalArgumentException("The StaticPtential already exists!");
         }
@@ -511,7 +480,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * @return The StaticPotential
      * @throws IllegalArgumentException
      */
-    public StaticPotential getStaticPotential(int id) throws IllegalArgumentException {
+    public StaticPotential getStaticPotential(int id) {
         if (!(staticPotentials.containsKey(id))) {
             throw new IllegalArgumentException("No StaticPotential with this ID exists!");
         }
@@ -558,7 +527,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
      * @param floor the floor
      * @return the collection of rooms
      */
-    public Collection<? super Room> getRoomsOnFloor(int floor) {
+    public Collection<Room> getRoomsOnFloor(int floor) {
         return roomCollections.get(floor).getRooms();
     }
     
