@@ -107,7 +107,7 @@ public class MoveAction extends Action {
         }
 
         //from.getRoom().moveIndividual( from, to );
-        onCA.moveIndividual(from, to);
+        //onCA.moveIndividual(from, to);
     }
 
     @Override

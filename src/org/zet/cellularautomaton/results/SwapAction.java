@@ -125,7 +125,7 @@ public class SwapAction extends Action {
         }
 
         //cell1.getRoom().swapIndividuals( cell1, cell2 );
-        onCA.swapIndividuals(cell1, cell2);
+        //onCA.swapIndividuals(cell1, cell2);
     }
 
     @Override

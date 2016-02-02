@@ -39,9 +39,5 @@ public interface Room extends LocatedCellMatrix<EvacCell> {
     public void addIndividual(EvacCell c, Individual i);
     public List<Individual> getIndividuals();
 
-    public void moveIndividual(EvacCell from, EvacCell to);
-
     public void removeIndividual(Individual i);
-
-    public void swapIndividuals(EvacCell cell1, EvacCell cell2);
 }

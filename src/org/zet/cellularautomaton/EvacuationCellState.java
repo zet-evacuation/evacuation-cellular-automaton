@@ -46,7 +46,7 @@ public class EvacuationCellState {
         return individual == null;
     }
 
-    void removeIndividual() {
+    public void removeIndividual() {
         if(isEmpty()) {
             throw new IllegalStateException("Cannot remove individual, is empty!");
         }

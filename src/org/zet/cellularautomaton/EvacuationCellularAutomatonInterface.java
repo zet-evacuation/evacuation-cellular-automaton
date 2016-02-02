@@ -15,11 +15,7 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public double absoluteSpeed(double relativeSpeed);
 
-    public void moveIndividual(EvacCell from, EvacCell to);
-
     public double getSecondsPerStep();
-
-    public void swapIndividuals(EvacCell cell1, EvacCell cell2);
 
     public Map<StaticPotential, Double> getExitToCapacityMapping();
 

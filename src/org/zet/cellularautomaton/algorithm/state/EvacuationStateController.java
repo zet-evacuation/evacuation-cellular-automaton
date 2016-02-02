@@ -17,27 +17,41 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     public EvacuationStateController(MutableEvacuationState evacuationState) {
         this.evacuationState = evacuationState;
     }
-    
-    void add(Individual i, EvacCell cell) {
-        evacuationState.propertyFor(i).setCell(cell);
-        cell.getState().setIndividual(i);
-    } 
 
     @Override
     public void move(EvacCell from, EvacCell to) {
-        Individual i = from.getState().getIndividual();
+        Individual i = getAndCheck(from);
+        if (from.equals(to)) {
+            return;
+        }
         remove(i);
         add(i, to);
     }
 
     @Override
     public void swap(EvacCell from, EvacCell to) {
-        Individual i1 = from.getState().getIndividual();
-        Individual i2 = from.getState().getIndividual();
+        Individual i1 = getAndCheck(from);
+        Individual i2 = getAndCheck(to);
+        if (from.equals(to)) {
+            return;
+        }
         remove(i1);
         remove(i2);
         add(i2, from);
         add(i1, to);
+    }
+    
+    private Individual getAndCheck(EvacCell cell) {
+        if (cell.getState().isEmpty()) {
+            throw new IllegalArgumentException("No Individual standing on cell " + cell);
+        }
+        return cell.getState().getIndividual();        
+    }
+
+    void add(Individual i, EvacCell cell) {
+        evacuationState.propertyFor(i).setCell(cell);
+        cell.getState().setIndividual(i);
+        cell.getRoom().addIndividual(cell, i);
     }
 
     @Override
@@ -56,6 +70,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     @Override
     public void evacuate(Individual i) {
         evacuationState.propertyFor(i).setEvacuationTime(evacuationState.getStep());
+        evacuationState.addToEvacuated(i);
         remove(i);
     }
 
@@ -64,7 +79,10 @@ public class EvacuationStateController implements EvacuationStateControllerInter
      * @param i an individual
      */
     void remove(Individual i) {
-        
+        EvacCell from = evacuationState.propertyFor(i).getCell();
+        from.getRoom().removeIndividual(i);
+        evacuationState.propertyFor(i).setCell(null);
+        from.getState().removeIndividual();
     }
 
     @Override

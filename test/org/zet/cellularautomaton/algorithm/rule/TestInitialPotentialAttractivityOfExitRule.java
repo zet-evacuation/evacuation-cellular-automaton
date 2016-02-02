@@ -71,7 +71,6 @@ public class TestInitialPotentialAttractivityOfExitRule {
 
         rule.setEvacuationState(es);
         rule.setEvacuationStateController(ec);
-        eca.addIndividual(cell, individual);
     }
 
     @Test

@@ -84,8 +84,7 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
      */
     public void setCell(EvacCell cell) {
         setCell(cell.getX(), cell.getY(), cell);
-        if ((getCell(cell.getX(),cell.getY()) != null)
-                && (getCell(cell.getX(), cell.getY()) instanceof DoorCell)) {
+        if ((getCell(cell.getX(),cell.getY()) != null) && (getCell(cell.getX(), cell.getY()) instanceof DoorCell)) {
             doors.remove((DoorCell)cell);
         }
         if (cell instanceof DoorCell) {
@@ -145,51 +144,18 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
         if (!c.getRoom().equals(this)) {
             throw new IllegalStateException("The cell does not belong to this room.");
         }
-        c.getState().setIndividual(i);
-        //i.setCell(c);
-        individuals.add(i);
-    }
-
-    private void checkIndividual(Individual i) throws IllegalStateException {
-        if (!individuals.contains(i)) {
-            throw new IllegalStateException("Individual " + i.id() + " is not in the room.");
+        if (individuals.contains(i)) {
+            throw new IllegalStateException("Individual " + i.id() + " is already in the room.");
         }
+        individuals.add(i);
     }
 
     @Override
     public void removeIndividual(Individual i) {
-        checkIndividual(i);
-        //if (i.getCell() == null) {
-        //} else {
-        //    if (!i.getCell().getRoom().equals(this)) {
-        //        throw new IllegalStateException("Individual is in the room, but the cell is in another room.");
-        //    }
-        //    i.getCell().getState().removeIndividual();
-        //    i.setCell(null);
-        //}
+        if (!individuals.contains(i)) {
+            throw new IllegalStateException("Individual " + i.id() + " is not in the room.");
+        }
         individuals.remove(i);
-        throw new IllegalStateException("Fix individual change");        
-    }
-
-    //TODO: make package private?
-    @Override
-    public void moveIndividual(EvacCell from, EvacCell to) throws IllegalStateException {
-        Individual i = from.getState().getIndividual();
-        checkIndividual(i);
-        to.getState().setIndividual(from.getState().getIndividual());
-        //i.setCell(to);
-        from.getState().removeIndividual();
-        throw new IllegalStateException("Fix individual change");        
-    }
-
-    //TODO: make package private? was before in interface
-    @Override
-    public void swapIndividuals(EvacCell cell1, EvacCell cell2) throws IllegalStateException {
-        Individual c1i = cell1.getState().getIndividual();
-        Individual c2i = cell2.getState().getIndividual();
-        checkIndividual(c1i);
-        checkIndividual(c2i);
-        cell1.swapIndividuals(cell2);
     }
 
 //  HashCode und Equals auskommentiert: Wenn zwei Räume gleich sind,
@@ -235,23 +201,4 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
         super.clear();
         this.doors.clear();
     }
-
-//    @Override
-//    public Room clone() {
-//        RoomImpl clone = new RoomImpl(getWidth(), getHeight(), floorID, id);
-//
-//        clone.isAlarmed = this.isAlarmed;
-//        for (DoorCell door : this.doors) {
-//            clone.doors.add(door);
-//        }
-//
-//        for (Individual individual : this.individuals) {
-//            clone.individuals.add(individual);
-//        }
-//
-//        clone.populate((x, y) -> this.getCell(x, y));
-//        
-//        return clone;
-//    }
-
 }

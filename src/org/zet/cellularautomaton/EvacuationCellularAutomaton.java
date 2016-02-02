@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.Neighborhood;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
@@ -67,15 +66,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     private double absoluteMaxSpeed;
     private double secondsPerStep;
     private double stepsPerSecond;
-
     
-    // Delete these from simulation
-    /** A mapping floor <-> rooms. */
-    //private List<ArrayList<Room>> roomsByFloor;
-    /** Map mapping UUIDs of AssignmentTypes to Individuals. */
-    private Map<UUID, HashSet<Individual>> typeIndividualMap;
-    /** Maps name of an assignment types to its unique id. */
-    private Map<String, UUID> assignmentTypes;
     /**
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
      */
@@ -86,9 +77,6 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         
         exits = new ArrayList<>();
         rooms = new HashMap<>();
-        assignmentTypes = new HashMap<>();
-        typeIndividualMap = new HashMap<>();
-        //roomsByFloor = new LinkedList<>();
         absoluteMaxSpeed = 1;
         secondsPerStep = 1;
         stepsPerSecond = 1;
@@ -116,7 +104,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         for (Room room : initialConfiguration.getRooms()) {
             for (EvacCell cell : room.getAllCells()) {
                 if (!cell.getState().isEmpty()) {
-                    addIndividual(cell, cell.getState().getIndividual());
+                    //addIndividual(cell, cell.getState().getIndividual());
                 }
             }
         }
@@ -305,74 +293,10 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
 
 
 
-
-
-    /**
-     * Adds an Individual object to the List of all individuals of the cellular automaton and puts this individual into
-     * the two mappings of rooms and assignment types.
-     *
-     * @param c the EvacCell on which the individual stands
-     * @param i the Individual object
-     * @throws IllegalArgumentException if the the specific individual exits already in the list individuals
-     * @throws IllegalStateException if an individual is added after the simulation has been startet.
-     */
-    public final void addIndividual(EvacCell c, Individual i)  {
-        c.getRoom().addIndividual(c, i);
-    }
     
 
 
-    /**
-     * Move the individual standing on the "from"-EvacCell to the "to"-EvacCell.
-     *
-     * @param from The cell on which the individual, which shall be moved, stays.
-     * @param to The destination-cell for the moving individual.
-     * @throws java.lang.IllegalArgumentException if the individual should be moved from an empty EvacCell, which is not
-     * occupied by an Individual, or if the ''to''-EvacCell is already occupied by another individual.
-     */
-    @Override
-    public void moveIndividual(EvacCell from, EvacCell to) {
-        if (from.getState().isEmpty()) {
-            throw new IllegalArgumentException("No Individual standing on the ''from''-Cell!");
-        }
-        if (from.equals(to)) {
-            return;
-        }
-        if (!to.getState().isEmpty()) {
-            throw new IllegalArgumentException("Individual " + to.getState().getIndividual() + " already standing on the ''to''-Cell!");
-        }
 
-        if (from.getRoom().equals(to.getRoom())) {
-            from.getRoom().moveIndividual(from, to);
-        } else {
-            Individual i = from.getState().getIndividual();
-            from.getRoom().removeIndividual(i);
-            to.getRoom().addIndividual(to, i);
-        }
-    }
-
-    @Override
-    public void swapIndividuals(EvacCell cell1, EvacCell cell2) {
-        if (cell1.getState().isEmpty()) {
-            throw new IllegalArgumentException("No Individual standing on cell #1!");
-        }
-        if (cell2.getState().isEmpty()) {
-            throw new IllegalArgumentException("No Individual standing on cell #2!");
-        }
-        if (cell1.equals(cell2)) {
-            throw new IllegalArgumentException("The cells are equal. Can't swap on equal cells.");
-        }
-        if (cell1.getRoom().equals(cell2.getRoom())) {
-            cell1.getRoom().swapIndividuals(cell1, cell2);
-        } else {
-            Individual c1i = cell1.getState().getIndividual();
-            Individual c2i = cell2.getState().getIndividual();
-            cell1.getRoom().removeIndividual(c1i);
-            cell2.getRoom().removeIndividual(c2i);
-            cell1.getRoom().addIndividual(cell1, c2i);
-            cell2.getRoom().addIndividual(cell2, c1i);
-        }
-    }
 
     /**
      * Removes a room from the list of all rooms of the building

@@ -85,10 +85,8 @@ public class TestInitialPotentialExitMappingRuleStrict {
         ip.setCell(cell);
         cell.getState().setIndividual(i);
         rule.setEvacuationState(es);
-        eca.addIndividual(cell, i);
 
         target = new ExitCell(1.0, 0, 0, room);
-
     }
 
     @Test
