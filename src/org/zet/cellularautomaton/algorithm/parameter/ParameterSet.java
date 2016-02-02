@@ -20,7 +20,6 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.Collection;
 import java.util.function.Function;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * An abstract class defining all methods that parameter sets have to support.

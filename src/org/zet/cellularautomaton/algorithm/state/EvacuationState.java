@@ -5,7 +5,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**

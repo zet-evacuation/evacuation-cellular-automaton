@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.Neighborhood;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;

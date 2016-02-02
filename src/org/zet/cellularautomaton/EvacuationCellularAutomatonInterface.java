@@ -2,7 +2,6 @@ package org.zet.cellularautomaton;
 
 import java.util.Collection;
 import java.util.Map;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.CellularAutomaton;
 
