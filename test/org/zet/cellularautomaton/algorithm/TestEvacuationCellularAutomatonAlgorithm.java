@@ -2,9 +2,9 @@ package org.zet.cellularautomaton.algorithm;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.junit.Assert.assertThat;
 import static org.zetool.common.util.Helper.in;
@@ -27,6 +27,7 @@ import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
+import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -47,7 +48,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     public static class MockEvacCell extends EvacCell {
-
+        
         public MockEvacCell(int x, int y) {
             super(new EvacuationCellState(null), 1, x, y);
         }
@@ -55,6 +56,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         @Override
         public EvacCell clone() {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void setRoom(Room room) {
+            super.room = room;
         }
 
     };
@@ -116,8 +121,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         };
 
         List<Individual> individuals = getTwoIndividuals();
-        Map<Individual, EvacCell> isp = getIndividualPositions(individuals);
-
+        Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
 
         // Set up a rule set
         EvacuationRuleSet rules = new EvacuationRuleSet() {
@@ -182,7 +186,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         // - Time Step of CA is updated.
 
         List<Individual> individuals = getTwoIndividuals();
-        Map<Individual, EvacCell> isp = getIndividualPositions(individuals);
+        Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
         EvacCell dynamicPotentialCheckCell = isp.get(individuals.get(0));
 
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
@@ -324,12 +328,14 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     }
 
     @Test
-    public void testTerminateSomeIndividualsLeft() {
+    public void terminateLeftIndividualsDie() {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
         };
         List<Individual> individuals = getTwoIndividuals();
-        Map<Individual, EvacCell> isp = getIndividualPositions(individuals);
-        
+        Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
+
+        Room room = context.mock(Room.class);
+        isp.get(individuals.get(0)).setRoom(room);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
@@ -351,6 +357,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(individuals));
                 allowing(esp).getParameterSet();
                 will(returnValue(context.mock(ParameterSet.class)));
+                
+                allowing(room).removeIndividual(individuals.get(0));
             }});
         algorithm.setProblem(esp);
         algorithm.initialize();
@@ -385,10 +393,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         return individuals;
     }
     
-    private Map<Individual, EvacCell> getIndividualPositions(List<Individual> individuals) {
-        Map<Individual, EvacCell> isp = new HashMap<>();
+    private Map<Individual, MockEvacCell> getIndividualPositions(List<Individual> individuals) {
+        Map<Individual, MockEvacCell> isp = new HashMap<>();
         for( int i = 0; i < individuals.size(); ++i) {
-            EvacCell cell = new MockEvacCell(i, 0);
+            MockEvacCell cell = new MockEvacCell(i, 0);
             cell.getState().setIndividual(individuals.get(i));
             isp.put(individuals.get(i), cell);
         }
