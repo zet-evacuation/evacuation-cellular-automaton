@@ -17,6 +17,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -134,21 +135,20 @@ public class TestSimpleMovementRule {
 
         Mockery context = new Mockery();
         EvacuationState es = context.mock(EvacuationState.class);
-        ParameterSet ps = context.mock(ParameterSet.class);
+        Computation c = context.mock(Computation.class);
         EvacuationCellularAutomatonInterface ca = context.mock(EvacuationCellularAutomatonInterface.class);
         context.checking(new Expectations() {
             {
-                allowing(es).getParameterSet();
-                will(returnValue(ps));
                 allowing(es).getCellularAutomaton();
                 will(returnValue(ca));
                 allowing(ca).getDynamicPotential();
                 will(returnValue(null));
-                allowing(ps).effectivePotential(with(currentCell), with(targetCell), with((DynamicPotential)null));
+                allowing(c).effectivePotential(with(currentCell), with(targetCell), with((DynamicPotential)null));
                 will(returnValue(1.0));
             }
         });
         rule.setEvacuationState(es);
+        rule.setComputation(c);
 
         EvacCell selectedCell = rule.selectTargetCell(currentCell, targets);
 

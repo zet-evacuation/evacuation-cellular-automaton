@@ -1,15 +1,16 @@
 package org.zetool.algorithm.simulation.cellularautomaton;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.closeTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.closeTo;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zetool.simulation.cellularautomaton.Cell;
 import org.zetool.simulation.cellularautomaton.CellularAutomaton;

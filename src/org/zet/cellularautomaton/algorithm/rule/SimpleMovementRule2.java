@@ -216,9 +216,9 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     @Override
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
         EvacCell target = cell;
-        double minPot = es.getParameterSet().effectivePotential(cell, cell, es.getCellularAutomaton().getDynamicPotential());
+        double minPot = c.effectivePotential(cell, cell, es.getCellularAutomaton().getDynamicPotential());
         for (EvacCell c : targets) {
-            double pot = es.getParameterSet().effectivePotential(cell, c, es.getCellularAutomaton().getDynamicPotential());
+            double pot = c.effectivePotential(cell, c, es.getCellularAutomaton().getDynamicPotential());
             if (pot > minPot) {
                 target = c;
                 minPot = pot;

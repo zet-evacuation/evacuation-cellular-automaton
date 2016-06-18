@@ -15,71 +15,17 @@
  */
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.StaticPotential;
-import java.util.Collection;
-import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * @author Jan-Philipp Kappmeier
  */
 public class SimpleParameterSet extends AbstractParameterSet {
-    PropertyAccess es;
-    
+
     public SimpleParameterSet() {
         super(0, 1, 0, 0, 0, 4);
     }
 
-    
-    
-    @Override
-    public double changePotentialThreshold(Individual individual) {
-        return 0;
-    }
-
-    /**
-     *
-     * @param referenceCell
-     * @param targetCell
-     * @param dynamicPotential 
-     * @return the potential difference between the two cells
-     */
-    @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
-        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
-        final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
-        return statPotlDiff;
-    }
-
-    @Override
-    public double idleThreshold(Individual i) {
-        return i.getSlackness() * 0.4;
-    }
-
-    @Override
-    public double movementThreshold(Individual i) {
-        double individualSpeed = es.propertyFor(i).getRelativeSpeed();
-        double cellSpeed = es.propertyFor(i).getCell().getSpeedFactor();
-        return individualSpeed * cellSpeed;
-    }
-
-    @Override
-    public double updateExhaustion(Individual individual, EvacCell targetCell) {
-        return 0;
-    }
-
-    @Override
-    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
-        return 0;
-    }
-
-    @Override
-    public double updatePreferredSpeed(Individual individual) {
-        return 0;
-    }
 
     @Override
     public double getAbsoluteMaxSpeed() {
@@ -114,5 +60,45 @@ public class SimpleParameterSet extends AbstractParameterSet {
     @Override
     public double getReactionTime() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double PANIC_WEIGHT_ON_POTENTIALS() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double PANIC_THRESHOLD() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double panicWeightOnSpeed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double exhaustionWeightOnSpeed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double slacknessToIdleRatio() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double panicToProbOfPotentialChangeRatio() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getPanicDecrease() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getPanicIncrease() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

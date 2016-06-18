@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
@@ -27,16 +28,15 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 public class MutableEvacuationState implements EvacuationState {
 
     /** Generic error message. */
+    private static final MessageFormat ERROR_NOT_EXISTING = new MessageFormat("Individual {0} not in simulation.");
     private static final MessageFormat ERROR_NOT_IN_LIST = new MessageFormat("Individual {0} not in list!");
     private static final MessageFormat ERROR_NOT_DEAD = new MessageFormat("Individual {0} not dead.");
-    private static final MessageFormat ERROR_NOT_IN_SIMULATION = new MessageFormat("Individual {0} not in simulation.");
     private static final MessageFormat ERROR_NOT_SAFE = new MessageFormat("Individual {0} not safe.");
     private static final MessageFormat ERROR_NOT_EVACUATED = new MessageFormat("Individual {0} not evacuated.");
     
     /** The cellular automaton of the simulation run. */
     private final EvacuationCellularAutomatonInterface ca;
     /** The parameter set of the simulation run. */
-    private final ParameterSet parameterSet;
 
     /** Mapping of individuals to their dynamic properties. */
     private final Map<Individual, IndividualProperty> individualProperties;
@@ -66,17 +66,14 @@ public class MutableEvacuationState implements EvacuationState {
 
     public MutableEvacuationState(ParameterSet parameterSet, EvacuationCellularAutomatonInterface ca,
             List<Individual> individuals) {
-        this.parameterSet = parameterSet;
         this.ca = ca;
         individualProperties = new HashMap<>();
-        for (Individual i : individuals) {
-            addIndividualInt(i);
-        }
+        individuals.stream().forEach(individual -> addIndividualInt(individual));
     }
-
+    
     @Override
     public IndividualProperty propertyFor(Individual i) {
-        return Objects.requireNonNull(individualProperties.get(i), ERROR_NOT_IN_SIMULATION.format(i));
+        return Objects.requireNonNull(individualProperties.get(i), () -> ERROR_NOT_EXISTING.format(new Object[] {i}));
     }
 
     @Override
@@ -129,7 +126,7 @@ public class MutableEvacuationState implements EvacuationState {
     @Override
     public void markIndividualForRemoval(Individual i) {
         if (!getRemainingIndividuals().contains(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
         }
         markedForRemoval.add(i);
     }
@@ -146,10 +143,10 @@ public class MutableEvacuationState implements EvacuationState {
         markedForRemoval.clear();
     }
 
-    @Override
-    public ParameterSet getParameterSet() {
-        return parameterSet;
-    }
+    //@Override
+//    public ParameterSet getParameterSet() {
+//        return parameterSet;
+//    }
 
     /**
      * Returns the number of initialIndividuals that were in the cellular automaton when the simulation starts.
@@ -219,7 +216,7 @@ public class MutableEvacuationState implements EvacuationState {
         }
 
         if(!propertyFor(i).isSafe()) {
-            throw new IllegalArgumentException(ERROR_NOT_SAFE.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_SAFE.format(new Object[] {i}));
         }
 
         safeIndividuals.add(i);
@@ -236,10 +233,10 @@ public class MutableEvacuationState implements EvacuationState {
      */
     public void addToEvacuated(Individual i) {
         if (!initialIndividuals.contains(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
         }
         if(!propertyFor(i).isEvacuated()) {
-            throw new IllegalArgumentException(ERROR_NOT_EVACUATED.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_EVACUATED.format(new Object[] {i}));
         }
         addToSafe(i);
         remainingIndividuals.remove(i);
@@ -262,10 +259,10 @@ public class MutableEvacuationState implements EvacuationState {
 
     public void addToDead(Individual i) {
         if (!remainingIndividuals.remove(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
         }
         if(!propertyFor(i).isDead()) {
-            throw new IllegalArgumentException(ERROR_NOT_DEAD.format(i));
+            throw new IllegalArgumentException(ERROR_NOT_DEAD.format(new Object[] {i}));
         }
         deadIndividuals.add(i);
 

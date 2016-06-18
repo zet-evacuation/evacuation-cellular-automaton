@@ -13,40 +13,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import org.zet.cellularautomaton.Individual;
-
 /**
- * A {@link ParameterSet} that sets the parameter of the simulation to values
- * that allow passing the RIMEA tests.
+ * A {@link ParameterSet} that sets the parameter of the simulation to values that allow passing the RIMEA tests.
+ *
  * @author Melanie Schmidt
  */
 public class RimeaParameterSetNoReactionTime extends RimeaParameterSet {
 
-	/**
-	 *
-	 * @param age
-	 * @return 0.0
-	 */
-	@Override
-	public double getReactionTimeFromAge( double age ) {
-		return 0.0;
-	}
 
-	/**
-	 *
-	 * @param individual
-	 * @return 0.0
-	 */
-	@Override
-	public double idleThreshold(Individual individual){
-		return 0.0;
-	}
+    /**
+     *
+     * @param age
+     * @return 0.0
+     */
+    @Override
+    public double getReactionTimeFromAge(double age) {
+        return 0.0;
+    }
 
-	@Override
-	public double getSpeedFromAge( double pAge ) {
-		return 0.595;
-	}
+    @Override
+    public double getSpeedFromAge(double pAge) {
+        return 0.595;
+    }
 }

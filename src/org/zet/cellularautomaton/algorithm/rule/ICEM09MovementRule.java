@@ -70,7 +70,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
         double p[] = new double[targets.size()];
 
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(es.getParameterSet().effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(c.effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
         }
 
         int number = RandomUtils.getInstance().chooseRandomlyAbsolute(p);

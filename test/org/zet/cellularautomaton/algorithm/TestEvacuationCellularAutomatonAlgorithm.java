@@ -26,6 +26,7 @@ import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
+import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -44,6 +45,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
     private Mockery context = new Mockery();
     private final static IndividualBuilder builder = new IndividualBuilder();
+    private StaticPotential sp = new StaticPotential();
 
     public static class MockEvacCell extends EvacCell {
 
@@ -167,8 +169,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         context.assertIsSatisfied();
     }
     
-    private StaticPotential sp = new StaticPotential();
-
     @Test
     public void testPerformStep() {
         // Tests that
@@ -603,6 +603,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             @Override
             public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
                 
+            }
+
+            @Override
+            public void setComputation(Computation c) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };
         rs.add(rule);

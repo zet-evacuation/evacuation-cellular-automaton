@@ -19,7 +19,7 @@ public class TestRandomOrdering {
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
-    public void testDefaultInAnyOrder() {
+    public void defaultInAnyOrder() {
         List<Individual> individuals = new LinkedList<>();
         for (int i = 1; i <= 5; ++i) {
             Individual ind = builder.build();

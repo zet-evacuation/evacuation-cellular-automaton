@@ -3,7 +3,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
+import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
 /**
@@ -35,6 +35,11 @@ public class MockRule {
         public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
         }
 
+        @Override
+        public void setComputation(Computation c) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
     }
 
     public static class TestLoopRule implements EvacuationRule {
@@ -57,6 +62,11 @@ public class MockRule {
 
         @Override
         public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
+        }
+
+        @Override
+        public void setComputation(Computation c) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

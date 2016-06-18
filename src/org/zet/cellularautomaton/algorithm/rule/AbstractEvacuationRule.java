@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -32,6 +33,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
 
     protected EvacuationState es;
     protected EvacuationStateControllerInterface ec;
+    protected Computation c;
 
     /**
      * Returns if the rule is executable on the cell. The default behavior is, that a rule is executable if an
@@ -75,9 +77,12 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         this.ec = Objects.requireNonNull(ec, CellularAutomatonLocalization.LOC.getString(
                 "algo.ca.rule.CAControllerIsNullException"));
     }
-    
-    
-    
+
+    @Override
+    public void setComputation(Computation c) {
+        this.c = c;
+    }
+
     protected static StaticPotential getNearestExitStaticPotential(Collection<StaticPotential> potentials, EvacCell c) {
         StaticPotential nearestPot = new StaticPotential();
         int distance = Integer.MAX_VALUE;
@@ -95,7 +100,6 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         return numberOfDisjunctStaticPotentials == potentials.size() ? null : nearestPot;
     }
  
-    
     protected void recordAction(Action a) {
         // ignore publishing
     }

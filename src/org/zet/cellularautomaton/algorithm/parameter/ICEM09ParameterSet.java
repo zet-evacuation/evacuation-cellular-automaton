@@ -16,13 +16,8 @@
 package org.zet.cellularautomaton.algorithm.parameter;
 
 import ds.PropertyContainer;
-import java.util.Collection;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * @author Sylvie Temme
@@ -69,6 +64,7 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         PANIC_THRESHOLD = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_THRESHOLD");
     }
 
+
 	////* Some constants*////
 	/* im AbstractParameterSet:
      @Override
@@ -92,43 +88,42 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
      return PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
      }
      */
+    @Override
     public double getAbsoluteMaxSpeed() {
         return ABSOLUTE_MAX_SPEED;
     }
 
-    protected double slacknessToIdleRatio() {
+    @Override
+    public double slacknessToIdleRatio() {
         return SLACKNESS_TO_IDLE_RATIO;
     }
 
-    protected double panicToProbOfPotentialChangeRatio() {
+    @Override
+    public double panicToProbOfPotentialChangeRatio() {
         return PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO;
     }
 
-    protected double getPanicIncrease() {
+    @Override
+    public double getPanicIncrease() {
         return PANIC_INCREASE;
     }
 
-    protected double getPanicDecrease() {
+    @Override
+    public double getPanicDecrease() {
         return PANIC_DECREASE;
     }
 
-    protected double panicWeightOnSpeed() {
+    @Override
+    public double panicWeightOnSpeed() {
         return PANIC_WEIGHT_ON_SPEED;
     }
 
-    protected double exhaustionWeightOnSpeed() {
+    @Override
+    public double exhaustionWeightOnSpeed() {
         return EXHAUSTION_WEIGHT_ON_SPEED;
     }
 
-    @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
-        if (referenceCell.getState().isEmpty()) {
-            throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
-        }
-        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
-        final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
-        return statPotlDiff;
-    }
+
 
     ////* Conversion parameters *////
     @Override
@@ -156,42 +151,15 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         return 1;
     }
 
-	//////////////////////////////////ab hier: nicht benutzt////////////////////////////////////////////////////////
-    ////* Updating of dynamic parameters *////
+
+
     @Override
-    public double updateExhaustion(Individual individual, EvacCell targetCell) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
+    public double PANIC_WEIGHT_ON_POTENTIALS() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public double updatePreferredSpeed(Individual individual) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
-    }
-
-    @Override
-    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
-    }
-
-    ////* Threshold values for various decisions *////
-    @Override
-    public double changePotentialThreshold(Individual individual) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
-    }
-
-    @Override
-    public double idleThreshold(Individual individual) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
-    }
-
-    @Override
-    public double movementThreshold(Individual individual) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
+    public double PANIC_THRESHOLD() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

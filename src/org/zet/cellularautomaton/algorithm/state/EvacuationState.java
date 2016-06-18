@@ -3,7 +3,6 @@ package org.zet.cellularautomaton.algorithm.state;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -39,6 +38,5 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual>{
     // To be removed from the interface completely:
     public CAStatisticWriter getStatisticWriter();
     public EvacuationCellularAutomatonInterface getCellularAutomaton();
-    public ParameterSet getParameterSet();
 
 }

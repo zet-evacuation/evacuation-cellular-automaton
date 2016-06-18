@@ -15,13 +15,8 @@
  */
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import java.util.Collection;
-
 import ds.PropertyContainer;
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.Individual;
 import java.lang.reflect.InvocationTargetException;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * @author Daniel R. Schmidt
@@ -104,27 +99,6 @@ public abstract class AbstractParameterSet implements ParameterSet {
         return PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
     }
 
-    @Override
-    public abstract double changePotentialThreshold(Individual individual);
-
-    @Override
-    public abstract double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential);
-
-    @Override
-    public abstract double idleThreshold(Individual individual);
-
-    @Override
-    public abstract double movementThreshold(Individual individual);
-
-    @Override
-    public abstract double updateExhaustion(Individual individual, EvacCell targetCell);
-
-    @Override
-    public abstract double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells);
-
-    @Override
-    public abstract double updatePreferredSpeed(Individual individual);
-
     /**
      * Creates a {@link ParameterSet} of a specified subclass.
      *
@@ -152,5 +126,4 @@ public abstract class AbstractParameterSet implements ParameterSet {
     public double getAbsoluteMaxSpeed() {
         return ABSOLUTE_MAX_SPEED;
     }
-
 }

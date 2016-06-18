@@ -8,8 +8,6 @@ import static org.hamcrest.Matchers.hasSize;
 
 import java.util.List;
 import java.util.Map;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 

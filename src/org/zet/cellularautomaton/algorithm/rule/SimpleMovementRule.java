@@ -69,7 +69,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
         double p[] = new double[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(es.getParameterSet().effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(c.effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
         }
 
         return targets.get(RandomUtils.getInstance().chooseRandomlyAbsolute(p));

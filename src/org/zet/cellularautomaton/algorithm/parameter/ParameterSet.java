@@ -13,59 +13,56 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import java.util.Collection;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * An abstract class defining all methods that parameter sets have to support.
+ *
  * @author Jan-Philipp Kappmeier
  * @author Daniel R. Schmidt
  */
 public interface ParameterSet {
-	/* Updating of dynamic parameters */
+    /* Updating of dynamic parameters */
 
-	public double updateExhaustion( Individual individual, EvacCell targetCell );
+    public double PANIC_WEIGHT_ON_POTENTIALS();
 
-	public double updatePreferredSpeed( Individual individual );
+    double PANIC_THRESHOLD();
 
-	public double updatePanic( Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells );
+    /* Some constants*/
+    public double dynamicPotentialWeight();
 
-	/* Threshold values for various decisions */
-	public double changePotentialThreshold( Individual individual );
+    public double staticPotentialWeight();
 
-	public double idleThreshold( Individual individual );
+    public double probabilityDynamicIncrease();
 
-	public double movementThreshold( Individual individual );
+    public double probabilityDynamicDecrease();
 
-	/* Other dynamic parameters */
-	public double effectivePotential( EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential);
+    public double probabilityChangePotentialFamiliarityOrAttractivityOfExitRule();
 
-	/* Some constants*/
-	public double dynamicPotentialWeight();
+    /* Conversion parameters */
+    public double getAbsoluteMaxSpeed();
 
-	public double staticPotentialWeight();
+    public double getSpeedFromAge(double pAge);
 
-	public double probabilityDynamicIncrease();
+    public double getSlacknessFromDecisiveness(double pDecisiveness);
 
-	public double probabilityDynamicDecrease();
+    public double getExhaustionFromAge(double pAge);
 
-	public double probabilityChangePotentialFamiliarityOrAttractivityOfExitRule();
+    public double getReactionTimeFromAge(double pAge);
 
-	/* Conversion parameters */
-	public double getAbsoluteMaxSpeed();
+    public double getReactionTime();
 
-	public double getSpeedFromAge( double pAge );
+    public double panicWeightOnSpeed();
 
-	public double getSlacknessFromDecisiveness( double pDecisiveness );
+    public double exhaustionWeightOnSpeed();
 
-	public double getExhaustionFromAge( double pAge );
+    public double slacknessToIdleRatio();
 
-	public double getReactionTimeFromAge( double pAge );
+    public double panicToProbOfPotentialChangeRatio();
 
-	public double getReactionTime();
+    public double getPanicDecrease();
+
+    public double getPanicIncrease();
 }
