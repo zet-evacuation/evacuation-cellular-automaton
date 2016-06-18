@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 import org.zetool.rndutils.RandomUtils;
 import java.util.List;
+import org.zet.cellularautomaton.Individual;
 
 /**
  *
@@ -63,6 +64,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
      */
     @Override
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+        Individual ind = cell.getState().getIndividual();
         if (targets.isEmpty()) {
             return cell;
         }
@@ -70,7 +72,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
         double p[] = new double[targets.size()];
 
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(c.effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
         }
 
         int number = RandomUtils.getInstance().chooseRandomlyAbsolute(p);

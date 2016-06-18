@@ -22,7 +22,6 @@ package org.zet.cellularautomaton.algorithm.parameter;
  */
 public class RimeaParameterSetNoReactionTime extends RimeaParameterSet {
 
-
     /**
      *
      * @param age

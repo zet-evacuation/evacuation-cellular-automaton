@@ -26,7 +26,6 @@ public class RimeaParameterSet extends DefaultParameterSet {
         super();
     }
 
-
     /**
      * Sets the reaction time depending from age. This is disabled in rimea profile, the reaction time is set by the
      * default individual reaction time distribution instead.

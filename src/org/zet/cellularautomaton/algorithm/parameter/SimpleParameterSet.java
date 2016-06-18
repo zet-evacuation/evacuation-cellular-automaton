@@ -15,8 +15,6 @@
  */
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import org.zet.cellularautomaton.Individual;
-
 /**
  * @author Jan-Philipp Kappmeier
  */
@@ -25,7 +23,6 @@ public class SimpleParameterSet extends AbstractParameterSet {
     public SimpleParameterSet() {
         super(0, 1, 0, 0, 0, 4);
     }
-
 
     @Override
     public double getAbsoluteMaxSpeed() {
@@ -64,41 +61,41 @@ public class SimpleParameterSet extends AbstractParameterSet {
 
     @Override
     public double PANIC_WEIGHT_ON_POTENTIALS() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double PANIC_THRESHOLD() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double panicWeightOnSpeed() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double exhaustionWeightOnSpeed() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double slacknessToIdleRatio() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double panicToProbOfPotentialChangeRatio() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double getPanicDecrease() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double getPanicIncrease() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

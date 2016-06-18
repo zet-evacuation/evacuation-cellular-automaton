@@ -170,6 +170,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
      */
     @Override
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+        Individual ind = cell.getState().getIndividual();
         if (targets.isEmpty()) {
             return cell;
         }
@@ -177,7 +178,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         double p[] = new double[targets.size()];
 
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(c.effectivePotential(cell, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
         }
 
         int number = RandomUtils.getInstance().chooseRandomlyAbsolute(p);

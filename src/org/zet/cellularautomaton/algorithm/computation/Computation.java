@@ -12,19 +12,17 @@ import org.zet.cellularautomaton.potential.DynamicPotential;
  */
 public interface Computation {
 
-    double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential);
-
-    double updateExhaustion(Individual individual, EvacCell targetCell);
+    double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential);
 
     double updatePreferredSpeed(Individual individual);
+
+    double updateExhaustion(Individual individual, EvacCell targetCell);
 
     double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells);
 
     /* Threshold values for various decisions */
     public double changePotentialThreshold(Individual individual);
 
-    public double movementThreshold(Individual individual);
     public double idleThreshold(Individual i);
-
 
 }

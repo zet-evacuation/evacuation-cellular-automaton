@@ -98,7 +98,7 @@ public class TestEvacuationParameterSet extends DefaultParameterSet {
         final NormalDistribution normal = new NormalDistribution(maxSpeedExpected, sigmaSquared, ageArray[16], ABSOLUTE_MAX_SPEED);
         double randSpeed = normal.getNextRandom();
 
-		// Change speeds for male and female individuals:
+        // Change speeds for male and female individuals:
         // + 5% for male, -5% for female
         if (RandomUtils.getInstance().binaryDecision(0.5)) {
             randSpeed *= 1.05;
@@ -110,19 +110,11 @@ public class TestEvacuationParameterSet extends DefaultParameterSet {
             cumulativeMale += randSpeed;
         }
 
-        //double randSpeed = maxSpeedExpected;
         double maxSpeed = randSpeed / ABSOLUTE_MAX_SPEED;
         if (maxSpeed > 1) {
             maxSpeed = 1;
-            //System.err.println( "Maximale geschw: " + maxSpeed );
         }
 
-		// Correction of 0.2
-//		maxSpeed = Math.max( 0.6, maxSpeed-0.4 );
-//		cumulativeSpeed += (maxSpeed * ABSOLUTE_MAX_SPEED);
-		//System.out.println( "First one has speed " + (maxSpeed * ABSOLUTE_MAX_SPEED) );
-        //System.out.println( "Average speed for " + counter + " persons: " + (cumulativeSpeed / counter) + " counterMale/s. (Should be 1.3x)" );
-    //randSpeed = 1.8120037611;
         speeds += randSpeed;
         count++;
 
@@ -136,7 +128,6 @@ public class TestEvacuationParameterSet extends DefaultParameterSet {
 
     @Override
     public double exhaustionWeightOnSpeed() {
-//		return super.exhaustionWeightOnSpeed();
         return 0;
     }
 

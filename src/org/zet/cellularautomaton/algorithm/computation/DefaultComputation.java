@@ -34,21 +34,6 @@ public class DefaultComputation implements Computation {
         return es.propertyFor(i).getPanic() * parameterSet.panicToProbOfPotentialChangeRatio();
     }
 
-    /*
-     * {@inheritDoc}
-     * @see algo.ca.parameter.AbstractParameterSet#movementThreshold( ds.ca.Individual )
-     */
-    // wird nur benutzt wenn die Geschwindigkeit der Individuen mit Wahrscheinlichkeiten simuliert wird
-    // das ist in der NonWaitingMovementRule nicht der Fall
-    @Override
-    public double movementThreshold(Individual i) {
-        double individualSpeed = es.propertyFor(i).getRelativeSpeed();
-        double cellSpeed = es.propertyFor(i).getCell().getSpeedFactor();
-        // double exhaustion = es.propertyFor(i).getExhaustion();  brauchen wir nur wenn wir in
-        //currentspeed exhaustion nicht einrechenen
-        return individualSpeed * cellSpeed;
-    }
-
     /**
      * <p>
      * Given a cell {@code referenceCell} that is occupied by an individual I, this method calculates the potential of a
@@ -57,14 +42,15 @@ public class DefaultComputation implements Computation {
      * dynamic potential on the average is determined by two constants and I's panic. The higher the panic, the more
      * important the dynamic potential will become while the influence of the static potential lessens.</p>
      *
-     * @param referenceCell A cell with an individual
+     * @param individual A cell with an individual
      * @param targetCell A neighbour of {@code cell}
      * @param dynamicPotential the dynamic potential
      * @return The potential between {@code referenceCell} and {@code targetCell} with respect to the static and the
      * dynamic potential.
      */
     @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
+    public double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential) {
+        EvacCell referenceCell = es.propertyFor(individual).getCell();
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
         }

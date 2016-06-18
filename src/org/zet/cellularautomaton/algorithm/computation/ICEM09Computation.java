@@ -16,6 +16,17 @@ public class ICEM09Computation implements Computation {
 
     protected PropertyAccess es;
 
+    @Override
+    public double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential) {
+        EvacCell referenceCell = es.propertyFor(individual).getCell();
+        if (referenceCell.getState().isEmpty()) {
+            throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
+        }
+        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
+        final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
+        return statPotlDiff;
+    }
+
     //////////////////////////////////ab hier: nicht benutzt////////////////////////////////////////////////////////
     ////* Updating of dynamic parameters *////
     @Override
@@ -43,7 +54,6 @@ public class ICEM09Computation implements Computation {
         //return 0;
     }
 
-    @Override
     public double movementThreshold(Individual individual) {
         throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
         //return 0;
@@ -52,15 +62,5 @@ public class ICEM09Computation implements Computation {
     public double idleThreshold(Individual individual) {
         throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
         //return 0;
-    }
-
-    @Override
-    public double effectivePotential(EvacCell referenceCell, EvacCell targetCell, DynamicPotential dynamicPotential) {
-        if (referenceCell.getState().isEmpty()) {
-            throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
-        }
-        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
-        final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
-        return statPotlDiff;
     }
 }

@@ -16,21 +16,12 @@
 package org.zet.cellularautomaton.algorithm.parameter;
 
 import ds.PropertyContainer;
-import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * @author Sylvie Temme
  */
 public class ICEM09ParameterSet extends AbstractParameterSet {
-    /* im AbstractParameterSet:
-     final protected double DYNAMIC_POTENTIAL_WEIGHT;
-     final protected double STATIC_POTENTIAL_WEIGHT;
-     final protected double PROB_DYNAMIC_POTENTIAL_INCREASE;
-     final protected double PROB_DYNAMIC_POTENTIAL_DECREASE;
-     final protected double PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
-     final protected double ABSOLUTE_MAX_SPEED;
-     */
 
     final protected double PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO;
     final protected double SLACKNESS_TO_IDLE_RATIO;
@@ -46,14 +37,6 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
      * Initializes the default parameter set and loads some constants from the property container.
      */
     public ICEM09ParameterSet() {
-        /* im AbstractParameterSet:
-         DYNAMIC_POTENTIAL_WEIGHT = PropertyContainer.getGlobal().getAsDouble( "algo.ca.DYNAMIC_POTENTIAL_WEIGHT" );
-         STATIC_POTENTIAL_WEIGHT = PropertyContainer.getGlobal().getAsDouble( "algo.ca.STATIC_POTENTIAL_WEIGHT" );
-         PROB_DYNAMIC_POTENTIAL_INCREASE = PropertyContainer.getGlobal().getAsDouble( "algo.ca.PROB_DYNAMIC_POTENTIAL_INCREASE" );
-         PROB_DYNAMIC_POTENTIAL_DECREASE = PropertyContainer.getGlobal().getAsDouble( "algo.ca.PROB_DYNAMIC_POTENTIAL_DECREASE" );
-         PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT = PropertyContainer.getGlobal().getAsDouble( "algo.ca.PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT" );
-         ABSOLUTE_MAX_SPEED = PropertyContainer.getGlobal().getAsDouble( "algo.ca.ABSOLUTE_MAX_SPEED" );
-         */
         PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO");
         SLACKNESS_TO_IDLE_RATIO = PropertyContainer.getGlobal().getAsDouble("algo.ca.SLACKNESS_TO_IDLE_RATIO");
         PANIC_DECREASE = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_DECREASE");
@@ -64,30 +47,6 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         PANIC_THRESHOLD = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_THRESHOLD");
     }
 
-
-	////* Some constants*////
-	/* im AbstractParameterSet:
-     @Override
-     public double dynamicPotentialWeight(){
-     return DYNAMIC_POTENTIAL_WEIGHT;
-     }
-     @Override
-     public double staticPotentialWeight(){
-     return STATIC_POTENTIAL_WEIGHT;
-     }
-     @Override
-     public double probabilityDynamicIncrease(){
-     return PROB_DYNAMIC_POTENTIAL_INCREASE;
-     }
-     @Override
-     public double probabilityDynamicDecrease(){
-     return PROB_DYNAMIC_POTENTIAL_DECREASE;
-     }
-     @Override
-     public double probabilityChangePotentialFamiliarityOrAttractivityOfExitRule(){
-     return PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
-     }
-     */
     @Override
     public double getAbsoluteMaxSpeed() {
         return ABSOLUTE_MAX_SPEED;
@@ -123,8 +82,6 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         return EXHAUSTION_WEIGHT_ON_SPEED;
     }
 
-
-
     ////* Conversion parameters *////
     @Override
     public double getSpeedFromAge(double pAge) {
@@ -151,15 +108,13 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         return 1;
     }
 
-
-
     @Override
     public double PANIC_WEIGHT_ON_POTENTIALS() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double PANIC_THRESHOLD() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

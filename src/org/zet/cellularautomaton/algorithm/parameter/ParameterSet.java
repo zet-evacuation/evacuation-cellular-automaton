@@ -15,8 +15,6 @@
  */
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import org.zet.cellularautomaton.Individual;
-
 /**
  * An abstract class defining all methods that parameter sets have to support.
  *

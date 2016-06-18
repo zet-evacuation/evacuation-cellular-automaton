@@ -55,8 +55,6 @@ public class DefaultParameterSet extends AbstractParameterSet {
         }
     }
 
-
-
     @Override
     public double slacknessToIdleRatio() {
         return SLACKNESS_TO_IDLE_RATIO;
@@ -77,10 +75,12 @@ public class DefaultParameterSet extends AbstractParameterSet {
         return PANIC_DECREASE;
     }
 
+    @Override
     public double panicWeightOnSpeed() {
         return PANIC_WEIGHT_ON_SPEED;
     }
 
+    @Override
     public double exhaustionWeightOnSpeed() {
         return EXHAUSTION_WEIGHT_ON_SPEED;
     }
@@ -195,9 +195,6 @@ public class DefaultParameterSet extends AbstractParameterSet {
             cumulativeMale += randSpeed;
         }
 
-//        System.out.println( "Berechnete Speed: " + randSpeed );
-//        if(true )
-//            return 1.33;
         return randSpeed;
     }
 

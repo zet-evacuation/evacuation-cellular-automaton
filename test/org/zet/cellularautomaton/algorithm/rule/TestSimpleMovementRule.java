@@ -18,7 +18,6 @@ import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
-import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.DynamicPotential;
@@ -130,6 +129,8 @@ public class TestSimpleMovementRule {
     public void singleCellSelected() {
         SimpleMovementRule rule = new SimpleMovementRule();
         EvacCell currentCell = new RoomCell(0, 0);
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        currentCell.getState().setIndividual(i);                
         EvacCell targetCell = new RoomCell(0, 0);
         List<EvacCell> targets = Collections.singletonList(targetCell);
 
@@ -143,7 +144,7 @@ public class TestSimpleMovementRule {
                 will(returnValue(ca));
                 allowing(ca).getDynamicPotential();
                 will(returnValue(null));
-                allowing(c).effectivePotential(with(currentCell), with(targetCell), with((DynamicPotential)null));
+                allowing(c).effectivePotential(with(i), with(targetCell), with((DynamicPotential)null));
                 will(returnValue(1.0));
             }
         });
