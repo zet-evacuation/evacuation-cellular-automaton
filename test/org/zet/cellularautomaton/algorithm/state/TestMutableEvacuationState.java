@@ -44,7 +44,7 @@ public class TestMutableEvacuationState {
     
     @Test
     public void testInitialization() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         
         assertThat(es.getRemainingIndividualCount(), is(equalTo(0)));
         assertThat(es.getInitialIndividuals(), is(empty()));
@@ -54,7 +54,7 @@ public class TestMutableEvacuationState {
 
     @Test
     public void iterator() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         
         Individual i1 = builder.build();
         Individual safe = builder.build();
@@ -80,7 +80,7 @@ public class TestMutableEvacuationState {
 
     @Test
     public void noAddingTwice() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         Individual i = builder.build();
         es.addIndividual(i);
         exception.expect(IllegalArgumentException.class);
@@ -96,7 +96,7 @@ public class TestMutableEvacuationState {
         individuals.add(toEvacuate);
         individuals.add(notToEvacuate);
         
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, individuals);
+        MutableEvacuationState es = new MutableEvacuationState(eca, individuals);
 
         es.markIndividualForRemoval(toEvacuate);
         es.removeMarkedIndividuals();
@@ -112,7 +112,7 @@ public class TestMutableEvacuationState {
         Individual safeIndividual = builder.build();
         Individual deadIndividual = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         es.addIndividual(activeIndividual);
         es.addIndividual(evacuatedIndividual);
         es.addIndividual(safeIndividual);
@@ -136,7 +136,7 @@ public class TestMutableEvacuationState {
         Individual safe = builder.build();
         Individual notSafe = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         es.addIndividual(safe);
         es.addIndividual(notSafe);
 
@@ -151,7 +151,7 @@ public class TestMutableEvacuationState {
 
     @Test(expected = IllegalArgumentException.class)
     public void safeFailsIfPropertyNotSet() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         Individual failIndividual = builder.build();
         es.addIndividual(failIndividual);
         es.addToSafe(failIndividual);
@@ -164,7 +164,7 @@ public class TestMutableEvacuationState {
         Individual notEvacuated1 = builder.build();
         Individual notEvacuated2 = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         es.addIndividual(evacuated1);
         es.addIndividual(evacuated2);
         es.addIndividual(notEvacuated1);
@@ -189,7 +189,7 @@ public class TestMutableEvacuationState {
         Individual normal = builder.build();
         Individual safeFirst = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         es.addIndividual(safeFirst);
         es.addIndividual(normal);
 
@@ -206,14 +206,14 @@ public class TestMutableEvacuationState {
 
     @Test(expected = IllegalArgumentException.class)
     public void evacuateFailsForNonExisting() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         Individual nonExistent = builder.build();        
         es.addToEvacuated(nonExistent);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void evacuateFailsIfPropertyNotSet() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         Individual failIndividual = builder.build();
         es.addIndividual(failIndividual);
         es.addToEvacuated(failIndividual);
@@ -226,7 +226,7 @@ public class TestMutableEvacuationState {
         Individual deadNotEnoughTime2 = builder.build();
         Individual deadUnreachable = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         es.addIndividual(alive);
         es.addIndividual(deadNotEnoughTime1);
         es.addIndividual(deadNotEnoughTime2);
@@ -247,14 +247,14 @@ public class TestMutableEvacuationState {
 
     @Test(expected = IllegalArgumentException.class)
     public void dieFailsForNonExisting() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         Individual failIndividual = builder.build();
         es.addToDead(failIndividual);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void dieFailsIfPropertyNotSet() {
-        MutableEvacuationState es = new MutableEvacuationState(ps, eca, Collections.emptyList());
+        MutableEvacuationState es = new MutableEvacuationState(eca, Collections.emptyList());
         Individual failIndividual = builder.build();        
         es.addIndividual(failIndividual);
         es.addToDead(failIndividual);

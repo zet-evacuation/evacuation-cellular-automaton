@@ -12,13 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualToExitMapping;
-import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -72,8 +70,7 @@ public class MutableEvacuationState implements EvacuationState {
     /** Statistics writer. TODO: remove */
     public CAStatisticWriter caStatisticWriter;
 
-    public MutableEvacuationState(ParameterSet parameterSet, EvacuationCellularAutomatonInterface ca,
-            List<Individual> individuals) {
+    public MutableEvacuationState(EvacuationCellularAutomatonInterface ca, List<Individual> individuals) {
         this.ca = ca;
         individualProperties = new HashMap<>();
         individuals.stream().forEach(individual -> addIndividualInt(individual));

@@ -34,7 +34,7 @@ public class TestEvacuationStateController {
         Individual deadNotEnoughTime2 = builder.build();
         Individual deadUnreachable = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(null, null,
+        MutableEvacuationState es = new MutableEvacuationState(null,
                 Arrays.asList(new Individual[]{alive, deadNotEnoughTime1, deadNotEnoughTime2, deadUnreachable}));
 
         Room room = createRoomWithExpectations(1, 4);
@@ -88,7 +88,7 @@ public class TestEvacuationStateController {
         Individual moved = builder.build();
         Individual notToEvacuate = builder.build();
         
-        MutableEvacuationState es = new MutableEvacuationState(null, null,
+        MutableEvacuationState es = new MutableEvacuationState(null,
                 Arrays.asList(new Individual[]{moved, notToEvacuate}));
         
         EvacuationStateController ec = new EvacuationStateController(es);
@@ -117,7 +117,7 @@ public class TestEvacuationStateController {
         Individual evacuatedIndividual = builder.build();
         Individual saveIndividual = builder.build();
 
-        MutableEvacuationState es = new MutableEvacuationState(null, null,
+        MutableEvacuationState es = new MutableEvacuationState(null,
                 Arrays.asList(new Individual[]{activeIndividual, evacuatedIndividual, saveIndividual}));
 
         Room room = createRoomWithExpectations(1, 4);

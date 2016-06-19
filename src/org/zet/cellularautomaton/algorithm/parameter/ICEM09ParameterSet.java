@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.algorithm.parameter;
 
 import ds.PropertyContainer;
-import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * @author Sylvie Temme
@@ -31,7 +30,6 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
     final protected double PANIC_WEIGHT_ON_POTENTIALS;
     final protected double EXHAUSTION_WEIGHT_ON_SPEED;
     final protected double PANIC_THRESHOLD;
-    private PropertyAccess es;
 
     /**
      * Initializes the default parameter set and loads some constants from the property container.

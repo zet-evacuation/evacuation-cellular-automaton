@@ -45,8 +45,8 @@ public class EvacuationCellularAutomatonAlgorithm
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<List<Individual>, Iterator<Individual>> reorder;
-    protected MutableEvacuationState es = new MutableEvacuationState(new DefaultParameterSet(),
-            new EvacuationCellularAutomaton(), Collections.emptyList());
+    protected MutableEvacuationState es = new MutableEvacuationState(new EvacuationCellularAutomaton(),
+            Collections.emptyList());
     protected EvacuationStateController ec = null;
 
     public EvacuationCellularAutomatonAlgorithm() {
@@ -82,7 +82,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private void initRulesAndState() {
-        es = new MutableEvacuationState(getProblem().getParameterSet(), getProblem().getCellularAutomaton(),
+        es = new MutableEvacuationState(getProblem().getCellularAutomaton(),
                 getProblem().getIndividuals());
         EvacuationCellularAutomatonInterface eca = getProblem().getCellularAutomaton();
         for (Map.Entry<Individual, EvacCell> e : getProblem().individualStartPositions().entrySet()) {
