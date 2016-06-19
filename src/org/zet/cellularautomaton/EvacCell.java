@@ -25,7 +25,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * The Cellular Automaton devides a room into quadratic cells. This abstract class "EvacCell" describes such a cell,
@@ -497,7 +496,4 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         return false;
     }
 
-    public double effectivePotential(EvacCell cell, EvacCell c, DynamicPotential dynamicPotential) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

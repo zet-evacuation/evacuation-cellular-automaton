@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.algorithm.parameter;
 
 import ds.PropertyContainer;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Function;
 
 /**
  * @author Daniel R. Schmidt

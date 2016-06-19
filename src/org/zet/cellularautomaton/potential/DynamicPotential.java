@@ -79,12 +79,13 @@ public class DynamicPotential extends AbstractPotential {
     }
 
     /**
-     * This method updates the values stored in the dynamic potential in the following way. With the probability decay a
-     * cell decreases its dynamic potential by one. Afterwards a cell with a dynamic potential greater than zero
-     * increases the dynamic potential of one of its neighbour cells by one.
+     * This method updates the values stored in the dynamic potential in the following way. With the
+     * probability decay a cell decreases its dynamic potential by one. Afterwards a cell with a
+     * dynamic potential greater than zero increases the dynamic potential of one of its neighbour
+     * cells by one.
      *
-     * @param diffusion The probability of increasing the dynamic potential of one neighbour cell of a cell with a
-     * dynamic potential greater than zero by one.
+     * @param diffusion The probability of increasing the dynamic potential of one neighbour cell of
+     * a cell with a dynamic potential greater than zero by one.
      * @param decay The probability of decreasing the dynamic potential of a cell.
      */
     public void update(double diffusion, double decay) {

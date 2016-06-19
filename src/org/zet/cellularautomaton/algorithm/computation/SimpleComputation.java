@@ -2,10 +2,10 @@ package org.zet.cellularautomaton.algorithm.computation;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -29,7 +29,7 @@ public class SimpleComputation implements Computation {
      * @return the potential difference between the two cells
      */
     @Override
-    public double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential) {
+    public double effectivePotential(Individual individual, EvacCell targetCell, Function<EvacCell,Double> dynamicPotential) {
         EvacCell referenceCell = es.propertyFor(individual).getCell();
         StaticPotential staticPotential = es.propertyFor(individual).getStaticPotential();
         final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);

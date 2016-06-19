@@ -1,11 +1,11 @@
 package org.zet.cellularautomaton.algorithm.computation;
 
 import java.util.Collection;
+import java.util.function.Function;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -17,7 +17,7 @@ public class ICEM09Computation implements Computation {
     protected PropertyAccess es;
 
     @Override
-    public double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential) {
+    public double effectivePotential(Individual individual, EvacCell targetCell, Function<EvacCell,Double> dynamicPotential) {
         EvacCell referenceCell = es.propertyFor(individual).getCell();
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
@@ -54,10 +54,6 @@ public class ICEM09Computation implements Computation {
         //return 0;
     }
 
-    public double movementThreshold(Individual individual) {
-        throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");
-        //return 0;
-    }
     @Override
     public double idleThreshold(Individual individual) {
         throw new IllegalStateException("Methode aus PaperParameterSet wurde aufgerufen!");

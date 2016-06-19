@@ -1,9 +1,9 @@
 package org.zet.cellularautomaton.algorithm.computation;
 
 import java.util.Collection;
+import java.util.function.Function;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  * Provides rules with computed values that may be necessary. Computations take into account the current state.
@@ -12,7 +12,7 @@ import org.zet.cellularautomaton.potential.DynamicPotential;
  */
 public interface Computation {
 
-    double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential);
+    double effectivePotential(Individual individual, EvacCell targetCell, Function<EvacCell,Double> dynamicPotential);
 
     double updatePreferredSpeed(Individual individual);
 

@@ -10,6 +10,7 @@ import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executea
 
 import java.util.List;
 import java.util.Collections;
+import java.util.function.Function;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -20,7 +21,6 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.potential.DynamicPotential;
 
 /**
  *
@@ -142,9 +142,7 @@ public class TestSimpleMovementRule {
             {
                 allowing(es).getCellularAutomaton();
                 will(returnValue(ca));
-                allowing(ca).getDynamicPotential();
-                will(returnValue(null));
-                allowing(c).effectivePotential(with(i), with(targetCell), with((DynamicPotential)null));
+                allowing(c).effectivePotential(with(i), with(targetCell), with(any(Function.class)));
                 will(returnValue(1.0));
             }
         });

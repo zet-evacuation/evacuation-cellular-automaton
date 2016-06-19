@@ -77,11 +77,6 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
         return PANIC_WEIGHT_ON_SPEED;
     }
 
-    @Override
-    public double exhaustionWeightOnSpeed() {
-        return EXHAUSTION_WEIGHT_ON_SPEED;
-    }
-
     ////* Conversion parameters *////
     @Override
     public double getSpeedFromAge(double pAge) {
@@ -115,6 +110,11 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
 
     @Override
     public double PANIC_THRESHOLD() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double exhaustionWeightOnSpeed() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

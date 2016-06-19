@@ -17,10 +17,10 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.Individual;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.zet.cellularautomaton.Individual;
 
 /**
  * A simple movement rule that does not care about anything like slack, speed, panic or anything else. Steps are always
@@ -71,7 +71,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
         double p[] = new double[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es::getDynamicPotential));
         }
 
         return targets.get(RandomUtils.getInstance().chooseRandomlyAbsolute(p));

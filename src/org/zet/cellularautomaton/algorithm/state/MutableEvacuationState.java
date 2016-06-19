@@ -17,7 +17,9 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
+import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -61,6 +63,12 @@ public class MutableEvacuationState implements EvacuationState {
     /** The individuals that are to be removed at the end of the current step. */
     private final List<Individual> markedForRemoval = new ArrayList<>();
 
+    /** The single DynamicPotential. */
+    private final DynamicPotential dynamicPotential;
+
+    /** A mapping that maps individuals to exits. */
+    private IndividualToExitMapping individualToExitMapping;
+
     /** Statistics writer. TODO: remove */
     public CAStatisticWriter caStatisticWriter;
 
@@ -69,6 +77,7 @@ public class MutableEvacuationState implements EvacuationState {
         this.ca = ca;
         individualProperties = new HashMap<>();
         individuals.stream().forEach(individual -> addIndividualInt(individual));
+        dynamicPotential = new DynamicPotential();
     }
     
     @Override
@@ -113,9 +122,27 @@ public class MutableEvacuationState implements EvacuationState {
         return caStatisticWriter;
     }
 
+
+    /**
+     * Get the dynamicPotential. Returns null if the DynamicPotential not exists.
+     *
+     * @param cell the evacuation cell
+     * @return the dynamic potential value of the cell
+     */
     @Override
-    public void increaseDynamicPotential(EvacCell targetCell) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public double getDynamicPotential(EvacCell cell) {
+        return dynamicPotential.getPotential(cell);
+    }
+
+    void increaseDynamicPotential(EvacCell targetCell) {
+        dynamicPotential.increase(targetCell);
+    }
+    public void setDynamicPotential(EvacCell cell, double value) {
+        dynamicPotential.setPotential(cell, value);
+    }
+
+    void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
+        dynamicPotential.update(probabilityDynamicIncrease, probabilityDynamicDecrease);
     }
 
     @Override
@@ -138,7 +165,6 @@ public class MutableEvacuationState implements EvacuationState {
                 propertyFor(individual).setEvacuationTime(currentStep);
             }
             addToEvacuated(individual);
-            getCellularAutomaton().setIndividualEvacuated(individual);
         });
         markedForRemoval.clear();
     }
@@ -303,4 +329,21 @@ public class MutableEvacuationState implements EvacuationState {
         return currentStep;
     }
 
-}
+    /**
+     * Returns the mapping between individuals and exit cells.
+     *
+     * @return the mapping between individuals and exit cells
+     */
+    @Override
+    public IndividualToExitMapping getIndividualToExitMapping() {
+        return individualToExitMapping;
+    }
+
+    /**
+     * Sets a mapping between individuals and exit cells.
+     *
+     * @param individualToExitMapping the mapping
+     */
+    public void setIndividualToExitMapping(IndividualToExitMapping individualToExitMapping) {
+        this.individualToExitMapping = individualToExitMapping;
+    }}

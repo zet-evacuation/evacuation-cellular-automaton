@@ -32,18 +32,27 @@ public class TestEvacuationCellularAutomaton {
     @Test
     public void testSingleRoom() {
         EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
-        ca.addFloor("floor1");
+        ca.addFloor(0, "floor1");
 
         Room room = context.mock(Room.class, "room1");
         roomExpectations(room, 1, 3);
         Room room2 = context.mock(Room.class, "room2");
         roomExpectations(room2, 2, 2);
 
-        ca.addRoom(room);
+        ca.addRoom(0, room);
         assertThat(ca.getCellCount(), is(equalTo(3)));
         
-        ca.addRoom(room2);
+        ca.addRoom(0, room2);
         assertThat(ca.getCellCount(), is(equalTo(5)));
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void addWithoutFloorFails() {
+        EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
+        ca.addFloor(0, "floor1");
+        Room room = context.mock(Room.class);
+        roomExpectations(room, 1, 1);
+        ca.addRoom(1, room);
     }
     
     private void roomExpectations(Room room, int id, int cells) {
@@ -51,6 +60,10 @@ public class TestEvacuationCellularAutomaton {
                 //debugger throws error on the line below.
                 atLeast(1).of(room).getCellCount(false);
                 will(returnValue(cells));
+                allowing(room).getXOffset();
+                allowing(room).getYOffset();
+                allowing(room).getWidth();
+                allowing(room).getHeight();
                 allowing(room).getID();
                 will(returnValue(id));
                 allowing(room).getFloorID();
@@ -58,65 +71,5 @@ public class TestEvacuationCellularAutomaton {
                 allowing(room).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));
         }});
-    }
-    
-    @Test
-    public void testRemoveIndividuals() {
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        Individual toEvacuate = builder.build();
-        Individual notToEvacuate = builder.build();
-        
-        eca.addFloor("floor1");
-        Room room = context.mock(Room.class, "room1");
-        roomExpectations(room, 1, 3);
-        eca.addRoom(room);
-
-        ExitCell cell = new ExitCell(0, 0);
-        cell.setRoom(room);
-        ExitCell cell2 = new ExitCell(1,1);
-        cell2.setRoom(room);
-        context.checking(new Expectations() {{
-            allowing(room).addIndividual(cell, toEvacuate);
-            allowing(room).addIndividual(cell2, notToEvacuate);
-            allowing(room).removeIndividual(toEvacuate);
-        }});
-        
-        eca.addIndividual(cell, toEvacuate);
-        //toEvacuate.setCell(cell);
-
-        eca.addIndividual(cell2, notToEvacuate);
-    }
-    
-    @Test
-    public void remainingIndividuals() {
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
-        Individual activeIndividual = builder.build();
-        Individual evacuatedIndividual = builder.build();
-        Individual saveIndividual = builder.build();
-        Individual deadIndividual = builder.build();
-
-        Room room = context.mock(Room.class, "room1");
-        context.checking(new Expectations() {{
-            allowing(room).addIndividual(with(any(RoomCell.class)), with(any(Individual.class)));
-            allowing(room).addIndividual(with(any(ExitCell.class)), with(any(Individual.class)));
-            allowing(room).getID();
-            will(returnValue(1));
-            allowing(room).removeIndividual(with(evacuatedIndividual));
-            allowing(room).removeIndividual(with(deadIndividual));
-        }});
-        RoomCell cell1 = new RoomCell(1, 0, 1, room);
-        eca.addIndividual(cell1, activeIndividual);
-        ExitCell cell2 = new ExitCell(1, 0, 2, room);
-        eca.addIndividual(cell2, evacuatedIndividual);
-        RoomCell cell3 = new RoomCell(1, 0, 3, room);
-        eca.addIndividual(cell3, saveIndividual);
-        RoomCell cell4 = new RoomCell(1, 0, 4, room);
-        eca.addIndividual(cell4, deadIndividual);
-        
-        //eca.setIndividualSave(saveIndividual);
-        //evacuatedIndividual.setCell(cell2);
-        //eca.setIndividualEvacuated(evacuatedIndividual);
-        //deadIndividual.setCell(cell4);
-        //eca.setIndividualDead(deadIndividual, DeathCause.NOT_ENOUGH_TIME);
     }
 }

@@ -45,9 +45,9 @@ public class EvacuationCellularAutomatonAlgorithm
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<List<Individual>, Iterator<Individual>> reorder;
-    protected MutableEvacuationState es = new MutableEvacuationState(new DefaultParameterSet(), new EvacuationCellularAutomaton(),
-            Collections.emptyList());
-    private EvacuationStateController ec = null;
+    protected MutableEvacuationState es = new MutableEvacuationState(new DefaultParameterSet(),
+            new EvacuationCellularAutomaton(), Collections.emptyList());
+    protected EvacuationStateController ec = null;
 
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
@@ -92,6 +92,7 @@ public class EvacuationCellularAutomatonAlgorithm
         ec = new EvacuationStateController((MutableEvacuationState) es);
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationState(es);
+            r.setEvacuationStateController(ec);
         }
     }
 
@@ -101,8 +102,7 @@ public class EvacuationCellularAutomatonAlgorithm
         super.increaseStep();
 
         es.removeMarkedIndividuals();
-        getProblem().getCellularAutomaton().updateDynamicPotential(
-                getProblem().getParameterSet().probabilityDynamicIncrease(),
+        ec.updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());
 
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",

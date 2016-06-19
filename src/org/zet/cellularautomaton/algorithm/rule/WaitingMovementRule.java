@@ -101,10 +101,10 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
             @Override
             public int compare(EvacCell cell1, EvacCell cell2) {
-                        Individual ind = referenceCell.getState().getIndividual();
+                Individual ind = referenceCell.getState().getIndividual();
 
-                final double potential1 = c.effectivePotential(ind, cell1, es.getCellularAutomaton().getDynamicPotential());
-                final double potential2 = c.effectivePotential(ind, cell2, es.getCellularAutomaton().getDynamicPotential());
+                final double potential1 = c.effectivePotential(ind, cell1, es::getDynamicPotential);
+                final double potential2 = c.effectivePotential(ind, cell2, es::getDynamicPotential);
                 if (potential1 < potential2) {
                     return -1;
                 } else if (potential1 == potential2) {
@@ -140,7 +140,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
         Individual ind = cell.getState().getIndividual();
         for (int i = 0; i < targets.size(); i++) {
-            p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es.getCellularAutomaton().getDynamicPotential()));
+            p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es::getDynamicPotential));
             if (p[i] > max) {
                 max = p[i];
                 max_index = i;

@@ -58,7 +58,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         }
 
         Individual individual = cell.getState().getIndividual();
-        TargetCell target = es.getCellularAutomaton().getIndividualToExitMapping().getExit(individual);
+        TargetCell target = es.getIndividualToExitMapping().getExit(individual);
         if (target != null) {
             handleWithTarget(cell, target);
         } else {

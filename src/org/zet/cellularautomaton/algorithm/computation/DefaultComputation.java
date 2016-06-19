@@ -2,6 +2,7 @@ package org.zet.cellularautomaton.algorithm.computation;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
@@ -49,7 +50,7 @@ public class DefaultComputation implements Computation {
      * dynamic potential.
      */
     @Override
-    public double effectivePotential(Individual individual, EvacCell targetCell, DynamicPotential dynamicPotential) {
+    public double effectivePotential(Individual individual, EvacCell targetCell, Function<EvacCell,Double> dynamicPotential) {
         EvacCell referenceCell = es.propertyFor(individual).getCell();
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
@@ -58,7 +59,7 @@ public class DefaultComputation implements Computation {
         StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
 
         if (dynamicPotential != null) {
-            final double dynPotDiff = (-1) * (dynamicPotential.getPotential(referenceCell) - dynamicPotential.getPotential(targetCell));
+            final double dynPotDiff = (-1) * (dynamicPotential.apply(referenceCell) - dynamicPotential.apply(targetCell));
             final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
             return (Math.pow(panic, parameterSet.PANIC_WEIGHT_ON_POTENTIALS()) * dynPotDiff * parameterSet.dynamicPotentialWeight()) + ((1 - Math.pow(panic, parameterSet.PANIC_WEIGHT_ON_POTENTIALS())) * statPotlDiff * parameterSet.staticPotentialWeight());
             //return statPotlDiff * staticPotentialWeight();

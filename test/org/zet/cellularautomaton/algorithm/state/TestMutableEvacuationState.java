@@ -98,10 +98,6 @@ public class TestMutableEvacuationState {
         
         MutableEvacuationState es = new MutableEvacuationState(ps, eca, individuals);
 
-        context.checking(new Expectations() {{
-            allowing(eca).setIndividualEvacuated(toEvacuate);
-        }});
-
         es.markIndividualForRemoval(toEvacuate);
         es.removeMarkedIndividuals();
         

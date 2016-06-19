@@ -96,7 +96,7 @@ public class DieAction extends Action {
                     + "as dead because it was not there (someone was lucky there, hu?)");
         }
 
-        onCA.setIndividualDead(placeOfDeath.getState().getIndividual(), cause);
+        //onCA.setIndividualDead(placeOfDeath.getState().getIndividual(), cause);
     }
 
     /**

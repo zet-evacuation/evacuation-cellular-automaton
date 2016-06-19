@@ -39,9 +39,9 @@ public interface ParameterSet {
 
     public double probabilityChangePotentialFamiliarityOrAttractivityOfExitRule();
 
-    /* Conversion parameters */
-    public double getAbsoluteMaxSpeed();
-
+    double getAbsoluteMaxSpeed();
+    
+    /* Other dynamic parameters */
     public double getSpeedFromAge(double pAge);
 
     public double getSlacknessFromDecisiveness(double pDecisiveness);

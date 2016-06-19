@@ -72,7 +72,6 @@ public class TestInitialConcretePotentialRule {
 
         rule.setEvacuationState(es);
         rule.setEvacuationStateController(ec);
-        eca.addIndividual(cell, i);
     }
 
     @Test

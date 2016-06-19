@@ -158,7 +158,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         if (individual == null) {
             throw new IllegalStateException("No Individual on from cell " + from);
         }
-        this.es.increaseDynamicPotential(targetCell);
+        ec.increaseDynamicPotential(targetCell);
 
         if (from instanceof DoorCell && targetCell instanceof DoorCell) {
             if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
@@ -217,11 +217,12 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
         Individual ind = cell.getState().getIndividual();
         EvacCell target = cell;
-        double minPot = c.effectivePotential(ind, cell, es.getCellularAutomaton().getDynamicPotential());
-        for (EvacCell c : targets) {
-            double pot = c.effectivePotential(cell, c, es.getCellularAutomaton().getDynamicPotential());
+        double minPot = c.effectivePotential(ind, cell, es::getDynamicPotential);
+        for (EvacCell targetCell : targets) {
+            double pot = c.effectivePotential(individual, targetCell, es::getDynamicPotential);
+
             if (pot > minPot) {
-                target = c;
+                target = targetCell;
                 minPot = pot;
             }
         }
