@@ -3,6 +3,8 @@ package org.zet.cellularautomaton.algorithm.computation;
 import java.util.Collection;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
+import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  *
@@ -10,6 +12,10 @@ import org.zet.cellularautomaton.Individual;
  */
 public class RimeaComputation extends DefaultComputation {
 
+    public RimeaComputation(PropertyAccess es, ParameterSet parameterSet) {
+        super(es, parameterSet);
+    }
+    
     /**
      * Updates the exhaustion. Disabled for rimea parameter set.
      *
