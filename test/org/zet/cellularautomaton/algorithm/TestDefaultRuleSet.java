@@ -15,7 +15,7 @@ import java.util.List;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.algorithm.rule.MockRule;
@@ -130,15 +130,15 @@ public class TestDefaultRuleSet {
     private static class MockAbstractMovementRule extends AbstractMovementRule {
 
         @Override
-        public void move(EvacCell from, EvacCell target) {
+        public void move(EvacCellInterface from, EvacCellInterface target) {
         }
 
         @Override
-        public void swap(EvacCell cell1, EvacCell cell2) {
+        public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
         }
 
         @Override
-        protected void onExecute(EvacCell cell) {
+        protected void onExecute(EvacCellInterface cell) {
         }
         
     }

@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -32,7 +32,7 @@ public class ReactionRuleOnePerson extends AbstractReactionRule {
      * @param cell the cell on which the rule is executed
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         Individual i = cell.getState().getIndividual();
         if (!es.propertyFor(i).isAlarmed() && es.getTimeStep() >= i.getReactionTime() * es.getCellularAutomaton().getStepsPerSecond()) {
             es.propertyFor(i).setAlarmed();

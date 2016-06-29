@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.TargetCell;
@@ -41,7 +41,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * have a StaticPotential.
      */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !cell.getState().isEmpty();
     }
 
@@ -52,7 +52,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * @throws java.lang.IllegalArgumentException if an individual has not been mapped to an exit.
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         if (potentialMapping == null) {
             init();
         }
@@ -85,7 +85,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * @param cell the cell the rule is executed on, containing an individual
      * @param target a target cell associated with the individual's exit choice
      */
-    protected void handleWithTarget(EvacCell cell, TargetCell target) {
+    protected void handleWithTarget(EvacCellInterface cell, TargetCell target) {
         StaticPotential potential = potentialMapping.get(target);
         if (potential == null) {
             throw new IllegalStateException("The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
@@ -97,7 +97,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * Assigns a potential to the individual on {@code cell} that has no exit assigned.
      * @param cell the cell the rule is executed on, containing an individual
      */
-    protected void handleWithoutTarget(EvacCell cell) {
+    protected void handleWithoutTarget(EvacCellInterface cell) {
         InitialPotentialShortestPathRule.assignShortestPathPotential(cell, this.es, this.ec);
     }
 }

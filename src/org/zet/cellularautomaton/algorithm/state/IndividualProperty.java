@@ -2,6 +2,7 @@ package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -45,7 +46,7 @@ public class IndividualProperty {
     private int evacuationTime = -1;
 
     // outdated and to delete?
-    private EvacCell cell;
+    private EvacCellInterface cell;
 
     public IndividualProperty(Individual i) {
         this.relativeSpeed = i.getMaxSpeed();
@@ -253,7 +254,7 @@ public class IndividualProperty {
      *
      * @param c the cell
      */
-    public void setCell(EvacCell c) {
+    public void setCell(EvacCellInterface c) {
         this.cell = c;
     }
 
@@ -262,7 +263,7 @@ public class IndividualProperty {
      *
      * @return The EvacCell
      */
-    public EvacCell getCell() {
+    public EvacCellInterface getCell() {
         return cell;
     }
 }

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
@@ -98,7 +99,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
         StaticPotential sp = es.propertyFor(individual).getStaticPotential();
         int cellCountToChange = getCellCountToChange(individual);
         int memoryIndex = getMemoryIndex(individual);
-        EvacCell cell = es.propertyFor(individual).getCell();
+        EvacCellInterface cell = es.propertyFor(individual).getCell();
 
         // Update the {@code potentialMemory}
         if (memoryIndex == 0) {
@@ -120,7 +121,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
      * @param cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         // Get the potential of the individual on the {@code cell} as well as some other concerning constants of the individual
         Individual individual = cell.getState().getIndividual();
         StaticPotential sp = es.propertyFor(individual).getStaticPotential();
@@ -151,7 +152,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
             // This is the case, if at least CHANGE_THRESHOLD cells of
             // the free neighbors have a lower potential (with respect
             // to the new static potential) than the current cell
-            List<EvacCell> freeNeighbours = cell.getFreeNeighbours();
+            List<EvacCellInterface> freeNeighbours = cell.getFreeNeighbours();
             int i = 0;
             int promisingNeighbours = 0;
             int curPotential = minWayLengthPotential.getPotential(cell);

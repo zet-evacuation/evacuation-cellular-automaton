@@ -1,7 +1,7 @@
 package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -19,7 +19,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     }
 
     @Override
-    public void move(EvacCell from, EvacCell to) {
+    public void move(EvacCellInterface from, EvacCellInterface to) {
         Individual i = getAndCheck(from);
         if (from.equals(to)) {
             return;
@@ -29,7 +29,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     }
 
     @Override
-    public void swap(EvacCell from, EvacCell to) {
+    public void swap(EvacCellInterface from, EvacCellInterface to) {
         Individual i1 = getAndCheck(from);
         Individual i2 = getAndCheck(to);
         if (from.equals(to)) {
@@ -41,14 +41,14 @@ public class EvacuationStateController implements EvacuationStateControllerInter
         add(i1, to);
     }
     
-    private Individual getAndCheck(EvacCell cell) {
+    private Individual getAndCheck(EvacCellInterface cell) {
         if (cell.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell " + cell);
         }
         return cell.getState().getIndividual();        
     }
 
-    void add(Individual i, EvacCell cell) {
+    void add(Individual i, EvacCellInterface cell) {
         evacuationState.propertyFor(i).setCell(cell);
         cell.getState().setIndividual(i);
         cell.getRoom().addIndividual(cell, i);
@@ -79,14 +79,14 @@ public class EvacuationStateController implements EvacuationStateControllerInter
      * @param i an individual
      */
     void remove(Individual i) {
-        EvacCell from = evacuationState.propertyFor(i).getCell();
+        EvacCellInterface from = evacuationState.propertyFor(i).getCell();
         from.getRoom().removeIndividual(i);
         evacuationState.propertyFor(i).setCell(null);
         from.getState().removeIndividual();
     }
 
     @Override
-    public void increaseDynamicPotential(EvacCell c) {
+    public void increaseDynamicPotential(EvacCellInterface c) {
         evacuationState.increaseDynamicPotential(c);
     }
 

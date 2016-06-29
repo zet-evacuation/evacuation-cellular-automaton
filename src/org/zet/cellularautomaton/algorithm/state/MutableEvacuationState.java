@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualToExitMapping;
@@ -127,11 +128,11 @@ public class MutableEvacuationState implements EvacuationState {
      * @return the dynamic potential value of the cell
      */
     @Override
-    public double getDynamicPotential(EvacCell cell) {
+    public double getDynamicPotential(EvacCellInterface cell) {
         return dynamicPotential.getPotential(cell);
     }
 
-    void increaseDynamicPotential(EvacCell targetCell) {
+    void increaseDynamicPotential(EvacCellInterface targetCell) {
         dynamicPotential.increase(targetCell);
     }
     public void setDynamicPotential(EvacCell cell, double value) {

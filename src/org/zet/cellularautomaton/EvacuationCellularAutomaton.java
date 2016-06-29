@@ -41,7 +41,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     /** The room collection for each floor. */
     private final Map<Integer, RoomCollection> roomCollections;
     /** The neighborhood. */
-    private final Neighborhood<EvacCell> neighborhood;
+    private final Neighborhood<EvacCellInterface> neighborhood;
 
     /** The names of floors. */
     private final Map<Integer, String> floorNames;
@@ -117,7 +117,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
     }
 
     @Override
-    public Neighborhood<EvacCell> getNeighborhood() {
+    public Neighborhood<EvacCellInterface> getNeighborhood() {
         return neighborhood;
     }
 
@@ -214,7 +214,7 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         this.exitToCapacityMapping = exitToCapacityMapping;
     }
     @Override
-    public StaticPotential minPotentialFor(EvacCell c) {
+    public StaticPotential minPotentialFor(EvacCellInterface c) {
         // assign shortest path potential to individual, so it is not null.
         int currentMin = -1;
         StaticPotential ret = null;
@@ -345,9 +345,9 @@ public class EvacuationCellularAutomaton implements EvacuationCellularAutomatonI
         if (!alreadySeen.contains(currentCell)) {
             cluster.add(currentCell);
             alreadySeen.add(currentCell);
-            Collection<EvacCell> cellNeighbours = currentCell.getDirectNeighbors();
+            Collection<EvacCellInterface> cellNeighbours = currentCell.getDirectNeighbors();
             List<ExitCell> neighbours = new ArrayList<>();
-            for (EvacCell c : cellNeighbours) {
+            for (EvacCellInterface c : cellNeighbours) {
                 if (c instanceof ExitCell) {
                     neighbours.add((ExitCell) c);
                 }

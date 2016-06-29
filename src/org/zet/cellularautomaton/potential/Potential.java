@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * A {@code Potential} stores a distance value for each cell to an exit. The potential values are used to evaluate 
@@ -16,9 +17,9 @@ public interface Potential {
      * @param cell the cell which potential should be returned
      * @return potential of the specified cell
      */
-    public int getPotential(EvacCell cell);
+    public int getPotential(EvacCellInterface cell);
 
-    public double getPotentialDouble(EvacCell cell);
+    public double getPotentialDouble(EvacCellInterface cell);
 
     public int getMaxPotential();
 
@@ -28,5 +29,5 @@ public interface Potential {
      * @param cell the cell
      * @return {@code true} if the cell has a valid potential value, {@code false} otherwise
      */
-    public boolean hasValidPotential(EvacCell cell);
+    public boolean hasValidPotential(EvacCellInterface cell);
 }

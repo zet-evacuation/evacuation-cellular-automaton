@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zetool.common.algorithm.AbstractAlgorithm;
 
@@ -36,8 +37,8 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
         StaticPotential staticPotential = new StaticPotential();
         staticPotential.setAssociatedExitCells(exitBlock);
         staticPotential.setAttractivity(exitBlock.get(0).getAttractivity());
-        List<? extends EvacCell> parentList;
-        Map<EvacCell, SmoothingTuple> childTuple;
+        List<? extends EvacCellInterface> parentList;
+        Map<EvacCellInterface, SmoothingTuple> childTuple;
 
         for (ExitCell c : exitBlock) {
             staticPotential.setPotential(c, 0);
@@ -47,8 +48,8 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
         parentList = exitBlock;
         while (!parentList.isEmpty()) {
             childTuple = new HashMap<>();
-            for (EvacCell parent : parentList) {
-                for (EvacCell c : getNeighbours(parent)) {
+            for (EvacCellInterface parent : parentList) {
+                for (EvacCellInterface c : getNeighbours(parent)) {
                     if (!(c instanceof ExitCell) && !(staticPotential.hasValidPotential(c))) {
                         //check if there already exists a tuple for this cell
                         if (childTuple.containsKey(c)) {
@@ -67,7 +68,7 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
                 }
             }
             
-            List<EvacCell> childList = new ArrayList<>();
+            List<EvacCellInterface> childList = new ArrayList<>();
             for (SmoothingTuple smoothingTuple : childTuple.values()) {
                 smoothingTuple.applySmoothing();
                 staticPotential.setPotential(smoothingTuple.getCell(), smoothingTuple.getValue());
@@ -86,7 +87,7 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
      * @param n the other neighbour
      * @return 10 if the two cells are horizontal or vertical neighbours, 14 else
      */
-    public int calculateDistance(EvacCell c, EvacCell n) {
+    public int calculateDistance(EvacCellInterface c, EvacCellInterface n) {
         if ((c.getX() == n.getX()) || (c.getY() == n.getY()) || (c instanceof DoorCell && n instanceof DoorCell)) {
             return APPROXIMATE_ORTHOGONAL_DISTANCE;
         } else {
@@ -101,7 +102,7 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
      * @param n the other neighbour
      * @return 10 if the two cells are horizontal or vertical neighbours, 14 else
      */
-    public double calculateRealDistance(EvacCell c, EvacCell n) {
+    public double calculateRealDistance(EvacCellInterface c, EvacCellInterface n) {
         if ((c.getX() == n.getX()) || (c.getY() == n.getY()) || (c instanceof DoorCell && n instanceof DoorCell)) {
             return 0.4;
         } else {
@@ -115,7 +116,7 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
      * @param cell A cell in the cellular automaton.
      * @return The neighbor cells of this cell.
      */
-    public List<EvacCell> getNeighbours(EvacCell cell) {
+    public List<EvacCellInterface> getNeighbours(EvacCellInterface cell) {
         return cell.getNeighbours();
     }
 }

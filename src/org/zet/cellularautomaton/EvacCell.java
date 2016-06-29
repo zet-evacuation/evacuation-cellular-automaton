@@ -35,7 +35,7 @@ import java.util.Set;
  * @author Marcel Preuß
  * @author Jan-Philipp Kappmeier
  */
-public abstract class EvacCell extends SquareCell<EvacuationCellState> implements Comparable<EvacCell> {
+public abstract class EvacCell extends SquareCell<EvacuationCellState> implements Comparable<EvacCell>, EvacCellInterface {
 
     /** This character is used for graphic-like ASCII-output. */
     protected char graphicalRepresentation = ' ';
@@ -107,6 +107,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return The Speed-Factor of the cell.
      */
+    @Override
     public double getSpeedFactor() {
         return speedFactor;
     }
@@ -136,7 +137,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return ArrayList of direct-neighbour-cells of "cell"
      */
-    public List<EvacCell> getNeighbours() {
+    @Override
+    public List<EvacCellInterface> getNeighbours() {
         return getNeighbours(true, false);
     }
 
@@ -145,7 +147,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return ArrayList of direct-neighbour-cells of "cell"
      */
-    public Collection<EvacCell> getDirectNeighbors() {
+    @Override
+    public Collection<EvacCellInterface> getDirectNeighbors() {
         return getNeighbours(false, false);
     }
 
@@ -154,7 +157,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return a list of all free neighbour cells
      */
-    public List<EvacCell> getFreeNeighbours() {
+    @Override
+    public List<EvacCellInterface> getFreeNeighbours() {
         return getNeighbours(true, true);
     }
 
@@ -163,6 +167,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return The x-coordinate of the cell.
      */
+    @Override
     public int getX() {
         return this.x;
     }
@@ -172,16 +177,9 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return The y-coordinate of the cell.
      */
+    @Override
     public int getY() {
         return this.y;
-    }
-
-    public int getAbsoluteX() {
-        return this.x + room.getXOffset();
-    }
-
-    public int getAbsoluteY() {
-        return this.y + room.getYOffset();
     }
 
     /**
@@ -189,6 +187,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      *
      * @return The room to which the cell belongs
      */
+    @Override
     public Room getRoom() {
         return room;
     }
@@ -280,6 +279,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @param direction The square in this direction is considered.
      * @return the level of the square in direction {@code direction} (higher, equal or lower).
      */
+    @Override
     public Level getLevel(Direction8 direction) {
         return levels.containsKey(direction) ? levels.get(direction) : Level.Equal;
     }
@@ -351,8 +351,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     }
 
     @SuppressWarnings("fallthrough")
-    protected List<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
-        List<EvacCell> neighbours = new ArrayList<>();
+    protected List<EvacCellInterface> getNeighbours(boolean passableOnly, boolean freeOnly) {
+        List<EvacCellInterface> neighbours = new ArrayList<>();
         Room cellRoom = this.getRoom();
         for (Direction8 direction : Direction8.values()) {
             int cellx = this.getX() + direction.xOffset();
@@ -401,6 +401,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @param dir the direction.
      * @return the neighbour, if exists. null else.
      */
+    @Override
     public EvacCell getNeighbor(Direction8 dir) {
         int cellx = getX() + dir.xOffset();
         int celly = getY() + dir.yOffset();
@@ -411,18 +412,22 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         }
     }
 
+    @Override
     public boolean isOccupied() {
         return getState().getIndividual() != null;
     }
 
+    @Override
     public boolean isOccupied(double time) {
         return getState().getIndividual() != null || time < occupiedUntil;
     }
 
+    @Override
     public double getOccupiedUntil() {
         return occupiedUntil;
     }
 
+    @Override
     public void setOccupiedUntil(double occupiedUntil) {
         this.occupiedUntil = occupiedUntil;
     }
@@ -484,16 +489,8 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @param c a neighbor cell
      * @return the direction in which {@code c} lies
      */
-    public Direction8 getRelative(EvacCell c) {
+    @Override
+    public Direction8 getRelative(EvacCellInterface c) {
         return Direction8.getDirection(c.getAbsoluteX() - getAbsoluteX(), c.getAbsoluteY() - getAbsoluteY());
     }
-    
-    /**
-     * Decides wether it is safe for evacuees to stand on the cell. By default cells are unsafe.
-     * @return {@code true} if it is safe to stand on the cell
-     */
-    public boolean isSafe() {
-        return false;
-    }
-
 }

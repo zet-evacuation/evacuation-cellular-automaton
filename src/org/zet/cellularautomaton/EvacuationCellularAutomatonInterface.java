@@ -9,7 +9,7 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
  *
  * @author Jan-Philipp Kappmeier
  */
-public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<EvacCell> {
+public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<EvacCellInterface> {
 
     public double getStepsPerSecond();
 
@@ -26,6 +26,6 @@ public interface EvacuationCellularAutomatonInterface extends CellularAutomaton<
 
     public StaticPotential getSafePotential();
 
-    public StaticPotential minPotentialFor(EvacCell c);
+    public StaticPotential minPotentialFor(EvacCellInterface c);
 
 }

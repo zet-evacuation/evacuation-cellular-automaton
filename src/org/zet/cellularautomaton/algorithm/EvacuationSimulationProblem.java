@@ -2,7 +2,7 @@ package org.zet.cellularautomaton.algorithm;
 
 import java.util.List;
 import java.util.Map;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
@@ -12,7 +12,7 @@ import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimula
  *
  * @author Jan-Philipp Kappmeier
  */
-public interface EvacuationSimulationProblem extends CellularAutomatonSimulationProblem<EvacuationCellularAutomatonInterface, EvacCell> {
+public interface EvacuationSimulationProblem extends CellularAutomatonSimulationProblem<EvacuationCellularAutomatonInterface, EvacCellInterface> {
 
     public ParameterSet getParameterSet();
 
@@ -26,6 +26,6 @@ public interface EvacuationSimulationProblem extends CellularAutomatonSimulation
      */
     public int getEvacuationStepLimit();
     
-    public Map<Individual, EvacCell> individualStartPositions();
+    public Map<Individual, ? extends EvacCellInterface> individualStartPositions();
     
 }

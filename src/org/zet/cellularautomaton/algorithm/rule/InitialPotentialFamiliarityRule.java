@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -43,7 +43,7 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
      * @param cell the cell for which the rule is executed
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         List<PotentialMemory<StaticPotential>> potentialDistanceMapping = computeDistanceMapping(cell);
         if (potentialDistanceMapping.isEmpty()) {
             ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
@@ -52,7 +52,7 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
         }
     }
     
-    private List<PotentialMemory<StaticPotential>> computeDistanceMapping(EvacCell cell) {
+    private List<PotentialMemory<StaticPotential>> computeDistanceMapping(EvacCellInterface cell) {
         List<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
         List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());

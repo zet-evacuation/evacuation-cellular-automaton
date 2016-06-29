@@ -15,6 +15,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
@@ -37,18 +38,18 @@ public class TestSimpleMovementRule {
         }
         
         @Override
-        public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+        public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
             counter++;
             return targetCell;
         }
         
         @Override
-        protected List<EvacCell> computePossibleTargets(EvacCell fromCell, boolean onlyFreeNeighbours) {
+        protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
             return Collections.emptyList();
         }
 
         @Override
-        public boolean executableOn(EvacCell cell) {
+        public boolean executableOn(EvacCellInterface cell) {
             return true;
         }
 
@@ -70,7 +71,7 @@ public class TestSimpleMovementRule {
         FakeSimpleMovementRule rule = new FakeSimpleMovementRule(testCell) {
 
             @Override
-            public void move(EvacCell from, EvacCell targetCell) {
+            public void move(EvacCellInterface from, EvacCellInterface targetCell) {
                 throw new AssertionError("Move should not be called!");
             }
         };
@@ -85,7 +86,7 @@ public class TestSimpleMovementRule {
         FakeSimpleMovementRule rule = new FakeSimpleMovementRule(expectedTargetCell) {
 
             @Override
-            public void move(EvacCell from, EvacCell to) {
+            public void move(EvacCellInterface from, EvacCellInterface to) {
                 assertThat(from, is(same(startCell)));
                 assertThat(to, is(same(expectedTargetCell)));
             }
@@ -116,11 +117,11 @@ public class TestSimpleMovementRule {
 
     @Test
     public void sameCellSelectedIfEmptyTargetList() {
-        List<EvacCell> targets = Collections.emptyList();
+        List<EvacCellInterface> targets = Collections.emptyList();
         SimpleMovementRule rule = new SimpleMovementRule();
         EvacCell currentCell = new RoomCell(0, 0);
 
-        EvacCell selectedCell = rule.selectTargetCell(currentCell, targets);
+        EvacCellInterface selectedCell = rule.selectTargetCell(currentCell, targets);
 
         assertThat(selectedCell, is(same(currentCell)));
     }
@@ -128,11 +129,11 @@ public class TestSimpleMovementRule {
     @Test
     public void singleCellSelected() {
         SimpleMovementRule rule = new SimpleMovementRule();
-        EvacCell currentCell = new RoomCell(0, 0);
+        EvacCellInterface currentCell = new RoomCell(0, 0);
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         currentCell.getState().setIndividual(i);                
         EvacCell targetCell = new RoomCell(0, 0);
-        List<EvacCell> targets = Collections.singletonList(targetCell);
+        List<EvacCellInterface> targets = Collections.singletonList(targetCell);
 
         Mockery context = new Mockery();
         EvacuationState es = context.mock(EvacuationState.class);
@@ -149,7 +150,7 @@ public class TestSimpleMovementRule {
         rule.setEvacuationState(es);
         rule.setComputation(c);
 
-        EvacCell selectedCell = rule.selectTargetCell(currentCell, targets);
+        EvacCellInterface selectedCell = rule.selectTargetCell(currentCell, targets);
 
         assertThat(selectedCell, is(same(targetCell)));
     }

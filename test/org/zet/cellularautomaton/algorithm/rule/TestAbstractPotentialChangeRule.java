@@ -11,6 +11,7 @@ import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
@@ -48,7 +49,7 @@ public class TestAbstractPotentialChangeRule {
         }
 
         @Override
-        protected void onExecute(EvacCell cell) {
+        protected void onExecute(EvacCellInterface cell) {
 
         }
     };

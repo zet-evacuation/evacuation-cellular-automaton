@@ -3,7 +3,7 @@ package org.zet.cellularautomaton.algorithm.computation;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
@@ -56,9 +56,9 @@ public class DefaultComputation implements Computation {
      * dynamic potential.
      */
     @Override
-    public double effectivePotential(Individual individual, EvacCell targetCell,
-            Function<EvacCell,Double> dynamicPotential) {
-        EvacCell referenceCell = es.propertyFor(individual).getCell();
+    public double effectivePotential(Individual individual, EvacCellInterface targetCell,
+            Function<EvacCellInterface,Double> dynamicPotential) {
+        EvacCellInterface referenceCell = es.propertyFor(individual).getCell();
         assert !referenceCell.getState().isEmpty();
 
         final double panic = es.propertyFor(referenceCell.getState().getIndividual()).getPanic();
@@ -80,10 +80,14 @@ public class DefaultComputation implements Computation {
 
     /**
      * {@inheritDoc}
+     *
+     * @param individual
+     * @param targetCell
+     * @return
      * @see algo.ca.parameter.AbstractParameterSet#updateExhaustion(ds.ca.Individual)
      */
     @Override
-    public double updateExhaustion(Individual individual, EvacCell targetCell) {
+    public double updateExhaustion(Individual individual, EvacCellInterface targetCell) {
         // ExhaustionFactor depends from the age. currently it is always initialized with 1, so all individuals exhauste
         // with the same speed.
         // i hope the formular is right: it does the following
@@ -114,28 +118,33 @@ public class DefaultComputation implements Computation {
 
     /**
      * {@inheritDoc}
+     * Individuals become faster with higher panic and slower with more exhaustion. In the initial state the result
+     * is the individual's max speed, as panic is 0 and exhaustion also.
+     *
+     * @param i the individual whose speed is updated
+     * @return the new preferred speed value of the individual
      * @see algo.ca.parameter.AbstractParameterSet#updateSpeed(ds.ca.Individual)
      */
     @Override
     public double updatePreferredSpeed(Individual i) {
-        double maxSpeed = i.getMaxSpeed();
-        double newSpeed = maxSpeed + ((es.propertyFor(i).getPanic() * parameterSet.panicWeightOnSpeed())
-                - (es.propertyFor(i).getExhaustion() * parameterSet.exhaustionWeightOnSpeed()));
-        es.propertyFor(i).setRelativeSpeed(Math.max(0.0001, Math.min(maxSpeed, newSpeed)));
+        double speedIncreaseFromPanic = es.propertyFor(i).getPanic() * parameterSet.panicWeightOnSpeed();
+        double speedDecreaseFromExhaustion = es.propertyFor(i).getExhaustion() * parameterSet.exhaustionWeightOnSpeed();
+        double newSpeed = i.getMaxSpeed() + speedIncreaseFromPanic - speedDecreaseFromExhaustion;
 
+        es.propertyFor(i).setRelativeSpeed(Math.max(0.0001, Math.min(i.getMaxSpeed(), newSpeed)));
         return es.propertyFor(i).getRelativeSpeed();
     }
 
     @Override
-    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
-        List<EvacCell> possibleNeighbours = es.propertyFor(individual).getCell().getNeighbours();
+    public double updatePanic(Individual individual, EvacCellInterface targetCell, Collection<EvacCellInterface> preferedCells) {
+        List<EvacCellInterface> possibleNeighbours = es.propertyFor(individual).getCell().getNeighbours();
         if (possibleNeighbours.isEmpty()) {
             return es.propertyFor(individual).getPanic();
         }
 
         double[] potentials = new double[possibleNeighbours.size()];
         int idx = 0;
-        for (EvacCell cell : possibleNeighbours) {
+        for (EvacCellInterface cell : possibleNeighbours) {
             double potentialDifference = (double)es.propertyFor(individual).getStaticPotential().getPotential(
                     es.propertyFor(individual).getCell())
                     - es.propertyFor(individual).getStaticPotential().getPotential(cell);
@@ -146,7 +155,7 @@ public class DefaultComputation implements Computation {
         int failures = 0;
 
         int chosenNeighbour = RandomUtils.getInstance().chooseRandomlyAbsolute(potentials);
-        while (!possibleNeighbours.get(chosenNeighbour).getState().isEmpty() && failures <= possibleNeighbours.size()) {
+        while (!possibleNeighbours.get(chosenNeighbour).getState().isEmpty() && failures < possibleNeighbours.size()) {
             failures++;
             potentials[chosenNeighbour] = 0;
             chosenNeighbour = RandomUtils.getInstance().chooseRandomlyAbsolute(potentials);
@@ -168,11 +177,13 @@ public class DefaultComputation implements Computation {
         return newPanic;
     }
 
-    /*
+    /**
      * {@inheritDoc}
+     *
+     * @param i the individual whose idle threshold is computed
+     * @return the idle threshold of the individual
      * @see algo.ca.parameter.AbstractParameterSet#idleThreshold(ds.ca.Individual)
      */
-
     @Override
     public double idleThreshold(Individual i) {
         return i.getSlackness() * parameterSet.slacknessToIdleRatio();

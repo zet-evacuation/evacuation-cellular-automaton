@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * For this a HashMap associates for each EvacCell a potential as int value. It is kept abstract, because there are two
@@ -32,7 +33,7 @@ public abstract class AbstractPotential implements Potential {
     /** The maximum potential value returned for an empty potential. */
     public static final int INALID = -1;
     /** A map from cells to their potential value. */
-    protected Map<EvacCell, Double> potential;
+    protected Map<EvacCellInterface, Double> potential;
     /** Stores the maximal value of this potential map. */
     private double maxPotential = INALID;
 
@@ -51,7 +52,7 @@ public abstract class AbstractPotential implements Potential {
      * @param cell cell which has to be updated or mapped
      * @param i potential of the cell
      */
-    public void setPotential(EvacCell cell, double i) {
+    public void setPotential(EvacCellInterface cell, double i) {
         if (potential.containsKey(Objects.requireNonNull(cell))) {
             Double value = potential.get(cell);
             potential.remove(cell);
@@ -71,12 +72,12 @@ public abstract class AbstractPotential implements Potential {
     }
 
     @Override
-    public int getPotential(EvacCell cell) {
+    public int getPotential(EvacCellInterface cell) {
         return (int) Math.round(getPotentialDouble(cell));
     }
 
     @Override
-    public double getPotentialDouble(EvacCell cell) {
+    public double getPotentialDouble(EvacCellInterface cell) {
         if (hasValidPotential(cell)) {
             return potential.get(cell);
         }
@@ -100,7 +101,7 @@ public abstract class AbstractPotential implements Potential {
      * @param cell A EvacCell that mapping you want to remove.
      * @throws IllegalArgumentException if the cell is not contained in the map
      */
-    public void deleteCell(EvacCell cell) {
+    public void deleteCell(EvacCellInterface cell) {
         if (!potential.containsKey(Objects.requireNonNull(cell))) {
             throw new IllegalArgumentException("The Cell must be insert previously!");
         }
@@ -119,14 +120,14 @@ public abstract class AbstractPotential implements Potential {
      *
      * @return set of mapped cells
      */
-    public Set<EvacCell> getMappedCells() {
-        SortedSet<EvacCell> cells = new TreeSet<>();
+    public Set<EvacCellInterface> getMappedCells() {
+        SortedSet<EvacCellInterface> cells = new TreeSet<>();
         potential.keySet().stream().forEach(cell -> cells.add(cell));
         return cells;
     }
 
     @Override
-    public boolean hasValidPotential(EvacCell cell) {
+    public boolean hasValidPotential(EvacCellInterface cell) {
         return potential.get(cell) != null;
     }
 }

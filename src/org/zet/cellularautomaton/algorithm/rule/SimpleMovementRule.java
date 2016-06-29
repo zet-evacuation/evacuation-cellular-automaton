@@ -15,12 +15,13 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zetool.rndutils.RandomUtils;
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.Individual;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.zetool.rndutils.RandomUtils;
+import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * A simple movement rule that does not care about anything like slack, speed, panic or anything else. Steps are always
@@ -38,7 +39,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
      * @return {@code true} if an individual stands on the cell, {@code false} otherwise
      */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !cell.getState().isEmpty();
     }
 
@@ -47,8 +48,8 @@ public class SimpleMovementRule extends AbstractMovementRule {
      * @param cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
-        EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
+    protected void onExecute(EvacCellInterface cell) {
+        EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
         Logger.getGlobal().log(Level.INFO, "Target cell: {0}", targetCell);
         if (cell.equals(targetCell)) {
             return;
@@ -57,13 +58,13 @@ public class SimpleMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    public void move(EvacCell from, EvacCell targetCell) {
+    public void move(EvacCellInterface from, EvacCellInterface targetCell) {
         Logger.getGlobal().log(Level.INFO, "Move from {0} to {1}", new Object[]{from, targetCell});
         ec.move(from, targetCell);        
     }
 
     @Override
-    public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+    public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
         Individual ind = cell.getState().getIndividual();
         if (targets.isEmpty()) {
             return cell;
@@ -78,7 +79,7 @@ public class SimpleMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    public void swap(EvacCell cell1, EvacCell cell2) {
+    public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
         ec.swap(cell1, cell2);
     }
 }

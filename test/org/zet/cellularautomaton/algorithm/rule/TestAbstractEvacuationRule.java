@@ -13,7 +13,7 @@ import org.jmock.Mockery;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
@@ -35,7 +35,7 @@ public class TestAbstractEvacuationRule {
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
             }
         };
         RoomCell cell = new RoomCell(0, 0);
@@ -48,16 +48,16 @@ public class TestAbstractEvacuationRule {
     
     @Test
     public void executesIfApplicable() {
-        final LinkedList<EvacCell> executedOn = new LinkedList<>();
+        final LinkedList<EvacCellInterface> executedOn = new LinkedList<>();
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
                 executedOn.add(cell);
             }
 
             @Override
-            public boolean executableOn(EvacCell cell) {
+            public boolean executableOn(EvacCellInterface cell) {
                 return true;
             }
         };
@@ -72,12 +72,12 @@ public class TestAbstractEvacuationRule {
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
                 throw new AssertionError("onExecute called!");
             }
 
             @Override
-            public boolean executableOn(EvacCell cell) {
+            public boolean executableOn(EvacCellInterface cell) {
                 return false;
             }
         };
@@ -91,7 +91,7 @@ public class TestAbstractEvacuationRule {
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
             }
         };
         rule.setEvacuationState(es);
@@ -106,7 +106,7 @@ public class TestAbstractEvacuationRule {
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
             }
         };
         rule.setEvacuationState(null);

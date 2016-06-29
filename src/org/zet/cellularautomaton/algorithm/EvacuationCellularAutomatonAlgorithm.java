@@ -14,10 +14,10 @@ import java.util.logging.Level;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
-import org.zet.cellularautomaton.algorithm.parameter.DefaultParameterSet;
 import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
@@ -34,7 +34,7 @@ import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomat
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationCellularAutomatonAlgorithm
-        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCell, EvacuationSimulationProblem, EvacuationSimulationResult> {
+        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCellInterface, EvacuationSimulationProblem, EvacuationSimulationResult> {
 
     /**
      * The order in which the individuals are asked for.
@@ -68,7 +68,7 @@ public class EvacuationCellularAutomatonAlgorithm
                 new Individual[es.getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
             Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
-            EvacCell c = es.propertyFor(i).getCell();
+            EvacCellInterface c = es.propertyFor(i).getCell();
             while (primary.hasNext()) {
                 EvacuationRule r = primary.next();
                 r.execute(c);
@@ -85,7 +85,7 @@ public class EvacuationCellularAutomatonAlgorithm
         es = new MutableEvacuationState(getProblem().getCellularAutomaton(),
                 getProblem().getIndividuals());
         EvacuationCellularAutomatonInterface eca = getProblem().getCellularAutomaton();
-        for (Map.Entry<Individual, EvacCell> e : getProblem().individualStartPositions().entrySet()) {
+        for (Map.Entry<Individual, ? extends EvacCellInterface> e : getProblem().individualStartPositions().entrySet()) {
             es.propertyFor(e.getKey()).setCell(e.getValue());
             es.propertyFor(e.getKey()).setStaticPotential(eca.minPotentialFor(e.getValue()));
         }
@@ -111,7 +111,7 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     @Override
-    protected final void execute(EvacCell cell) {
+    protected final void execute(EvacCellInterface cell) {
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
         for (EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
@@ -177,7 +177,7 @@ public class EvacuationCellularAutomatonAlgorithm
      * @return iterator of all occupied cells
      */
     @Override
-    public final Iterator<EvacCell> iterator() {
+    public final Iterator<EvacCellInterface> iterator() {
         return new CellIterator(reorder.apply(es.getRemainingIndividuals()), es);
     }
 
@@ -185,7 +185,7 @@ public class EvacuationCellularAutomatonAlgorithm
      * A simple iterator that iterates over all cells of the cellular automaton that contain an individual. The
      * iteration order equals the order of the individuals given.
      */
-    private static class CellIterator implements Iterator<EvacCell> {
+    private static class CellIterator implements Iterator<EvacCellInterface> {
 
         private final Iterator<Individual> individuals;
         private final EvacuationState es;
@@ -206,7 +206,7 @@ public class EvacuationCellularAutomatonAlgorithm
         }
 
         @Override
-        public EvacCell next() {
+        public EvacCellInterface next() {
             return es.propertyFor(individuals.next()).getCell();
         }
 

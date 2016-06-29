@@ -1,6 +1,6 @@
 package org.zet.cellularautomaton.algorithm.state;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualToExitMapping;
@@ -27,7 +27,7 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual>{
      * @return the time necessary to complete the simulation at least
      */
     public int getNecessaryTime();
-    public double getDynamicPotential(EvacCell cell);
+    public double getDynamicPotential(EvacCellInterface cell);
 
     // only necessary in concrete implementation?
     public void markIndividualForRemoval(Individual individual);

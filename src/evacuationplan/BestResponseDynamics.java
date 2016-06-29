@@ -5,13 +5,13 @@
  */
 package evacuationplan;
 
-import org.zet.cellularautomaton.EvacCell;
+import java.util.ArrayList;
+import java.util.List;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import java.util.ArrayList;
-import java.util.List;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 
@@ -50,7 +50,7 @@ public class BestResponseDynamics {
         System.out.println("Best Response Rounds: " + c);
     }
 
-    public int computePotential(EvacCell cell, EvacuationCellularAutomatonInterface ca) {
+    public int computePotential(EvacCellInterface cell, EvacuationCellularAutomatonInterface ca) {
         ArrayList<StaticPotential> exits = new ArrayList<>();
         exits.addAll(ca.getStaticPotentials());
         StaticPotential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
@@ -71,7 +71,7 @@ public class BestResponseDynamics {
         }
     }
 
-    private double getResponse(EvacuationCellularAutomatonInterface ca, EvacCell cell, StaticPotential pot) {
+    private double getResponse(EvacuationCellularAutomatonInterface ca, EvacCellInterface cell, StaticPotential pot) {
 
         // Constants
         Individual ind = cell.getState().getIndividual();

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 
 /**
@@ -45,7 +46,7 @@ public class StaticPotential extends AbstractPotential {
     /** contains the associated ExitCells. */
     private List<ExitCell> associatedExitCells;
     /** A map from cells to their potential value. */
-    private final Map<EvacCell, Double> distance;
+    private final Map<EvacCellInterface, Double> distance;
 
     /**
      * Creates a StaticPotential with a automatic generated unique ID, that can not be changed.
@@ -84,7 +85,7 @@ public class StaticPotential extends AbstractPotential {
      * @param i potential of the cell
      */
     @Override
-    public void setPotential(EvacCell cell, double i) {
+    public void setPotential(EvacCellInterface cell, double i) {
         super.setPotential(cell, i);
         distance.put(cell, i);
     }
@@ -96,7 +97,7 @@ public class StaticPotential extends AbstractPotential {
      * @param cell cell which has to be updated or mapped
      * @param i distance of the cell
      */
-    public void setDistance(EvacCell cell, double i) {
+    public void setDistance(EvacCellInterface cell, double i) {
         if (!hasValidPotential(cell)) {
             throw new IllegalStateException(cell + " has no valid potential. Set potential first!");
         }
@@ -110,7 +111,7 @@ public class StaticPotential extends AbstractPotential {
      * @param cell A cell which distance you want to know.
      * @return distance of the specified cell or -1 if the cell is not mapped by this potential
      */
-    public double getDistance(EvacCell cell) {
+    public double getDistance(EvacCellInterface cell) {
         return hasValidPotential(Objects.requireNonNull(cell)) ? distance.get(cell) : -1;
     }
 
@@ -129,7 +130,7 @@ public class StaticPotential extends AbstractPotential {
      * @param cell an {@link EvacCell} that mapping you want to remove.
      * @throws IllegalArgumentException if no distance was stored for cell
      */
-    public void deleteDistanceCell(EvacCell cell) {
+    public void deleteDistanceCell(EvacCellInterface cell) {
         deleteCell(cell);
     }
 
@@ -139,7 +140,7 @@ public class StaticPotential extends AbstractPotential {
      * @param cell an {@link EvacCell} of that you want to know if it exists.
      * @return {@code true} if the distance has been defined, {@code false} otherwise
      */
-    public boolean containsDistance(EvacCell cell) {
+    public boolean containsDistance(EvacCellInterface cell) {
         return hasValidPotential(cell);
     }
 

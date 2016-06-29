@@ -16,8 +16,8 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.ArrayList;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.DeathCause;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.rndutils.RandomUtils;
 
@@ -30,7 +30,7 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
      * @param cell the cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         ArrayList<StaticPotential> exits = new ArrayList<>();
         es.getCellularAutomaton().getStaticPotentials().stream().filter(
                 sp -> (sp.getDistance(cell) >= 0)).forEach(sp -> exits.add(sp));

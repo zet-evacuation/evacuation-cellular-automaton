@@ -15,18 +15,19 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Collections;
+import java.util.List;
 import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
@@ -48,17 +49,17 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @return true if the rule can be executed
      */
     @Override
-    public boolean executableOn(org.zet.cellularautomaton.EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !(cell instanceof ExitCell) && !cell.getState().isEmpty();
     }
 
     @Override
-    protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         individual = cell.getState().getIndividual();
         if (es.propertyFor(individual).isAlarmed()) {
             if (canMove(individual)) {
                 if (isDirectExecute()) { // we are in a "normal" simulation
-                    EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
+                    EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                     setMoveRuleCompleted(true);
                     move(cell, targetCell);
                 } else { // only calculate possible movements, used for swap cellular automaton
@@ -77,7 +78,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     }
 
     @Override
-    public void move(EvacCell from, EvacCell targetCell) {
+    public void move(EvacCellInterface from, EvacCellInterface targetCell) {
         if (es.propertyFor(individual).getCell().equals(targetCell)) {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
                     .addWaitedTimeToStatistic(individual, es.getTimeStep());
@@ -125,7 +126,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         int randomDirection = rnd.nextInt(5);
         Direction8 ret = possible[randomDirection];
         int minDistance = Integer.MAX_VALUE;
-        EvacCell cell = es.propertyFor(individual).getCell();
+        EvacCellInterface cell = es.propertyFor(individual).getCell();
         for (Direction8 dir : possible) {
             EvacCell target = cell.getNeighbor(dir);
             if (target != null && !target.isOccupied()) {
@@ -153,7 +154,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @param performMove decides if the move is actually performed. If swapping is active, only values have to be
      * updated.
      */
-    private void initializeMove(EvacCell from, EvacCell targetCell) {
+    private void initializeMove(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual individual = from.getState().getIndividual();
         if (individual == null) {
             throw new IllegalStateException("No Individual on from cell " + from);
@@ -198,7 +199,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      *
      * @param targetCell
      */
-    protected void performMove(EvacCell from, EvacCell targetCell) {
+    protected void performMove(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual individual = from.getState().getIndividual();
 
         from.setOccupiedUntil(es.propertyFor(individual).getStepEndTime());
@@ -214,11 +215,11 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @return A neighbour of {@code cell} chosen at random.
      */
     @Override
-    public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+    public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
         Individual ind = cell.getState().getIndividual();
-        EvacCell target = cell;
+        EvacCellInterface target = cell;
         double minPot = c.effectivePotential(ind, cell, es::getDynamicPotential);
-        for (EvacCell targetCell : targets) {
+        for (EvacCellInterface targetCell : targets) {
             double pot = c.effectivePotential(individual, targetCell, es::getDynamicPotential);
 
             if (pot > minPot) {
@@ -241,7 +242,7 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
     }
 
     @Override
-    public void swap(EvacCell cell1, EvacCell cell2) {
+    public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
         if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell #1!");
         }
@@ -266,8 +267,8 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * @return a list containing all neighbors and the from cell
      */
     @Override
-    protected List<EvacCell> computePossibleTargets(EvacCell fromCell, boolean onlyFreeNeighbours) {
-        List<EvacCell> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
+    protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
+        List<EvacCellInterface> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
         targets.add(fromCell);
         return Collections.unmodifiableList(targets);
     }

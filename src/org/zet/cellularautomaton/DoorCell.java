@@ -138,8 +138,8 @@ public class DoorCell extends BaseTeleportCell<DoorCell> {
     }
 
     @Override
-    protected List<EvacCell> getNeighbours(boolean passableOnly, boolean freeOnly) {
-        List<EvacCell> neighbours = super.getNeighbours(passableOnly, freeOnly);
+    protected List<EvacCellInterface> getNeighbours(boolean passableOnly, boolean freeOnly) {
+        List<EvacCellInterface> neighbours = super.getNeighbours(passableOnly, freeOnly);
         for (DoorCell door : this.teleportTargets) {
             if (!freeOnly || door.getState().getIndividual() == null) {
                 neighbours.add(door);

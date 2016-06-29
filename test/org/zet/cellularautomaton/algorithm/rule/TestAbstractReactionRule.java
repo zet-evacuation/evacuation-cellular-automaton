@@ -10,6 +10,7 @@ import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executea
 
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
@@ -26,7 +27,7 @@ public class TestAbstractReactionRule {
         AbstractReactionRule rule = new AbstractReactionRule() {
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
             }
         };
         

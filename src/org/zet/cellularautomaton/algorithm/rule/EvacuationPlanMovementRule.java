@@ -15,10 +15,10 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
 import java.util.Iterator;
 import java.util.List;
 import evacuationplan.CellularAutomatonDirectionChecker;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 public class EvacuationPlanMovementRule extends WaitingMovementRule {
 
@@ -29,11 +29,11 @@ public class EvacuationPlanMovementRule extends WaitingMovementRule {
     }
 
     @Override
-    protected List<EvacCell> computePossibleTargets(EvacCell fromCell, boolean onlyFreeNeighbours) {
-        List<EvacCell> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
-        Iterator<EvacCell> it = targets.iterator();
+    protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
+        List<EvacCellInterface> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
+        Iterator<EvacCellInterface> it = targets.iterator();
         while (it.hasNext()) {
-            EvacCell cell = it.next();
+            EvacCellInterface cell = it.next();
             if (cell != fromCell) {
                 if (!checker.canPass(fromCell.getState().getIndividual(), fromCell, cell)) {
                     it.remove();

@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zetool.algorithm.simulation.cellularautomaton.Rule;
@@ -24,13 +24,13 @@ import org.zetool.algorithm.simulation.cellularautomaton.Rule;
 /**
  * @author Daniel R. Schmidt
  */
-public interface EvacuationRule extends Rule<EvacCell> {
+public interface EvacuationRule extends Rule<EvacCellInterface> {
 
     @Override
-    void execute(EvacCell cell);
+    void execute(EvacCellInterface cell);
 
     @Override
-    boolean executableOn(EvacCell cell);
+    boolean executableOn(EvacCellInterface cell);
 
     void setEvacuationState(EvacuationState es);
     void setEvacuationStateController(EvacuationStateControllerInterface ec);

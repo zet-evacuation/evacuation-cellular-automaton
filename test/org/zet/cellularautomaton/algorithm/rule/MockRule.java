@@ -3,6 +3,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
@@ -19,11 +20,11 @@ public class MockRule {
         }
 
         @Override
-        public void execute(EvacCell cell) {
+        public void execute(EvacCellInterface cell) {
         }
 
         @Override
-        public boolean executableOn(EvacCell cell) {
+        public boolean executableOn(EvacCellInterface cell) {
             return false;
         }
 
@@ -48,11 +49,11 @@ public class MockRule {
         }
 
         @Override
-        public void execute(EvacCell cell) {
+        public void execute(EvacCellInterface cell) {
         }
 
         @Override
-        public boolean executableOn(EvacCell cell) {
+        public boolean executableOn(EvacCellInterface cell) {
             return false;
         }
 

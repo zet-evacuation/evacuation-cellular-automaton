@@ -22,6 +22,7 @@ package org.zet.cellularautomaton.statistic.results;
 import java.util.HashMap;
 import java.util.ArrayList;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Room;
 
 /**
@@ -31,11 +32,11 @@ import org.zet.cellularautomaton.Room;
 public class StoredCAStatisticResultsForCells {
 
     /** Associate each cell with an ArrayList which contains all timesteps the cell is occupied. */
-    private HashMap<EvacCell, ArrayList<Integer>> cellUtilization;
+    private HashMap<EvacCellInterface, ArrayList<Integer>> cellUtilization;
 
     /** Associate each cell with an ArrayList which contains all timesteps at which an individual standing at the cell
      * is waiting. */
-    private HashMap<EvacCell, ArrayList<Integer>> waitingTime;
+    private HashMap<EvacCellInterface, ArrayList<Integer>> waitingTime;
 
     /** Stores utilization for each room. */
     private HashMap<Room, Double> overallRoomUtilization;
@@ -55,7 +56,7 @@ public class StoredCAStatisticResultsForCells {
      * @param c cell occupied
      * @param t timestep
      */
-    public void addCellToUtilizationStatistic(EvacCell c, int t) {
+    public void addCellToUtilizationStatistic(EvacCellInterface c, int t) {
         if (cellUtilization.containsKey(c)) {
             cellUtilization.get(c).add(t);
         } else {
@@ -70,7 +71,7 @@ public class StoredCAStatisticResultsForCells {
      * @param c cell occupied
      * @param t timestep
      */
-    public void addCellToWaitingStatistic(EvacCell c, int t) {
+    public void addCellToWaitingStatistic(EvacCellInterface c, int t) {
         if (waitingTime.containsKey(c)) {
             waitingTime.get(c).add(t);
         } else {
@@ -79,11 +80,11 @@ public class StoredCAStatisticResultsForCells {
         }
     }
 
-    public HashMap<EvacCell, ArrayList<Integer>> getHashMapCellUtilization() {
+    public HashMap<EvacCellInterface, ArrayList<Integer>> getHashMapCellUtilization() {
         return cellUtilization;
     }
 
-    public HashMap<EvacCell, ArrayList<Integer>> getHashMapWaitingTime() {
+    public HashMap<EvacCellInterface, ArrayList<Integer>> getHashMapWaitingTime() {
         return waitingTime;
     }
 

@@ -36,7 +36,7 @@ public interface Room extends LocatedCellMatrix<EvacCell> {
 
     // status-related, probably to be moved somewhere else!
     
-    public void addIndividual(EvacCell c, Individual i);
+    public void addIndividual(EvacCellInterface c, Individual i);
     public List<Individual> getIndividuals();
 
     public void removeIndividual(Individual i);

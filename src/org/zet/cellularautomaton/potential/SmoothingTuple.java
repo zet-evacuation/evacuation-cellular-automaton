@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.potential;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * The data structure used by the algorithm for calculating the static potentials.
@@ -26,7 +26,7 @@ import org.zet.cellularautomaton.EvacCell;
 public class SmoothingTuple {
     private static final int SMOOTHING_FACTOR = 3;
     /** Reference to the cell. */
-    private final EvacCell cell;
+    private final EvacCellInterface cell;
     /** Potential potential. */
     private double potential;
     /** Real distance. */
@@ -44,7 +44,7 @@ public class SmoothingTuple {
      * @param potentialDifference the distance (diagonal: 14, horizontal or vertical: 10)
      * @param initialDistance the distance of the cell (using the parent as next)
      */
-    public SmoothingTuple(EvacCell c, double potentialOfParent, int potentialDifference, double initialDistance) {
+    public SmoothingTuple(EvacCellInterface c, double potentialOfParent, int potentialDifference, double initialDistance) {
         cell = c;
         potential = potentialOfParent + potentialDifference;
         distanceValue = initialDistance;
@@ -74,7 +74,7 @@ public class SmoothingTuple {
      *
      * @return the EvacCell
      */
-    public EvacCell getCell() {
+    public EvacCellInterface getCell() {
         return cell;
     }
 

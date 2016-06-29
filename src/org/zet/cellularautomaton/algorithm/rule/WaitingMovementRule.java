@@ -15,15 +15,15 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zetool.common.util.Direction8;
-import org.zetool.rndutils.RandomUtils;
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.zetool.common.util.Direction8;
+import org.zetool.rndutils.RandomUtils;
+import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.results.IndividualStateChangeAction;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  *
@@ -32,7 +32,7 @@ import java.util.List;
 public class WaitingMovementRule extends SimpleMovementRule2 {
 
     @Override
-    protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         individual = cell.getState().getIndividual();
         if (es.propertyFor(individual).isAlarmed() == true) {
             if (canMove(individual)) {
@@ -42,7 +42,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
                     noMove();
                 } else {
                     if (isDirectExecute()) {
-                        EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
+                        EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                         setMoveRuleCompleted(true);
                         move(cell, targetCell);
                     } else {
@@ -63,14 +63,14 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
     }
 
     @Override
-    public void move(EvacCell from, EvacCell targetCell) {
+    public void move(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual ind = from.getState().getIndividual();
         updatePanic(ind, targetCell);
         updateExhaustion(ind, targetCell);
         super.move(from, targetCell);
     }
 
-    protected void updatePanic(Individual individual, EvacCell targetCell) {
+    protected void updatePanic(Individual individual, EvacCellInterface targetCell) {
         double oldPanic = es.propertyFor(individual).getPanic();
         c.updatePanic(individual, targetCell, this.neighboursByPriority(es.propertyFor(individual).getCell()));
         if (oldPanic != es.propertyFor(individual).getPanic()) {
@@ -90,17 +90,17 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
      * @return A sorted list of the neighbour cells of {@code cell}, sorted in an increasing fashion according to their
      * potential computed by {@code mergePotential}.
      */
-    protected ArrayList<EvacCell> neighboursByPriority(EvacCell cell) {
-        class CellPrioritySorter implements Comparator<EvacCell> {
+    protected ArrayList<EvacCellInterface> neighboursByPriority(EvacCellInterface cell) {
+        class CellPrioritySorter implements Comparator<EvacCellInterface> {
 
-            final EvacCell referenceCell;
+            final EvacCellInterface referenceCell;
 
-            CellPrioritySorter(EvacCell referenceCell) {
+            CellPrioritySorter(EvacCellInterface referenceCell) {
                 this.referenceCell = referenceCell;
             }
 
             @Override
-            public int compare(EvacCell cell1, EvacCell cell2) {
+            public int compare(EvacCellInterface cell1, EvacCellInterface cell2) {
                 Individual ind = referenceCell.getState().getIndividual();
 
                 final double potential1 = c.effectivePotential(ind, cell1, es::getDynamicPotential);
@@ -115,7 +115,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
             }
         }
 
-        ArrayList<EvacCell> result = new ArrayList<>(cell.getNeighbours());
+        ArrayList<EvacCellInterface> result = new ArrayList<>(cell.getNeighbours());
         Collections.sort(result, new CellPrioritySorter(cell));
         return result;
     }
@@ -128,7 +128,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
      * @return A neighbor of {@code cell} chosen at random.
      */
     @Override
-    public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+    public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
         if (targets.isEmpty()) {
             return cell;
         }
@@ -161,7 +161,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
             }
         }
         if (inSameRoom) {
-            EvacCell mostProbableTarget = targets.get(max_index);
+            EvacCellInterface mostProbableTarget = targets.get(max_index);
 
             Individual individual = cell.getState().getIndividual();
             Direction8 oldDir = es.propertyFor(individual).getDirection();
@@ -174,7 +174,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
                 // check, if one of the targets is in the old direction
 
                 for (int j = 0; j < targets.size(); ++j) {
-                    EvacCell target = targets.get(j);
+                    EvacCellInterface target = targets.get(j);
                     if (target != cell && oldDir.equals(cell.getRelative(target))) {
                         // We found a cell in the current direciton
                         p[j] = p[j] * 10.5;
@@ -194,7 +194,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
      * @param individual
      * @param targetCell
      */
-    protected void updateExhaustion(Individual individual, EvacCell targetCell) {
+    protected void updateExhaustion(Individual individual, EvacCellInterface targetCell) {
         double oldExhaustion = es.propertyFor(individual).getExhaustion();
         c.updateExhaustion(individual, targetCell);
         if (oldExhaustion != es.propertyFor(individual).getExhaustion()) {

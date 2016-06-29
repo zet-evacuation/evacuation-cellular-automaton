@@ -15,8 +15,8 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
 import evacuationplan.BestResponseDynamics;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -39,7 +39,7 @@ public class ChangePotentialBestResponseOptimizedRule extends AbstractPotentialC
      * @param cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         // perform initial best response dynamics exit selection
         BestResponseDynamics brd = new BestResponseDynamics();
         brd.computePotential(cell, es.getCellularAutomaton());

@@ -23,6 +23,7 @@ import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
@@ -208,14 +209,14 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             private EvacuationStateControllerInterface ec;
             private EvacuationState es;
             @Override
-            public void execute(EvacCell cell) {
+            public void execute(EvacCellInterface cell) {
                 ec.increaseDynamicPotential(cell);
                 counter[0]++;
                 assertThat(es.getDynamicPotential(cell), is(equalTo(1.0)));
             }
 
             @Override
-            public boolean executableOn(EvacCell cell) {
+            public boolean executableOn(EvacCellInterface cell) {
                 return true;
             }
 
@@ -516,7 +517,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.setProblem(esp);
         algorithm.initialize();
         List<Individual> callOrder = new LinkedList<>();
-        for (EvacCell individual : algorithm) {
+        for (EvacCellInterface individual : algorithm) {
             callOrder.add(individual.getState().getIndividual());
         }
         assertThat(callOrder, hasSize(expectedOrder.size()));
@@ -631,7 +632,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         int index = 0;
         for( Individual i : original) {
             IndividualProperty ip = algorithm.getEvacuationState().propertyFor(i);
-            EvacCell cell = ip.getCell();
+            EvacCellInterface cell = ip.getCell();
             sp = new StaticPotential();
             sp.setPotential(cell, distance[index]);
             ip.setStaticPotential(sp);
@@ -641,12 +642,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         EvacuationRule rule = new EvacuationRule() {
 
             @Override
-            public void execute(EvacCell cell) {
+            public void execute(EvacCellInterface cell) {
                 resultList.add(cell.getState().getIndividual());
             }
 
             @Override
-            public boolean executableOn(EvacCell cell) {
+            public boolean executableOn(EvacCellInterface cell) {
                 return true;
             }
 

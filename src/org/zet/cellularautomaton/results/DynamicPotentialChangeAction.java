@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
@@ -25,9 +26,9 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 public class DynamicPotentialChangeAction extends Action {
 
     protected double newPotential;
-    protected EvacCell affectedCell;
+    protected EvacCellInterface affectedCell;
 
-    public DynamicPotentialChangeAction(EvacCell affectedCell, double newPotential) {
+    public DynamicPotentialChangeAction(EvacCellInterface affectedCell, double newPotential) {
         this.affectedCell = affectedCell;
         this.newPotential = newPotential;
     }

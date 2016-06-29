@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.potential;
 
 import java.util.Objects;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * A tuple of {@link StaticPotential}s and the Individuals distance from that ExitCell, to which the
@@ -43,7 +43,7 @@ public class PotentialMemory<P extends Potential> implements Comparable<Potentia
         potential = null;
     }
     
-    public PotentialMemory(EvacCell c, P potential) {
+    public PotentialMemory(EvacCellInterface c, P potential) {
         this.lengthOfWay = potential.getPotential(Objects.requireNonNull(c));
         this.potential = potential;
     }

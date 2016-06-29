@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResultsForCells;
 
@@ -39,13 +40,13 @@ public class CellStatistic implements CellStatisticMethods {
    * associate each cell with an ArrayList which contains all timesteps the cell
    * is occupied
    */
-  private HashMap<EvacCell, ArrayList<Integer>> cellUtilization;
+  private HashMap<EvacCellInterface, ArrayList<Integer>> cellUtilization;
 
   /**
    * associate each cell with an ArrayList which contains all timesteps at which
    * an individual standing at the cell is waiting
    */
-  private HashMap<EvacCell, ArrayList<Integer>> waitingTime;
+  private HashMap<EvacCellInterface, ArrayList<Integer>> waitingTime;
 
   /**
    * stores utilization for each room

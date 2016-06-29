@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.potential;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.results.Action;
 import org.zet.cellularautomaton.results.DynamicPotentialChangeAction;
@@ -35,7 +36,7 @@ public class DynamicPotential extends AbstractPotential {
     }
 
     @Override
-    public void setPotential(EvacCell cell, double value) {
+    public void setPotential(EvacCellInterface cell, double value) {
         super.setPotential(cell, value);
         recordAction(new DynamicPotentialChangeAction(cell, value));
     }
@@ -47,7 +48,7 @@ public class DynamicPotential extends AbstractPotential {
      * @throws IllegalArgumentException if the cell is not contained in the map
      */
     @Override
-    public void deleteCell(EvacCell cell) {
+    public void deleteCell(EvacCellInterface cell) {
         super.deleteCell(cell);
         recordAction(new DynamicPotentialChangeAction(cell, 0));
     }
@@ -64,7 +65,7 @@ public class DynamicPotential extends AbstractPotential {
      * @return potential of the specified cell or -1 if the cell is not mapped by this potential
      */
     @Override
-    public int getPotential(EvacCell cell) throws IllegalArgumentException {
+    public int getPotential(EvacCellInterface cell) throws IllegalArgumentException {
         return hasValidPotential(cell) ? super.getPotential(cell) : 0;
     }
 
@@ -98,7 +99,7 @@ public class DynamicPotential extends AbstractPotential {
             if ( /*dynPot.getPotential(c) > 0 && */diffusion > randomNumber) {
                 // Potential diffuses to a a neighbour cell. It should not increase, so
                 // reduce it afterwards on this cell!
-                EvacCell randomNeighbour = null;
+                EvacCellInterface randomNeighbour = null;
                 while (randomNeighbour == null) {
                     final int randomInt = rnd.nextInt((c.getNeighbours()).size());
                     randomNeighbour = (c.getNeighbours()).get(randomInt);
@@ -123,7 +124,7 @@ public class DynamicPotential extends AbstractPotential {
      *
      * @param cell A cell which potential you want to increase.
      */
-    public void increase(EvacCell cell) {
+    public void increase(EvacCellInterface cell) {
         int newPotential;
         DynamicPotential dynPot = this;
         if (dynPot.hasValidPotential(cell)) {

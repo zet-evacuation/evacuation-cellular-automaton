@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.SaveCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -31,7 +31,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     }
 
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         Individual savedIndividual = cell.getState().getIndividual();
         if (!(es.propertyFor(savedIndividual).isSafe())) {
             ec.setSafe(savedIndividual);

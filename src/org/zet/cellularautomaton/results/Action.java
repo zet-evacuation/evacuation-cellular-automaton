@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
@@ -67,7 +68,7 @@ public abstract class Action implements Cloneable {
     @Override
     public abstract String toString();
 
-    protected EvacCell adoptCell(EvacCell cell, EvacuationCellularAutomaton targetCA) {
+    protected EvacCell adoptCell(EvacCellInterface cell, EvacuationCellularAutomaton targetCA) {
         org.zet.cellularautomaton.Room newRoom = targetCA.getRoom(cell.getRoom().getID());
         org.zet.cellularautomaton.EvacCell newCell = newRoom.getCell(cell.getX(), cell.getY());
         return newCell;

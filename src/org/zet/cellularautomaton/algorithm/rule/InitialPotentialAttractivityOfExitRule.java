@@ -18,7 +18,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -39,7 +39,7 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      * @param cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         List<StaticPotential> staticPotentials = new ArrayList<>(es.getCellularAutomaton().getStaticPotentials());
         StaticPotential initialPotential = initialPotential(staticPotentials, cell);
         if (initialPotential == null) {
@@ -55,7 +55,7 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      * @param individual
      * @return 
      */
-    private StaticPotential initialPotential(List<StaticPotential> staticPotentials, EvacCell cell) {
+    private StaticPotential initialPotential(List<StaticPotential> staticPotentials, EvacCellInterface cell) {
         for( StaticPotential mostAttractiveSP : staticPotentials) {
             if (mostAttractiveSP.getDistance(cell) >= 0) {
                 return mostAttractiveSP;
@@ -71,7 +71,7 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      * @param cell the cell
      */
     private void assignMostAttractivePotential(List<StaticPotential> staticPotentials,
-            StaticPotential referencePotential, EvacCell cell) {
+            StaticPotential referencePotential, EvacCellInterface cell) {
         StaticPotential mostAttractivePotential = referencePotential;
         for (StaticPotential sp : staticPotentials) {
             if ((sp.getAttractivity() > referencePotential.getAttractivity())

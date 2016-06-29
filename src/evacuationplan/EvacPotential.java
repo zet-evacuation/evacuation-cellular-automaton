@@ -15,7 +15,7 @@
  */
 package evacuationplan;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -46,7 +46,7 @@ public class EvacPotential extends StaticPotential {
     }
 
     @Override
-    public int getPotential(EvacCell cell) {
+    public int getPotential(EvacCellInterface cell) {
         if (hasValidPotential(cell)) {
             if (checker.canPass(ind, es.propertyFor(ind).getCell(), cell)) {
                 return super.getPotential(cell);

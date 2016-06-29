@@ -21,6 +21,7 @@ import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.ArrayList;
 import java.util.List;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zetool.common.debug.Debug;
 
 /**
@@ -34,7 +35,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 
     private boolean directExecute;
     private boolean moveCompleted;
-    private List<EvacCell> possibleTargets;
+    private List<EvacCellInterface> possibleTargets;
 
     public AbstractMovementRule() {
         directExecute = true;
@@ -49,13 +50,13 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      * @param onlyFreeNeighbours
      * @return
      */
-    protected List<EvacCell> computePossibleTargets(EvacCell fromCell, boolean onlyFreeNeighbours) {
+    protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
         possibleTargets = new ArrayList<>();
-        List<EvacCell> neighbors = onlyFreeNeighbours ? fromCell.getFreeNeighbours() : fromCell.getNeighbours();
+        List<EvacCellInterface> neighbors = onlyFreeNeighbours ? fromCell.getFreeNeighbours() : fromCell.getNeighbours();
 
         Direction8 dir = es.propertyFor(fromCell.getState().getIndividual()).getDirection();
 
-        for (EvacCell c : neighbors) {
+        for (EvacCellInterface c : neighbors) {
             if (es.propertyFor(fromCell.getState().getIndividual()).isSafe() && !c.isSafe()) {
                 continue; // ignore all moves that would mean walking out of safe areas
             }
@@ -86,7 +87,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      *
      * @return a list of possible targets.
      */
-    public List<EvacCell> getPossibleTargets() {
+    public List<EvacCellInterface> getPossibleTargets() {
         return possibleTargets;
     }
 
@@ -98,7 +99,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
      * @param targets possible targets (only the first one is used)
      * @return the first cell of the possible targets
      */
-    public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+    public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
         Debug.globalLogger.warning("Not-overriden target cell selection is used.");
         if (targets.isEmpty()) {
             throw new IllegalArgumentException("Target list cannot be empty.");
@@ -155,7 +156,7 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
         this.moveCompleted = moveCompleted;
     }
 
-    public abstract void move(EvacCell from, EvacCell target);
+    public abstract void move(EvacCellInterface from, EvacCellInterface target);
 
-    public abstract void swap(EvacCell cell1, EvacCell cell2);
+    public abstract void swap(EvacCellInterface cell1, EvacCellInterface cell2);
 }

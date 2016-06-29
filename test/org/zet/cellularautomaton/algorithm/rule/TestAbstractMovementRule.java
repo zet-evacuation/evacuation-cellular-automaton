@@ -17,6 +17,7 @@ import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
@@ -40,7 +41,7 @@ public class TestAbstractMovementRule {
 
     private static class FakeEvacCell extends EvacCell {
         private final boolean isFreeNeighbors;
-        private List<EvacCell> neighbors = Collections.emptyList();
+        private List<EvacCellInterface> neighbors = Collections.emptyList();
         boolean safe;
         Direction8 direction = DEFAULT_DIRECTION;
         public FakeEvacCell() {
@@ -57,7 +58,7 @@ public class TestAbstractMovementRule {
         }
 
         @Override
-        public List<EvacCell> getFreeNeighbours() {
+        public List<EvacCellInterface> getFreeNeighbours() {
             if(!isFreeNeighbors) {
                 throw new AssertionError("Free neighbors not set!");
             }
@@ -65,7 +66,7 @@ public class TestAbstractMovementRule {
         }
 
         @Override
-        public List<EvacCell> getNeighbours() {
+        public List<EvacCellInterface> getNeighbours() {
             if(isFreeNeighbors) {
                 throw new AssertionError("Free neighbors set!");
             }
@@ -78,7 +79,7 @@ public class TestAbstractMovementRule {
         }
         
         @Override
-        public Direction8 getRelative(EvacCell c) {
+        public Direction8 getRelative(EvacCellInterface c) {
             if( c instanceof FakeEvacCell ) {
                 return ((FakeEvacCell)c).direction;
             }
@@ -106,15 +107,15 @@ public class TestAbstractMovementRule {
         rule = new AbstractMovementRule() {
 
             @Override
-            public void move(EvacCell from, EvacCell target) {
+            public void move(EvacCellInterface from, EvacCellInterface target) {
             }
 
             @Override
-            public void swap(EvacCell cell1, EvacCell cell2) {
+            public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
             }
 
             @Override
-            protected void onExecute(EvacCell cell) {
+            protected void onExecute(EvacCellInterface cell) {
             }
         };
         EvacuationState es = context.mock(EvacuationState.class);
@@ -147,7 +148,7 @@ public class TestAbstractMovementRule {
         ip.setDirection(DEFAULT_DIRECTION);
         ip.safe = true;
         
-        List<EvacCell> cellList = new LinkedList<>();
+        List<EvacCellInterface> cellList = new LinkedList<>();
         
         EvacCell n1 = new FakeEvacCell();
         cellList.add(n1);
@@ -164,7 +165,7 @@ public class TestAbstractMovementRule {
         cell.getState().setIndividual(individual);
         cell.neighbors = cellList;
         
-        List<EvacCell> result = rule.computePossibleTargets(cell, false);
+        List<EvacCellInterface> result = rule.computePossibleTargets(cell, false);
         assertThat(result, hasSize(2));
         assertThat(result, Matchers.hasItem(n2));
         assertThat(result, Matchers.hasItem(n3));
@@ -174,7 +175,7 @@ public class TestAbstractMovementRule {
     public void testDirections() {
         ip.setDirection(DEFAULT_DIRECTION);
         
-        List<EvacCell> cellList = new ArrayList<>(Direction8.values().length);
+        List<EvacCellInterface> cellList = new ArrayList<>(Direction8.values().length);
 
         for( Direction8 dir : Direction8.values()) {
             FakeEvacCell cell = new FakeEvacCell();
@@ -187,7 +188,7 @@ public class TestAbstractMovementRule {
         cell.neighbors = cellList;
 
 
-        List<EvacCell> result = rule.computePossibleTargets(cell, false);
+        List<EvacCellInterface> result = rule.computePossibleTargets(cell, false);
         assertThat(result, hasSize(5));
         for( int i : new int[] {0, 1, 2, 6, 7}) {
             assertThat(result, Matchers.hasItem(cellList.get(i)));        
@@ -196,13 +197,13 @@ public class TestAbstractMovementRule {
     
     @Test
     public void testTargetSelection() {
-        List<EvacCell> cells = new LinkedList<>();
+        List<EvacCellInterface> cells = new LinkedList<>();
         FakeEvacCell cell1 = new FakeEvacCell();
         FakeEvacCell cell2 = new FakeEvacCell();
         cells.add(cell1);
         cells.add(cell2);
         
-        EvacCell result = rule.selectTargetCell(new FakeEvacCell(), cells);
+        EvacCellInterface result = rule.selectTargetCell(new FakeEvacCell(), cells);
         assertThat(result, is(equalTo(cell1)));
     }
     

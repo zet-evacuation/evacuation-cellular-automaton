@@ -15,8 +15,8 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
 import java.util.List;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * A movement rule with which the individuals try to move, if possible.
@@ -24,16 +24,17 @@ import java.util.List;
  */
 public class NonWaitingMovementRule extends WaitingMovementRule {
 
-	/**
-	 * Selects the possible targets excluding the current cell.
-	 * @param fromCell the current sell
-	 * @param onlyFreeNeighbours indicates whether only free neighbours or all neighbours are included
-	 * @return a list containing all neighbours and the from cell
-	 */
-	@Override
-	protected List<EvacCell> computePossibleTargets( EvacCell fromCell, boolean onlyFreeNeighbours ) {
-		List<EvacCell> targets = super.computePossibleTargets( fromCell, onlyFreeNeighbours );
-		targets.remove( fromCell );
-		return targets;
-	}
+    /**
+     * Selects the possible targets excluding the current cell.
+     *
+     * @param fromCell the current sell
+     * @param onlyFreeNeighbours indicates whether only free neighbours or all neighbours are included
+     * @return a list containing all neighbours and the from cell
+     */
+    @Override
+    protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
+        List<EvacCellInterface> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
+        targets.remove(fromCell);
+        return targets;
+    }
 }

@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -34,7 +35,7 @@ public class ReactionRuleAllPersonsInRoom extends AbstractReactionRule {
      * @param cell the cell, whose individuals reaction time is reduced
      */
     @Override
-    protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         for (Individual individual : cell.getRoom().getIndividuals()) {
             if (es.getTimeStep() < individual.getReactionTime() * es.getCellularAutomaton().getStepsPerSecond()) {
                 return;

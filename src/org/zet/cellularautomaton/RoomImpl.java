@@ -140,7 +140,7 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
      * @param i
      */
     @Override
-    public void addIndividual(EvacCell c, Individual i) {
+    public void addIndividual(EvacCellInterface c, Individual i) {
         if (!c.getRoom().equals(this)) {
             throw new IllegalStateException("The cell does not belong to this room.");
         }

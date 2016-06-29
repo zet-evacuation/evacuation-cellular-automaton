@@ -3,7 +3,7 @@ package org.zet.cellularautomaton.algorithm.computation;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -29,9 +29,9 @@ public class SimpleComputation implements Computation {
      * @return the potential difference between the two cells
      */
     @Override
-    public double effectivePotential(Individual individual, EvacCell targetCell,
-            Function<EvacCell,Double> dynamicPotential) {
-        EvacCell referenceCell = es.propertyFor(individual).getCell();
+    public double effectivePotential(Individual individual, EvacCellInterface targetCell,
+            Function<EvacCellInterface,Double> dynamicPotential) {
+        EvacCellInterface referenceCell = es.propertyFor(individual).getCell();
         StaticPotential staticPotential = es.propertyFor(individual).getStaticPotential();
         return staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
     }
@@ -42,12 +42,12 @@ public class SimpleComputation implements Computation {
     }
 
     @Override
-    public double updateExhaustion(Individual individual, EvacCell targetCell) {
+    public double updateExhaustion(Individual individual, EvacCellInterface targetCell) {
         return 0;
     }
 
     @Override
-    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
+    public double updatePanic(Individual individual, EvacCellInterface targetCell, Collection<EvacCellInterface> preferedCells) {
         return 0;
     }
 

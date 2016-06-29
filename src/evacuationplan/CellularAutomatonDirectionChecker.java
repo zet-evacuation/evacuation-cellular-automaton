@@ -15,7 +15,7 @@
  */
 package evacuationplan;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -25,5 +25,5 @@ import org.zet.cellularautomaton.Individual;
 @FunctionalInterface
 public interface CellularAutomatonDirectionChecker {
 
-    public boolean canPass(Individual i, EvacCell from, EvacCell to);
+    public boolean canPass(Individual i, EvacCellInterface from, EvacCellInterface to);
 }

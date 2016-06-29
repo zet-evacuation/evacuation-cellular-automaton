@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -43,12 +44,12 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
      * @return {@code true} if an individual is standing on the cell, {@code false} otherwise
      */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !cell.getState().isEmpty();
     }
 
     @Override
-    public final void execute(EvacCell cell) {
+    public final void execute(EvacCellInterface cell) {
         if (!executableOn(cell)) {
             return;
         }
@@ -56,7 +57,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         onExecute(cell);
     }
 
-    protected abstract void onExecute(EvacCell cell);
+    protected abstract void onExecute(EvacCellInterface cell);
 
     @Override
     public void setEvacuationState(EvacuationState es) {
@@ -83,7 +84,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         this.c = c;
     }
 
-    protected static StaticPotential getNearestExitStaticPotential(Collection<StaticPotential> potentials, EvacCell c) {
+    protected static StaticPotential getNearestExitStaticPotential(Collection<StaticPotential> potentials, EvacCellInterface c) {
         StaticPotential nearestPot = new StaticPotential();
         int distance = Integer.MAX_VALUE;
         int numberOfDisjunctStaticPotentials = 0;

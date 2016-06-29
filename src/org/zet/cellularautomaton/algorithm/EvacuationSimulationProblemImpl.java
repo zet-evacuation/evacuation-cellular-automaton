@@ -19,6 +19,7 @@ import ds.PropertyContainer;
 import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
@@ -35,7 +36,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
     private final List<Individual> individuals;
-    private Map<Individual, EvacCell> individualStartPositions;
+    private final Map<Individual, EvacCell> individualStartPositions;
 
     public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca, List<Individual> individuals, Map<Individual,EvacCell> individualStartPositions) {
         this.ca = ca;
@@ -81,7 +82,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     }
 
     @Override
-    public Map<Individual, EvacCell> individualStartPositions() {
+    public Map<Individual, ? extends EvacCellInterface> individualStartPositions() {
         return this.individualStartPositions;
     }
     

@@ -18,10 +18,9 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
@@ -44,11 +43,11 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
      * @param cell the cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         assignShortestPathPotential(cell, this.es, this.ec);
     }
 
-    public static void assignShortestPathPotential(EvacCell cell, EvacuationState es, EvacuationStateControllerInterface ec) {
+    public static void assignShortestPathPotential(EvacCellInterface cell, EvacuationState es, EvacuationStateControllerInterface ec) {
         Individual individual = cell.getState().getIndividual();
         List<StaticPotential> staticPotentials = new ArrayList<>();
         staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());

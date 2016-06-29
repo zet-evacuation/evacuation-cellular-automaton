@@ -1,9 +1,9 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.TeleportCell;
 import java.util.ArrayList;
 import java.util.List;
+import org.zet.cellularautomaton.TeleportCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  *
@@ -12,7 +12,7 @@ import java.util.List;
 public class TeleportMovementRule extends WaitingMovementRule {
 
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return cell instanceof TeleportCell ? super.executableOn(cell) && !((TeleportCell) cell).isTeleportFailed() : super.executableOn(cell);
     }
 
@@ -24,12 +24,12 @@ public class TeleportMovementRule extends WaitingMovementRule {
      * @return a list containing all neighbours and the from cell
      */
     @Override
-    protected List<EvacCell> computePossibleTargets(EvacCell fromCell, boolean onlyFreeNeighbours) {
-        List<EvacCell> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
+    protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
+        List<EvacCellInterface> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
 
-        ArrayList<EvacCell> returned = new ArrayList<>(); // create new list to avoid concurrent modification
+        ArrayList<EvacCellInterface> returned = new ArrayList<>(); // create new list to avoid concurrent modification
         double time = es.getTimeStep();
-        for (EvacCell cell : targets) {
+        for (EvacCellInterface cell : targets) {
             if (!cell.isOccupied(time)) {
                 returned.add(cell);
             }

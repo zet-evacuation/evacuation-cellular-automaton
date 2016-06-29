@@ -16,10 +16,10 @@
 
 package org.zet.algo.ca.util;
 
-import org.zet.cellularautomaton.EvacCell;
+import java.util.Collection;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import java.util.Collection;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * @author Daniel R. Schmidt
@@ -44,7 +44,7 @@ public class PotentialUtils {
         // iterate over all mapped cells
         for(StaticPotential sp : potentialsToMerge) {
             totalAttractivity += sp.getAttractivity();
-            for(EvacCell c : sp.getMappedCells()) {
+            for(EvacCellInterface c : sp.getMappedCells()) {
                 //for each cell get the minimum of all potentials in potentialsToMerge and put in into newSP
                 minPot = Integer.MAX_VALUE;
                 for(StaticPotential localSP : potentialsToMerge){    

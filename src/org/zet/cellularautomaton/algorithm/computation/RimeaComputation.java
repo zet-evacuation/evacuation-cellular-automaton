@@ -2,6 +2,7 @@ package org.zet.cellularautomaton.algorithm.computation;
 
 import java.util.Collection;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
@@ -24,7 +25,7 @@ public class RimeaComputation extends DefaultComputation {
      * @return
      */
     @Override
-    public double updateExhaustion(Individual individual, EvacCell targetCell) {
+    public double updateExhaustion(Individual individual, EvacCellInterface targetCell) {
         es.propertyFor(individual).setExhaustion(0);
         return 0;
     }
@@ -38,7 +39,7 @@ public class RimeaComputation extends DefaultComputation {
      * @return
      */
     @Override
-    public double updatePanic(Individual individual, EvacCell targetCell, Collection<EvacCell> preferedCells) {
+    public double updatePanic(Individual individual, EvacCellInterface targetCell, Collection<EvacCellInterface> preferedCells) {
         es.propertyFor(individual).setPanic(0);
         return 0;
     }

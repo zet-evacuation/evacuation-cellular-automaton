@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * By default swap cellular automaton are randomized.
@@ -60,10 +61,10 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
         AbstractMovementRule movement = null;
         // erster Lauf: bis zur movement-rule und dann anmelden lassen.
         ArrayList<Individual> unfinished = new ArrayList<>();
-        HashMap<Individual, List<EvacCell>> individualPossibleMapping = new HashMap<>();
+        HashMap<Individual, List<EvacCellInterface>> individualPossibleMapping = new HashMap<>();
         HashSet<Individual> individualSwapped = new HashSet<>();
 
-        for (EvacCell cell : this) {
+        for (EvacCellInterface cell : this) {
             Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
 
             while (loop.hasNext()) {
@@ -79,9 +80,9 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
             if (movement.isMoveCompleted() && movement.executableOn(cell)) {
                 unfinished.add(cell.getState().getIndividual());
 
-                List<EvacCell> possibleTargets = movement.getPossibleTargets();
+                List<EvacCellInterface> possibleTargets = movement.getPossibleTargets();
 
-                for (EvacCell c : possibleTargets) {
+                for (EvacCellInterface c : possibleTargets) {
                     try {
                         if (cell != c) {
                             Direction8 dir = cell.getRelative(c);
@@ -89,7 +90,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                         }
                     } catch (AssertionError e) {
                         System.out.println(e);
-                        EvacCell target2 = movement.selectTargetCell(cell, possibleTargets);
+                        EvacCellInterface target2 = movement.selectTargetCell(cell, possibleTargets);
                         movement.getPossibleTargets();
                     }
 
@@ -115,8 +116,8 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
             if (individualSwapped.contains(i)) {
                 continue;
             }
-            List<EvacCell> possibleTargets = individualPossibleMapping.get(i);
-            EvacCell target = movement.selectTargetCell(es.propertyFor(i).getCell(), possibleTargets);
+            List<EvacCellInterface> possibleTargets = individualPossibleMapping.get(i);
+            EvacCellInterface target = movement.selectTargetCell(es.propertyFor(i).getCell(), possibleTargets);
 
             try {
                 if (es.propertyFor(i).getCell() != target) {
@@ -125,7 +126,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                 }
             } catch (AssertionError e) {
                 System.out.println(e);
-                EvacCell target2 = movement.selectTargetCell(es.propertyFor(i).getCell(), possibleTargets);
+                EvacCellInterface target2 = movement.selectTargetCell(es.propertyFor(i).getCell(), possibleTargets);
             }
 
             if (target.getState().isEmpty()) {
@@ -142,12 +143,12 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                     if (individualSwapped.contains(i2)) {
                         unfinished2.add(i);
                     } else {
-                        List<EvacCell> possibleTargets2 = individualPossibleMapping.get(i2);
+                        List<EvacCellInterface> possibleTargets2 = individualPossibleMapping.get(i2);
                         if (possibleTargets2 == null) {
                             // das andere individual hat wohl seinen weg ausgeführt!
                             unfinished2.add(i);
                         } else {
-                            EvacCell target2 = movement.selectTargetCell(es.propertyFor(i2).getCell(), possibleTargets2);
+                            EvacCellInterface target2 = movement.selectTargetCell(es.propertyFor(i2).getCell(), possibleTargets2);
                             if (es.propertyFor(i).getCell().equals(target2) && es.propertyFor(i2).getCell().equals(target)) {
                                 //if( util.DebugFlags.CA_SWAP )
                                 System.out.println("SWAP Individual " + i.id() + " und Individual " + i2.id());

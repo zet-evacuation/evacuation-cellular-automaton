@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  * Abstract class rules only used during initialization.
@@ -32,7 +33,7 @@ public abstract class AbstractInitialRule extends AbstractEvacuationRule {
      * have a StaticPotential.
      */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !cell.getState().isEmpty() && es.propertyFor(cell.getState().getIndividual()).getStaticPotential() == null;
     }
 

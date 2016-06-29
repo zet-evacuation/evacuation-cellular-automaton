@@ -16,7 +16,7 @@
 
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -31,7 +31,7 @@ public abstract class AbstractPotentialChangeRule extends AbstractEvacuationRule
      * @return true, if the cange potential rule can be used
      */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !cell.getState().isEmpty() && !es.propertyFor(cell.getState().getIndividual()).isSafe()
                 && wantsToChange(cell.getState().getIndividual());
     }

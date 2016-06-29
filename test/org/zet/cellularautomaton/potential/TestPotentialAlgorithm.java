@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.RoomCell;
 
@@ -21,14 +22,14 @@ public class TestPotentialAlgorithm {
 
     private static class MockExitCell extends ExitCell {
 
-        List<EvacCell> neighbors = new LinkedList<>();
+        List<EvacCellInterface> neighbors = new LinkedList<>();
 
         public MockExitCell(int x, int y) {
             super(x, y);
         }
 
         @Override
-        public List<EvacCell> getNeighbours() {
+        public List<EvacCellInterface> getNeighbours() {
             return neighbors;
         }
 
@@ -39,14 +40,14 @@ public class TestPotentialAlgorithm {
 
     private static class MockCell extends RoomCell {
 
-        List<EvacCell> neighbors = new LinkedList<>();
+        List<EvacCellInterface> neighbors = new LinkedList<>();
 
         public MockCell(int x, int y) {
             super(x, y);
         }
 
         @Override
-        public List<EvacCell> getNeighbours() {
+        public List<EvacCellInterface> getNeighbours() {
             return neighbors;
         }
 

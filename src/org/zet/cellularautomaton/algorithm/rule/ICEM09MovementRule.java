@@ -15,10 +15,10 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 import org.zetool.rndutils.RandomUtils;
 import java.util.List;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -37,12 +37,12 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
      * @param cell
      */
     @Override
-    protected void onExecute(org.zet.cellularautomaton.EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         individual = cell.getState().getIndividual();
 
         if (canMove(individual)) {
             if (isDirectExecute()) {
-                EvacCell targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
+                EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                 setMoveRuleCompleted(true);
                 move(cell, targetCell);
             } else {
@@ -63,7 +63,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
      * @return A neighbour of {@code cell} chosen at random.
      */
     @Override
-    public EvacCell selectTargetCell(EvacCell cell, List<EvacCell> targets) {
+    public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
         Individual ind = cell.getState().getIndividual();
         if (targets.isEmpty()) {
             return cell;

@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.SaveCell;
 
@@ -31,7 +31,7 @@ public abstract class AbstractSaveRule extends AbstractEvacuationRule {
      * @return {@code true} if the rule is applicable to the given cell, {@code false} otherwise
      */
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         return !cell.getState().isEmpty() && (cell instanceof ExitCell || cell instanceof SaveCell);
     }
 

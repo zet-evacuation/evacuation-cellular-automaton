@@ -1,6 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.TeleportCell;
 
@@ -11,7 +11,7 @@ import org.zet.cellularautomaton.TeleportCell;
 public class TeleportRule extends AbstractEvacuationRule {
 
     @Override
-    public boolean executableOn(EvacCell cell) {
+    public boolean executableOn(EvacCellInterface cell) {
         boolean res = cell instanceof TeleportCell && super.executableOn(cell);
         if (res) {
             res = res && canMove(cell.getState().getIndividual());
@@ -22,12 +22,12 @@ public class TeleportRule extends AbstractEvacuationRule {
     static int counter = 0;
 
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
         final TeleportCell tc = (TeleportCell) cell;
 
         if (tc.targetCount() > 0 && tc.getTarget(0) != null) {
 
-//						double beginTime = Math.max( i.getCell().getOccupiedUntil(), i.getStepEndTime() );
+//          double beginTime = Math.max( i.getCell().getOccupiedUntil(), i.getStepEndTime() );
             double targetFreeAt = tc.getTarget(0).getOccupiedUntil();
 
             if (tc.getTarget(0).getState().getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < es.getTimeStep()) {

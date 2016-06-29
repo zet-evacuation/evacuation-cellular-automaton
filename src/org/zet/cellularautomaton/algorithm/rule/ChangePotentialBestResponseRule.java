@@ -18,6 +18,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -38,7 +39,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
         return true;
     }
 
-    private double getResponse(EvacCell cell, StaticPotential pot) {
+    private double getResponse(EvacCellInterface cell, StaticPotential pot) {
         // Constants
         Individual ind = cell.getState().getIndividual();
         double speed = es.propertyFor(ind).getRelativeSpeed();
@@ -77,7 +78,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
         }
 
         int wrongDirectedNeighbours = 0;
-        for (EvacCell neighbour : cell.getDirectNeighbors()) {
+        for (EvacCellInterface neighbour : cell.getDirectNeighbors()) {
             if (!neighbour.getState().isEmpty()) {
                 if (es.propertyFor(neighbour.getState().getIndividual()).getStaticPotential() != pot) {
                     wrongDirectedNeighbours++;
@@ -107,7 +108,7 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
      * @param cell
      */
     @Override
-    protected void onExecute(EvacCell cell) {
+    protected void onExecute(EvacCellInterface cell) {
 
         ArrayList<StaticPotential> exits = new ArrayList<>();
         exits.addAll(es.getCellularAutomaton().getStaticPotentials());

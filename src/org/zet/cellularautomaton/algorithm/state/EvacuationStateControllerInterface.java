@@ -1,7 +1,7 @@
 package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -20,7 +20,7 @@ public interface EvacuationStateControllerInterface {
      * @param from the origin cell
      * @param to the target cell
      */
-    void move(EvacCell from, EvacCell to);
+    void move(EvacCellInterface from, EvacCellInterface to);
 
     /**
      * Swaps the positions of two individuals between two cells. Both cells, {@code cell1} and
@@ -29,7 +29,7 @@ public interface EvacuationStateControllerInterface {
      * @param cell1 the first cell with an individual
      * @param cell2 the second cell with an individual
      */
-    void swap(EvacCell cell1, EvacCell cell2);
+    void swap(EvacCellInterface cell1, EvacCellInterface cell2);
 
     /**
      * Sets an individual to be dead. The reason is stored and the individual is taken out of the
@@ -58,5 +58,5 @@ public interface EvacuationStateControllerInterface {
     
     void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);
     
-    void increaseDynamicPotential(EvacCell c);
+    void increaseDynamicPotential(EvacCellInterface c);
 }
