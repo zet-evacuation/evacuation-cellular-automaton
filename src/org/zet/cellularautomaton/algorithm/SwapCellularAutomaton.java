@@ -18,7 +18,6 @@ package org.zet.cellularautomaton.algorithm;
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zetool.common.util.Direction8;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.ArrayList;
 import java.util.HashMap;

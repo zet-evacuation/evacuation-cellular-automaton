@@ -1,7 +1,6 @@
 package org.zet.cellularautomaton.algorithm.computation;
 
 import java.util.Collection;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;

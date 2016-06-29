@@ -21,7 +21,6 @@ package org.zet.cellularautomaton.statistic.results;
  */
 import java.util.HashMap;
 import java.util.ArrayList;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Room;
 

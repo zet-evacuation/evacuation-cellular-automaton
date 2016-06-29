@@ -17,7 +17,6 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;

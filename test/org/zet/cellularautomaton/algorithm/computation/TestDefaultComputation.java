@@ -338,7 +338,7 @@ public class TestDefaultComputation {
                 allowing(targetCell).getState();
                 will(returnValue(new EvacuationCellState(null)));
                 
-                allowing(ps).PANIC_THRESHOLD();
+                allowing(ps).getPanicThreshold();
                 will(returnValue(0d));
                 allowing(ps).getPanicDecrease();
                 will(returnValue(1d));
@@ -376,7 +376,7 @@ public class TestDefaultComputation {
                 allowing(targetCell).getState();
                 will(returnValue(new EvacuationCellState(null)));
                 
-                allowing(ps).PANIC_THRESHOLD();
+                allowing(ps).getPanicThreshold();
                 will(returnValue(0.5d));
                 allowing(ps).getPanicDecrease();
                 will(returnValue(1.5d));
@@ -415,7 +415,7 @@ public class TestDefaultComputation {
                 allowing(targetCell).getState();
                 will(returnValue(new EvacuationCellState(individual)));
                 
-                allowing(ps).PANIC_THRESHOLD();
+                allowing(ps).getPanicThreshold();
                 will(returnValue(0.5d));
                 allowing(ps).getPanicDecrease();
                 will(returnValue(1.5d));

@@ -26,6 +26,6 @@ public interface EvacuationSimulationProblem extends CellularAutomatonSimulation
      */
     public int getEvacuationStepLimit();
     
-    public Map<Individual, ? extends EvacCellInterface> individualStartPositions();
+    public Map<Individual, EvacCellInterface> individualStartPositions();
     
 }

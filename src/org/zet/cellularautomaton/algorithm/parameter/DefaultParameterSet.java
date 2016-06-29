@@ -25,26 +25,26 @@ import org.zetool.rndutils.distribution.continuous.NormalDistribution;
  */
 public class DefaultParameterSet extends AbstractParameterSet {
 
-    private final double PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO;
-    final private double SLACKNESS_TO_IDLE_RATIO;
-    final private double PANIC_DECREASE;
-    final private double PANIC_INCREASE;
-    final private double PANIC_WEIGHT_ON_SPEED;
-    final private double PANIC_WEIGHT_ON_POTENTIALS;
-    final private double EXHAUSTION_WEIGHT_ON_SPEED;
-    final private double PANIC_THRESHOLD;
+    private final double panicToProbabilityOfPotentialChangeRatio;
+    private final double slacknessToIdleRatio;
+    private final double panicDecrease;
+    private final double panicIncrease;
+    private final double panicWeightOnSpeed;
+    private final double panicWeightOnPotentials;
+    private final double exhaustionWeightOnSpeed;
+    private final double panicThreshold;
     /**
      * Creates a new instance with some static values stored in the {@code PropertyContainer}.
      */
     public DefaultParameterSet() {
-        PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO = getSafe("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO", 0);
-        SLACKNESS_TO_IDLE_RATIO = getSafe("algo.ca.SLACKNESS_TO_IDLE_RATIO", 0);
-        PANIC_DECREASE = getSafe("algo.ca.PANIC_DECREASE", 0.0);
-        PANIC_INCREASE = getSafe("algo.ca.PANIC_INCREASE", 0.0);
-        PANIC_WEIGHT_ON_SPEED = getSafe("algo.ca.PANIC_WEIGHT_ON_SPEED", 0);
-        PANIC_WEIGHT_ON_POTENTIALS = getSafe("algo.ca.PANIC_WEIGHT_ON_POTENTIALS", 0);
-        EXHAUSTION_WEIGHT_ON_SPEED = getSafe("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED", 0);
-        PANIC_THRESHOLD = getSafe("algo.ca.PANIC_THRESHOLD", 3);
+        panicToProbabilityOfPotentialChangeRatio = getSafe("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO", 0);
+        slacknessToIdleRatio = getSafe("algo.ca.SLACKNESS_TO_IDLE_RATIO", 0);
+        panicDecrease = getSafe("algo.ca.PANIC_DECREASE", 0.0);
+        panicIncrease = getSafe("algo.ca.PANIC_INCREASE", 0.0);
+        panicWeightOnSpeed = getSafe("algo.ca.PANIC_WEIGHT_ON_SPEED", 0);
+        panicWeightOnPotentials = getSafe("algo.ca.PANIC_WEIGHT_ON_POTENTIALS", 0);
+        exhaustionWeightOnSpeed = getSafe("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED", 0);
+        panicThreshold = getSafe("algo.ca.PANIC_THRESHOLD", 3);
     }
     
     private double getSafe(String parameter, double defaultValue) {
@@ -57,32 +57,32 @@ public class DefaultParameterSet extends AbstractParameterSet {
 
     @Override
     public double slacknessToIdleRatio() {
-        return SLACKNESS_TO_IDLE_RATIO;
+        return slacknessToIdleRatio;
     }
 
     @Override
     public double panicToProbOfPotentialChangeRatio() {
-        return PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO;
+        return panicToProbabilityOfPotentialChangeRatio;
     }
 
     @Override
     public double getPanicIncrease() {
-        return PANIC_INCREASE;
+        return panicIncrease;
     }
 
     @Override
     public double getPanicDecrease() {
-        return PANIC_DECREASE;
+        return panicDecrease;
     }
 
     @Override
     public double panicWeightOnSpeed() {
-        return PANIC_WEIGHT_ON_SPEED;
+        return panicWeightOnSpeed;
     }
 
     @Override
     public double exhaustionWeightOnSpeed() {
-        return EXHAUSTION_WEIGHT_ON_SPEED;
+        return exhaustionWeightOnSpeed;
     }
 
     @Override
@@ -211,12 +211,12 @@ public class DefaultParameterSet extends AbstractParameterSet {
     }
 
     @Override
-    public double PANIC_WEIGHT_ON_POTENTIALS() {
-        return PANIC_WEIGHT_ON_POTENTIALS;
+    public double getPanicWeightOnPotentials() {
+        return panicWeightOnPotentials;
     }
 
     @Override
-    public double PANIC_THRESHOLD() {
-        return PANIC_THRESHOLD;
+    public double getPanicThreshold() {
+        return panicThreshold;
     }
 }

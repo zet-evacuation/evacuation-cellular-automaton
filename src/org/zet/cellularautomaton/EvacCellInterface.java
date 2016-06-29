@@ -85,7 +85,7 @@ public interface EvacCellInterface extends Cell<EvacuationCellState> {
         return getX() + getRoom().getXOffset();
     }
 
-    default public int getAbsoluteY() {
+    default int getAbsoluteY() {
         return getY() + getRoom().getYOffset();
     }
     

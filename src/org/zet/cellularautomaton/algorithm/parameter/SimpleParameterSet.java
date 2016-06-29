@@ -60,12 +60,12 @@ public class SimpleParameterSet extends AbstractParameterSet {
     }
 
     @Override
-    public double PANIC_WEIGHT_ON_POTENTIALS() {
+    public double getPanicWeightOnPotentials() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public double PANIC_THRESHOLD() {
+    public double getPanicThreshold() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

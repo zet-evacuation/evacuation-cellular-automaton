@@ -162,11 +162,11 @@ public class DefaultComputation implements Computation {
         }
 
         double newPanic = es.propertyFor(individual).getPanic();
-        if (failures < parameterSet.PANIC_THRESHOLD()) {
+        if (failures < parameterSet.getPanicThreshold()) {
             newPanic = newPanic - individual.getPanicFactor() * parameterSet.getPanicDecrease()
-                    * (parameterSet.PANIC_THRESHOLD() - failures);
+                    * (parameterSet.getPanicThreshold() - failures);
         } else {
-            newPanic = newPanic + individual.getPanicFactor() * (failures - parameterSet.PANIC_THRESHOLD())
+            newPanic = newPanic + individual.getPanicFactor() * (failures - parameterSet.getPanicThreshold())
                     * parameterSet.getPanicIncrease();
         }
 

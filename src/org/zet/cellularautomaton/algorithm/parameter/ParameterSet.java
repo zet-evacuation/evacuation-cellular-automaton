@@ -24,9 +24,9 @@ package org.zet.cellularautomaton.algorithm.parameter;
 public interface ParameterSet {
     /* Updating of dynamic parameters */
 
-    public double PANIC_WEIGHT_ON_POTENTIALS();
+    public double getPanicWeightOnPotentials();
 
-    double PANIC_THRESHOLD();
+    double getPanicThreshold();
 
     /* Some constants*/
     public double dynamicPotentialWeight();
@@ -40,7 +40,7 @@ public interface ParameterSet {
     public double probabilityChangePotentialFamiliarityOrAttractivityOfExitRule();
 
     double getAbsoluteMaxSpeed();
-    
+
     /* Other dynamic parameters */
     public double getSpeedFromAge(double pAge);
 

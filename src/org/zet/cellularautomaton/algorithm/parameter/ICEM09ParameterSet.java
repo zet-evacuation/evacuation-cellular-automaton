@@ -22,27 +22,27 @@ import ds.PropertyContainer;
  */
 public class ICEM09ParameterSet extends AbstractParameterSet {
 
-    final protected double PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO;
-    final protected double SLACKNESS_TO_IDLE_RATIO;
-    final protected double PANIC_DECREASE;
-    final protected double PANIC_INCREASE;
-    final protected double PANIC_WEIGHT_ON_SPEED;
-    final protected double PANIC_WEIGHT_ON_POTENTIALS;
-    final protected double EXHAUSTION_WEIGHT_ON_SPEED;
-    final protected double PANIC_THRESHOLD;
+    protected final double panicToProbabilityOfPotentialChangeRatio;
+    protected final double slacknessToIdleRatio;
+    protected final double panicDecrease;
+    protected final double panicIncrease;
+    protected final double panicWeightOnSpeed;
+    protected final double panicWeightOnPotentials;
+    protected final double exhaustionWeightOnSpeed;
+    protected final double panicThreshold;
 
     /**
      * Initializes the default parameter set and loads some constants from the property container.
      */
     public ICEM09ParameterSet() {
-        PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO");
-        SLACKNESS_TO_IDLE_RATIO = PropertyContainer.getGlobal().getAsDouble("algo.ca.SLACKNESS_TO_IDLE_RATIO");
-        PANIC_DECREASE = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_DECREASE");
-        PANIC_INCREASE = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_INCREASE");
-        PANIC_WEIGHT_ON_SPEED = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_WEIGHT_ON_SPEED");
-        PANIC_WEIGHT_ON_POTENTIALS = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_WEIGHT_ON_POTENTIALS");
-        EXHAUSTION_WEIGHT_ON_SPEED = PropertyContainer.getGlobal().getAsDouble("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED");
-        PANIC_THRESHOLD = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_THRESHOLD");
+        panicToProbabilityOfPotentialChangeRatio = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO");
+        slacknessToIdleRatio = PropertyContainer.getGlobal().getAsDouble("algo.ca.SLACKNESS_TO_IDLE_RATIO");
+        panicDecrease = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_DECREASE");
+        panicIncrease = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_INCREASE");
+        panicWeightOnSpeed = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_WEIGHT_ON_SPEED");
+        panicWeightOnPotentials = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_WEIGHT_ON_POTENTIALS");
+        exhaustionWeightOnSpeed = PropertyContainer.getGlobal().getAsDouble("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED");
+        panicThreshold = PropertyContainer.getGlobal().getAsDouble("algo.ca.PANIC_THRESHOLD");
     }
 
     @Override
@@ -52,27 +52,27 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
 
     @Override
     public double slacknessToIdleRatio() {
-        return SLACKNESS_TO_IDLE_RATIO;
+        return slacknessToIdleRatio;
     }
 
     @Override
     public double panicToProbOfPotentialChangeRatio() {
-        return PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO;
+        return panicToProbabilityOfPotentialChangeRatio;
     }
 
     @Override
     public double getPanicIncrease() {
-        return PANIC_INCREASE;
+        return panicIncrease;
     }
 
     @Override
     public double getPanicDecrease() {
-        return PANIC_DECREASE;
+        return panicDecrease;
     }
 
     @Override
     public double panicWeightOnSpeed() {
-        return PANIC_WEIGHT_ON_SPEED;
+        return panicWeightOnSpeed;
     }
 
     ////* Conversion parameters *////
@@ -102,12 +102,12 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
     }
 
     @Override
-    public double PANIC_WEIGHT_ON_POTENTIALS() {
+    public double getPanicWeightOnPotentials() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public double PANIC_THRESHOLD() {
+    public double getPanicThreshold() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -11,6 +11,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
@@ -74,7 +75,7 @@ public class TestEvacuationCellularAutomatonRun {
         ds.PropertyContainer.getGlobal().define("algo.ca.ruleSet", String.class, ruleSet);
         ds.PropertyContainer.getGlobal().define("algo.ca.parameterSet", String.class, "SimpleParameterSet");
         
-        Map<Individual, EvacCell> individualStartPositions = new HashMap<>();
+        Map<Individual, EvacCellInterface> individualStartPositions = new HashMap<>();
         individualStartPositions.put(i, rightCell);
         
         EvacuationSimulationProblem esp = new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i), individualStartPositions);
