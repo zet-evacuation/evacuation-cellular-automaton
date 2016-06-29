@@ -29,6 +29,14 @@
                 <id>jar</id>
             </reference>
             <reference>
+                <foreign-project>zetool-math</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>nbbuild.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
                 <foreign-project>zetool-rndutils</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>nbbuild.xml</script>
