@@ -47,7 +47,7 @@ public class ICEM09ParameterSet extends AbstractParameterSet {
 
     @Override
     public double getAbsoluteMaxSpeed() {
-        return ABSOLUTE_MAX_SPEED;
+        return absoluteMaxSpeed;
     }
 
     @Override

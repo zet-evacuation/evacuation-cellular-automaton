@@ -17,42 +17,46 @@ package org.zet.cellularautomaton.algorithm.parameter;
 
 import ds.PropertyContainer;
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
+ * 
  * @author Daniel R. Schmidt
- *
  */
 public abstract class AbstractParameterSet implements ParameterSet {
 
-    private final double DYNAMIC_POTENTIAL_WEIGHT;
-    private final double STATIC_POTENTIAL_WEIGHT;
-    private final double PROB_DYNAMIC_POTENTIAL_INCREASE;
-    private final double PROB_DYNAMIC_POTENTIAL_DECREASE;
-    private final double PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
-    protected final double ABSOLUTE_MAX_SPEED;
+    /** The default absolute max speed is such that normal walking is possible. */
+    public final static double DEFAULT_ABSOLUTE_MAX_SPEED = 2.1;
+    private final double dynamicPotentialWeight;
+    private final double staticPotentialWeight;
+    private final double probabilityDynamicPotentialIncrease;
+    private final double probabilityDynamicPotentialDecrease;
+    private final double probabilityFamiliarityOrAttractivityOfExit;
+    protected final double absoluteMaxSpeed;
 
     /**
-     * Initializes the default parameter set and loads some constants from the property container.
+     * Initializes the default parameter set and loads some constants from the property container. By default, dynamic
+     * potential influence is 0 and the static potential weight is set to 1.
      */
     public AbstractParameterSet() {
-        DYNAMIC_POTENTIAL_WEIGHT = getSafe("algo.ca.DYNAMIC_POTENTIAL_WEIGHT", 0);
-        STATIC_POTENTIAL_WEIGHT = getSafe("algo.ca.STATIC_POTENTIAL_WEIGHT", 1);
-        PROB_DYNAMIC_POTENTIAL_INCREASE = getSafe("algo.ca.PROB_DYNAMIC_POTENTIAL_INCREASE", 0);
-        PROB_DYNAMIC_POTENTIAL_DECREASE = getSafe("algo.ca.PROB_DYNAMIC_POTENTIAL_DECREASE", 0);
-        PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT = getSafe("algo.ca.PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT", 0);
-        ABSOLUTE_MAX_SPEED = getSafe("algo.ca.ABSOLUTE_MAX_SPEED", 2.1);
+        dynamicPotentialWeight = getSafe("algo.ca.DYNAMIC_POTENTIAL_WEIGHT", 0);
+        staticPotentialWeight = getSafe("algo.ca.STATIC_POTENTIAL_WEIGHT", 1);
+        probabilityDynamicPotentialIncrease = getSafe("algo.ca.PROB_DYNAMIC_POTENTIAL_INCREASE", 0);
+        probabilityDynamicPotentialDecrease = getSafe("algo.ca.PROB_DYNAMIC_POTENTIAL_DECREASE", 0);
+        probabilityFamiliarityOrAttractivityOfExit = getSafe("algo.ca.PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT", 0);
+        absoluteMaxSpeed = getSafe("algo.ca.ABSOLUTE_MAX_SPEED", DEFAULT_ABSOLUTE_MAX_SPEED);
     }
 
     public AbstractParameterSet(double dynamicPotentialWeight, double staticPotentialWeight,
-            double ProbDynamicPotentialIncrease, double ProbDynamicPotentialDecrease,
+            double probDynamicPotentialIncrease, double probDynamicPotentialDecrease,
             double probFamiliarityOrAttractivityOfExit, double absoluteMaxSpeed) {
-        this.DYNAMIC_POTENTIAL_WEIGHT = dynamicPotentialWeight;
-        this.STATIC_POTENTIAL_WEIGHT = staticPotentialWeight;
-        this.PROB_DYNAMIC_POTENTIAL_INCREASE = ProbDynamicPotentialIncrease;
-        this.PROB_DYNAMIC_POTENTIAL_DECREASE = ProbDynamicPotentialDecrease;
-        this.PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT = probFamiliarityOrAttractivityOfExit;
-        this.ABSOLUTE_MAX_SPEED = absoluteMaxSpeed;
+        this.dynamicPotentialWeight = dynamicPotentialWeight;
+        this.staticPotentialWeight = staticPotentialWeight;
+        this.probabilityDynamicPotentialIncrease = probDynamicPotentialIncrease;
+        this.probabilityDynamicPotentialDecrease = probDynamicPotentialDecrease;
+        this.probabilityFamiliarityOrAttractivityOfExit = probFamiliarityOrAttractivityOfExit;
+        this.absoluteMaxSpeed = absoluteMaxSpeed;
     }
 
     private double getSafe(String parameter, double defaultValue) {
@@ -71,7 +75,7 @@ public abstract class AbstractParameterSet implements ParameterSet {
      */
     @Override
     public double dynamicPotentialWeight() {
-        return DYNAMIC_POTENTIAL_WEIGHT;
+        return dynamicPotentialWeight;
     }
 
     /**
@@ -82,22 +86,22 @@ public abstract class AbstractParameterSet implements ParameterSet {
      */
     @Override
     public double staticPotentialWeight() {
-        return STATIC_POTENTIAL_WEIGHT;
+        return staticPotentialWeight;
     }
 
     @Override
     public double probabilityDynamicDecrease() {
-        return PROB_DYNAMIC_POTENTIAL_DECREASE;
+        return probabilityDynamicPotentialDecrease;
     }
 
     @Override
     public double probabilityDynamicIncrease() {
-        return PROB_DYNAMIC_POTENTIAL_INCREASE;
+        return probabilityDynamicPotentialIncrease;
     }
 
     @Override
     public double probabilityChangePotentialFamiliarityOrAttractivityOfExitRule() {
-        return PROB_FAMILIARITY_OR_ATTRACTIVITY_OF_EXIT;
+        return probabilityFamiliarityOrAttractivityOfExit;
     }
 
     /**
@@ -113,7 +117,8 @@ public abstract class AbstractParameterSet implements ParameterSet {
             parameterSet = (AbstractParameterSet) parameterSetClass.getConstructor().newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
                 IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace(System.err);
+            Logger.getLogger(AbstractParameterSet.class.getName()).log(
+                    Level.SEVERE, "Cannot instantiate parameter set for '" + parameterSetName + "'", e);
         }
         return parameterSet;
     }
@@ -125,6 +130,6 @@ public abstract class AbstractParameterSet implements ParameterSet {
      */
     @Override
     public double getAbsoluteMaxSpeed() {
-        return ABSOLUTE_MAX_SPEED;
+        return absoluteMaxSpeed;
     }
 }

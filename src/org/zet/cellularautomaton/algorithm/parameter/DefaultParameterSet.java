@@ -181,10 +181,10 @@ public class DefaultParameterSet extends AbstractParameterSet {
         // Generate the random speed with a deviation around the expected speed for the person
         if (maxSpeedExpected < ageArray[16]) {
             maxSpeedExpected = ageArray[16];
-        } else if (maxSpeedExpected > ABSOLUTE_MAX_SPEED) {
-            maxSpeedExpected = ABSOLUTE_MAX_SPEED;
+        } else if (maxSpeedExpected > absoluteMaxSpeed) {
+            maxSpeedExpected = absoluteMaxSpeed;
         }
-        final NormalDistribution normal = new NormalDistribution(maxSpeedExpected, sigmaSquared, ageArray[16], ABSOLUTE_MAX_SPEED);
+        final NormalDistribution normal = new NormalDistribution(maxSpeedExpected, sigmaSquared, ageArray[16], absoluteMaxSpeed);
         double randSpeed = normal.getNextRandom();
 
         if (!male) {
