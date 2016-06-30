@@ -27,8 +27,8 @@ public interface EvacCellInterface extends Cell<EvacuationCellState> {
     List<EvacCellInterface> getFreeNeighbours();
 
     /**
-     * Returns the level difference between this cell and the cell at the relative position {@code relPosition}. If the
-     * level has never been set explicitly, Equal is returned.
+     * Returns the level difference between this cell and the cell at the relative position
+     * {@code relPosition}. If the level has never been set explicitly, Equal is returned.
      *
      * @param direction The square in this direction is considered.
      * @return the level of the square in direction {@code direction} (higher, equal or lower).
@@ -88,19 +88,23 @@ public interface EvacCellInterface extends Cell<EvacuationCellState> {
     default int getAbsoluteY() {
         return getY() + getRoom().getYOffset();
     }
-    
+
     /**
      * Returns the Speed-Factor of the cell.
      *
      * @return The Speed-Factor of the cell.
      */
     double getSpeedFactor();
+
     boolean isOccupied();
 
     public void setOccupiedUntil(double occupiedUntil);
+
     public boolean isOccupied(double time);
+
     /**
      * Decides wether it is safe for evacuees to stand on the cell. By default cells are unsafe.
+     *
      * @return {@code true} if it is safe to stand on the cell
      */
     default boolean isSafe() {
