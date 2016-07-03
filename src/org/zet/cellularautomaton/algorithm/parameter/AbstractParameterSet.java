@@ -59,7 +59,7 @@ public abstract class AbstractParameterSet implements ParameterSet {
         this.absoluteMaxSpeed = absoluteMaxSpeed;
     }
 
-    private double getSafe(String parameter, double defaultValue) {
+    protected static double getSafe(String parameter, double defaultValue) {
         if (PropertyContainer.getGlobal().isDefined(parameter)) {
             return PropertyContainer.getGlobal().getAsDouble(parameter);
         } else {

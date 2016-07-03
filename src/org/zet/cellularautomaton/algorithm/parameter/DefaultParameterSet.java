@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.algorithm.parameter;
 
-import ds.PropertyContainer;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.distribution.continuous.NormalDistribution;
 
@@ -23,77 +22,38 @@ import org.zetool.rndutils.distribution.continuous.NormalDistribution;
  * @author Daniel R. Schmidt
  * @author Jan-Philipp Kappmeier
  */
-public class DefaultParameterSet extends AbstractParameterSet {
+public class DefaultParameterSet extends ParameterSetAdapter {
 
-    private final double panicToProbabilityOfPotentialChangeRatio;
-    private final double slacknessToIdleRatio;
-    private final double panicDecrease;
-    private final double panicIncrease;
-    private final double panicWeightOnSpeed;
-    private final double panicWeightOnPotentials;
-    private final double exhaustionWeightOnSpeed;
-    private final double panicThreshold;
+    final static double MIN_EXHAUSTION = 0.0018d;
+    final static double MAX_EXHAUSTION = 0.004d;
+    public double cumulativeSpeed = 0;
+
+    public double cumulativeFemale = 0;
+    public double cumulativeMale = 0;
+    public int counterFemale = 0;
+    public int counterMale = 0;
+
+    protected final static double SIGMA_SQUARED = 0.26 * 0.26;
+
     /**
      * Creates a new instance with some static values stored in the {@code PropertyContainer}.
      */
     public DefaultParameterSet() {
-        panicToProbabilityOfPotentialChangeRatio = getSafe("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO", 0);
-        slacknessToIdleRatio = getSafe("algo.ca.SLACKNESS_TO_IDLE_RATIO", 0);
-        panicDecrease = getSafe("algo.ca.PANIC_DECREASE", 0.0);
-        panicIncrease = getSafe("algo.ca.PANIC_INCREASE", 0.0);
-        panicWeightOnSpeed = getSafe("algo.ca.PANIC_WEIGHT_ON_SPEED", 0);
-        panicWeightOnPotentials = getSafe("algo.ca.PANIC_WEIGHT_ON_POTENTIALS", 0);
-        exhaustionWeightOnSpeed = getSafe("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED", 0);
-        panicThreshold = getSafe("algo.ca.PANIC_THRESHOLD", 3);
+        super(getSafe("algo.ca.PANIC_TO_PROB_OF_POTENTIAL_CHANGE_RATIO", 0), getSafe("algo.ca.SLACKNESS_TO_IDLE_RATIO", 0),
+        getSafe("algo.ca.PANIC_DECREASE", 0.0), getSafe("algo.ca.PANIC_INCREASE", 0.0), getSafe("algo.ca.PANIC_WEIGHT_ON_SPEED", 0),
+        getSafe("algo.ca.PANIC_WEIGHT_ON_POTENTIALS", 0), getSafe("algo.ca.EXHAUSTION_WEIGHT_ON_SPEED", 0),
+        getSafe("algo.ca.PANIC_THRESHOLD", 3));
     }
     
-    private double getSafe(String parameter, double defaultValue) {
-        if( PropertyContainer.getGlobal().isDefined(parameter)) {
-            return PropertyContainer.getGlobal().getAsDouble(parameter);
-        } else {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public double slacknessToIdleRatio() {
-        return slacknessToIdleRatio;
-    }
-
-    @Override
-    public double panicToProbOfPotentialChangeRatio() {
-        return panicToProbabilityOfPotentialChangeRatio;
-    }
-
-    @Override
-    public double getPanicIncrease() {
-        return panicIncrease;
-    }
-
-    @Override
-    public double getPanicDecrease() {
-        return panicDecrease;
-    }
-
-    @Override
-    public double panicWeightOnSpeed() {
-        return panicWeightOnSpeed;
-    }
-
-    @Override
-    public double exhaustionWeightOnSpeed() {
-        return exhaustionWeightOnSpeed;
-    }
-
+    /**
+     * Returns an exhaustion value depending on the age. Maximum Exhaustion: individual is fully exhausted after about 450 meters.
+     * Minum Exhaustion: individual is fully exhausted after about 200 meters.
+     * 
+     * @param age
+     * @return 
+     */
     @Override
     public double getExhaustionFromAge(double age) {
-        //minum Exhaustion: individual is fully exhausted
-        //after about 450 meter
-        final double MIN_EXHAUSTION = 0.0018d;
-
-        //minum Exhaustion: individual is fully exhausted
-        //after about 200 meter
-        final double MAX_EXHAUSTION = 0.004d;
         if (age < 10d) {
             return MAX_EXHAUSTION;
         } else if (age >= 90d) {
@@ -117,20 +77,6 @@ public class DefaultParameterSet extends AbstractParameterSet {
     public double getReactionTimeFromAge(double age) {
         return age / 10;
     }
-
-    @Override
-    public double getReactionTime() {
-        return 1;
-    }
-
-    public double cumulativeSpeed = 0;
-
-    public double cumulativeFemale = 0;
-    public double cumulativeMale = 0;
-    public int counterFemale = 0;
-    public int counterMale = 0;
-
-    protected final static double sigmaSquared = 0.26 * 0.26;
 
     /**
      * Calculates the maximal speed for a person dependingon the speed-values from the rimea test suite.
@@ -184,7 +130,7 @@ public class DefaultParameterSet extends AbstractParameterSet {
         } else if (maxSpeedExpected > absoluteMaxSpeed) {
             maxSpeedExpected = absoluteMaxSpeed;
         }
-        final NormalDistribution normal = new NormalDistribution(maxSpeedExpected, sigmaSquared, ageArray[16], absoluteMaxSpeed);
+        final NormalDistribution normal = new NormalDistribution(maxSpeedExpected, SIGMA_SQUARED, ageArray[16], absoluteMaxSpeed);
         double randSpeed = normal.getNextRandom();
 
         if (!male) {
@@ -208,15 +154,5 @@ public class DefaultParameterSet extends AbstractParameterSet {
     @Override
     public double getSlacknessFromDecisiveness(double pDecisiveness) {
         return 1 - pDecisiveness;
-    }
-
-    @Override
-    public double getPanicWeightOnPotentials() {
-        return panicWeightOnPotentials;
-    }
-
-    @Override
-    public double getPanicThreshold() {
-        return panicThreshold;
     }
 }
