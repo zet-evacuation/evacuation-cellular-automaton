@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public abstract class AbstractParameterSet implements ParameterSet {
 
     /** The default absolute max speed is such that normal walking is possible. */
-    public final static double DEFAULT_ABSOLUTE_MAX_SPEED = 2.1;
+    public static final double DEFAULT_ABSOLUTE_MAX_SPEED = 2.1;
     private final double dynamicPotentialWeight;
     private final double staticPotentialWeight;
     private final double probabilityDynamicPotentialIncrease;
@@ -60,7 +60,7 @@ public abstract class AbstractParameterSet implements ParameterSet {
     }
 
     private double getSafe(String parameter, double defaultValue) {
-        if( PropertyContainer.getGlobal().isDefined(parameter)) {
+        if (PropertyContainer.getGlobal().isDefined(parameter)) {
             return PropertyContainer.getGlobal().getAsDouble(parameter);
         } else {
             return defaultValue;
