@@ -95,14 +95,14 @@ public class AbstractParameterSetTest {
 
     @Test
     public void checkCreateFromClassname() {
-        ParameterSet ps = AbstractParameterSet.createParameterSet("TestAbstractParameterSet$AbstractParameterSetTestImplementation");
+        ParameterSet ps = AbstractParameterSet.createParameterSet("AbstractParameterSetTest$AbstractParameterSetTestImplementation");
         
         assertParameterSetDefaults(ps);
     }
 
     @Test
     public void erroneousCreation() {
-        ParameterSet ps = AbstractParameterSet.createParameterSet("TestAbstractParameterSet$NonExisting");
+        ParameterSet ps = AbstractParameterSet.createParameterSet("AbstractParameterSetTest$NonExisting");
         
         assertThat(ps, is(nullValue()));
     }
