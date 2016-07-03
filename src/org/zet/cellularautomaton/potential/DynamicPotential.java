@@ -92,9 +92,9 @@ public class DynamicPotential extends AbstractPotential {
     public void update(double diffusion, double decay) {
         GeneralRandom rnd = RandomUtils.getInstance().getRandomGenerator();
         DynamicPotential dynPot = this;
-        EvacCell[] cellsCopy = dynPot.getMappedCells().toArray(new EvacCell[dynPot.getMappedCells().size()]);
+        EvacCellInterface[] cellsCopy = dynPot.getMappedCells().toArray(new EvacCellInterface[dynPot.getMappedCells().size()]);
         /* NEW CODE */
-        for (EvacCell c : cellsCopy) {
+        for (EvacCellInterface c : cellsCopy) {
             double randomNumber = rnd.nextDouble();
             if ( /*dynPot.getPotential(c) > 0 && */diffusion > randomNumber) {
                 // Potential diffuses to a a neighbour cell. It should not increase, so
@@ -145,7 +145,7 @@ public class DynamicPotential extends AbstractPotential {
      *
      * @param cell A cell which potential you want to decrease.
      */
-    public void decrease(EvacCell cell) throws IllegalArgumentException {
+    public void decrease(EvacCellInterface cell) throws IllegalArgumentException {
         DynamicPotential dynPot = this;
         if (!(dynPot.hasValidPotential(cell))) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.InsertCellPreviouslyException"));
