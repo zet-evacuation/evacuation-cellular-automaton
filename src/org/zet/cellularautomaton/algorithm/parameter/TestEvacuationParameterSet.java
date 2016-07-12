@@ -64,7 +64,7 @@ public class TestEvacuationParameterSet extends DefaultParameterSet {
     @Override
     public double getSpeedFromAge(double pAge) {
         // additional: calculate the average speed.
-        double ageArray[] = {
+        double[] ageArray = {
             0.58, // 5  years
             1.15, // 10
             1.42, // 15
@@ -91,7 +91,7 @@ public class TestEvacuationParameterSet extends DefaultParameterSet {
         } else if (pAge >= 85) {
             maxSpeedExpected = ageArray[16];
         } else {
-            final double slope = (ageArray[right] - ageArray[left]);
+            final double slope = ageArray[right] - ageArray[left];
             maxSpeedExpected = slope * (pAge - ((int) pAge / 5) * 5) / 5 + ageArray[left];
         }
 
@@ -100,15 +100,13 @@ public class TestEvacuationParameterSet extends DefaultParameterSet {
 
         // Change speeds for male and female individuals:
         // + 5% for male, -5% for female
-        if (RandomUtils.getInstance().binaryDecision(0.5)) {
+        boolean male = RandomUtils.getInstance().binaryDecision(0.5);
+        if (male) {
             randSpeed *= 1.05;
-            counterFemale++;
-            cumulativeFemale += randSpeed;
         } else {
             randSpeed *= 0.95;
-            counterMale++;
-            cumulativeMale += randSpeed;
         }
+        increaseStatistic(true, randSpeed);
 
         double maxSpeed = randSpeed / absoluteMaxSpeed;
         if (maxSpeed > 1) {

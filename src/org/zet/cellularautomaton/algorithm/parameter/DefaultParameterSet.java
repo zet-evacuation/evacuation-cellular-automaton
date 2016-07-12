@@ -24,16 +24,14 @@ import org.zetool.rndutils.distribution.continuous.NormalDistribution;
  */
 public class DefaultParameterSet extends ParameterSetAdapter {
 
-    final static double MIN_EXHAUSTION = 0.0018d;
-    final static double MAX_EXHAUSTION = 0.004d;
-    public double cumulativeSpeed = 0;
+    static final double MIN_EXHAUSTION = 0.0018d;
+    static final double MAX_EXHAUSTION = 0.004d;
+    protected static final double SIGMA_SQUARED = 0.26 * 0.26;
 
-    public double cumulativeFemale = 0;
-    public double cumulativeMale = 0;
-    public int counterFemale = 0;
-    public int counterMale = 0;
-
-    protected final static double SIGMA_SQUARED = 0.26 * 0.26;
+    protected double cumulativeFemale = 0;
+    private double cumulativeMale = 0;
+    private int counterFemale = 0;
+    private int counterMale = 0;
 
     /**
      * Creates a new instance with some static values stored in the {@code PropertyContainer}.
@@ -61,14 +59,11 @@ public class DefaultParameterSet extends ParameterSetAdapter {
             //assume exhaustion is at the least on age of 20
         } else if (age <= 20) {
             double ageRatio = (age - 10d) / 10;
-            double ret = MAX_EXHAUSTION - ageRatio * (MAX_EXHAUSTION - MIN_EXHAUSTION);
-            return ret;
+            return MAX_EXHAUSTION - ageRatio * (MAX_EXHAUSTION - MIN_EXHAUSTION);
 
         } else {
             double ageRatio = (age - 25d) / (90d - 25d);
-            double ret = MIN_EXHAUSTION
-                    + ageRatio * (MAX_EXHAUSTION - MIN_EXHAUSTION);
-            return ret;
+            return MIN_EXHAUSTION + ageRatio * (MAX_EXHAUSTION - MIN_EXHAUSTION);
         }
 
     }
@@ -87,7 +82,7 @@ public class DefaultParameterSet extends ParameterSetAdapter {
     @Override
     public double getSpeedFromAge(double pAge) {
         // additional: calculate the average speed.
-        double ageArray[] = {
+        double[] ageArray = {
             0.58, // 5  years
             1.15, // 10
             1.42, // 15
@@ -114,7 +109,7 @@ public class DefaultParameterSet extends ParameterSetAdapter {
         } else if (pAge >= 85) {
             maxSpeedExpected = ageArray[16];
         } else {
-            final double slope = (ageArray[right] - ageArray[left]);
+            final double slope = ageArray[right] - ageArray[left];
             maxSpeedExpected = slope * (pAge - ((int) pAge / 5) * 5) / 5 + ageArray[left];
         }
 
@@ -133,14 +128,7 @@ public class DefaultParameterSet extends ParameterSetAdapter {
         final NormalDistribution normal = new NormalDistribution(maxSpeedExpected, SIGMA_SQUARED, ageArray[16], absoluteMaxSpeed);
         double randSpeed = normal.getNextRandom();
 
-        if (!male) {
-            counterFemale++;
-            cumulativeFemale += randSpeed;
-        } else {
-            counterMale++;
-            cumulativeMale += randSpeed;
-        }
-
+        increaseStatistic(male, randSpeed);
         return randSpeed;
     }
 
@@ -155,4 +143,53 @@ public class DefaultParameterSet extends ParameterSetAdapter {
     public double getSlacknessFromDecisiveness(double pDecisiveness) {
         return 1 - pDecisiveness;
     }
+    
+    /**
+     * Increases the counters of generated individuals and their cumulative speeds.
+     * 
+     * @param male the gender
+     * @param randSpeed the generated speed
+     */
+    protected void increaseStatistic(boolean male, double randSpeed) {
+        if (!male) {
+            counterFemale++;
+            cumulativeFemale += randSpeed;
+        } else {
+            counterMale++;
+            cumulativeMale += randSpeed;
+        }        
+    }
+
+    /**
+     * Returns the cumulative random speed values for the female generated individuals so far.
+     * @return the cumulated speeds of all generated female individuals
+     */
+    public double getCumulativeFemale() {
+        return cumulativeFemale;
+    }
+    
+    /**
+     * Returns the cumulative random speed values for the male generated individuals so far.
+     * @return the cumulated speeds of all generated male individuals
+     */
+    public double getCumulativeMale() {
+        return cumulativeMale;
+    }
+
+    /**
+     * Returns the number of generated individuals with male properties.
+     * @return the number of generated individuals with male properties
+     */
+    public int getCounterFemale() {
+        return counterFemale;
+    }
+
+    /**
+     * Returns the number of generated individuals with female properties.
+     * @return the number of generated individuals with female properties
+     */
+    public int getCounterMale() {
+        return counterMale;
+    }
+
 }
