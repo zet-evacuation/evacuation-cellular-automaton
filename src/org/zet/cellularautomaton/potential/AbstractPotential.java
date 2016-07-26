@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.potential;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,11 +31,11 @@ import org.zet.cellularautomaton.EvacCellInterface;
 public abstract class AbstractPotential implements Potential {
     
     /** The maximum potential value returned for an empty potential. */
-    public static final int INALID = -1;
+    public static final int INVALID = -1;
     /** A map from cells to their potential value. */
     protected Map<EvacCellInterface, Double> potential;
     /** Stores the maximal value of this potential map. */
-    private double maxPotential = INALID;
+    private double maxPotential = INVALID;
 
     /**
      * Create an empty potential.
@@ -44,7 +45,7 @@ public abstract class AbstractPotential implements Potential {
     }
 
     /**
-     * Associates the specified potential with the specified EvacCell in this AbstractPotential. If a EvacCell is
+     * Associates the specified potential with the specified EvacCell in this AbstractPotential. If an EvacCell is
      * specified that exists already in this AbstractPotential the value will be overwritten. Otherwise a new mapping is
      * created.
      *
@@ -64,10 +65,7 @@ public abstract class AbstractPotential implements Potential {
     }
     
     private void recomputeMaxPotential() {
-        maxPotential = INALID;
-        for( Double d : potential.values()) {
-            maxPotential = Math.max(maxPotential, d);
-        }
+      maxPotential = potential.values().stream().mapToDouble(x -> x).max().orElse(INVALID);
     }
 
     @Override
@@ -120,7 +118,8 @@ public abstract class AbstractPotential implements Potential {
      * @return set of mapped cells
      */
     public Set<EvacCellInterface> getMappedCells() {
-        SortedSet<EvacCellInterface> cells = new TreeSet<>();
+        SortedSet<EvacCellInterface> cells = new TreeSet<>(new abComparator());
+        
         potential.keySet().stream().forEach(cell -> cells.add(cell));
         return cells;
     }
@@ -128,5 +127,25 @@ public abstract class AbstractPotential implements Potential {
     @Override
     public boolean hasValidPotential(EvacCellInterface cell) {
         return potential.get(cell) != null;
+    }
+    
+    private static class abComparator implements Comparator<EvacCellInterface> {
+
+        @Override
+        public int compare(EvacCellInterface c, EvacCellInterface o2) {
+            if (c.getX() == o2.getX() && c.getY() == o2.getY()) {
+                if (c.hashCode() == hashCode()) {
+                    return 0;
+                } else if (c.hashCode() < hashCode()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            } else if (c.getX() < o2.getX() || (c.getX() == o2.getX() && c.getY() < o2.getY())) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
     }
 }

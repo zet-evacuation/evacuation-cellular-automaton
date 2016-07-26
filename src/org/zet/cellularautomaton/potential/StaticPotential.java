@@ -116,7 +116,7 @@ public class StaticPotential extends AbstractPotential {
     }
 
     public double getMaxDistance() {
-        double maxDistance = INALID;
+        double maxDistance = INVALID;
         for( Double d : distance.values()) {
             maxDistance = Math.max(maxDistance, d);
         }

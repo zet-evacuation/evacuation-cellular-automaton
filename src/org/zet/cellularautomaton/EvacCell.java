@@ -35,7 +35,7 @@ import java.util.Set;
  * @author Marcel Preuß
  * @author Jan-Philipp Kappmeier
  */
-public abstract class EvacCell extends SquareCell<EvacuationCellState> implements Comparable<EvacCell>, EvacCellInterface {
+public abstract class EvacCell extends SquareCell<EvacuationCellState> implements EvacCellInterface {
 
     /** This character is used for graphic-like ASCII-output. */
     protected char graphicalRepresentation = ' ';
@@ -459,28 +459,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         }
 
         return aClone;
-    }
-
-    // TODO ob das so funktioniert?
-    /**
-     * @param c the cell that is compared to
-     * @return -1, 0 or 1
-     */
-    @Override
-    public int compareTo(EvacCell c) {
-        if (c.x == x && c.y == y) {
-            if (c.hashCode() == hashCode()) {
-                return 0;
-            } else if (c.hashCode() < hashCode()) {
-                return 1;
-            } else {
-                return -1;
-            }
-        } else if (c.x < x || (c.x == x && c.y < y)) {
-            return 1;
-        } else {
-            return -1;
-        }
     }
 
     /**

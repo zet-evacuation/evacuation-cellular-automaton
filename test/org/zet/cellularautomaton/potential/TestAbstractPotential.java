@@ -30,8 +30,8 @@ public class TestAbstractPotential {
     public void initializedPotential() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        assertThat(AbstractPotential.INALID, is(equalTo(-1)));
-        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INALID)));
+        assertThat(AbstractPotential.INVALID, is(equalTo(-1)));
+        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INVALID)));
         assertThat(potential.getMappedCells(), is(empty()));
         assertThat(potential.hasValidPotential(getCell()), is(false));
     }
@@ -97,7 +97,7 @@ public class TestAbstractPotential {
         potential.setPotential(c, 3);
         potential.deleteCell(c);
         assertThat(potential.getMappedCells(), is(empty()));
-        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INALID)));
+        assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INVALID)));
     }
     
     @Test
@@ -113,11 +113,18 @@ public class TestAbstractPotential {
         EvacCell c3 = getCell();
         potential.setPotential(c3, 2);
         assertThat(potential.getMaxPotential(), is(equalTo(4)));
+        
+        // Now set the cell with maximum value to a lower one such that the maximum potential decreases
+        potential.setPotential(c2, 3);
+        assertThat(potential.getMaxPotential(), is(equalTo(3)));
+        
+        // Set the potential of an existing cell to a lower value. should not change the maximum.
         potential.setPotential(c1, 1);
-        assertThat(potential.getMaxPotential(), is(equalTo(4)));
+        assertThat(potential.getMaxPotential(), is(equalTo(3)));
+        
+        // Set the potential of an existing cell to a higher value
         potential.setPotential(c2, 5);
         assertThat(potential.getMaxPotential(), is(equalTo(5)));
-        
     }
     
     @Test
