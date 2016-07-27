@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.zet.cellularautomaton.DoorCell;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zetool.common.algorithm.AbstractAlgorithm;
@@ -38,7 +37,6 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
         staticPotential.setAssociatedExitCells(exitBlock);
         staticPotential.setAttractivity(exitBlock.get(0).getAttractivity());
         List<? extends EvacCellInterface> parentList;
-        Map<EvacCellInterface, SmoothingTuple> childTuple;
 
         for (ExitCell c : exitBlock) {
             staticPotential.setPotential(c, 0);
@@ -47,37 +45,58 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
 
         parentList = exitBlock;
         while (!parentList.isEmpty()) {
-            childTuple = new HashMap<>();
-            for (EvacCellInterface parent : parentList) {
-                for (EvacCellInterface c : getNeighbours(parent)) {
-                    if (!(c instanceof ExitCell) && !(staticPotential.hasValidPotential(c))) {
-                        //check if there already exists a tuple for this cell
-                        if (childTuple.containsKey(c)) {
-                            childTuple.get(c).addParent(staticPotential.getPotentialDouble(parent), calculateDistance(parent, c));
-                            childTuple.get(c).addDistanceParent(staticPotential.getDistance(parent), calculateRealDistance(parent, c));
-                        } else {
-                            childTuple.put(c, new SmoothingTuple(c,
-                                    staticPotential.getPotentialDouble(parent), calculateDistance(parent, c),
-                                    calculateRealDistance(parent, c) + staticPotential.getDistance(parent)
-                                    ));
-
-                        }
-                    } else {
-                        Logger.getGlobal().warning("Reached an exit cell that does not get a potential!");
-                    }
-                }
-            }
-            
-            List<EvacCellInterface> childList = new ArrayList<>();
-            for (SmoothingTuple smoothingTuple : childTuple.values()) {
-                smoothingTuple.applySmoothing();
-                staticPotential.setPotential(smoothingTuple.getCell(), smoothingTuple.getValue());
-                staticPotential.setDistance(smoothingTuple.getCell(), smoothingTuple.getDistanceValue());
-                childList.add(smoothingTuple.getCell());
-            }
-            parentList = childList;
+            Map<EvacCellInterface, SmoothingTuple> childTuple = computeChildTuples(staticPotential, parentList);
+            parentList = computeChildList(staticPotential, childTuple);
         }
         return staticPotential;
+    }
+
+    private Map<EvacCellInterface, SmoothingTuple> computeChildTuples(StaticPotential staticPotential, 
+            List<? extends EvacCellInterface> parentList) {
+        Map<EvacCellInterface, SmoothingTuple> childTuple = new HashMap<>();
+        for (EvacCellInterface parent : parentList) {
+            addToChildTuples(staticPotential, parent, childTuple);
+        }
+        return childTuple;
+    }
+    
+    private void addToChildTuples(StaticPotential staticPotential, EvacCellInterface parent,
+            Map<EvacCellInterface, SmoothingTuple> childTuple) {
+        for (EvacCellInterface c : getNeighbours(parent)) {
+            if (!(c instanceof ExitCell) && !(staticPotential.hasValidPotential(c))) {
+                //check if there already exists a tuple for this cell
+                if (!childTuple.containsKey(c)) {
+                    childTuple.put(c, createTuple(staticPotential, parent, c));
+                } else {                    
+                    updateTuple(childTuple.get(c), staticPotential, parent, c);
+                }
+            } else {
+                Logger.getGlobal().warning("Reached an exit cell that does not get a potential!");
+            }
+        }
+    }
+    
+    private SmoothingTuple createTuple(StaticPotential staticPotential, EvacCellInterface parent, EvacCellInterface c) {
+        return new SmoothingTuple(c, staticPotential.getPotentialDouble(parent), calculateDistance(parent, c),
+                calculateRealDistance(parent, c) + staticPotential.getDistance(parent));
+        
+    }
+    
+    private void updateTuple(SmoothingTuple s, StaticPotential staticPotential, EvacCellInterface parent, EvacCellInterface c) {
+        s.addParent(staticPotential.getPotentialDouble(parent), calculateDistance(parent, c));
+        s.addDistanceParent(staticPotential.getDistance(parent), calculateRealDistance(parent, c));
+    }
+    
+    private List<EvacCellInterface> computeChildList(StaticPotential staticPotential,
+            Map<EvacCellInterface, SmoothingTuple> childTuple) {
+        List<EvacCellInterface> childList = new ArrayList<>();
+        for (SmoothingTuple smoothingTuple : childTuple.values()) {
+            smoothingTuple.applySmoothing();
+            staticPotential.setPotential(smoothingTuple.getCell(), smoothingTuple.getValue());
+            staticPotential.setDistance(smoothingTuple.getCell(), smoothingTuple.getDistanceValue());
+            childList.add(smoothingTuple.getCell());
+        }
+        return childList;
     }
 
     /**
