@@ -6,15 +6,18 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
+import static org.zet.cellularautomaton.potential.TestAbstractPotential.getCell;
+import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
-import static org.zet.cellularautomaton.potential.TestAbstractPotential.getCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class TestDynamicPotential {
+    private final Mockery context = new Mockery();
 
     @Test
     public void testSetPlotential() {
@@ -40,5 +43,48 @@ public class TestDynamicPotential {
         assertThat(potential.getMaxPotential(), is(equalTo(0)));
     }
     
+    @Test
+    public void increaseDynamicPotential() {
+        DynamicPotential potential = new DynamicPotential();
+        EvacCellInterface cell = context.mock(EvacCellInterface.class);
 
+        potential.increase(cell);
+        
+        assertThat(potential.getPotential(cell), is(equalTo(1)));
+        
+        potential.increase(cell);
+        
+        assertThat(potential.getPotential(cell), is(equalTo(2)));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void decreaseFailsForNonExisting() {
+        DynamicPotential potential = new DynamicPotential();
+        
+        EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        potential.decrease(cell);
+    }
+    
+    @Test
+    public void decreasePotential() {
+        DynamicPotential potential = new DynamicPotential();
+        
+        EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        potential.setPotential(cell, 3);
+        potential.decrease(cell);
+        
+        assertThat(potential.getPotential(cell), is(equalTo(2)));
+    }
+    
+    @Test
+    public void decreasePotentialVanishes() {
+        DynamicPotential potential = new DynamicPotential();
+        
+        EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        potential.setPotential(cell, 1);
+        potential.decrease(cell);
+        
+        assertThat(potential.getPotential(cell), is(equalTo(0)));
+        assertThat(potential.hasValidPotential(cell), is(false));
+    }
 }

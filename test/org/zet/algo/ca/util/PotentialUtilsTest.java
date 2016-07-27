@@ -13,9 +13,7 @@ import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
@@ -72,16 +70,6 @@ public class PotentialUtilsTest {
         assertThat(minimum.getPotential(cell3), is(equalTo(1)));
     }
 
-    static EvacCell getCell() {
-        return new EvacCell(new EvacuationCellState(null), 1, 0, 0) {
-
-            @Override
-            public EvacCell clone() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };        
-    }
-    
     @Test
     public void negativeIsIgnored() {
         StaticPotential sp1 = new StaticPotential();
