@@ -110,7 +110,7 @@ public abstract class AbstractPotential implements Potential {
     }
 
     /**
-     * Returns a set of all cell which are mapped by this potential.
+     * Returns a set of all cells which are mapped by this potential.
      * 
      * It is secured that the elements in the set have the same ordering using a {@code SortedSet}. This is needed due
      * to the fact that the keys can have different order even if the values are inserted using default hashcodes.
@@ -118,7 +118,7 @@ public abstract class AbstractPotential implements Potential {
      * @return set of mapped cells
      */
     public Set<EvacCellInterface> getMappedCells() {
-        SortedSet<EvacCellInterface> cells = new TreeSet<>(new abComparator());
+        SortedSet<EvacCellInterface> cells = new TreeSet<>(new EvacCellComparator());
         
         potential.keySet().stream().forEach(cell -> cells.add(cell));
         return cells;
@@ -129,22 +129,18 @@ public abstract class AbstractPotential implements Potential {
         return potential.get(cell) != null;
     }
     
-    private static class abComparator implements Comparator<EvacCellInterface> {
+    private static class EvacCellComparator implements Comparator<EvacCellInterface> {
 
         @Override
-        public int compare(EvacCellInterface c, EvacCellInterface o2) {
-            if (c.getX() == o2.getX() && c.getY() == o2.getY()) {
-                if (c.hashCode() == hashCode()) {
-                    return 0;
-                } else if (c.hashCode() < hashCode()) {
-                    return 1;
+        public int compare(EvacCellInterface c, EvacCellInterface o2) {            
+            if (c.getX() == o2.getX()) {
+                if (c.getY() == o2.getY()) {
+                    return o2.hashCode() - c.hashCode();
                 } else {
-                    return -1;
+                    return o2.getY() - c.getY();
                 }
-            } else if (c.getX() < o2.getX() || (c.getX() == o2.getX() && c.getY() < o2.getY())) {
-                return 1;
             } else {
-                return -1;
+                return o2.getX() - c.getX();
             }
         }
     }
