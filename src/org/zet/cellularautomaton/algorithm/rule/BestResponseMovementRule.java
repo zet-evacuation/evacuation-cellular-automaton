@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.List;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
@@ -69,9 +68,9 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    public void move(EvacCellInterface from, EvacCellInterface targetCell) {
+    public void move(EvacCellInterface from, EvacCellInterface currentTargetCell) {
+        EvacCellInterface targetCell = currentTargetCell;
         Individual ind = from.getState().getIndividual();
-        //public void move( EvacCell targetCell ) {
         if (es.propertyFor(ind).isSafe() && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell))) // Rauslaufen aus sicheren Bereichen ist nicht erlaubt
         {
             targetCell = from;
@@ -127,14 +126,14 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             if (es.propertyFor(i).getCell().getX() + es.propertyFor(i).getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() && es.propertyFor(i).getCell().getY() + es.propertyFor(i).getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
                 System.err.println("SelfCell reached or Stockwerkwechsel!");
                 dist = 0.4;
-            } else if (es.propertyFor(i).getCell().getX() + es.propertyFor(i).getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() | es.propertyFor(i).getCell().getY() + es.propertyFor(i).getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
+            } else if (es.propertyFor(i).getCell().getX() + es.propertyFor(i).getCell().getRoom().getXOffset() == targetCell.getX() + targetCell.getRoom().getXOffset() || es.propertyFor(i).getCell().getY() + es.propertyFor(i).getCell().getRoom().getYOffset() == targetCell.getY() + targetCell.getRoom().getYOffset()) {
                 dist = 0.4;
             } else {
                 dist = sqrt2;
             }
         } else if (es.propertyFor(i).getCell().getX() == targetCell.getX() && es.propertyFor(i).getCell().getY() == targetCell.getY()) {
             dist = 0;
-        } else if (es.propertyFor(i).getCell().getX() == targetCell.getX() | es.propertyFor(i).getCell().getY() == targetCell.getY()) {
+        } else if (es.propertyFor(i).getCell().getX() == targetCell.getX() || es.propertyFor(i).getCell().getY() == targetCell.getY()) {
             dist = 0.4;
         } else {
             dist = sqrt2;
@@ -147,7 +146,6 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(i).getRelativeSpeed()) >= 0.0001) {
             double speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(i).getRelativeSpeed());
             speed *= targetCell.getSpeedFactor() * stairSpeedFactor;
-            //System.out.println( "Speed ist " + speed );
             // zu diesem zeitpunkt ist die StepEndtime aktualisiert, falls ein individual vorher geslackt hat
             // oder sich nicht bewegen konnte.
             es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
@@ -176,7 +174,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             return cell;
         }
 
-        double p[] = new double[targets.size()];
+        double[] p = new double[targets.size()];
 
         for (int i = 0; i < targets.size(); i++) {
             p[i] = Math.exp(c.effectivePotential(ind, targets.get(i), es::getDynamicPotential));

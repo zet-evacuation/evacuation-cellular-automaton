@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.potential;
 
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.results.Action;
@@ -65,7 +64,7 @@ public class DynamicPotential extends AbstractPotential {
      * @return potential of the specified cell or -1 if the cell is not mapped by this potential
      */
     @Override
-    public int getPotential(EvacCellInterface cell) throws IllegalArgumentException {
+    public int getPotential(EvacCellInterface cell) {
         return hasValidPotential(cell) ? super.getPotential(cell) : 0;
     }
 
@@ -145,17 +144,16 @@ public class DynamicPotential extends AbstractPotential {
      *
      * @param cell A cell which potential you want to decrease.
      */
-    public void decrease(EvacCellInterface cell) throws IllegalArgumentException {
-        DynamicPotential dynPot = this;
-        if (!(dynPot.hasValidPotential(cell))) {
+    public void decrease(EvacCellInterface cell) {
+        if (!hasValidPotential(cell)) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.InsertCellPreviouslyException"));
         }
 
-        if (dynPot.getPotential(cell) == 1) {
-            dynPot.deleteCell(cell);
+        if (getPotential(cell) == 1) {
+            deleteCell(cell);
         } else {
-            int newPotential = dynPot.getPotential(cell) - 1;
-            dynPot.setPotential(cell, newPotential);
+            int newPotential = getPotential(cell) - 1;
+            setPotential(cell, newPotential);
         }
     }
 }
