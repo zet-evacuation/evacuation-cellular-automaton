@@ -30,9 +30,9 @@ public class CellMatrixFormatter<E extends Cell<?>> {
     
     public CellMatrixFormatter(CellMatrixFormatterStyle style) {
         this.style = style;
-        horizontalUpper = getThree(style.getBound(Bounds.Upper));
+        horizontalUpper = getThree(style.getBound(Bounds.UPPER));
         horizontal = getThree(style.getGrid(Orientation.HORIZONTAL));
-        horizontalLower = getThree(style.getBound(Bounds.Bottom));
+        horizontalLower = getThree(style.getBound(Bounds.LOWER));
     }
     
     private String getThree(char c) {
@@ -88,13 +88,13 @@ public class CellMatrixFormatter<E extends Cell<?>> {
     }
     
     private void appendContentRow(StringBuilder graphic, int y, int width, CellMatrix<E> matrix) {
-        graphic.append(style.getBound(Bounds.Left));
+        graphic.append(style.getBound(Bounds.LEFT));
         for (int x = 0; x < width-1; x++) {
             graphic.append(appendCellContent(matrix, x, y));
             graphic.append(style.getGrid(Orientation.VERTICAL));
         }
         graphic.append(appendCellContent(matrix, width-1, y));
-        graphic.append(style.getBound(Bounds.Right)).append("\n");
+        graphic.append(style.getBound(Bounds.RIGHT)).append("\n");
     }
     
     private String appendCellContent(CellMatrix<E> matrix, int x, int y) {

@@ -30,7 +30,7 @@ public interface CellMatrixFormatterStyle {
      * @return 
      */
     default char getBound(Bounds b) {
-        return b == Bounds.Bottom || b == Bounds.Upper ? getGrid(Orientation.HORIZONTAL) : getGrid(Orientation.VERTICAL);
+        return b == Bounds.LOWER || b == Bounds.UPPER ? getGrid(Orientation.HORIZONTAL) : getGrid(Orientation.VERTICAL);
     }
     
     char getGrid(Orientation c);
