@@ -35,19 +35,20 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 public class TestSimpleMovementRule2 {
 
     private static class FakeSimpleMovementRule2 extends SimpleMovementRule2 {
+
         private final EvacCell targetCell;
         int counter = 0;
 
         public FakeSimpleMovementRule2(EvacCell targetCell) {
             this.targetCell = targetCell;
         }
-        
+
         @Override
         public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
             counter++;
             return targetCell;
         }
-        
+
         @Override
         protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
             return Collections.emptyList();
@@ -71,7 +72,7 @@ public class TestSimpleMovementRule2 {
     }
 
     @Test
-    public void noActionIfSameCell() {
+    public void noMoveIfNotAlarmed() {
         Mockery context = new Mockery();
 
         Room room = context.mock(Room.class);
@@ -83,7 +84,7 @@ public class TestSimpleMovementRule2 {
             }
         });
         EvacCell testCell = new RoomCell(1, 0, 0, room);
-        
+
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
         testCell.getState().setIndividual(i);
         FakeSimpleMovementRule2 rule = new FakeSimpleMovementRule2(testCell) {
@@ -93,13 +94,13 @@ public class TestSimpleMovementRule2 {
                 throw new AssertionError("Move should not be called!");
             }
         };
-        
+
         EvacuationState es = context.mock(EvacuationState.class);
         EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
         IndividualProperty ip = new IndividualProperty(i);
         ip.setCell(testCell);
         ip.setStepEndTime(0);
-        
+
         context.checking(new Expectations() {
             {
                 allowing(es).propertyFor(i);
@@ -112,23 +113,87 @@ public class TestSimpleMovementRule2 {
                 allowing(es).getTimeStep();
                 will(returnValue(4));
                 allowing(room).existsCellAt(with(any(Integer.class)), with(any(Integer.class)));
-                
                 will(returnValue(false));
             }
         });
         assertThat(ip.isAlarmed(), is(false));
-        
+
         rule.setEvacuationState(es);
         rule.setEvacuationStateController(ec);
 
-        
         rule.execute(testCell);
         assertThat(rule.counter, is(equalTo(0)));
-        
+
+        // Assert that one time step is used for not doing anything
         assertThat(ip.getStepStartTime(), is(closeTo(0.0, 0.0001)));
         assertThat(ip.getStepEndTime(), is(closeTo(1.0, 0.0001)));
     }
 
+    /**
+     * Asserts that an individual is not moving when the last move is not yet finished
+     */
+    @Test
+    public void noMoveWhenLastMoveOngoing() {
+        Mockery context = new Mockery();
+
+        Room room = context.mock(Room.class);
+
+        context.checking(new Expectations() {
+            {
+                allowing(room).getID();
+                will(returnValue(1));
+            }
+        });
+        EvacCell testCell = new RoomCell(1, 0, 0, room);
+
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        testCell.getState().setIndividual(i);
+        FakeSimpleMovementRule2 rule = new FakeSimpleMovementRule2(testCell) {
+
+            @Override
+            public void move(EvacCellInterface from, EvacCellInterface targetCell) {
+                throw new AssertionError("Move should not be called!");
+            }
+        };
+
+        EvacuationState es = context.mock(EvacuationState.class);
+        EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
+        IndividualProperty ip = new IndividualProperty(i);
+        ip.setCell(testCell);
+        final double stepStartTime = 12.2;
+        final double stepEndTime = 13.8;
+        ip.setStepEndTime(stepEndTime);
+        ip.setStepStartTime(stepStartTime);
+        ip.setAlarmed();
+
+        context.checking(new Expectations() {
+            {
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
+                never(ec).move(with(any(EvacCell.class)), with(any(EvacCell.class)));
+                allowing(room).getID();
+                will(returnValue(1));
+                allowing(es).getStatisticWriter();
+                will(returnValue(new CAStatisticWriter(es)));
+                allowing(es).getTimeStep();
+                will(returnValue(13));
+                
+                allowing(room).existsCellAt(with(any(Integer.class)), with(any(Integer.class)));
+                will(returnValue(false));
+            }
+        });
+
+        rule.setEvacuationState(es);
+        rule.setEvacuationStateController(ec);
+
+        rule.execute(testCell);
+        assertThat(rule.counter, is(equalTo(0)));
+
+        // Assert that step start and end times have not been modified
+        assertThat(Double.doubleToRawLongBits(stepStartTime), is(equalTo(Double.doubleToRawLongBits(ip.getStepStartTime()))));
+        assertThat(Double.doubleToRawLongBits(ip.getStepEndTime()), is(equalTo(Double.doubleToRawLongBits(stepEndTime))));
+    }
+    
     @Test
     public void moveCallsCellularAutomaton() {
         Mockery context = new Mockery();
@@ -165,7 +230,7 @@ public class TestSimpleMovementRule2 {
         SimpleMovementRule rule = new SimpleMovementRule();
         EvacCellInterface currentCell = new RoomCell(0, 0);
         Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        currentCell.getState().setIndividual(i);                
+        currentCell.getState().setIndividual(i);
         EvacCell targetCell = new RoomCell(0, 0);
         List<EvacCellInterface> targets = Collections.singletonList(targetCell);
 
