@@ -402,7 +402,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
      * @return the neighbour, if exists. null else.
      */
     @Override
-    public EvacCell getNeighbor(Direction8 dir) {
+    public EvacCellInterface getNeighbor(Direction8 dir) {
         int cellx = getX() + dir.xOffset();
         int celly = getY() + dir.yOffset();
         if (getRoom().existsCellAt(cellx, celly)) {

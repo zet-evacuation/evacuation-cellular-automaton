@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zetool.common.util.Direction8;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.Individual;
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Ignore;
-import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
  *
@@ -13,7 +13,7 @@ import org.zet.cellularautomaton.EvacCell;
 @Ignore
 public class RuleTestMatchers {
 
-    public static Matcher<EvacuationRule> executeableOn(final EvacCell cell) {
+    public static Matcher<EvacuationRule> executeableOn(final EvacCellInterface cell) {
         return new BaseMatcher<EvacuationRule>() {
             @Override
             public boolean matches(final Object item) {

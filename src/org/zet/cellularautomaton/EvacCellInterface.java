@@ -41,7 +41,7 @@ public interface EvacCellInterface extends Cell<EvacuationCellState> {
      * @param dir the direction.
      * @return the neighbour, if exists. null else.
      */
-    EvacCell getNeighbor(Direction8 dir);
+    EvacCellInterface getNeighbor(Direction8 dir);
 
     /**
      * Returns all existing direct-neighbour-cells that are reachable of this cell

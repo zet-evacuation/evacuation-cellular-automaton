@@ -21,12 +21,11 @@ import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 import org.zet.cellularautomaton.DoorCell;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 
 /**
@@ -122,16 +121,14 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
             current,
             current.getCounterClockwise(),
             current.getCounterClockwise().getCounterClockwise()};
-        GeneralRandom rnd = (RandomUtils.getInstance()).getRandomGenerator();
-        int randomDirection = rnd.nextInt(5);
-        Direction8 ret = possible[randomDirection];
+        Direction8 ret = current;
         int minDistance = Integer.MAX_VALUE;
         EvacCellInterface cell = es.propertyFor(individual).getCell();
         for (Direction8 dir : possible) {
-            EvacCell target = cell.getNeighbor(dir);
+            EvacCellInterface target = cell.getNeighbor(dir);
             if (target != null && !target.isOccupied()) {
-                StaticPotential staticPotential = es.propertyFor(individual).getStaticPotential();
-                int cellDistance = staticPotential.getPotential(cell);
+                Potential staticPotential = es.propertyFor(individual).getStaticPotential();
+                int cellDistance = staticPotential.getPotential(target);
                 if (cellDistance < minDistance) {
                     minDistance = cellDistance;
                     ret = dir;
@@ -139,10 +136,12 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
             }
         }
 
-        if (ret != current) {
+        if (minDistance != Integer.MAX_VALUE) {
             return ret;
         }
 
+        GeneralRandom rnd = (RandomUtils.getInstance()).getRandomGenerator();
+        int randomDirection = rnd.nextInt(5);
         return possible[randomDirection];
     }
 
