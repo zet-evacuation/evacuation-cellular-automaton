@@ -24,7 +24,7 @@ import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.StairCell;
+import org.zet.cellularautomaton.Stairs;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 
@@ -154,41 +154,37 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * updated.
      */
     private void initializeMove(EvacCellInterface from, EvacCellInterface targetCell) {
-        Individual individual = from.getState().getIndividual();
+        //Individual individual = from.getState().getIndividual();
         if (individual == null) {
             throw new IllegalStateException("No Individual on from cell " + from);
         }
+
+        if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed()) < 0.0001) { // if individual moves, update times
+            throw new IllegalStateException("Individuum has no speed.");
+        }
+
         ec.increaseDynamicPotential(targetCell);
 
         if (from instanceof DoorCell && targetCell instanceof DoorCell) {
-            if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
-                speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed());
-                speed *= targetCell.getSpeedFactor() * 1;
-                es.propertyFor(individual).setStepStartTime(Math.max(es.propertyFor(individual).getCell().getOccupiedUntil(), es.propertyFor(individual).getStepEndTime()));
-                setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
-                es.propertyFor(individual).setDirection(es.propertyFor(individual).getDirection());
-            } else {
-                throw new IllegalStateException("Individuum has no speed.");
-            }
+            speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed());
+            speed *= targetCell.getSpeedFactor() * 1;
+            es.propertyFor(individual).setStepStartTime(Math.max(es.propertyFor(individual).getCell().getOccupiedUntil(), es.propertyFor(individual).getStepEndTime()));
+            setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
+            es.propertyFor(individual).setDirection(es.propertyFor(individual).getDirection());
 
         } else {
             Direction8 direction = from.getRelative(targetCell);
 
-            double stairSpeedFactor = targetCell instanceof StairCell ? ((StairCell) targetCell).getStairSpeedFactor(direction) * 1.1 : 1;
+            double stairSpeedFactor = targetCell instanceof Stairs ? ((Stairs) targetCell).getStairSpeedFactor(direction) * 1.1 : 1;
             dist = direction.distance() * 0.4; // calculate distance
             double add = getSwayDelay(individual, direction); // add a delay if the person is changing direction
 
-            if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed()) >= 0.0001) { // if individual moves, update times
-                speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed());
-                double factor = targetCell.getSpeedFactor() * stairSpeedFactor;
-                //System.out.println( "Speed factor: " + factor + " stairspeed: " + stairSpeedFactor );
-                speed *= factor;
-                es.propertyFor(individual).setStepStartTime(Math.max(from.getOccupiedUntil(), es.propertyFor(individual).getStepEndTime()));
-                setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + add * es.getCellularAutomaton().getStepsPerSecond());
-                es.propertyFor(individual).setDirection(direction);
-            } else {
-                throw new IllegalStateException("Individuum has no speed.");
-            }
+            speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(individual).getRelativeSpeed());
+            double factor = targetCell.getSpeedFactor() * stairSpeedFactor;
+            speed *= factor;
+            es.propertyFor(individual).setStepStartTime(Math.max(from.getOccupiedUntil(), es.propertyFor(individual).getStepEndTime()));
+            setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + add * es.getCellularAutomaton().getStepsPerSecond());
+            es.propertyFor(individual).setDirection(direction);
         }
     }
 
@@ -196,11 +192,10 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
      * Performs a move after the parameters ({@code speed} and {@code dist}) have alredy been set by {@link #initializeMove(ds.ca.evac.Individual, ds.ca.evac.EvacCell)
      * }
      *
+     * @param from
      * @param targetCell
      */
     protected void performMove(EvacCellInterface from, EvacCellInterface targetCell) {
-        Individual individual = from.getState().getIndividual();
-
         from.setOccupiedUntil(es.propertyFor(individual).getStepEndTime());
         ec.move(from, targetCell);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());

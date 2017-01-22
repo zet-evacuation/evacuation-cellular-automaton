@@ -26,7 +26,7 @@ import org.zetool.common.util.Level;
  * @author Marcel Preuß
  *
  */
-public class StairCell extends EvacCell implements Cloneable {
+public class StairCell extends EvacCell implements Cloneable, Stairs {
 
     /** Constant defining the standard Speed-Factor of a Stair-EvacCell, which is usually &lt; 1. */
     public static final double STANDARD_STAIRCELL_UP_SPEEDFACTOR = 0.5d;
@@ -135,6 +135,7 @@ public class StairCell extends EvacCell implements Cloneable {
      * @param direction
      * @return
      */
+    @Override
     public double getStairSpeedFactor(Direction8 direction) {
         double stairSpeedFactor = 1;
         Level lvl = getLevel(direction);

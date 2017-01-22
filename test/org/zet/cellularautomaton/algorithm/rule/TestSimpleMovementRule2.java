@@ -26,13 +26,16 @@ import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.junit.Before;
 import org.junit.Test;
+import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
+import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.Stairs;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -48,6 +51,9 @@ import org.zetool.rndutils.generators.GeneralRandom;
  * @author Jan-Philipp Kappmeier
  */
 public class TestSimpleMovementRule2 {
+
+    private static interface StairCellMock extends EvacCellInterface, Stairs {
+    }
 
     private static class FakeSimpleMovementRule2 extends SimpleMovementRule2 {
 
@@ -149,6 +155,14 @@ public class TestSimpleMovementRule2 {
         // Executeable when filled
         assertThat(rule, is(executeableOn(testCell)));
     }
+    
+    @Test
+    public void notExecutableOnExitCells() {
+        SimpleMovementRule2 rule = new SimpleMovementRule2();
+        
+        ExitCell exitCell = new ExitCell(0, 0);
+        assertThat(rule, is(not(executeableOn(exitCell))));
+    }
 
     @Test
     public void noMoveIfNotAlarmed() {
@@ -224,6 +238,104 @@ public class TestSimpleMovementRule2 {
     @Test
     public void normalMove() {
         EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "normalMoveTarget");
+        assertMovePaarameters(targetCell, 0.7, 3.5, 2.3, Direction8.Top, Direction8.Right, 90, 1.0);
+    }
+
+    @Test
+    public void normalMoveDiagonal() {
+        EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "normalMoveTargetDiagonal");
+        assertMovePaarameters(targetCell, 0.7, 3.5, 2.3, Direction8.Top, Direction8.TopRight, 45, 1.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void individualNeedsPositiveSpeed() {
+        EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "failNoSpeedTarget");
+        double arbitraryValue = 1.0;
+        assertMovePaarameters(targetCell, arbitraryValue, 0.0, arbitraryValue, Direction8.Top, Direction8.Right, 90, 1.0);
+    }
+
+    @Test
+    public void moveOnStairs() {
+        StairCellMock targetCell = context.mock(StairCellMock.class);
+        double stairSpeedFactor = 4.0;
+        context.checking(new Expectations() {
+            {
+                allowing(targetCell).getStairSpeedFactor(Direction8.Right);
+                will(returnValue(stairSpeedFactor));
+            }
+        });
+        assertMovePaarameters(targetCell, 0.7, 3.5, 2.3, Direction8.Top, Direction8.Right, 90, stairSpeedFactor * 1.1);
+    }
+
+    /**
+     * Moving on cells does not involve factors and no distance.
+     */
+    @Test
+    public void moveDoors() {
+        DoorCell doorStart = new DoorCell(1, 2);
+        // Directly above
+        DoorCell doorTarget = new DoorCell(1, 3);
+        double speedFactor = 0.2;
+        doorTarget.setSpeedFactor(speedFactor);
+        
+        FakeSimpleMovementRule2 rule = new FakeSimpleMovementRule2(doorTarget, Direction8.Top) {
+
+            @Override
+            protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
+                if (onlyFreeNeighbours != true) {
+                    throw new AssertionError("Only free neighbours are available");
+                }
+                return Collections.singletonList(doorTarget);
+            }
+        };
+        ip.setCell(doorStart);
+        ip.setAlarmed();
+        final double stepEndTime = TIME_STEP - 0.8;
+        ip.setStepEndTime(stepEndTime);
+        doorStart.getState().setIndividual(i);
+
+        Direction8 startDirection = Direction8.Top;
+        Direction8 newDirection = Direction8.Top;
+        double arbitraryRelativeSpeed = 0.3;
+        double arbitraryButPositiveAbsoluteSpeed = 3.0;
+
+        context.checking(new Expectations() {
+            {
+                // Assert that the move is actually called within the controller
+                oneOf(ec).move(with(doorStart), with(doorTarget));
+
+                // Assert that the dynamic potential for target Cell is increased
+                oneOf(ec).increaseDynamicPotential(with(doorTarget));
+
+                allowing(ca).absoluteSpeed(arbitraryRelativeSpeed);
+                will(returnValue(arbitraryButPositiveAbsoluteSpeed));
+
+                allowing(testCell).getOccupiedUntil();
+                will(returnValue(3.0));
+
+                allowing(testCell).setOccupiedUntil(with(any(Double.class)));
+            }
+        });
+
+        ip.setDirection(startDirection);
+        ip.setRelativeSpeed(arbitraryRelativeSpeed);
+
+        rule.setEvacuationState(es);
+        rule.setEvacuationStateController(ec);
+        
+        rule.execute(doorStart);
+
+        // The actual distance is 0 for door cells in the current implementation (because cells are in different rooms)
+        // Additional factor of infinity leads to the desired result of time to move = 0
+        assertSMoveResults(rule, arbitraryButPositiveAbsoluteSpeed, speedFactor, newDirection, 0, Double.POSITIVE_INFINITY, stepEndTime);
+    }
+
+    /**
+     * Checks that properties of individuals are set correctly during move depending on some
+     * parameters.
+     */
+    private void assertMovePaarameters(EvacCellInterface targetCell, double relativeSpeed, double absoluteSpeed,
+            double speedFactor, Direction8 startDirection, Direction8 newDirection, int degree, double additionalSpeedFactor) {
 
         FakeSimpleMovementRule2 rule = new FakeSimpleMovementRule2(targetCell, Direction8.DownLeft) {
 
@@ -234,31 +346,27 @@ public class TestSimpleMovementRule2 {
                 }
                 return Collections.singletonList(targetCell);
             }
-
         };
-        double normalSpeed = 3.5;
-        double individualSpeed = 0.7;
+
         ip.setAlarmed();
 
         final double stepEndTime = TIME_STEP - 0.8;
 
         ip.setStepEndTime(stepEndTime);
-        double speedFactor = 2.3;
 
         context.checking(new Expectations() {
             {
+                // Assert that the move is actually called within the controller
                 oneOf(ec).move(with(testCell), with(targetCell));
 
+                // Assert that the dynamic potential for target Cell is increased
                 oneOf(ec).increaseDynamicPotential(with(targetCell));
 
-                allowing(room).existsCellAt(with(any(Integer.class)), with(any(Integer.class)));
-                will(returnValue(false));
-
                 allowing(testCell).getRelative(targetCell);
-                will(returnValue(Direction8.Right));
+                will(returnValue(newDirection));
 
-                allowing(ca).absoluteSpeed(individualSpeed);
-                will(returnValue(normalSpeed));
+                allowing(ca).absoluteSpeed(relativeSpeed);
+                will(returnValue(absoluteSpeed));
 
                 allowing(targetCell).getSpeedFactor();
                 will(returnValue(speedFactor));
@@ -270,23 +378,52 @@ public class TestSimpleMovementRule2 {
                 allowing(testCell).setOccupiedUntil(with(any(Double.class)));
             }
         });
-        ip.setDirection(Direction8.Top);
-        ip.setRelativeSpeed(individualSpeed);
+        ip.setDirection(startDirection);
+        ip.setRelativeSpeed(relativeSpeed);
 
         rule.setEvacuationState(es);
         rule.setEvacuationStateController(ec);
 
         rule.execute(testCell);
-        assertThat(rule.counter, is(equalTo(1)));
+
+        assertSMoveResults(rule, absoluteSpeed, speedFactor, newDirection, degree, additionalSpeedFactor, stepEndTime);
+    }
+    
+    private void assertSMoveResults(FakeSimpleMovementRule2 rule, double absoluteSpeed, double speedFactor,
+            Direction8 newDirection, int degree, double additionalSpeedFactor, double stepEndTime) {
+        double stepLength = degree == 0 || degree == 90 ? 0.4 : Math.sqrt(0.4 * 0.4 + 0.4 * 0.4);
 
         // Is that correct?
         assertThat(rule.isMoveCompleted(), is(false));
 
-        assertThat(ip.getDirection(), is(equalTo(Direction8.Right)));
+        // Assertions
+        // Move called
+        assertThat(rule.counter, is(equalTo(1)));
 
-        // expected end 22.69689440993789
-        double expectedStepEndTime = stepEndTime + (0.4 /* dist */ / (normalSpeed * speedFactor)) * STEPS_PER_SECOND + 1 * STEPS_PER_SECOND /* add for sway */;
+        // New view direction
+        assertThat(ip.getDirection(), is(equalTo(newDirection)));
+
+        // Step start and end time
+        final double sway = swayFromDegree(degree);
+        final double timeToWalk = (stepLength /* dist */ / (absoluteSpeed * speedFactor * additionalSpeedFactor));
+        double expectedStepEndTime = stepEndTime + timeToWalk * STEPS_PER_SECOND + sway * STEPS_PER_SECOND;
         assertThat(ip.getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
+//            setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
+        
+    }
+
+    private double swayFromDegree(int degree) {
+        switch (degree) {
+            case 0:
+                return 0;
+            case 45:
+                return 0.5;
+            case 90:
+                return 1;
+            case 135:
+                return 2;
+        }
+        throw new AssertionError();
     }
 
     @Test
