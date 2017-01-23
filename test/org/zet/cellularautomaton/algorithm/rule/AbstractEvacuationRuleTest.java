@@ -25,7 +25,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestAbstractEvacuationRule {
+public class AbstractEvacuationRuleTest {
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();

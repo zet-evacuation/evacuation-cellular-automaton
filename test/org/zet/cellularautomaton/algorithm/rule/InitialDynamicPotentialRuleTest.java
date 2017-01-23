@@ -6,7 +6,7 @@ import org.junit.Test;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialDynamicPotentialRule {
+public class InitialDynamicPotentialRuleTest {
     @Test
     public void test() {
         

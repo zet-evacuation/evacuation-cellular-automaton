@@ -31,7 +31,7 @@ import org.zetool.common.util.Direction8;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestAbstractMovementRule {
+public class AbstractMovementRuleTest {
     private final static Direction8 DEFAULT_DIRECTION = Direction8.Top;
     private final static IndividualBuilder builder = new IndividualBuilder();
     private Mockery context = new Mockery();

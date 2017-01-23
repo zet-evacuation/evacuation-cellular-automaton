@@ -28,7 +28,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialConcretePotentialRule {
+public class InitialConcretePotentialRuleTest {
 
     private final Mockery context = new Mockery();
     InitialConcretePotentialRule rule;

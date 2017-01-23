@@ -21,7 +21,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestAbstractReactionRule {
+public class AbstractReactionRuleTest {
     @Test
     public void executeableOnlyIfNotAlarmed() {
         AbstractReactionRule rule = new AbstractReactionRule() {

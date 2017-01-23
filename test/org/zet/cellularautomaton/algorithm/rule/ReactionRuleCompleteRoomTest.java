@@ -21,7 +21,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestReactionRuleCompleteRoom {
+public class ReactionRuleCompleteRoomTest {
     private final Mockery context = new Mockery();
     private EvacuationState es;
     private final static IndividualBuilder builder = new IndividualBuilder();

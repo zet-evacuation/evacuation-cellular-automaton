@@ -22,7 +22,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestReactionRuleAllPersonsInRoom {
+public class ReactionRuleAllPersonsInRoomTest {
     private final Mockery context = new Mockery();
     EvacuationState es;
     private final static IndividualBuilder builder = new IndividualBuilder();

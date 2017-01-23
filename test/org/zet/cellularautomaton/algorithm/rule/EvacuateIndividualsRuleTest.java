@@ -24,7 +24,7 @@ import sun.security.ec.ECKeyFactory;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestEvacuateIndividualsRule {
+public class EvacuateIndividualsRuleTest {
 
     private final Mockery context = new Mockery();
 

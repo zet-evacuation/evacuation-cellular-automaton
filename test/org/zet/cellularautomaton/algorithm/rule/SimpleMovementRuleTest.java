@@ -27,7 +27,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestSimpleMovementRule {
+public class SimpleMovementRuleTest {
 
     private static class FakeSimpleMovementRule extends SimpleMovementRule {
         private final EvacCell targetCell;

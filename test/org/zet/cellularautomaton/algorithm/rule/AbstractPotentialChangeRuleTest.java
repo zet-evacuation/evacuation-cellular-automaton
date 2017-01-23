@@ -22,7 +22,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestAbstractPotentialChangeRule {
+public class AbstractPotentialChangeRuleTest {
 
     private final static IndividualBuilder builder = new IndividualBuilder();
     private final Mockery context = new Mockery();

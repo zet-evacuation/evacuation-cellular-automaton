@@ -19,7 +19,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestReactionRuleOnePerson {
+public class ReactionRuleOnePersonTest {
     private final Mockery context = new Mockery();
     private EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
     private EvacuationState es;

@@ -2,10 +2,10 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
-import static org.junit.Assert.assertThat;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import org.jmock.Expectations;
@@ -29,25 +29,25 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialPotentialShortestPathRule {
+public class InitialPotentialFamiliarityRuleTest {
     private final Mockery context = new Mockery();
-    private InitialPotentialShortestPathRule rule;
+    private InitialPotentialFamiliarityRule rule;
     private EvacCell cell;
     private Individual individual;
     private IndividualProperty ip;
+    private EvacuationState es;
     private EvacuationStateControllerInterface ec;
     private EvacuationCellularAutomaton eca;
-    private EvacuationState es;
     private final static IndividualBuilder builder = new IndividualBuilder();
-    
+
     @Before
     public void init() {
-        rule = new InitialPotentialShortestPathRule();
+        rule = new InitialPotentialFamiliarityRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
-        ip = new IndividualProperty(individual);                
+        ip = new IndividualProperty(individual);
         ec = context.mock(EvacuationStateControllerInterface.class);
         context.checking(new Expectations() {
             {
@@ -70,7 +70,7 @@ public class TestInitialPotentialShortestPathRule {
         rule.setEvacuationState(es);
         rule.setEvacuationStateController(ec);
     }
-    
+
     @Test
     public void testAppliccableIfNotEmpty() {
         cell = new RoomCell(0, 0);
@@ -97,24 +97,24 @@ public class TestInitialPotentialShortestPathRule {
     @Test
     public void testDeadIfNoPotentials() {
         context.checking(new Expectations() {{
-                exactly(1).of(ec).die(with(individual), with(DeathCause.EXIT_UNREACHABLE));
-        }});
+                exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
+            }});
         rule.execute(cell);
         context.assertIsSatisfied();
     }
-    
+
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
         eca.addStaticPotential(sp);
         
         context.checking(new Expectations() {{
-                exactly(1).of(ec).die(with(individual), with(DeathCause.EXIT_UNREACHABLE));
-        }});
+                exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
+            }});
         rule.execute(cell);
         context.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
@@ -125,26 +125,24 @@ public class TestInitialPotentialShortestPathRule {
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(same(sp)));
     }
-    
+
     @Test
-    public void testShortestPotentialTaken() {
-        StaticPotential targetPotential = initPotential();
+    public void testFirstTaken() {
+        StaticPotential longPotential1 = new StaticPotential();
+        longPotential1.setPotential(cell, 3);
+        StaticPotential longPotential2 = new StaticPotential();
+        longPotential2.setPotential(cell, 4);
+        StaticPotential shortestPotential = new StaticPotential();
+        shortestPotential.setPotential(cell, 2);
+
+        eca.addStaticPotential(longPotential1);
+        eca.addStaticPotential(longPotential2);
+        eca.addStaticPotential(shortestPotential);
+
+        //individual.setFamiliarity(0.667);
         
         rule.execute(cell);
-        assertThat(ip.getStaticPotential(), is(same(targetPotential)));
+        assertThat(ip.getStaticPotential(), is(same(shortestPotential)));
     }
     
-    private StaticPotential initPotential() {
-        StaticPotential shortDistance = new StaticPotential();
-        StaticPotential mediumDistance = new StaticPotential();
-        StaticPotential longDistance = new StaticPotential();
-        shortDistance.setPotential(cell, 1);
-        mediumDistance.setPotential(cell, 2);
-        longDistance.setPotential(cell, 3);
-
-        eca.addStaticPotential(longDistance);
-        eca.addStaticPotential(shortDistance);
-        eca.addStaticPotential(mediumDistance);
-        return shortDistance;
-    }
 }

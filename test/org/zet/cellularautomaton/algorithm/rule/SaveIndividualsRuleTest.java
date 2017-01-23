@@ -27,7 +27,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestSaveIndividualsRule {
+public class SaveIndividualsRuleTest {
 
     private final Mockery context = new Mockery();
     private final States test = context.states("normal-test");

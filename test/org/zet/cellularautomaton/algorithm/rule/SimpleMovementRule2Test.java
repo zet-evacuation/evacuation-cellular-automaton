@@ -50,7 +50,7 @@ import org.zetool.rndutils.generators.GeneralRandom;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestSimpleMovementRule2 {
+public class SimpleMovementRule2Test {
 
     private static interface StairCellMock extends EvacCellInterface, Stairs {
     }

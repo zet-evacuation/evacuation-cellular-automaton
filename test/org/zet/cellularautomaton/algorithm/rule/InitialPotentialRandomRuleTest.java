@@ -20,7 +20,6 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
@@ -30,12 +29,12 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialPotentialAttractivityOfExitRule {
+public class InitialPotentialRandomRuleTest {
     private final Mockery context = new Mockery();
-    private InitialPotentialAttractivityOfExitRule rule;
-    private IndividualProperty ip;
+    private InitialPotentialRandomRule rule;
     private EvacCell cell;
     private Individual individual;
+    private IndividualProperty ip;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
     private EvacuationStateControllerInterface ec;
@@ -43,9 +42,8 @@ public class TestInitialPotentialAttractivityOfExitRule {
 
     @Before
     public void init() {
-        rule = new InitialPotentialAttractivityOfExitRule();
+        rule = new InitialPotentialRandomRule();
         Room room = context.mock(Room.class);
-        EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         es = context.mock(EvacuationState.class);
         eca = new EvacuationCellularAutomaton();
         individual = builder.build();
@@ -79,16 +77,16 @@ public class TestInitialPotentialAttractivityOfExitRule {
         assertThat(rule, is(not(executeableOn(cell))));
 
         individual = builder.build();
-        ip = new IndividualProperty(individual);
-        cell.getState().setIndividual(individual);
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
                 allowing(es).propertyFor(individual);
                 will(returnValue(ip));
-            }});
-        
+            }
+        });
+        cell.getState().setIndividual(individual);
         assertThat(rule, is(executeableOn(cell)));
     }
-
+    
     @Test
     public void testNotApplicableIfPotentialSet() {
         StaticPotential sp = new StaticPotential();
@@ -104,12 +102,12 @@ public class TestInitialPotentialAttractivityOfExitRule {
         rule.execute(cell);
         context.assertIsSatisfied();
     }
-
+    
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
         eca.addStaticPotential(sp);
-
+        
         context.checking(new Expectations() {{
                 exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
             }});
@@ -121,33 +119,20 @@ public class TestInitialPotentialAttractivityOfExitRule {
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
         sp.setPotential(cell, 1);
+
         eca.addStaticPotential(sp);
         
         rule.execute(cell);
-        assertThat(ip.isDead(), is(false));
         assertThat(ip.getStaticPotential(), is(same(sp)));
     }
-
+    
     @Test
-    public void mostAttractiveTaken() {
-        StaticPotential unattractive1 = new StaticPotential();
-        unattractive1.setPotential(cell, 1);
-        unattractive1.setAttractivity(100);
-        StaticPotential unattractive2 = new StaticPotential();
-        unattractive1.setPotential(cell, 1);
-        unattractive1.setAttractivity(100);
-        StaticPotential mostAttractive = new StaticPotential();
-        mostAttractive.setPotential(cell, 1);
-        mostAttractive.setAttractivity(200);
-        StaticPotential unreachable = new StaticPotential();
-
-        eca.addStaticPotential(unattractive1);
-        eca.addStaticPotential(mostAttractive);
-        eca.addStaticPotential(unattractive2);
-        eca.addStaticPotential(unreachable);
-
-        rule.execute(cell);
-        assertThat(ip.getStaticPotential(), is(same(mostAttractive)));
+    public void testRandomPotentialTaken() {
+        // Need to insert seed into rule to manipulate random decision
+//        rule.execute(cell);
+//        assertThat(i.isDead(), is(false));
+//        assertThat(i.getDeathCause(), is(nullValue()));
+//        assertThat(i.getStaticPotential(), is(same(targetPotential)));
     }
     
 }

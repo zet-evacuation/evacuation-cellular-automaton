@@ -33,7 +33,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TestInitialPotentialExitMappingRuleStrict {
+public class InitialPotentialExitMappingRuleStrictTest {
     private States test;
     private final Mockery context = new Mockery();
     private InitialPotentialExitMappingRuleStrict rule;
@@ -47,7 +47,7 @@ public class TestInitialPotentialExitMappingRuleStrict {
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     private final IndividualToExitMapping exitMapping = (Individual individual) -> {
-        if (individual == TestInitialPotentialExitMappingRuleStrict.this.i) {
+        if (individual == InitialPotentialExitMappingRuleStrictTest.this.i) {
             return target;
         }
         throw new IllegalStateException("Called with bad individual.");
