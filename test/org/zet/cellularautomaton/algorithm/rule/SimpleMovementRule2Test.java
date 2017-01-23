@@ -156,7 +156,6 @@ public class SimpleMovementRule2Test {
         });
         ip.setCell(testCell);
         ip.setStepEndTime(STEP_END_TIME);
-
     }
 
     @Test

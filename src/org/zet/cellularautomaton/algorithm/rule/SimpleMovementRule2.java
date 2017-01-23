@@ -222,17 +222,6 @@ public class SimpleMovementRule2 extends AbstractMovementRule {
         return target;
     }
 
-    /**
-     * Decides, if an individual can move in individual step. This is possible, when the last move was already finished at a
-     * time earlier than this time step.
-     *
-     * @param individual An individual with a given parameterSet
-     * @return {@code true} if the individual moves or {@code false} otherwise.
-     */
-    protected boolean canMove(Individual individual) {
-        return es.getTimeStep() >= es.propertyFor(individual).getStepEndTime();
-    }
-
     @Override
     public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
         if (cell1.getState().isEmpty()) {

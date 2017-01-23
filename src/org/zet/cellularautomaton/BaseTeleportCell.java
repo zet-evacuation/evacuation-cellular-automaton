@@ -65,8 +65,8 @@ public abstract class BaseTeleportCell<T> extends EvacCell implements Cloneable 
      *
      * @param target defines the reference to the Door-EvacCell of the room you can enter by using this Door-EvacCell of
      * the current room.
-     * @throws IllegalArgumentException if the parameter "Door" is null or if "Door" has already been added to the list
-     * of doors.
+     * @throws IllegalArgumentException if the parameter {@code target} is {@literal null} or if the {@code target}
+     * has already been added to the list of targets.
      */
     public abstract void addTarget(T target);
 

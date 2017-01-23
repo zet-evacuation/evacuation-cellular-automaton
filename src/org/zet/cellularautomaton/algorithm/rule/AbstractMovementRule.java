@@ -27,7 +27,7 @@ import org.zetool.common.debug.Debug;
  * @author Jan-Philipp Kappmeier
  *
  */
-public abstract class AbstractMovementRule extends AbstractEvacuationRule {
+public abstract class AbstractMovementRule extends AbstractMoveRule {
 
     protected double speed;
     protected double dist;
@@ -55,25 +55,25 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
 
         Direction8 dir = es.propertyFor(fromCell.getState().getIndividual()).getDirection();
 
-        for (EvacCellInterface c : neighbors) {
-            if (es.propertyFor(fromCell.getState().getIndividual()).isSafe() && !c.isSafe()) {
+        for (EvacCellInterface evacCell : neighbors) {
+            if (es.propertyFor(fromCell.getState().getIndividual()).isSafe() && !evacCell.isSafe()) {
                 continue; // ignore all moves that would mean walking out of safe areas
             }
-            if (fromCell instanceof DoorCell && c instanceof DoorCell) {
-                possibleTargets.add(c);
+            if (fromCell instanceof DoorCell && evacCell instanceof DoorCell) {
+                possibleTargets.add(evacCell);
                 continue;
             }
-            Direction8 rel = fromCell.getRelative(c);
+            Direction8 rel = fromCell.getRelative(evacCell);
             if (dir == rel) {
-                possibleTargets.add(c);
+                possibleTargets.add(evacCell);
             } else if (dir == rel.getClockwise()) {
-                possibleTargets.add(c);
+                possibleTargets.add(evacCell);
             } else if (dir == rel.getClockwise().getClockwise()) {
-                possibleTargets.add(c);
+                possibleTargets.add(evacCell);
             } else if (dir == rel.getCounterClockwise()) {
-                possibleTargets.add(c);
+                possibleTargets.add(evacCell);
             } else if (dir == rel.getCounterClockwise().getCounterClockwise()) {
-                possibleTargets.add(c);
+                possibleTargets.add(evacCell);
             }
         }
         return possibleTargets;
@@ -154,8 +154,6 @@ public abstract class AbstractMovementRule extends AbstractEvacuationRule {
     protected void setMoveRuleCompleted(boolean moveCompleted) {
         this.moveCompleted = moveCompleted;
     }
-
-    public abstract void move(EvacCellInterface from, EvacCellInterface target);
 
     public abstract void swap(EvacCellInterface cell1, EvacCellInterface cell2);
 }
