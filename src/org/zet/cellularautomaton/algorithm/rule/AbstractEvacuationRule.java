@@ -15,15 +15,15 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.results.Action;
 
 /**
@@ -36,8 +36,8 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     protected Computation c;
 
     /**
-     * Returns if the rule is executable on the cell. The default behavior is, that a rule is executable if an
-     * {@link Individual} is standing on it.
+     * Returns if the rule is executable on the cell. The default behavior is, that a rule is
+     * executable if an {@link Individual} is standing on it.
      *
      * @param cell the cell that is checked
      * @return {@code true} if an individual is standing on the cell, {@code false} otherwise
@@ -83,23 +83,22 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         this.c = c;
     }
 
-    protected static StaticPotential getNearestExitStaticPotential(Collection<StaticPotential> potentials, EvacCellInterface c) {
-        StaticPotential nearestPot = new StaticPotential();
+    protected static <T extends Potential> T getNearestExitStaticPotential(Collection<T> potentials, EvacCellInterface cell) {
+        T nearestPot = null;
         int distance = Integer.MAX_VALUE;
-        int numberOfDisjunctStaticPotentials = 0;
-        for (StaticPotential sP : potentials) {
-            if (sP.getPotential(c) == -1) {
-                numberOfDisjunctStaticPotentials++;
-            } else {
-                if (sP.getPotential(c) < distance) {
-                    nearestPot = sP;
-                    distance = sP.getPotential(c);
-                }
+        for (T potential : potentials) {
+            final int potentialValue = potential.getPotential(cell);
+            if (potentialValue != -1 && potentialValue < distance) {
+                nearestPot = potential;
+                distance = potential.getPotential(cell);
             }
         }
-        return numberOfDisjunctStaticPotentials == potentials.size() ? null : nearestPot;
+        if (nearestPot == null) {
+            throw new IllegalStateException("No potential at cell " + cell.toString());
+        }
+        return nearestPot;
     }
- 
+
     protected void recordAction(Action a) {
         // ignore publishing
     }

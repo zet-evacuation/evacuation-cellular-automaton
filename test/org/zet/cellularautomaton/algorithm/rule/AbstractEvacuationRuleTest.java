@@ -6,9 +6,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jmock.AbstractExpectations.returnValue;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +24,7 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  *
@@ -114,6 +119,49 @@ public class AbstractEvacuationRuleTest {
     public void evacuationSimulationProblemNotNull() {
         AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
         rule.setEvacuationState(null);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void selectNearestPotential() {
+        Potential p1 = context.mock(Potential.class, "p1");
+        Potential p2 = context.mock(Potential.class, "p2");
+
+        EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(p1).getPotential(cell);
+                will(returnValue(-1));
+                allowing(p2).getPotential(cell);
+                will(returnValue(-1));
+            }
+        });
+
+        AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
+        rule.getNearestExitStaticPotential(Arrays.asList(p1, p2), cell);
+    }
+
+    @Test
+    public void minimumPotentialSelected() {
+        Potential p1 = context.mock(Potential.class, "p1");
+        Potential p2 = context.mock(Potential.class, "p2");
+        Potential p3 = context.mock(Potential.class, "p3");
+
+        EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        context.checking(new Expectations() {
+            {
+                allowing(p1).getPotential(cell);
+                will(returnValue(10));
+                allowing(p2).getPotential(cell);
+                will(returnValue(0));
+                allowing(p3).getPotential(cell);
+                will(returnValue(-1));
+            }
+        });
+
+        AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
+        Potential p = rule.getNearestExitStaticPotential(Arrays.asList(p1, p2), cell);
+
+        assertThat(p, is(sameInstance(p2)));
     }
 
     private static AbstractEvacuationRule simpleConcreteAbstractEvacuationRule() {
