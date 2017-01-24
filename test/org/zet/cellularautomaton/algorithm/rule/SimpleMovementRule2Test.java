@@ -587,7 +587,7 @@ public class SimpleMovementRule2Test {
 
         FakeSimpleMovementRule2 rule = new FakeSimpleMovementRule2(testCell) {
             @Override
-            protected void noMove() {
+            protected void noMove(EvacCellInterface cell) {
                 // Nothing
             }
         };
@@ -639,7 +639,7 @@ public class SimpleMovementRule2Test {
     public void singleCellSelected() {
         SimpleMovementRule2 rule = new SimpleMovementRule2() {
             @Override
-            protected void noMove() {
+            protected void noMove(EvacCellInterface cell) {
                 // Nothing
             }
         };
@@ -665,7 +665,7 @@ public class SimpleMovementRule2Test {
     public void minimumCellSelected() {
         SimpleMovementRule2 rule = new SimpleMovementRule2() {
             @Override
-            protected void noMove() {
+            protected void noMove(EvacCellInterface cell) {
                 // Nothing
             }
         };

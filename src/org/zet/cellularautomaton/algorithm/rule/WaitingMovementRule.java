@@ -32,36 +32,19 @@ import org.zet.cellularautomaton.EvacCellInterface;
 public class WaitingMovementRule extends SimpleMovementRule2 {
 
     @Override
-    protected void onExecute(EvacCellInterface cell) {
-        individual = cell.getState().getIndividual();
-        if (es.propertyFor(individual).isAlarmed() == true) {
-            if (canMove(individual)) {
-                if (slack(individual)) {
-                    updateExhaustion(individual, cell);
-                    setMoveRuleCompleted(true);
-                    noMove();
-                } else {
-                    if (isDirectExecute()) {
-                        EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
-                        setMoveRuleCompleted(true);
-                        move(cell, targetCell);
-                    } else {
-                        computePossibleTargets(cell, false);
-                        setMoveRuleCompleted(true);
-                    }
-                }
-                this.updateSpeed(individual);
-            } else {
-                // Individual can't move, it is already moving
-                setMoveRuleCompleted(false);
-            }
-        } else { // Individual is not alarmed, that means it remains standing on the cell
-            setMoveRuleCompleted(true);
-            noMove();
-        }
-        recordAction(new IndividualStateChangeAction(individual, es));
+    boolean isIndividualMoving() {
+        return !slack(individual);
     }
 
+    @Override
+    protected void noMove(EvacCellInterface cell) {
+        if (es.propertyFor(individual).isAlarmed()) {
+            updateExhaustion(individual, cell);
+        }
+        super.noMove(cell);
+    }
+
+    
     @Override
     public void move(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual ind = from.getState().getIndividual();
