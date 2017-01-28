@@ -22,11 +22,9 @@ import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Stairs;
 import org.zet.cellularautomaton.potential.Potential;
-import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 
 /**
  *
@@ -52,6 +50,16 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             performMove(from, targetCell);
             setMoveRuleCompleted(false);
         }
+    }
+
+    /**
+     * Checks whether the {@link Individual} is alarmed, or not.
+     * 
+     * @return whether the individual is active and can move
+     */
+    @Override
+    protected boolean isActive() {
+        return es.propertyFor(individual).isAlarmed();
     }
 
     /**

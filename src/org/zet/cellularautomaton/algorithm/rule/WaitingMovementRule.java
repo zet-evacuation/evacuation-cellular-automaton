@@ -22,18 +22,28 @@ import java.util.List;
 import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.results.IndividualStateChangeAction;
 import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
- *
+ * Waiting movement rule that allows individuals to wait when they are not able to walk in a direction nearer to an
+ * exit. When all good targets are occupied the individual can remain standing on its position. When an individual moves ore remains, the
+ * exhaustion is increased and decreased, respectively. When an individual is not able to move the panic is updated.
  * @author Daniel R. Schmidt
  */
 public class WaitingMovementRule extends SimpleMovementRule2 {
 
+    private static final double DIRECTION_BOOST_FACTOR = 10.5;
+
+    /**
+     * Decides randomly if an individual idles.
+     *
+     * @param i An individual with a given slackness
+     * @return {@code true} with a probability of slackness or {@code false} otherwise.
+     */
     @Override
-    boolean isIndividualMoving() {
-        return !slack(individual);
+    boolean wishToMove() {
+        double randomNumber = RandomUtils.getInstance().getRandomGenerator().nextDouble();
+        return (c.idleThreshold(individual) <= randomNumber);
     }
 
     @Override
@@ -44,7 +54,6 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         super.noMove(cell);
     }
 
-    
     @Override
     public void move(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual ind = from.getState().getIndividual();
@@ -66,12 +75,13 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
     }
 
     /**
-     * Returns all reachable neighbours sorted according to their priority which is calculated by mergePotential(). The
-     * first element in the list is the most probable neighbour, the last element is the least probable neighbour.
+     * Returns all reachable neighbours sorted according to their priority which is calculated by
+     * mergePotential(). The first element in the list is the most probable neighbour, the last
+     * element is the least probable neighbour.
      *
      * @param cell The cell whose neighbours are to be sorted
-     * @return A sorted list of the neighbour cells of {@code cell}, sorted in an increasing fashion according to their
-     * potential computed by {@code mergePotential}.
+     * @return A sorted list of the neighbour cells of {@code cell}, sorted in an increasing fashion
+     * according to their potential computed by {@code mergePotential}.
      */
     protected ArrayList<EvacCellInterface> neighboursByPriority(EvacCellInterface cell) {
         class CellPrioritySorter implements Comparator<EvacCellInterface> {
@@ -104,8 +114,10 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
     }
 
     /**
-     * Given a starting cell, this method picks one of its reachable neighbors at random. The i-th neighbor is chosen
-     * with probability {@code p(i) := N * exp[mergePotentials(i, cell)]} where N is a constant used for normalization.
+     * Given a starting cell, this method picks one of its reachable neighbors at random. The
+     * {@literal i}th neighbor is chosen with probability
+     * {@code p(i) := N * exp[mergePotentials(i, cell)]} where {@literal N} is a constant used for
+     * normalization.
      *
      * @param cell The starting cell
      * @return A neighbor of {@code cell} chosen at random.
@@ -130,11 +142,6 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
             }
         }
 
-        boolean directPath = true; // notice, that direct path is a deterministic rule!
-        if (directPath) {
-            return targets.get(max_index);
-        }
-
         // raising probablities only makes sense if the cell and all its neighbours are in the same room
         boolean inSameRoom = true;
         for (int i = 0; i < targets.size(); i++) {
@@ -146,7 +153,6 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         if (inSameRoom) {
             EvacCellInterface mostProbableTarget = targets.get(max_index);
 
-            Individual individual = cell.getState().getIndividual();
             Direction8 oldDir = es.propertyFor(individual).getDirection();
             Direction8 newDir = cell.equals(mostProbableTarget) ? oldDir : cell.getRelative(mostProbableTarget);
 
@@ -160,7 +166,7 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
                     EvacCellInterface target = targets.get(j);
                     if (target != cell && oldDir.equals(cell.getRelative(target))) {
                         // We found a cell in the current direciton
-                        p[j] = p[j] * 10.5;
+                        p[j] = p[j] * DIRECTION_BOOST_FACTOR;
 
                     }
                 }
@@ -185,14 +191,4 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
         }
     }
 
-    /**
-     * Decides randomly if an individual idles.
-     *
-     * @param i An individual with a given slackness
-     * @return {@code true} with a probability of slackness or {@code false} otherwise.
-     */
-    protected boolean slack(Individual i) {
-        double randomNumber = RandomUtils.getInstance().getRandomGenerator().nextDouble();
-        return (c.idleThreshold(i) > randomNumber);
-    }
 }
