@@ -28,15 +28,15 @@ import org.zetool.simulation.cellularautomaton.GeometricCellMatrix;
 public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
 
     /** The id of the room (to calculate the hashCode). */
-    private int id;
+    private final int id;
     /** Counts the number of existing Rooms. Every new Room gets automatically a unique ID. */
     private static int idCount = 0;
     /** Manages the DoorCells existing in this room. */
-    private ArrayList<DoorCell> doors;
+    private final ArrayList<DoorCell> doors;
     /** Manages the individuals existing in this room. */
-    private ArrayList<Individual> individuals;
+    private final ArrayList<Individual> individuals;
 
-    private int floorID;
+    private final int floorID;
 
     private boolean isAlarmed;
 
@@ -62,13 +62,10 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
         this(room.getWidth(), room.getHeight(), room.getFloorID(), room.getID(), room.getXOffset(), room.getYOffset());
 
         isAlarmed = room.isAlarmed();
-        for (DoorCell door : room.getDoors()) {
-            doors.add(door);
-        }
 
-        for (Individual individual : room.getIndividuals()) {
-            individuals.add(individual);
-        }
+        room.getDoors().forEach(doors::add);
+
+        room.getIndividuals().forEach(individuals::add);
 
         populate((x, y) -> room.getCell(x, y));
     }
