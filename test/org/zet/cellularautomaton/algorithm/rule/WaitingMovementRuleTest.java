@@ -35,7 +35,7 @@ import org.zetool.rndutils.generators.GeneralRandom;
 public class WaitingMovementRuleTest {
 
     private Mockery context;
-    MovementRuleTestHelper helper;
+    private MovementRuleTestHelper helper;
 
     @Before
     public void initState() {

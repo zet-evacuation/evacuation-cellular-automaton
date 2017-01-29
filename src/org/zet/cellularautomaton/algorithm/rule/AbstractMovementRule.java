@@ -27,7 +27,7 @@ import org.zetool.common.debug.Debug;
  * @author Jan-Philipp Kappmeier
  *
  */
-public abstract class AbstractMovementRule extends AbstractMoveRule {
+public abstract class AbstractMovementRule extends AbstractMoveRule implements MovementRule {
 
     protected double speed;
     protected double dist;
@@ -86,6 +86,7 @@ public abstract class AbstractMovementRule extends AbstractMoveRule {
      *
      * @return a list of possible targets.
      */
+    @Override
     public List<EvacCellInterface> getPossibleTargets() {
         return possibleTargets;
     }
@@ -98,6 +99,7 @@ public abstract class AbstractMovementRule extends AbstractMoveRule {
      * @param targets possible targets (only the first one is used)
      * @return the first cell of the possible targets
      */
+    @Override
     public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
         Debug.globalLogger.warning("Not-overriden target cell selection is used.");
         if (targets.isEmpty()) {
@@ -139,14 +141,17 @@ public abstract class AbstractMovementRule extends AbstractMoveRule {
         es.propertyFor(i).setStepEndTime(d);
     }
 
+    @Override
     public boolean isDirectExecute() {
         return directExecute;
     }
 
+    @Override
     public void setDirectExecute(boolean directExecute) {
         this.directExecute = directExecute;
     }
 
+    @Override
     public boolean isMoveCompleted() {
         return moveCompleted;
     }
@@ -155,5 +160,4 @@ public abstract class AbstractMovementRule extends AbstractMoveRule {
         this.moveCompleted = moveCompleted;
     }
 
-    public abstract void swap(EvacCellInterface cell1, EvacCellInterface cell2);
 }

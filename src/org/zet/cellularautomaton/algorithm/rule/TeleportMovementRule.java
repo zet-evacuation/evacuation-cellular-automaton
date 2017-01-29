@@ -1,43 +1,99 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.TeleportCell;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.algorithm.computation.Computation;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
 /**
+ * A special implementation of a {@link MovementRule} that supports teleportation. When the rule is
+ * executed on an instance of {@link TeleportCell} it cannot be executed when the teleport failed.
+ * On other {@link EvacCellInterface} instances the rule is executeable as always. When the rule is
+ * executeable, its calls are delegated to another movement rule instance. This instance may not be
+ * aware of teleportation.
  *
  * @author Jan-Philipp Kappmeier
  */
-public class TeleportMovementRule extends WaitingMovementRule {
+public class TeleportMovementRule implements MovementRule {
 
-    @Override
-    public boolean executableOn(EvacCellInterface cell) {
-        return cell instanceof TeleportCell ? super.executableOn(cell) && !((TeleportCell) cell).isTeleportFailed() : super.executableOn(cell);
+    private final MovementRule movementRule;
+
+    public TeleportMovementRule() {
+        this.movementRule = new WaitingMovementRule();
+    }
+
+    TeleportMovementRule(MovementRule movementRule) {
+        this.movementRule = movementRule;
     }
 
     /**
-     * Selects the possible targets including the current cell.
+     * When the cell is an instanceo of {@link TeleportCell}, the rule is only executeable when the
+     * teleport succeeded. Also, it is only executable, if the wrapped rule is executable.
      *
-     * @param fromCell the current sell
-     * @param onlyFreeNeighbours indicates whether only free neighbours or all neighbours are included
-     * @return a list containing all neighbours and the from cell
+     * @param cell the cell
+     * @return whether the teleport movement rule is executeable
      */
     @Override
-    protected List<EvacCellInterface> computePossibleTargets(EvacCellInterface fromCell, boolean onlyFreeNeighbours) {
-        List<EvacCellInterface> targets = super.computePossibleTargets(fromCell, onlyFreeNeighbours);
-
-        ArrayList<EvacCellInterface> returned = new ArrayList<>(); // create new list to avoid concurrent modification
-        double time = es.getTimeStep();
-        for (EvacCellInterface cell : targets) {
-            if (!cell.isOccupied(time)) {
-                returned.add(cell);
-            }
-        }
-        if (!returned.contains(fromCell)) {
-            returned.add(fromCell);
-        }
-
-        return returned;
+    public boolean executableOn(EvacCellInterface cell) {
+        boolean wrappedExecuteable = movementRule.executableOn(cell);
+        return cell instanceof TeleportCell ? !((TeleportCell) cell).isTeleportFailed() && wrappedExecuteable : wrappedExecuteable;
     }
+
+    @Override
+    public void execute(EvacCellInterface cell) {
+        movementRule.execute(cell);
+    }
+
+    @Override
+    public List<EvacCellInterface> getPossibleTargets() {
+        return movementRule.getPossibleTargets();
+    }
+
+    @Override
+    public EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets) {
+        return movementRule.selectTargetCell(cell, targets);
+    }
+
+    @Override
+    public boolean isDirectExecute() {
+        return movementRule.isDirectExecute();
+    }
+
+    @Override
+    public void setDirectExecute(boolean directExecute) {
+        movementRule.setDirectExecute(directExecute);
+    }
+
+    @Override
+    public boolean isMoveCompleted() {
+        return movementRule.isMoveCompleted();
+    }
+
+    @Override
+    public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+        movementRule.swap(cell1, cell2);
+    }
+
+    @Override
+    public void move(EvacCellInterface from, EvacCellInterface target) {
+        movementRule.move(from, target);
+    }
+
+    @Override
+    public void setEvacuationState(EvacuationState es) {
+        movementRule.setEvacuationState(es);
+    }
+
+    @Override
+    public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
+        movementRule.setEvacuationStateController(ec);
+    }
+
+    @Override
+    public void setComputation(Computation c) {
+        movementRule.setComputation(c);
+    }
+
 }

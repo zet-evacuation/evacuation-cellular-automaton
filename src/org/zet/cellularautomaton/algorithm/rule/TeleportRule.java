@@ -25,19 +25,19 @@ public class TeleportRule extends AbstractMoveRule {
         }
     }
 
-    private void performTeleport(TeleportCell tc) {
-        double targetFreeAt = tc.getTarget(0).getOccupiedUntil();
+    private void performTeleport(TeleportCell teleportCell) {
+        double targetFreeAt = teleportCell.getTarget(0).getOccupiedUntil();
 
-        if (tc.getTarget(0).getState().getIndividual() == null && tc.getTarget(0).getUsedInTimeStep() < es.getTimeStep()) {
-            double moveTime = Math.max(targetFreeAt, es.propertyFor(tc.getState().getIndividual()).getStepEndTime());
-            es.propertyFor(tc.getState().getIndividual()).setStepStartTime(moveTime);
-            es.propertyFor(tc.getState().getIndividual()).setStepEndTime(moveTime);
+        if (teleportCell.getTarget(0).getState().getIndividual() == null && teleportCell.getTarget(0).getUsedInTimeStep() < es.getTimeStep()) {
+            double moveTime = Math.max(targetFreeAt, es.propertyFor(teleportCell.getState().getIndividual()).getStepEndTime());
+            es.propertyFor(teleportCell.getState().getIndividual()).setStepStartTime(moveTime);
+            es.propertyFor(teleportCell.getState().getIndividual()).setStepEndTime(moveTime);
 
-            move(tc, tc.getTarget(0));
-            tc.setTeleportFailed(false);
-            tc.getTarget(0).setUsedInTimeStep(es.getTimeStep());
+            move(teleportCell, teleportCell.getTarget(0));
+            teleportCell.setTeleportFailed(false);
+            teleportCell.getTarget(0).setUsedInTimeStep(es.getTimeStep());
         } else {
-            tc.setTeleportFailed(true);
+            teleportCell.setTeleportFailed(true);
         }
     }
 
@@ -45,11 +45,4 @@ public class TeleportRule extends AbstractMoveRule {
     public void move(EvacCellInterface from, EvacCellInterface target) {
         ec.move(from, target);
     }
-
-    /**
-     * Decides randomly if an individual moves. (falsch)
-     *
-     * @param i An individual with a given parameterSet
-     * @return {@code true} if the individual moves or {@code false} otherwise.
-     */
 }
