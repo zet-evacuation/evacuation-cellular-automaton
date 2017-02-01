@@ -1,8 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -11,8 +8,13 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
@@ -22,19 +24,19 @@ import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.MovementRuleStep;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
-import org.zetool.common.util.Direction8;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zetool.common.util.Direction8;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
-public class MovementRuleTestHelper {
+ @Ignore
+ public class MovementRuleTestHelper {
 
     private EvacCellInterface testCell;
     private final Individual individual = new Individual(0, 0, 0, 0, 0, 0, 1, 0);

@@ -192,6 +192,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
                     continue;
                 }
                 Exit exit = getExitOfCell((ExitCell)cell, seen);
+                exits.add(exit);
             } else {
                 seen.add(cell);
             }
