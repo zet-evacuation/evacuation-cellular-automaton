@@ -16,14 +16,14 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
@@ -34,7 +34,7 @@ import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomat
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationCellularAutomatonAlgorithm
-        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomatonInterface, EvacCellInterface, EvacuationSimulationProblem, EvacuationSimulationResult> {
+        extends AbstractCellularAutomatonSimulationAlgorithm<EvacuationCellularAutomaton, EvacCellInterface, EvacuationSimulationProblem, EvacuationSimulationResult> {
 
     /**
      * The order in which the individuals are asked for.
@@ -45,7 +45,7 @@ public class EvacuationCellularAutomatonAlgorithm
      * The ordering used in the evacuation cellular automaton.
      */
     private Function<List<Individual>, Iterator<Individual>> reorder;
-    protected MutableEvacuationState es = new MutableEvacuationState(new EvacuationCellularAutomaton(),
+    protected MutableEvacuationState es = new MutableEvacuationState(new MultiFloorEvacuationCellularAutomaton(),
             Collections.emptyList());
     protected EvacuationStateController ec = null;
 
@@ -84,7 +84,7 @@ public class EvacuationCellularAutomatonAlgorithm
     private void initRulesAndState() {
         es = new MutableEvacuationState(getProblem().getCellularAutomaton(),
                 getProblem().getIndividuals());
-        EvacuationCellularAutomatonInterface eca = getProblem().getCellularAutomaton();
+        EvacuationCellularAutomaton eca = getProblem().getCellularAutomaton();
         for (Map.Entry<Individual, ? extends EvacCellInterface> e : getProblem().individualStartPositions().entrySet()) {
             es.propertyFor(e.getKey()).setCell(e.getValue());
             es.propertyFor(e.getKey()).setStaticPotential(eca.minPotentialFor(e.getValue()));

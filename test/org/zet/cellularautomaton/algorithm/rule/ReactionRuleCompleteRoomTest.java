@@ -10,7 +10,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
@@ -81,7 +81,7 @@ public class ReactionRuleCompleteRoomTest {
 
     private ReactionRuleCompleteRoom generateReactionRule() {
         es = context.mock(EvacuationState.class);
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();

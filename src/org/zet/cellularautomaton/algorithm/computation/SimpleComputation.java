@@ -6,7 +6,7 @@ import java.util.function.Function;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  *
@@ -32,7 +32,7 @@ public class SimpleComputation implements Computation {
     public double effectivePotential(Individual individual, EvacCellInterface targetCell,
             Function<EvacCellInterface,Double> dynamicPotential) {
         EvacCellInterface referenceCell = es.propertyFor(individual).getCell();
-        StaticPotential staticPotential = es.propertyFor(individual).getStaticPotential();
+        Potential staticPotential = es.propertyFor(individual).getStaticPotential();
         return staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
     }
 

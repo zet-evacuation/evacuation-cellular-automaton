@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm;
 
+import java.util.Collection;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -10,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
@@ -37,7 +38,7 @@ public class TestEvacuationCellularAutomatonRun {
     
     @Test
     public void run() {
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
         
         eca.addFloor(0, "floor");
         
@@ -51,13 +52,14 @@ public class TestEvacuationCellularAutomatonRun {
         r.setCell(rightCell);
         eca.addRoom(0, r);
         
-        List<List<ExitCell>> exitClusters = eca.clusterExitCells();
+        List<Exit> exitClusters = eca.getExits();
         assertThat(exitClusters, hasSize(1));
-        List<ExitCell> exitCluster = exitClusters.get(0);
-        assertThat(exitCluster, hasSize(1));
-        assertThat(exitCluster, contains(exit));
+        Exit exitCluster = exitClusters.get(0);
+        assertThat(exitCluster.getExitCluster(), hasSize(1));
+        assertThat(exitCluster.getExitCluster(), contains(exit));
 
-        for (List<ExitCell> cells : exitClusters) {
+        for (Exit e : exitClusters) {
+            Collection<ExitCell> cells = e.getExitCluster();
             PotentialAlgorithm pa = new PotentialAlgorithm();
             pa.setProblem(cells);
             StaticPotential sp = pa.call();

@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 
 /**
  * @author Daniel R. Schmidt
@@ -34,13 +34,13 @@ public class DynamicPotentialChangeAction extends Action {
     }
 
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+    Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         EvacCell newAffectedCell = adoptCell(affectedCell, targetCA);
         return new DynamicPotentialChangeAction(newAffectedCell, newPotential);
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA)
+    public void execute(MultiFloorEvacuationCellularAutomaton onCA)
             throws InconsistentPlaybackStateException {
         //onCA.setDynamicPotential(affectedCell, newPotential);
     }

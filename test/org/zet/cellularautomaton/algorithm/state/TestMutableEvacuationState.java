@@ -18,10 +18,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  *
@@ -34,12 +34,12 @@ public class TestMutableEvacuationState {
     private final Mockery context = new Mockery();
     private final static IndividualBuilder builder = new IndividualBuilder();
     private ParameterSet ps;
-    private EvacuationCellularAutomatonInterface eca;
+    private EvacuationCellularAutomaton eca;
     
     @Before
     public void init() {
         ps = context.mock(ParameterSet.class);
-        eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        eca = context.mock(EvacuationCellularAutomaton.class);
     }
     
     @Test

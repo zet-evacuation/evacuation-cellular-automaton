@@ -16,12 +16,13 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.Room;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  *
@@ -38,7 +39,8 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
         return true;
     }
 
-    private double getResponse(EvacCellInterface cell, StaticPotential pot) {
+    private double getResponse(EvacCellInterface cell, Exit exit) {
+        final Potential pot = es.getCellularAutomaton().getPotentialFor(exit);
         // Constants
         Individual ind = cell.getState().getIndividual();
         double speed = es.propertyFor(ind).getRelativeSpeed();
@@ -46,10 +48,10 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
         // Exit dependant values                                    
         double distance = Double.MAX_VALUE;
         if (pot.getPotential(cell) > 0) {
-            distance = pot.getDistance(cell);
+            distance = pot.getPotentialDouble(cell);
         }
         double movingTime = distance / speed;
-        List<ExitCell> exitCells = pot.getAssociatedExitCells();
+        Collection<ExitCell> exitCells = exit.getExitCluster();
         int exitCapacity = exitCells.size();
 
         // calculate number of individuals that are heading to the same exit and closer to it            
@@ -66,8 +68,8 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
             for (Individual otherInd : otherInds) {
                 if (!otherInd.equals(ind)) {
                     if (es.propertyFor(otherInd).getStaticPotential() == pot) {
-                        if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) > 0) {
-                            if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) < distance) {
+                        if (es.propertyFor(otherInd).getStaticPotential().getPotentialDouble(es.propertyFor(otherInd).getCell()) > 0) {
+                            if (es.propertyFor(otherInd).getStaticPotential().getPotentialDouble(es.propertyFor(otherInd).getCell()) < distance) {
                                 queueLength++;
                             }
                         }
@@ -109,13 +111,15 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
     @Override
     protected void onExecute(EvacCellInterface cell) {
 
-        ArrayList<StaticPotential> exits = new ArrayList<>();
-        exits.addAll(es.getCellularAutomaton().getStaticPotentials());
-        StaticPotential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
+        //ArrayList<Potential> exits = new ArrayList<>();
+        //exits.addAll(es.getCellularAutomaton().getExits());
+        Potential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
         double response = Double.MAX_VALUE;
-        for (StaticPotential pot : exits) {
-            if (getResponse(cell, pot) < response) {
-                response = getResponse(cell, pot);
+        for (Exit exit : es.getCellularAutomaton().getExits()) {
+            Potential pot = es.getCellularAutomaton().getPotentialFor(exit);
+            final double newResponse = getResponse(cell, exit);
+            if ( newResponse< response) {
+                response = newResponse;
                 newPot = pot;
             }
         }

@@ -10,7 +10,9 @@ import static org.jmock.AbstractExpectations.returnValue;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -18,6 +20,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
@@ -125,19 +129,32 @@ public class AbstractEvacuationRuleTest {
     public void selectNearestPotential() {
         Potential p1 = context.mock(Potential.class, "p1");
         Potential p2 = context.mock(Potential.class, "p2");
+        Exit e1 = new Exit("exit1", Collections.emptyList());
+        Exit e2 = new Exit("exit2", Collections.emptyList());
+        List<Exit> exits = Arrays.asList(e1, e2);
 
         EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        EvacuationCellularAutomaton ca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {
             {
                 allowing(p1).getPotential(cell);
                 will(returnValue(-1));
                 allowing(p2).getPotential(cell);
                 will(returnValue(-1));
+
+                allowing(ca).getExits();
+                will(returnValue(exits));
+                allowing(ca).getPotentialFor(e1);
+                will(returnValue(p1));
+                allowing(ca).getPotentialFor(e2);
+                will(returnValue(p2));
             }
         });
 
         AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
-        rule.getNearestExitStaticPotential(Arrays.asList(p1, p2), cell);
+
+        rule.getNearestExitStaticPotential(ca, cell);
+        //rule.getNearestExitStaticPotential(Arrays.asList(p1, p2), cell);
     }
 
     @Test
@@ -145,8 +162,13 @@ public class AbstractEvacuationRuleTest {
         Potential p1 = context.mock(Potential.class, "p1");
         Potential p2 = context.mock(Potential.class, "p2");
         Potential p3 = context.mock(Potential.class, "p3");
+        Exit e1 = new Exit("exit1", Collections.emptyList());
+        Exit e2 = new Exit("exit2", Collections.emptyList());
+        Exit e3 = new Exit("exit3", Collections.emptyList());
+        List<Exit> exits = Arrays.asList(e1, e2, e3);
 
         EvacCellInterface cell = context.mock(EvacCellInterface.class);
+        EvacuationCellularAutomaton ca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {
             {
                 allowing(p1).getPotential(cell);
@@ -155,11 +177,20 @@ public class AbstractEvacuationRuleTest {
                 will(returnValue(0));
                 allowing(p3).getPotential(cell);
                 will(returnValue(-1));
+
+                allowing(ca).getExits();
+                will(returnValue(exits));
+                allowing(ca).getPotentialFor(e1);
+                will(returnValue(p1));
+                allowing(ca).getPotentialFor(e2);
+                will(returnValue(p2));
+                allowing(ca).getPotentialFor(e3);
+                will(returnValue(p3));
             }
         });
 
         AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
-        Potential p = rule.getNearestExitStaticPotential(Arrays.asList(p1, p2), cell);
+        Potential p = rule.getNearestExitStaticPotential(ca, cell);
 
         assertThat(p, is(sameInstance(p2)));
     }

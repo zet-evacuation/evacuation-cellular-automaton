@@ -7,13 +7,14 @@ package evacuationplan;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * The class {@code BestResponseDynamics} ...
@@ -34,7 +35,7 @@ public class BestResponseDynamics {
 
     }
 
-    public void computeAssignmentBasedOnBestResponseDynamics(EvacuationCellularAutomaton ca, List<Individual> individuals) {
+    public void computeAssignmentBasedOnBestResponseDynamics(MultiFloorEvacuationCellularAutomaton ca, List<Individual> individuals) {
         int c = 0;
         while (true) {
             c++;
@@ -50,19 +51,20 @@ public class BestResponseDynamics {
         System.out.println("Best Response Rounds: " + c);
     }
 
-    public int computePotential(EvacCellInterface cell, EvacuationCellularAutomatonInterface ca) {
-        ArrayList<StaticPotential> exits = new ArrayList<>();
-        exits.addAll(ca.getStaticPotentials());
-        StaticPotential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
+    public int computePotential(EvacCellInterface cell, EvacuationCellularAutomaton ca) {
+        ArrayList<Potential> exits = new ArrayList<>();
+        //exits.addAll(ca.getExits());
+        Potential newPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
         double response = Double.MAX_VALUE;
-        for (StaticPotential pot : exits) {
-            if (getResponse(ca, cell, pot) < response) {
-                response = getResponse(ca, cell, pot);
-                newPot = pot;
+        for (Exit exit : es.getCellularAutomaton().getExits()) {
+            double newResponse = getResponse(ca, cell, exit);
+            if (newResponse < response) {
+                response = newResponse;
+                newPot = es.getCellularAutomaton().getPotentialFor(exit);
             }
         }
 
-        StaticPotential oldPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
+        Potential oldPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
         es.propertyFor(cell.getState().getIndividual()).setStaticPotential(newPot);
         if (!oldPot.equals(newPot)) {
             return 1;
@@ -71,7 +73,8 @@ public class BestResponseDynamics {
         }
     }
 
-    private double getResponse(EvacuationCellularAutomatonInterface ca, EvacCellInterface cell, StaticPotential pot) {
+    private double getResponse(EvacuationCellularAutomaton ca, EvacCellInterface cell, Exit exit) {
+        Potential pot = es.getCellularAutomaton().getPotentialFor(exit);
 
         // Constants
         Individual ind = cell.getState().getIndividual();
@@ -79,13 +82,13 @@ public class BestResponseDynamics {
 
         // Exit dependant values
         double distance = Double.MAX_VALUE;
-        if (pot.getDistance(cell) >= 0) {
-            distance = pot.getDistance(cell);
+        if (pot.getPotentialDouble(cell) >= 0) {
+            distance = pot.getPotentialDouble(cell);
         }
         double movingTime = distance / speed;
 
-        double exitCapacity = ca.getExitToCapacityMapping().get(pot);
-		//System.out.println("Exit: " + pot.getID() + " : " + exitCapacity);
+        double exitCapacity = exit.getCapacity(); //ca.getExitToCapacityMapping().get(pot);
+        //System.out.println("Exit: " + pot.getID() + " : " + exitCapacity);
 
         // calculate number of individuals that are heading to the same exit and closer to it
         ArrayList<Individual> otherInds = new ArrayList<>();
@@ -102,15 +105,15 @@ public class BestResponseDynamics {
         for (Individual otherInd : otherInds) {
             if (!otherInd.equals(ind)) {
                 if (es.propertyFor(otherInd).getStaticPotential() == pot) {
-                    if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) >= 0) {
-                        if (es.propertyFor(otherInd).getStaticPotential().getDistance(es.propertyFor(otherInd).getCell()) < distance) {
+                    if (es.propertyFor(otherInd).getStaticPotential().getPotentialDouble(es.propertyFor(otherInd).getCell()) >= 0) {
+                        if (es.propertyFor(otherInd).getStaticPotential().getPotentialDouble(es.propertyFor(otherInd).getCell()) < distance) {
                             queueLength++;
                         }
                     }
                 }
             }
         }
-		//System.out.println("Potential = " + pot.getID());
+        //System.out.println("Potential = " + pot.getID());
         //System.out.println("Queue / Kapa = " + queueLength + " / " + exitCapacity + " = " + (queueLength / exitCapacity));
         //System.out.println("Dist / Speed = " + distance + " / " + speed + " = " + (distance / speed));
 

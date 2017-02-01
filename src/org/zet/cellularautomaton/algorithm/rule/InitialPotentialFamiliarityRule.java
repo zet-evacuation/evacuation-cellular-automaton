@@ -20,9 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.PotentialMemory;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
 
@@ -44,7 +45,7 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
      */
     @Override
     protected void onExecute(EvacCellInterface cell) {
-        List<PotentialMemory<StaticPotential>> potentialDistanceMapping = computeDistanceMapping(cell);
+        List<PotentialMemory<Potential>> potentialDistanceMapping = computeDistanceMapping(cell);
         if (potentialDistanceMapping.isEmpty()) {
             ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
         } else {
@@ -52,12 +53,11 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
         }
     }
     
-    private List<PotentialMemory<StaticPotential>> computeDistanceMapping(EvacCellInterface cell) {
-        List<PotentialMemory<StaticPotential>> potentialToLengthOfWayMapper = new ArrayList<>();
-        List<StaticPotential> staticPotentials = new ArrayList<>();
-        staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());
-        staticPotentials.stream().filter(sp -> sp.getDistance(cell) >= 0).forEach(sp
-                -> potentialToLengthOfWayMapper.add(new PotentialMemory<>(cell, sp)));
+    private List<PotentialMemory<Potential>> computeDistanceMapping(EvacCellInterface cell) {
+        List<PotentialMemory<Potential>> potentialToLengthOfWayMapper = new ArrayList<>();
+        final EvacuationCellularAutomaton ca = es.getCellularAutomaton();
+        ca.getExits().stream().filter(exit -> ca.getPotentialFor(exit).hasValidPotential(cell))
+                .forEach(exit -> potentialToLengthOfWayMapper.add(new PotentialMemory<>(cell, ca.getPotentialFor(exit))));
         return potentialToLengthOfWayMapper;
     }
 
@@ -68,7 +68,7 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
      * @param distanceMapping maps potentials to their distance to their respective exit
      * @param individual the individual on the cell for this rule
      */
-    private void selectPotential(List<PotentialMemory<StaticPotential>> distanceMapping, Individual individual) {
+    private void selectPotential(List<PotentialMemory<Potential>> distanceMapping, Individual individual) {
         Collections.sort(distanceMapping);
         int nrOfPossiblePotentials = Math.max((int) Math.round(
                 (1 - individual.getFamiliarity()) * distanceMapping.size()), 1);
@@ -76,7 +76,7 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
         GeneralRandom rnd = (RandomUtils.getInstance()).getRandomGenerator();
         int randomPotentialNumber = rnd.nextInt(nrOfPossiblePotentials);
 
-        StaticPotential potential = distanceMapping.get(randomPotentialNumber).getStaticPotential();
+        Potential potential = distanceMapping.get(randomPotentialNumber).getStaticPotential();
         es.propertyFor(individual).setStaticPotential(potential);            
     }
 }

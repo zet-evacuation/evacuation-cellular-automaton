@@ -8,12 +8,16 @@ import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
@@ -21,6 +25,7 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -30,15 +35,16 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  */
 public class InitialConcretePotentialRuleTest {
 
+    private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
     private final Mockery context = new Mockery();
     InitialConcretePotentialRule rule;
     EvacCell cell;
     Individual i;
     IndividualProperty ip;
-    EvacuationCellularAutomaton eca;
+    private EvacuationCellularAutomaton eca;
     EvacuationState es;
     EvacuationStateControllerInterface ec;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private List<Exit> exitList;
 
     private void init() {
         init(0);
@@ -48,14 +54,17 @@ public class InitialConcretePotentialRuleTest {
         rule = new InitialConcretePotentialRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        eca = new EvacuationCellularAutomaton();
-        i = builder.withAge(30).withFamiliarity(familiarity).build();
+        eca = context.mock(EvacuationCellularAutomaton.class);
+        i = INDIVIDUAL_BUILDER.withAge(30).withFamiliarity(familiarity).build();
         ip = new IndividualProperty(i);
         ec = context.mock(EvacuationStateControllerInterface.class);
+        exitList = new LinkedList<>();
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
+                allowing(eca).getExits();
+                will(returnValue(exitList));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
@@ -108,7 +117,7 @@ public class InitialConcretePotentialRuleTest {
     public void testDeadIfPotentialsBad() {
         init();
         StaticPotential sp = new StaticPotential();
-        eca.addStaticPotential(sp);
+        addStaticPotential(sp, 0);
 
         context.checking(new Expectations() {
             {
@@ -125,7 +134,7 @@ public class InitialConcretePotentialRuleTest {
         StaticPotential sp = new StaticPotential();
         sp.setPotential(cell, 1);
 
-        eca.addStaticPotential(sp);
+        addStaticPotential(sp, 0);
 
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(same(sp)));
@@ -179,13 +188,13 @@ public class InitialConcretePotentialRuleTest {
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
 
-        shortDistance.setAttractivity(10);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
+//        shortDistance.setAttractivity(10);
+//        mediumDistance.setAttractivity(50);
+//        longDistance.setAttractivity(100);
 
-        eca.addStaticPotential(longDistance);
-        eca.addStaticPotential(shortDistance);
-        eca.addStaticPotential(mediumDistance);
+        addStaticPotential(longDistance, 100);
+        addStaticPotential(shortDistance, 10);
+        addStaticPotential(mediumDistance, 50);
         return shortDistance;
     }
 
@@ -196,13 +205,13 @@ public class InitialConcretePotentialRuleTest {
         shortDistance.setPotential(cell, 1);
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
-        shortDistance.setAttractivity(10);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
+//        shortDistance.setAttractivity(10);
+//        mediumDistance.setAttractivity(50);
+//        longDistance.setAttractivity(100);
 
-        eca.addStaticPotential(longDistance);
-        eca.addStaticPotential(shortDistance);
-        eca.addStaticPotential(mediumDistance);
+        addStaticPotential(longDistance, 100);
+        addStaticPotential(shortDistance, 10);
+        addStaticPotential(mediumDistance, 50);
         return longDistance;
     }
 
@@ -213,13 +222,13 @@ public class InitialConcretePotentialRuleTest {
         shortDistance.setPotential(cell, 1);
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
-        shortDistance.setAttractivity(10);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
+//        shortDistance.setAttractivity(10);
+//        mediumDistance.setAttractivity(50);
+//        longDistance.setAttractivity(100);
 
-        eca.addStaticPotential(longDistance);
-        eca.addStaticPotential(shortDistance);
-        eca.addStaticPotential(mediumDistance);
+        addStaticPotential(longDistance, 100);
+        addStaticPotential(shortDistance, 10);
+        addStaticPotential(mediumDistance, 50);
         return mediumDistance;
     }
 
@@ -230,13 +239,25 @@ public class InitialConcretePotentialRuleTest {
         shortDistance.setPotential(cell, 1);
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
-        shortDistance.setAttractivity(1000);
-        mediumDistance.setAttractivity(50);
-        longDistance.setAttractivity(100);
+        //shortDistance.setAttractivity(1000);
+        //mediumDistance.setAttractivity(50);
+        //longDistance.setAttractivity(100);
 
-        eca.addStaticPotential(longDistance);
-        eca.addStaticPotential(shortDistance);
-        eca.addStaticPotential(mediumDistance);
+        addStaticPotential(longDistance, 100);
+        addStaticPotential(shortDistance, 1000);
+        addStaticPotential(mediumDistance, 50);
         return shortDistance;
+    }
+
+    private void addStaticPotential(Potential p, int attractivity) {
+        Exit e = new Exit("", Collections.emptyList());
+        e.setAttractivity(attractivity);
+        exitList.add(e);
+        context.checking(new Expectations() {
+            {
+                allowing(eca).getPotentialFor(e);
+                will(returnValue(p));
+            }
+        });
     }
 }

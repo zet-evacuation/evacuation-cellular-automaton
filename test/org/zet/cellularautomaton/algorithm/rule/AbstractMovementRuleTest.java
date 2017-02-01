@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
@@ -228,7 +228,7 @@ public class AbstractMovementRuleTest {
     @Test
     public void testStepEndTime() {
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
         context.checking(new Expectations() {
             {
                 allowing(esp).getCellularAutomaton();

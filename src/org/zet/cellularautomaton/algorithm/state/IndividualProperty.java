@@ -1,11 +1,10 @@
 package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.Potential;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
 import org.zetool.common.util.Helper;
 
@@ -27,7 +26,7 @@ public class IndividualProperty {
     private double panic = 0.0000;
 
     /** The potential the individual is following. */
-    private StaticPotential staticPotential;
+    private Potential staticPotential;
     /**
      * The (accurate) time when the moving of the individual is over. Initializes with 0 as step 0
      * is the first cellular automaton step.
@@ -132,7 +131,7 @@ public class IndividualProperty {
      *
      * @param sp
      */
-    public void setStaticPotential(StaticPotential sp) {
+    public void setStaticPotential(Potential sp) {
         this.staticPotential = sp;
     }
 
@@ -141,8 +140,12 @@ public class IndividualProperty {
      *
      * @return the static potential the individual is following
      */
-    public StaticPotential getStaticPotential() {
+    public Potential getStaticPotential() {
         return staticPotential;
+    }
+    
+    public Exit getExit() {
+        return null;
     }
 
     public double getStepEndTime() {

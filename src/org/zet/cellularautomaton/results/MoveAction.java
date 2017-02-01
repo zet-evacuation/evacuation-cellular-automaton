@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
@@ -91,7 +91,7 @@ public class MoveAction extends Action {
     }
 
     @Override
-    public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (from.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     -1,
@@ -122,7 +122,7 @@ public class MoveAction extends Action {
     }
 
     @Override
-    public Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+    public Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         EvacCell newFrom = adoptCell(from, targetCA);
         if (newFrom == null) {
             throw new CADoesNotMatchException(

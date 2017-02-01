@@ -15,11 +15,11 @@ import java.util.Set;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  * The current state of the simulation run.
@@ -36,7 +36,7 @@ public class MutableEvacuationState implements EvacuationState {
     private static final MessageFormat ERROR_NOT_EVACUATED = new MessageFormat("Individual {0} not evacuated.");
     
     /** The cellular automaton of the simulation run. */
-    private final EvacuationCellularAutomatonInterface ca;
+    private final EvacuationCellularAutomaton ca;
     /** The parameter set of the simulation run. */
 
     /** Mapping of individuals to their dynamic properties. */
@@ -71,7 +71,7 @@ public class MutableEvacuationState implements EvacuationState {
     /** Statistics writer. TODO: remove */
     public CAStatisticWriter caStatisticWriter;
 
-    public MutableEvacuationState(EvacuationCellularAutomatonInterface ca, List<Individual> individuals) {
+    public MutableEvacuationState(EvacuationCellularAutomaton ca, List<Individual> individuals) {
         this.ca = ca;
         individualProperties = new HashMap<>();
         individuals.stream().forEach(individual -> addIndividualInt(individual));
@@ -144,7 +144,7 @@ public class MutableEvacuationState implements EvacuationState {
     }
 
     @Override
-    public EvacuationCellularAutomatonInterface getCellularAutomaton() {
+    public EvacuationCellularAutomaton getCellularAutomaton() {
         return ca;
     }
 

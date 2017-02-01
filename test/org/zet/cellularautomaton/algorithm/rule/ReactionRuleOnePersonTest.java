@@ -9,7 +9,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
@@ -21,7 +21,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
  */
 public class ReactionRuleOnePersonTest {
     private final Mockery context = new Mockery();
-    private EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+    private MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
     private EvacuationState es;
     private final static IndividualBuilder builder = new IndividualBuilder();
 
@@ -95,7 +95,7 @@ public class ReactionRuleOnePersonTest {
     @Before
     public void initEvacuationProblem() {
         es = context.mock(EvacuationState.class);
-        eca = new EvacuationCellularAutomaton();
+        eca = new MultiFloorEvacuationCellularAutomaton();
         context.checking(new Expectations() {{
                 allowing(es).getCellularAutomaton();
                 will(returnValue(eca));

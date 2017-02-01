@@ -16,12 +16,12 @@ import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  *
@@ -138,7 +138,7 @@ public class SimpleMovementRuleTest {
         Mockery context = new Mockery();
         EvacuationState es = context.mock(EvacuationState.class);
         Computation c = context.mock(Computation.class);
-        EvacuationCellularAutomatonInterface ca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton ca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();

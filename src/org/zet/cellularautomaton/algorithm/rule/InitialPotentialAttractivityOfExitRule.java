@@ -17,8 +17,11 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -40,45 +43,41 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      */
     @Override
     protected void onExecute(EvacCellInterface cell) {
-        List<StaticPotential> staticPotentials = new ArrayList<>(es.getCellularAutomaton().getStaticPotentials());
-        StaticPotential initialPotential = initialPotential(staticPotentials, cell);
+        List<Exit> staticPotentials = new ArrayList<>(es.getCellularAutomaton().getExits());
+        Exit initialPotential = initialPotential(staticPotentials.stream(), cell);
         if (initialPotential == null) {
             ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
         } else {
             assignMostAttractivePotential(staticPotentials, initialPotential, cell);
         }
     }
-    
+
     /**
      * Find any admissible StaticPotential for this Individual
+     *
      * @param staticPotentials list of static potentials
      * @param individual
-     * @return 
+     * @return
      */
-    private StaticPotential initialPotential(List<StaticPotential> staticPotentials, EvacCellInterface cell) {
-        for( StaticPotential mostAttractiveSP : staticPotentials) {
-            if (mostAttractiveSP.getDistance(cell) >= 0) {
-                return mostAttractiveSP;
-            }
-        }
-        return null;
+    private Exit initialPotential(Stream<Exit> staticPotentials, EvacCellInterface cell) {
+        return staticPotentials.filter(exit -> es.getCellularAutomaton().getPotentialFor(exit).hasValidPotential(cell)).findAny().orElse(null);
     }
 
     /**
      * Find the best admissible StaticPotential for the individual on a cell.
-     * @param staticPotentials a list of all static potentials
+     *
+     * @param exits a list of all static potentials
      * @param referencePotential some reference potential
      * @param cell the cell
      */
-    private void assignMostAttractivePotential(List<StaticPotential> staticPotentials,
-            StaticPotential referencePotential, EvacCellInterface cell) {
-        StaticPotential mostAttractivePotential = referencePotential;
-        for (StaticPotential sp : staticPotentials) {
-            if ((sp.getAttractivity() > referencePotential.getAttractivity())
-                    && (sp.getDistance(cell) >= 0)) {
-                mostAttractivePotential = sp;
+    private void assignMostAttractivePotential(List<Exit> exits, Exit referencePotential, EvacCellInterface cell) {
+        Exit mostAttractivePotential = referencePotential;
+        for (Exit exit : exits) {
+            if ((exit.getAttractivity() > referencePotential.getAttractivity())
+                    && (es.getCellularAutomaton().getPotentialFor(exit).hasValidPotential(cell))) {
+                mostAttractivePotential = exit;
             }
         }
-        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(mostAttractivePotential);
+        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(es.getCellularAutomaton().getPotentialFor(mostAttractivePotential));
     }
 }

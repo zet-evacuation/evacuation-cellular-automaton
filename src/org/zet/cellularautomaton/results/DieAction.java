@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
 
@@ -70,7 +70,7 @@ public class DieAction extends Action {
      * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+    Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         EvacCell newCell = adoptCell(placeOfDeath, targetCA);
         if (newCell == null) {
             throw new CADoesNotMatchException(
@@ -89,7 +89,7 @@ public class DieAction extends Action {
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (placeOfDeath.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     "I could not mark the individual on cell "

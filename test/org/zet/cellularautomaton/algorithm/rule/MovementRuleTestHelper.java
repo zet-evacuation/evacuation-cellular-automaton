@@ -16,7 +16,6 @@ import org.jmock.Mockery;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
@@ -29,6 +28,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import org.zetool.common.util.Direction8;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  *
@@ -42,7 +42,7 @@ public class MovementRuleTestHelper {
     private EvacuationState es;
     private EvacuationStateControllerInterface ec;
     private IndividualProperty ip;
-    private EvacuationCellularAutomatonInterface ca;
+    private EvacuationCellularAutomaton ca;
     static final double STEPS_PER_SECOND = 10.0;
     private final int TIME_STEP = 13;
     private final double STEP_END_TIME_CURRENTLY_MOVING = TIME_STEP + 2;
@@ -66,7 +66,7 @@ public class MovementRuleTestHelper {
         ec = context.mock(EvacuationStateControllerInterface.class);
         ip = new IndividualProperty(individual);
         testCell = context.mock(EvacCellInterface.class, "testStartCell");
-        ca = context.mock(EvacuationCellularAutomatonInterface.class);
+        ca = context.mock(EvacuationCellularAutomaton.class);
 
         context.checking(new Expectations() {
             {

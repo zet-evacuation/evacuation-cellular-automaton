@@ -18,6 +18,8 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -83,20 +85,25 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
         this.c = c;
     }
 
-    protected static <T extends Potential> T getNearestExitStaticPotential(Collection<T> potentials, EvacCellInterface cell) {
-        T nearestPot = null;
+    protected static Exit getNearestExit(EvacuationCellularAutomaton ca, EvacCellInterface cell) {
+        Exit nearestExit = null;
         int distance = Integer.MAX_VALUE;
-        for (T potential : potentials) {
+        for (Exit exit : ca.getExits()) {
+            Potential potential = ca.getPotentialFor(exit);
             final int potentialValue = potential.getPotential(cell);
             if (potentialValue != -1 && potentialValue < distance) {
-                nearestPot = potential;
+                nearestExit = exit;
                 distance = potential.getPotential(cell);
             }
         }
-        if (nearestPot == null) {
+        if (nearestExit == null) {
             throw new IllegalStateException("No potential at cell " + cell.toString());
         }
-        return nearestPot;
+        return nearestExit;
+    }
+    
+    protected static Potential getNearestExitStaticPotential(EvacuationCellularAutomaton ec, EvacCellInterface cell) {
+        return ec.getPotentialFor(getNearestExit(ec, cell));
     }
 
     protected void recordAction(Action a) {

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -47,14 +48,14 @@ public class IndividualStatistic {
     private IndividualProperty ip;
     HashMap<Individual, Integer> safetyTimes;
     HashMap<Individual, ArrayList<Integer>> changePotentialTimes;
-    private Map<Individual, List<List<ExitCell>>> potentials;
+    private Map<Individual, List<Exit>> potentials;
     HashMap<Individual, ArrayList<Integer>> coveredDistanceTimes;
     private HashMap<Individual, ArrayList<Double>> coveredDistance;
     HashMap<Individual, ArrayList<Integer>> waitedTimeTimes;
     private HashMap<Individual, ArrayList<Integer>> waitedTime;
     HashMap<Individual, Double> minDistanceToNearestExit;
     HashMap<Individual, Double> minDistanceToPlannedExit;
-    private HashMap<Individual, StaticPotential> takenExit;
+    private HashMap<Individual, Exit> takenExit;
     HashMap<Individual, ArrayList<Integer>> panicTimes;
     private HashMap<Individual, ArrayList<Double>> panic;
     HashMap<Individual, ArrayList<Integer>> exhaustionTimes;
@@ -2332,8 +2333,7 @@ public class IndividualStatistic {
      * potential (there`s no exit reachable from the individual's position)
      * @throws java.lang.IllegalArgumentException
      */
-    //eventuell auf StaticPotential umstellen?
-    public List<ExitCell> getPlannedExit(Individual ind, int t) throws OneIndNoPotentialException, IllegalArgumentException {
+    public Exit getPlannedExit(Individual ind, int t) throws OneIndNoPotentialException, IllegalArgumentException {
         if (changePotentialTimes.containsKey(ind)) {
             int index = (Collections.binarySearch(changePotentialTimes.get(ind), t));
             if (index < 0) {
@@ -2358,7 +2358,7 @@ public class IndividualStatistic {
      * @throws org.zet.cellularautomaton.statistic.exception.OneIndNoPotentialException if the individual has no static
      * potential (there`s no exit reachable from the individual's position)
      */
-    public StaticPotential getTakenExit(Individual ind) throws OneIndNoPotentialException {
+    public Exit getTakenExit(Individual ind) throws OneIndNoPotentialException {
         if (!takenExit.containsKey(ind)) {
             // ind hat keinen Ausgang genommen (ist gestorben)
             throw new OneIndNoPotentialException(ind);

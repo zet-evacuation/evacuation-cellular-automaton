@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton;
 
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * A Save-Cell is special type of cell and therefore inherits properties and methods from the abstract class Cell. When
@@ -29,7 +29,7 @@ public class SaveCell extends TargetCell implements Cloneable {
     /** Constant defining the standard Speed-Factor of a Save-Cell, which may be &lt; 1. */
     public static final double STANDARD_SAVECELL_SPEEDFACTOR = 0.8d;
     /** Static potential leading to the exit associated with the safe area. */
-    private StaticPotential exitPotential;
+    private Potential exitPotential;
 
     /**
      * This constructor creates an empty Save-Cell with the standard SaveCell-Speed-Factor
@@ -80,11 +80,11 @@ public class SaveCell extends TargetCell implements Cloneable {
         return "S;" + super.toString();
     }
 
-    public StaticPotential getExitPotential() {
+    public Potential getExitPotential() {
         return exitPotential;
     }
 
-    public void setExitPotential(StaticPotential sp) {
+    public void setExitPotential(Potential sp) {
         exitPotential = sp;
     }
 

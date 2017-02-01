@@ -1,5 +1,8 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.jmock.AbstractExpectations.any;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
@@ -22,6 +26,7 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -38,17 +43,21 @@ public class InitialPotentialShortestPathRuleTest {
     private EvacuationStateControllerInterface ec;
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private final static IndividualBuilder INDIVIDUAL = new IndividualBuilder();
+    private final Exit exit = new Exit("", Collections.emptyList());
+    private List<Exit> exitList;
     
     @Before
     public void init() {
         rule = new InitialPotentialShortestPathRule();
         Room room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
-        eca = new EvacuationCellularAutomaton();
-        individual = builder.build();
+        eca = context.mock(EvacuationCellularAutomaton.class);
+        individual = INDIVIDUAL.build();
         ip = new IndividualProperty(individual);                
         ec = context.mock(EvacuationStateControllerInterface.class);
+        exitList = new LinkedList<>();
+        exitList.add(exit);
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
@@ -61,6 +70,8 @@ public class InitialPotentialShortestPathRuleTest {
                 will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).propertyFor(individual);
                 will(returnValue(ip));
+                allowing(eca).getExits();
+                will(returnValue(exitList));
             }
         });
         cell = new RoomCell(1, 0, 0, room);
@@ -76,7 +87,7 @@ public class InitialPotentialShortestPathRuleTest {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        individual = builder.build();
+        individual = INDIVIDUAL.build();
         context.checking(new Expectations() {
             {
                 allowing(es).propertyFor(individual);
@@ -96,6 +107,7 @@ public class InitialPotentialShortestPathRuleTest {
     
     @Test
     public void testDeadIfNoPotentials() {
+        exitList.clear();
         context.checking(new Expectations() {{
                 exactly(1).of(ec).die(with(individual), with(DeathCause.EXIT_UNREACHABLE));
         }});
@@ -106,7 +118,8 @@ public class InitialPotentialShortestPathRuleTest {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        eca.addStaticPotential(sp);
+        
+        addStaticPotential(sp);
         
         context.checking(new Expectations() {{
                 exactly(1).of(ec).die(with(individual), with(DeathCause.EXIT_UNREACHABLE));
@@ -120,7 +133,7 @@ public class InitialPotentialShortestPathRuleTest {
         StaticPotential sp = new StaticPotential();
         sp.setPotential(cell, 1);
 
-        eca.addStaticPotential(sp);
+        addStaticPotential(sp);
         
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(same(sp)));
@@ -142,9 +155,25 @@ public class InitialPotentialShortestPathRuleTest {
         mediumDistance.setPotential(cell, 2);
         longDistance.setPotential(cell, 3);
 
-        eca.addStaticPotential(longDistance);
-        eca.addStaticPotential(shortDistance);
-        eca.addStaticPotential(mediumDistance);
+        addStaticPotential(longDistance);
+        addStaticPotential(new Exit("", Collections.emptyList()), shortDistance);
+        addStaticPotential(new Exit("", Collections.emptyList()), mediumDistance);
         return shortDistance;
     }
+    
+    private void addStaticPotential(Potential p) {
+        context.checking(new Expectations() {{
+            allowing(eca).getPotentialFor(exit);
+            will(returnValue(p));
+        }});
+    }
+    
+    private void addStaticPotential(Exit e, Potential p) {
+        exitList.add(e);
+        context.checking(new Expectations() {{
+            allowing(eca).getPotentialFor(e);
+            will(returnValue(p));
+        }});
+    }
+    
 }

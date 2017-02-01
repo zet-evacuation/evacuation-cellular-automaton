@@ -18,7 +18,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.SaveCell;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * The save rule must be executed before the evacuation rule is executed.
@@ -45,7 +45,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     }
 
     private void setExitPotential(SaveCell cell, Individual savedIndividual) {
-        StaticPotential correspondingExitPotential = cell.getExitPotential();
+        Potential correspondingExitPotential = cell.getExitPotential();
         if (correspondingExitPotential == null) {
             es.propertyFor(savedIndividual).setStaticPotential(es.getCellularAutomaton().getSafePotential());
         } else {
@@ -53,7 +53,8 @@ public class SaveIndividualsRule extends AbstractSaveRule {
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(savedIndividual, es.getTimeStep());
                 es.propertyFor(savedIndividual).setStaticPotential(correspondingExitPotential);
             }
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(savedIndividual, correspondingExitPotential);
+            //TODO: exit for the save potential?
+            //es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(savedIndividual, correspondingExitPotential);
         }
     }
 

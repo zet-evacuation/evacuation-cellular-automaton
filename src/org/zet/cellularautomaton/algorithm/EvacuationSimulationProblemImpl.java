@@ -21,7 +21,7 @@ import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 
 /**
@@ -31,13 +31,13 @@ import org.zet.cellularautomaton.Individual;
 public class EvacuationSimulationProblemImpl implements EvacuationSimulationProblem {
     double seconds = 300;
 
-    private final EvacuationCellularAutomaton ca;
+    private final MultiFloorEvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
     private final List<Individual> individuals;
     private final Map<Individual, EvacCellInterface> individualStartPositions;
 
-    public EvacuationSimulationProblemImpl(EvacuationCellularAutomaton ca, List<Individual> individuals, Map<Individual,EvacCellInterface> individualStartPositions) {
+    public EvacuationSimulationProblemImpl(MultiFloorEvacuationCellularAutomaton ca, List<Individual> individuals, Map<Individual,EvacCellInterface> individualStartPositions) {
         this.ca = ca;
         this.individuals = individuals;
         this.individualStartPositions = individualStartPositions;
@@ -52,7 +52,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     }
 
     @Override
-    public EvacuationCellularAutomaton getCellularAutomaton() {
+    public MultiFloorEvacuationCellularAutomaton getCellularAutomaton() {
         return ca;
     }
 

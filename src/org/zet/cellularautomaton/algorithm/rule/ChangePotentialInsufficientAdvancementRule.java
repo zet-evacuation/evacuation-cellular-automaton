@@ -21,8 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  *
@@ -95,7 +96,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
      */
     @Override
     protected boolean wantsToChange(Individual individual) {
-        StaticPotential sp = es.propertyFor(individual).getStaticPotential();
+        Potential sp = es.propertyFor(individual).getStaticPotential();
         int cellCountToChange = getCellCountToChange(individual);
         int memoryIndex = getMemoryIndex(individual);
         EvacCellInterface cell = es.propertyFor(individual).getCell();
@@ -123,7 +124,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
     protected void onExecute(EvacCellInterface cell) {
         // Get the potential of the individual on the {@code cell} as well as some other concerning constants of the individual
         Individual individual = cell.getState().getIndividual();
-        StaticPotential sp = es.propertyFor(individual).getStaticPotential();
+        Potential sp = es.propertyFor(individual).getStaticPotential();
 
         /**
          * Calibratingfactor - The smaller {@code epsilon}, the lower the probability of a potential-change
@@ -136,11 +137,12 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
         if ((potentialDifference < epsilon) && (sp == getPotentialMemoryStart(individual).getStaticPotential())) {
 
             // Calculate the second best Potential and the associated potential value on the {@code cell}
-            List<StaticPotential> staticPotentials = new ArrayList<>();
-            staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());
-            StaticPotential minWayLengthPotential = sp;
+            //List<Potential> staticPotentials = new ArrayList<>();
+            //staticPotentials.addAll(es.getCellularAutomaton().getExits());
+            Potential minWayLengthPotential = sp;
             int lengthOfWayValue = Integer.MAX_VALUE;
-            for (StaticPotential statPot : staticPotentials) {
+            for (Exit exit : es.getCellularAutomaton().getExits()) {
+                Potential statPot = es.getCellularAutomaton().getPotentialFor(exit);
                 if ((statPot.getPotential(cell) < lengthOfWayValue) && (statPot != sp)) {
                     minWayLengthPotential = statPot;
                     lengthOfWayValue = statPot.getPotential(cell);

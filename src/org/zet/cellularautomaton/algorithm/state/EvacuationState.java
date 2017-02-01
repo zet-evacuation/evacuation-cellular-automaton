@@ -1,10 +1,10 @@
 package org.zet.cellularautomaton.algorithm.state;
 
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  * Provides information about the current evacuation simulation to rules.
@@ -41,7 +41,7 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual> {
     // To be removed from the interface completely:
     public CAStatisticWriter getStatisticWriter();
 
-    public EvacuationCellularAutomatonInterface getCellularAutomaton();
+    public EvacuationCellularAutomaton getCellularAutomaton();
 
     /**
      * Returns the mapping between individuals and exit cells.

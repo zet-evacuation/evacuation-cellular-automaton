@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.potential;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +15,12 @@ import org.zetool.common.algorithm.AbstractAlgorithm;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, StaticPotential> {
+public class PotentialAlgorithm extends AbstractAlgorithm<Collection<ExitCell>, StaticPotential> {
     private static final int APPROXIMATE_ORTHOGONAL_DISTANCE = 10;
     private static final int APPROXIMATE_DIAGONAL_DISTANCE = 14;
     
     @Override
-    protected StaticPotential runAlgorithm(List<ExitCell> problem) {
+    protected StaticPotential runAlgorithm(Collection<ExitCell> problem) {
         return createStaticPotential(problem);
     }
 
@@ -32,11 +33,11 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
      * @param exitBlock list of ExitCells
      * @return the calculated StaticPotential
      */
-    public StaticPotential createStaticPotential(List<ExitCell> exitBlock) {
+    public StaticPotential createStaticPotential(Collection<ExitCell> exitBlock) {
         StaticPotential staticPotential = new StaticPotential();
-        staticPotential.setAssociatedExitCells(exitBlock);
-        staticPotential.setAttractivity(exitBlock.get(0).getAttractivity());
-        List<? extends EvacCellInterface> parentList;
+        //staticPotential.setAssociatedExitCells(exitBlock);
+        //staticPotential.setAttractivity(exitBlock.get(0).getAttractivity());
+        Collection<? extends EvacCellInterface> parentList;
 
         for (ExitCell c : exitBlock) {
             staticPotential.setPotential(c, 0);
@@ -52,7 +53,7 @@ public class PotentialAlgorithm extends AbstractAlgorithm<List<ExitCell>, Static
     }
 
     private Map<EvacCellInterface, SmoothingTuple> computeChildTuples(StaticPotential staticPotential, 
-            List<? extends EvacCellInterface> parentList) {
+            Collection<? extends EvacCellInterface> parentList) {
         Map<EvacCellInterface, SmoothingTuple> childTuple = new HashMap<>();
         for (EvacCellInterface parent : parentList) {
             addToChildTuples(staticPotential, parent, childTuple);

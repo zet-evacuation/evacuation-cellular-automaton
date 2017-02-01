@@ -18,9 +18,10 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.HashMap;
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.TargetCell;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * This rule applies the exit mapping to the cellular automaton. It is explicitly allowed to have individuals with no
@@ -31,7 +32,7 @@ import org.zet.cellularautomaton.TargetCell;
 public class InitialPotentialExitMappingRule extends AbstractInitialRule {
 
     /** Mapping of exit cells to their respective potentials. */
-    protected Map<TargetCell, StaticPotential> potentialMapping;
+    protected Map<TargetCell, Potential> potentialMapping;
 
     /**
      * Checks, whether the rule is executable or not.
@@ -71,10 +72,10 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      */
     protected void init() {
         potentialMapping = new HashMap<>();
-        for (StaticPotential potential : es.getCellularAutomaton().getStaticPotentials()) {
-            for (TargetCell target : potential.getAssociatedExitCells()) {
-                if (potentialMapping.put(target, potential) != null) {
-                    throw new UnsupportedOperationException("There were two potentials leading to the same exit. This method can currently not deal with this.");
+        for (Exit exit : es.getCellularAutomaton().getExits()) {
+            for (TargetCell target : exit.getExitCluster()) {
+                if (potentialMapping.put(target, es.getCellularAutomaton().getPotentialFor(exit)) != null) {
+                    throw new UnsupportedOperationException("There were two potentials leading to the same exit.");
                 }
             }
         }
@@ -86,7 +87,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * @param target a target cell associated with the individual's exit choice
      */
     protected void handleWithTarget(EvacCellInterface cell, TargetCell target) {
-        StaticPotential potential = potentialMapping.get(target);
+        Potential potential = potentialMapping.get(target);
         if (potential == null) {
             throw new IllegalStateException("The target cell (room id, x, y) " + target.getRoom().getID() + ", " + target.getX() + ", " + target.getY() + " does not correspond to a static potential.");
         }

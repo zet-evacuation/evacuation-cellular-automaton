@@ -15,13 +15,13 @@ import org.junit.Test;
  *
  * @author Jan-Philipp Kappmeier
  */
-public class EvacuationCellularAutomatonTest {
+public class MultiFloorEvacuationCellularAutomatonTest {
+    private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
     private final Mockery context = new Mockery();
-    private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
     public void testInitialization() {
-        EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton ca = new MultiFloorEvacuationCellularAutomaton();
         assertThat(ca.getCellCount(), is(equalTo(0)));
         assertThat(ca.getDimension(), is(equalTo(2)));
         assertThat(ca.getFloors(), is(empty()));
@@ -31,7 +31,7 @@ public class EvacuationCellularAutomatonTest {
     
     @Test
     public void testSingleRoom() {
-        EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton ca = new MultiFloorEvacuationCellularAutomaton();
         ca.addFloor(0, "floor1");
 
         Room room = context.mock(Room.class, "room1");
@@ -48,7 +48,7 @@ public class EvacuationCellularAutomatonTest {
     
     @Test(expected = IllegalStateException.class)
     public void addWithoutFloorFails() {
-        EvacuationCellularAutomaton ca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton ca = new MultiFloorEvacuationCellularAutomaton();
         ca.addFloor(0, "floor1");
         Room room = context.mock(Room.class);
         roomExpectations(room, 1, 1);
@@ -57,7 +57,6 @@ public class EvacuationCellularAutomatonTest {
     
     private void roomExpectations(Room room, int id, int cells) {
         context.checking(new Expectations() {{
-                //debugger throws error on the line below.
                 atLeast(1).of(room).getCellCount(false);
                 will(returnValue(cells));
                 allowing(room).getXOffset();

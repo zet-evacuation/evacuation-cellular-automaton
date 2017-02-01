@@ -12,7 +12,7 @@ import org.jmock.Mockery;
 import org.jmock.States;
 import org.junit.Before;
 import org.junit.Test;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
@@ -40,7 +40,7 @@ public class SaveIndividualsRuleTest {
 
     @Before
     public void init() {
-        EvacuationCellularAutomaton eca = new EvacuationCellularAutomaton();
+        MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
         rule = new SaveIndividualsRule();
         ec = context.mock(EvacuationStateControllerInterface.class);
         rule.setEvacuationStateController(ec);

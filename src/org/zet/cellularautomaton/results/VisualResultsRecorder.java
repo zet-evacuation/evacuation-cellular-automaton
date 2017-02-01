@@ -20,16 +20,17 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.InitialConfiguration;
 import org.zet.cellularautomaton.Room;
-import org.zet.cellularautomaton.potential.StaticPotential;
 
 import java.util.LinkedList;
 import org.zet.cellularautomaton.RoomImpl;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
+import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * This class helps you to store all the parts of a simulation that are
@@ -68,7 +69,7 @@ public class VisualResultsRecorder {
      * based on this configuration. 
      */
     private InitialConfiguration clonedInitialConfig;
-    private EvacuationCellularAutomaton clonedCA;
+    private MultiFloorEvacuationCellularAutomaton clonedCA;
     /**
      * Stores a vector of actions for every time step
      * Each vector holds the actions for its time step in the
@@ -85,7 +86,7 @@ public class VisualResultsRecorder {
      * This is bad design and must be changed!
      */
     private HashMap<EvacCell, EvacCell> cellMap;
-    private HashMap<StaticPotential, StaticPotential> staticPotentialMap;
+    private HashMap<Potential, Potential> staticPotentialMap;
     private boolean doRecord;
 
     protected VisualResultsRecorder() {
@@ -130,7 +131,7 @@ public class VisualResultsRecorder {
     public final void setInitialConfiguration(InitialConfiguration initialConfig) {
         reset();
         this.clonedInitialConfig = cloneConfig(initialConfig, cellMap, staticPotentialMap);
-        this.clonedCA = new EvacuationCellularAutomaton(clonedInitialConfig);
+        this.clonedCA = new MultiFloorEvacuationCellularAutomaton(clonedInitialConfig);
     }
 
     public InitialConfiguration getInitialConfiguration() {
@@ -206,7 +207,7 @@ public class VisualResultsRecorder {
      * @return A deep copy of {@code orig}.
      */
     private static InitialConfiguration cloneConfig(InitialConfiguration orig,
-            HashMap<EvacCell, EvacCell> cellMapping, HashMap<StaticPotential, StaticPotential> potentialMapping) {
+            HashMap<EvacCell, EvacCell> cellMapping, HashMap<Potential, Potential> potentialMapping) {
 
         if (cellMapping == null) {
             cellMapping = new HashMap<>();
@@ -258,11 +259,11 @@ public class VisualResultsRecorder {
         // all cells and all potentials. The cells are iterated room
         // by room
         //PotentialManager globals = orig.getPotentialManager();
-        Collection<StaticPotential> statics = orig.getStaticPotentials();
+        Collection<Potential> statics = orig.getStaticPotentials();
         //PotentialManager clonedGlobals = new PotentialManager();
-        Collection<StaticPotential> staticClone = new LinkedList<>();
+        Collection<Potential> staticClone = new LinkedList<>();
         if (statics != null) {
-            for (StaticPotential pot : statics) {
+            for (Potential pot : statics) {
                 StaticPotential clone = new StaticPotential();
                 staticClone.add(clone);
                 potentialMapping.put(pot, clone);
@@ -310,7 +311,7 @@ public class VisualResultsRecorder {
                     EvacCell cell = room.getCell(x, y);
                     if (cell != null && cell.getState().getIndividual() != null) {
                         EvacCell clonedCell = cellMapping.get(cell);
-                        StaticPotential origPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
+                        Potential origPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
                         es.propertyFor(cell.getState().getIndividual()).setStaticPotential(potentialMapping.get(origPot));
                     }
                 }

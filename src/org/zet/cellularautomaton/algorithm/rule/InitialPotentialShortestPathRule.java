@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -49,15 +51,17 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
     public static void assignShortestPathPotential(EvacCellInterface cell, EvacuationState es, EvacuationStateControllerInterface ec) {
         Individual individual = cell.getState().getIndividual();
-        List<StaticPotential> staticPotentials = new ArrayList<>();
-        staticPotentials.addAll(es.getCellularAutomaton().getStaticPotentials());
-        StaticPotential initialPotential = new StaticPotential();
+        Potential initialPotential = new StaticPotential();
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
         double distanceToEvacArea;
-        for (StaticPotential sp : staticPotentials) {
-            distanceToEvacArea = sp.getDistance(es.propertyFor(individual).getCell());
+        for (Exit exit : es.getCellularAutomaton().getExits()) {
+            Potential sp = es.getCellularAutomaton().getPotentialFor(exit);
+            if (!sp.hasValidPotential(es.propertyFor(individual).getCell())) {
+                continue;
+            }
+            distanceToEvacArea = sp.getPotentialDouble(es.propertyFor(individual).getCell());
             if (distanceToEvacArea >= 0 && distanceToEvacArea <= minDistanceToEvacArea) {
-                minDistanceToEvacArea = sp.getDistance(es.propertyFor(individual).getCell());
+                minDistanceToEvacArea = sp.getPotentialDouble(es.propertyFor(individual).getCell());
                 initialPotential = sp;
             }
         }
@@ -68,7 +72,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
         }
 
         es.propertyFor(individual).setStaticPotential(initialPotential);
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic(individual, minDistanceToEvacArea, initialPotential.getDistance(cell));
+        //es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addMinDistancesToStatistic(individual, minDistanceToEvacArea, initialPotential.getPotential(cell));
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, 0);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, es.propertyFor(individual).getExhaustion());
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, es.propertyFor(individual).getPanic());

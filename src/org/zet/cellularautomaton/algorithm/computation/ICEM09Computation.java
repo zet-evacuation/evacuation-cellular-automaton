@@ -6,7 +6,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  *
@@ -22,7 +22,7 @@ public class ICEM09Computation implements Computation {
         if (referenceCell.getState().isEmpty()) {
             throw new IllegalArgumentException(CellularAutomatonLocalization.LOC.getString("algo.ca.parameter.NoIndividualOnReferenceCellException"));
         }
-        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
+        Potential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
         final double statPotlDiff = staticPotential.getPotential(referenceCell) - staticPotential.getPotential(targetCell);
         return statPotlDiff;
     }

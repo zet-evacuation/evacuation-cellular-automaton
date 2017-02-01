@@ -16,8 +16,8 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.ExitCell;
-import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
  * A rule that evacuates the individuals.
@@ -38,7 +38,7 @@ public class EvacuateIndividualsRule extends AbstractEvacuationRule {
     protected void onExecute(EvacCellInterface cell) {
         es.markIndividualForRemoval(cell.getState().getIndividual());
         // Potential needed for statistics:
-        StaticPotential exit = getNearestExitStaticPotential(es.getCellularAutomaton().getStaticPotentials(), cell);
+        Exit exit = getNearestExit(es.getCellularAutomaton(), cell);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(cell.getState().getIndividual(), exit);
         // safetyTime etc will be set in the SaveIndividualsRule
     }

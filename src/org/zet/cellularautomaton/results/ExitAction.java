@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
 
@@ -42,7 +42,7 @@ public class ExitAction extends Action {
     }
 
     @Override
-    public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (exit.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException("Could not evacuate an individual from cell " + exit + "(" + exit.hashCode() + ") because there was none.");
         }
@@ -56,7 +56,7 @@ public class ExitAction extends Action {
     }
 
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+    Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         EvacCell newExit = adoptCell(exit, targetCA);
         if (newExit == null) {
             throw new CADoesNotMatchException(this, "Could not find the exit " + exit + " that this action uses in the new CA.");

@@ -8,6 +8,9 @@ import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
@@ -23,6 +27,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -31,6 +36,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  * @author Jan-Philipp Kappmeier
  */
 public class InitialPotentialAttractivityOfExitRuleTest {
+    private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
     private final Mockery context = new Mockery();
     private InitialPotentialAttractivityOfExitRule rule;
     private IndividualProperty ip;
@@ -39,20 +45,24 @@ public class InitialPotentialAttractivityOfExitRuleTest {
     private EvacuationCellularAutomaton eca;
     private EvacuationState es;
     private EvacuationStateControllerInterface ec;
-    private final static IndividualBuilder builder = new IndividualBuilder();
-
+    private List<Exit> exitList;
+    
     @Before
     public void init() {
         rule = new InitialPotentialAttractivityOfExitRule();
         Room room = context.mock(Room.class);
         EvacuationSimulationProblem p = context.mock(EvacuationSimulationProblem.class);
         es = context.mock(EvacuationState.class);
-        eca = new EvacuationCellularAutomaton();
-        individual = builder.build();
+        eca = context.mock(EvacuationCellularAutomaton.class);
+        individual = INDIVIDUAL_BUILDER.build();
         ip = new IndividualProperty(individual);
         ec = context.mock(EvacuationStateControllerInterface.class);
+        exitList = new LinkedList<>();
+        
         context.checking(new Expectations() {
             {
+                allowing(eca).getExits();
+                will(returnValue(exitList));
                 allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
                 allowing(room).getID();
@@ -78,7 +88,7 @@ public class InitialPotentialAttractivityOfExitRuleTest {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        individual = builder.build();
+        individual = INDIVIDUAL_BUILDER.build();
         ip = new IndividualProperty(individual);
         cell.getState().setIndividual(individual);
         context.checking(new Expectations() {{
@@ -108,7 +118,7 @@ public class InitialPotentialAttractivityOfExitRuleTest {
     @Test
     public void testDeadIfPotentialsBad() {
         StaticPotential sp = new StaticPotential();
-        eca.addStaticPotential(sp);
+        addStaticPotential(sp, 100);
 
         context.checking(new Expectations() {{
                 exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
@@ -121,7 +131,7 @@ public class InitialPotentialAttractivityOfExitRuleTest {
     public void testSinglePotentialTaken() {
         StaticPotential sp = new StaticPotential();
         sp.setPotential(cell, 1);
-        eca.addStaticPotential(sp);
+        addStaticPotential(sp, 100);
         
         rule.execute(cell);
         assertThat(ip.isDead(), is(false));
@@ -132,22 +142,31 @@ public class InitialPotentialAttractivityOfExitRuleTest {
     public void mostAttractiveTaken() {
         StaticPotential unattractive1 = new StaticPotential();
         unattractive1.setPotential(cell, 1);
-        unattractive1.setAttractivity(100);
         StaticPotential unattractive2 = new StaticPotential();
-        unattractive1.setPotential(cell, 1);
-        unattractive1.setAttractivity(100);
+        unattractive2.setPotential(cell, 1);
         StaticPotential mostAttractive = new StaticPotential();
         mostAttractive.setPotential(cell, 1);
-        mostAttractive.setAttractivity(200);
         StaticPotential unreachable = new StaticPotential();
 
-        eca.addStaticPotential(unattractive1);
-        eca.addStaticPotential(mostAttractive);
-        eca.addStaticPotential(unattractive2);
-        eca.addStaticPotential(unreachable);
+        addStaticPotential(unattractive1, 100);
+        addStaticPotential(mostAttractive, 200);
+        addStaticPotential(unattractive2, 100);
+        addStaticPotential(unreachable, 1000);
 
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(same(mostAttractive)));
     }
-    
+
+    private void addStaticPotential(Potential p, int attractivity) {
+        Exit e = new Exit("", Collections.emptyList());
+        e.setAttractivity(attractivity);
+        exitList.add(e);
+        context.checking(new Expectations() {
+            {
+                allowing(eca).getPotentialFor(e);
+                will(returnValue(p));
+            }
+        });
+    }
+
 }

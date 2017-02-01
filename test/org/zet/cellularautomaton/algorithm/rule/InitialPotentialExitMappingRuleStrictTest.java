@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
@@ -10,6 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
@@ -25,7 +26,9 @@ import org.zet.cellularautomaton.IndividualToExitMapping;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
@@ -44,7 +47,8 @@ public class InitialPotentialExitMappingRuleStrictTest {
     private EvacuationSimulationProblem p;
     private ExitCell target;
     private EvacuationState es;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
+    private List<Exit> exitList;
 
     private final IndividualToExitMapping exitMapping = (Individual individual) -> {
         if (individual == InitialPotentialExitMappingRuleStrictTest.this.i) {
@@ -58,17 +62,20 @@ public class InitialPotentialExitMappingRuleStrictTest {
         rule = new InitialPotentialExitMappingRuleStrict();
         Room room = context.mock(Room.class);
         p = context.mock(EvacuationSimulationProblem.class);
-        eca = new EvacuationCellularAutomaton();
+        eca = context.mock(EvacuationCellularAutomaton.class);
         es = context.mock(EvacuationState.class);
-        i = builder.build();
+        i = INDIVIDUAL_BUILDER.build();
         ip = new IndividualProperty(i);
         test = context.states("normal-test");
         test.become("normal-test");
+        exitList = new LinkedList<>();
 
         context.checking(new Expectations() {
             {
                 allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
+                allowing(eca).getExits();
+                will(returnValue(exitList));
                 allowing(room).getID();
                 will(returnValue(1));
                 allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
@@ -101,7 +108,7 @@ public class InitialPotentialExitMappingRuleStrictTest {
         cell = new RoomCell(0, 0);
         assertThat(rule, is(not(executeableOn(cell))));
 
-        Individual i = builder.build();
+        Individual i = INDIVIDUAL_BUILDER.build();
         cell.getState().setIndividual(i);
         assertThat(rule, is(executeableOn(cell)));
     }
@@ -113,7 +120,7 @@ public class InitialPotentialExitMappingRuleStrictTest {
         spExits.add(target);
         sp.setAssociatedExitCells(spExits);
 
-        eca.addStaticPotential(sp);
+        addStaticPotential(sp);
 
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(equalTo(sp)));
@@ -136,8 +143,8 @@ public class InitialPotentialExitMappingRuleStrictTest {
         sp2Exits.add(target);
         sp2.setAssociatedExitCells(sp2Exits);
 
-        eca.addStaticPotential(sp1);
-        eca.addStaticPotential(sp2);
+        addStaticPotential(sp1);
+        addStaticPotential(sp2);
 
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(equalTo(sp2)));
@@ -175,6 +182,17 @@ public class InitialPotentialExitMappingRuleStrictTest {
                 will(returnValue(mapping));
             }});
         rule.execute(cell);
+    }
+
+    private void addStaticPotential(Potential p) {
+        Exit e = new Exit("", Collections.singletonList(target));
+        exitList.add(e);
+        context.checking(new Expectations() {
+            {
+                allowing(eca).getPotentialFor(e);
+                will(returnValue(p));
+            }
+        });
     }
 
 }

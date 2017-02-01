@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
@@ -55,12 +55,12 @@ public abstract class Action implements Cloneable {
      * @param targetCa The cellular automaton to which this action should be adopted.
      * @return The adopted action
      */
-    abstract Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException;
+    abstract Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException;
 
     /**
      * Executes the action with respect to the starting and ending cell of the action.
      */
-    public abstract void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException;
+    public abstract void execute(MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException;
 
     /**
      * Every subclass of this class should override the {@code toString()}.
@@ -68,7 +68,7 @@ public abstract class Action implements Cloneable {
     @Override
     public abstract String toString();
 
-    protected EvacCell adoptCell(EvacCellInterface cell, EvacuationCellularAutomaton targetCA) {
+    protected EvacCell adoptCell(EvacCellInterface cell, MultiFloorEvacuationCellularAutomaton targetCA) {
         org.zet.cellularautomaton.Room newRoom = targetCA.getRoom(cell.getRoom().getID());
         org.zet.cellularautomaton.EvacCell newCell = newRoom.getCell(cell.getX(), cell.getY());
         return newCell;

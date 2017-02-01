@@ -18,11 +18,12 @@ package org.zet.cellularautomaton.statistic.results;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  *
@@ -32,14 +33,14 @@ public class StoredCAStatisticResultsForIndividuals {
     PropertyAccess es;
     HashMap<Individual, Integer> safetyTimes;
     HashMap<Individual, ArrayList<Integer>> changePotentialTimes;
-    private final HashMap<Individual, List<List<ExitCell>>> potentials;
+    private final HashMap<Individual, List<Exit>> potentials;
     HashMap<Individual, ArrayList<Integer>> coveredDistanceTimes;
     private final HashMap<Individual, ArrayList<Double>> coveredDistance;
     HashMap<Individual, ArrayList<Integer>> waitedTimeTimes;
     private final HashMap<Individual, ArrayList<Integer>> waitedTime;
     HashMap<Individual, Double> minDistanceToNearestExit;
     HashMap<Individual, Double> minDistanceToPlannedExit;
-    private final HashMap<Individual, StaticPotential> takenExit;
+    private final HashMap<Individual, Exit> takenExit;
     HashMap<Individual, ArrayList<Integer>> panicTimes;
     private final HashMap<Individual, ArrayList<Double>> panic;
     HashMap<Individual, ArrayList<Integer>> exhaustionTimes;
@@ -80,7 +81,7 @@ public class StoredCAStatisticResultsForIndividuals {
             potentials.put(ind, new ArrayList<>());
         }
         changePotentialTimes.get(ind).add(t);
-        potentials.get(ind).add(es.propertyFor(ind).getStaticPotential().getAssociatedExitCells());
+        potentials.get(ind).add(es.propertyFor(ind).getExit());
     }
 
     public void addCoveredDistanceToStatistic(Individual ind, int t, double distance) {
@@ -116,7 +117,7 @@ public class StoredCAStatisticResultsForIndividuals {
         }
     }
 
-    public void addExitToStatistic(Individual ind, StaticPotential exit) {
+    public void addExitToStatistic(Individual ind, Exit exit) {
         takenExit.put(ind, exit);
     }
 
@@ -168,7 +169,7 @@ public class StoredCAStatisticResultsForIndividuals {
         return minDistanceToPlannedExit;
     }
 
-    public HashMap<Individual, List<List<ExitCell>>> getHashMapPotentials() {
+    public HashMap<Individual, List<Exit>> getHashMapPotentials() {
         return potentials;
     }
 
@@ -184,7 +185,7 @@ public class StoredCAStatisticResultsForIndividuals {
         return waitedTimeTimes;
     }
 
-    public HashMap<Individual, StaticPotential> getHashMapTakenExit() {
+    public HashMap<Individual, Exit> getHashMapTakenExit() {
         return takenExit;
     }
 

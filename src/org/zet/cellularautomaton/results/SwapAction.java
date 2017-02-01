@@ -16,7 +16,7 @@
 package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
@@ -116,7 +116,7 @@ public class SwapAction extends Action {
     }
 
     @Override
-    public void execute(org.zet.cellularautomaton.EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (cell1.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(-1, this, "There is no Individual on cell 1.");
         }
@@ -143,7 +143,7 @@ public class SwapAction extends Action {
     }
 
     @Override
-    public Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+    public Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         EvacCell newCell1 = adoptCell(cell1, targetCA);
         if (newCell1 == null) {
             throw new CADoesNotMatchException(this, "Could not find cell 1 " + cell1 + " in the new CA.");

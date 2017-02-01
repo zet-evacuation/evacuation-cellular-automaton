@@ -7,7 +7,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zetool.math.averaging.NonLinearAverages;
 import org.zetool.rndutils.RandomUtils;
 
@@ -62,7 +62,7 @@ public class DefaultComputation implements Computation {
         assert !referenceCell.getState().isEmpty();
 
         final double panic = es.propertyFor(referenceCell.getState().getIndividual()).getPanic();
-        StaticPotential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
+        Potential staticPotential = es.propertyFor(referenceCell.getState().getIndividual()).getStaticPotential();
 
         if (dynamicPotential != null) {
             final double dynPotDiff = dynamicPotential.apply(referenceCell)

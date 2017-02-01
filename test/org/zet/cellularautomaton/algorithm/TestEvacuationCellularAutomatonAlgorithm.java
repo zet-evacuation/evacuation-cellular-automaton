@@ -25,7 +25,6 @@ import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
-import org.zet.cellularautomaton.EvacuationCellularAutomatonInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
@@ -39,6 +38,7 @@ import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
 import org.zetool.common.algorithm.AlgorithmProgressEvent;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  *
@@ -139,7 +139,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         rules.add(loop, false, true);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {{
                 allowing(esp).getEvacuationStepLimit();
                 will(returnValue(3));
@@ -247,7 +247,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         rules.add(loop, false, true);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         ParameterSet ps = context.mock(ParameterSet.class);        
         
         context.checking(new Expectations() {{
@@ -306,7 +306,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     public void testTerminateEventAllSave() {
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true);
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         
         context.checking(new Expectations() {{
                 allowing(esp).getCellularAutomaton();
@@ -344,7 +344,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         isp.get(individuals.get(0)).setRoom(room);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {{
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
@@ -444,7 +444,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         algorithm.setNeededTime(neededTime);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {{
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
@@ -495,7 +495,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
     private void assertOrder(EvacuationCellularAutomatonAlgorithm algorithm, List<Individual> individuals, List<Individual> expectedOrder) {
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         context.checking(new Expectations() {{
                 allowing(esp).getCellularAutomaton();
                 will(returnValue(eca));
@@ -535,7 +535,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         EvacuationCellularAutomatonAlgorithm algorithm = EvacuationCellularAutomatonAlgorithm.getFrontToBackAlgorithm();
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         EvacuationRuleSet rs = new TestEvacuationRuleSet.FakeEvacuationRuleSet();
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {{
@@ -577,7 +577,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         EvacuationCellularAutomatonAlgorithm algorithm = EvacuationCellularAutomatonAlgorithm.getBackToFrontAlgorithm();
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         EvacuationRuleSet rs = new TestEvacuationRuleSet.FakeEvacuationRuleSet();
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {
@@ -706,7 +706,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         };
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
         ParameterSet ps = context.mock(ParameterSet.class);
         context.checking(new Expectations() {{
                 allowing(esp).getCellularAutomaton();
@@ -755,7 +755,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             }
         };
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
-        EvacuationCellularAutomatonInterface eca = context.mock(EvacuationCellularAutomatonInterface.class);
+        EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
 
         context.checking(new Expectations() {{
                 allowing(esp).getEvacuationStepLimit();
