@@ -16,9 +16,9 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collection;
+import java.util.Map;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.Potential;
-import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
 /**
@@ -35,7 +35,7 @@ public class InitialConfiguration {
     private final Collection<Room> rooms;
     private final Collection<String> floors;
     /** A {@code TreeMap} of all StaticPotentials. */
-    private final Collection<Potential> staticPotentials;
+    private final Map<Exit, Potential> staticPotentials;
     /** The single DynamicPotential. */
     private final DynamicPotential dynamicPotential;
 
@@ -50,7 +50,7 @@ public class InitialConfiguration {
      * @param absoluteMaxSpeed the maximal speed that any individual can have at maximum
      * @param dynamicPotential
      */
-    public InitialConfiguration(Collection<String> floors, Collection<Room> rooms, Collection<Potential> staticPotentials,
+    public InitialConfiguration(Collection<String> floors, Collection<Room> rooms, Map<Exit, Potential> staticPotentials,
             DynamicPotential dynamicPotential, double absoluteMaxSpeed) {
         this.rooms = rooms;
         this.floors = floors;
@@ -111,7 +111,7 @@ public class InitialConfiguration {
         this.absoluteMaxSpeed = absoluteMaxSpeed;
     }
 
-    public Collection<Potential> getStaticPotentials() {
+    public Map<Exit, Potential> getStaticPotentials() {
         return staticPotentials;
     }
 

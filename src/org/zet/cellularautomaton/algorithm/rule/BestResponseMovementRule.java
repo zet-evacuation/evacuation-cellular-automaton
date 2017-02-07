@@ -143,16 +143,16 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         //if( es.propertyFor(i).getCell().getRoom() != targetCell.getRoom() )
         //	es.propertyFor(i).getCell().getRoom().moveIndividual( i.getCell(), targetCell );
         // update times
-        if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(i).getRelativeSpeed()) >= 0.0001) {
-            double speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(i).getRelativeSpeed());
+        if (sp.absoluteSpeed(es.propertyFor(i).getRelativeSpeed()) >= 0.0001) {
+            double speed = sp.absoluteSpeed(es.propertyFor(i).getRelativeSpeed());
             speed *= targetCell.getSpeedFactor() * stairSpeedFactor;
             // zu diesem zeitpunkt ist die StepEndtime aktualisiert, falls ein individual vorher geslackt hat
             // oder sich nicht bewegen konnte.
             es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
-            setStepEndTime(i, es.propertyFor(i).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond());
+            setStepEndTime(i, es.propertyFor(i).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond());
             if (performMove) {
                 ec.move(es.propertyFor(i).getCell(), targetCell);
-                es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
+                es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), speed * sp.getSecondsPerStep());
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(i, (int) Math.ceil(es.propertyFor(i).getStepEndTime()), dist);
             }
         } else {

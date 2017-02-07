@@ -15,6 +15,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 
@@ -25,11 +26,11 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 public class ReactionRuleAllPersonsInRoomTest {
     private final Mockery context = new Mockery();
     EvacuationState es;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private final static IndividualBuilder BUILDER = new IndividualBuilder();
             
     @Test
     public void testSingleIndividual() {
-        Individual i = builder.build();
+        Individual i = BUILDER.build();
         IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i);
         RoomCell cell = generateCell(room, i, ip);
@@ -47,11 +48,11 @@ public class ReactionRuleAllPersonsInRoomTest {
 
     @Test
     public void testMultipleIndividuals() {
-        Individual i1 = builder.build();
+        Individual i1 = BUILDER.build();
         IndividualProperty ip1 = new IndividualProperty(i1);
-        Individual i2 = builder.build();
+        Individual i2 = BUILDER.build();
         IndividualProperty ip2 = new IndividualProperty(i2);
-        Individual i3 = builder.build();
+        Individual i3 = BUILDER.build();
         IndividualProperty ip3 = new IndividualProperty(i3);
         Room room = mockRoom(i1, i2, i3);
         RoomCell cell = generateCell(room, i1, ip1);
@@ -77,11 +78,11 @@ public class ReactionRuleAllPersonsInRoomTest {
     
     @Test
     public void testNotAllReady() {
-        Individual i1 = builder.build();
+        Individual i1 = BUILDER.build();
         IndividualProperty ip1 = new IndividualProperty(i1);
-        Individual i2 = builder.withReactionTime(7).build();
+        Individual i2 = BUILDER.withReactionTime(7).build();
         IndividualProperty ip2 = new IndividualProperty(i2);
-        Individual i3 = builder.withReactionTime(0).build();
+        Individual i3 = BUILDER.withReactionTime(0).build();
         IndividualProperty ip3 = new IndividualProperty(i3);
         Room room = mockRoom(i1, i2, i3);
         RoomCell cell = generateCell(room, i1, ip1);
@@ -114,6 +115,8 @@ public class ReactionRuleAllPersonsInRoomTest {
         }});
         ReactionRuleAllPersonsInRoom rule = new ReactionRuleAllPersonsInRoom();
         rule.setEvacuationState(es);
+        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(1);
+        rule.setEvacuationSimulationSpeed(sp);
         return rule;
     }
     

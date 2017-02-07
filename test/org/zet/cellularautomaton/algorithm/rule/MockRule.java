@@ -2,8 +2,8 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.junit.Ignore;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
@@ -38,7 +38,12 @@ public class MockRule {
 
         @Override
         public void setComputation(Computation c) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void setEvacuationSimulationSpeed(EvacuationSimulationSpeed sp) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
     }
@@ -67,7 +72,12 @@ public class MockRule {
 
         @Override
         public void setComputation(Computation c) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void setEvacuationSimulationSpeed(EvacuationSimulationSpeed sp) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
     }

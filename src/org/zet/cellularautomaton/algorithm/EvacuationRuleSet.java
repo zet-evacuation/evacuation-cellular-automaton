@@ -26,10 +26,6 @@ import org.zetool.algorithm.simulation.cellularautomaton.RuleSet;
  * The abstract base class for rule sets. A {@code EvacuationRuleSet} basically is a container for {@link EvacuationRule} objects. The rules
  * fall into two different types: the initialization rules and the loop rules.
  *
- * When a new instance is created, it should load the rules itself, so all child classes need to implement the method
- * {@code selfInit()}. It is intended to load the rules out of the {@link ds.PropertyContainer}, but this can easyly be
- * omitted. Nevertheless {@code selfInit()} needs to be overwritten at least with an empty method.
- *
  * As the objects are divided in two parts, a {@code EvacuationRuleSet} provides three different iterators: one that iterates
  * through all known rules, one iterating the initialization rules and a third one iterating the loop rules.
  *
@@ -45,8 +41,7 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
     private final List<EvacuationRule> loopRules;
 
     /**
-     * Creates a new instance of {@code RuleSet} and initializes the container. The abstract method {@link #selfInit()}
-     * is called, that should load all neccessary rules.
+     * Creates a new instance of {@code RuleSet} and initializes the container.
      */
     public EvacuationRuleSet() {
         allRules = new ArrayList<>();
@@ -98,6 +93,25 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
     }
 
     /**
+     * Returns an {@code Iterator} that iterates through the initialization rules. These rules can be added twice or
+     * more often.
+     *
+     * @return the iterator
+     */
+    public Iterator<EvacuationRule> loopIterator() {
+        return loopRules.iterator();
+    }
+
+    /**
+     * Returns an {@code Iterator} that iterates through the loop rules. These rules can be added twice or more often.
+     *
+     * @return the iterator
+     */
+    public Iterator<EvacuationRule> primaryIterator() {
+        return primaryRules.iterator();
+    }
+
+    /**
      * Creates a new instance of the {@link EvacuationRule} interface. The object has the specified type and is created using the
      * default constructor, thus the {@code EvacuationRule} shall have at least this public constructor.
      *
@@ -131,24 +145,5 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
                 | IllegalArgumentException | InvocationTargetException e) {
             throw new IllegalArgumentException("Error creating RuleSet " + ruleSetClassName, e);
         }
-    }
-
-    /**
-     * Returns an {@code Iterator} that iterates through the initialization rules. These rules can be added twice or
-     * more often.
-     *
-     * @return the iterator
-     */
-    public Iterator<EvacuationRule> loopIterator() {
-        return loopRules.iterator();
-    }
-
-    /**
-     * Returns an {@code Iterator} that iterates through the loop rules. These rules can be added twice or more often.
-     *
-     * @return the iterator
-     */
-    public Iterator<EvacuationRule> primaryIterator() {
-        return primaryRules.iterator();
     }
 }

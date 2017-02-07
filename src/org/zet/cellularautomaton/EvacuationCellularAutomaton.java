@@ -1,7 +1,6 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collection;
-import java.util.Map;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zetool.simulation.cellularautomaton.CellularAutomaton;
 
@@ -22,13 +21,11 @@ import org.zetool.simulation.cellularautomaton.CellularAutomaton;
 public interface EvacuationCellularAutomaton extends CellularAutomaton<EvacCellInterface> {
 
     // Speed methods
-    public double getStepsPerSecond();
-
-    public double absoluteSpeed(double relativeSpeed);
-
-    public double getSecondsPerStep();
-
-    //public Map<Potential, Double> getExitToCapacityMapping();
+//    public double getStepsPerSecond();
+//
+//    public double absoluteSpeed(double relativeSpeed);
+//
+//    public double getSecondsPerStep();
 
     /**
      * 
@@ -41,6 +38,12 @@ public interface EvacuationCellularAutomaton extends CellularAutomaton<EvacCellI
     
     public Potential getPotentialFor(Exit exit);
 
+    /**
+     * Returns a distinct {@link Potential} that can be assigned to {@link Individual}s that are safe. Typically, this
+     * {@link Potential} does not point in the direction of any exit.
+     * 
+     * @return a potential
+     */
     public Potential getSafePotential();
 
     public Potential minPotentialFor(EvacCellInterface c);

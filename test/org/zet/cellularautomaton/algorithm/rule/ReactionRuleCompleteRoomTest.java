@@ -15,6 +15,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 
 /**
@@ -24,11 +25,11 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 public class ReactionRuleCompleteRoomTest {
     private final Mockery context = new Mockery();
     private EvacuationState es;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private final static IndividualBuilder BUILDER = new IndividualBuilder();
 
     @Test
     public void roomAlerted() {
-        Individual i = builder.build();
+        Individual i = BUILDER.build();
         IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i, false, 1);
         RoomCell cell = generateCell(room, i, ip);
@@ -46,7 +47,7 @@ public class ReactionRuleCompleteRoomTest {
     
     @Test
     public void roomNotAlerted() {
-        Individual i = builder.withAge(0).withReactionTime(7).buildAndReset();
+        Individual i = BUILDER.withAge(0).withReactionTime(7).buildAndReset();
         IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i, false, 0);
         RoomCell cell = generateCell(room, i, ip);
@@ -64,7 +65,7 @@ public class ReactionRuleCompleteRoomTest {
     
     @Test
     public void alertedByRoom() {
-        Individual i = builder.withAge(0).withReactionTime(7).build();
+        Individual i = BUILDER.withAge(0).withReactionTime(7).build();
         IndividualProperty ip = new IndividualProperty(i);
         Room room = mockRoom(i, true, 0);
         RoomCell cell = generateCell(room, i, ip);
@@ -90,6 +91,8 @@ public class ReactionRuleCompleteRoomTest {
         });
         ReactionRuleCompleteRoom rule = new ReactionRuleCompleteRoom();
         rule.setEvacuationState(es);
+        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(1);
+        rule.setEvacuationSimulationSpeed(sp);
         return rule;
     }
     

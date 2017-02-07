@@ -19,7 +19,6 @@ import static org.jmock.AbstractExpectations.same;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
-import org.jmock.internal.ExpectationBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.DoorCell;
@@ -156,8 +155,8 @@ public class SimpleMovementRule2Test {
         context.checking(new Expectations() {
             {
                 helper.getIndividualProperties().setRelativeSpeed(0.0);
-                allowing(helper.getEs().getCellularAutomaton()).absoluteSpeed(0.0);
-                will(returnValue(0.0));
+                //allowing(helper.getEs().getCellularAutomaton()).absoluteSpeed(0.0);
+                //will(returnValue(0.0));
             }
         });
 

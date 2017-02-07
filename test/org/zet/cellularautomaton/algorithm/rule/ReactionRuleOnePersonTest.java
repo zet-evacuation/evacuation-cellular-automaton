@@ -13,6 +13,7 @@ import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 
 /**
@@ -23,15 +24,16 @@ public class ReactionRuleOnePersonTest {
     private final Mockery context = new Mockery();
     private MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
     private EvacuationState es;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
 
     @Test
     public void alertsImmediately() {
         ReactionRuleOnePerson rule = new ReactionRuleOnePerson();
         rule.setEvacuationState(es);
+        rule.setEvacuationSimulationSpeed(new EvacuationSimulationSpeed(0.4));
 
         RoomCell cell = new RoomCell(0, 0);
-        Individual i = builder.build();
+        Individual i = INDIVIDUAL_BUILDER.build();
         IndividualProperty ip = new IndividualProperty(i);
         cell.getState().setIndividual(i);
 
@@ -51,8 +53,11 @@ public class ReactionRuleOnePersonTest {
         ReactionRuleOnePerson rule = new ReactionRuleOnePerson();
         rule.setEvacuationState(es);
 
+        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(0.41);
+        rule.setEvacuationSimulationSpeed(sp);
+
         RoomCell cell = new RoomCell(0, 0);
-        Individual evacuee = builder.withAge(0).withReactionTime(7).buildAndReset();
+        Individual evacuee = INDIVIDUAL_BUILDER.withAge(0).withReactionTime(7).buildAndReset();
         IndividualProperty ip = new IndividualProperty(evacuee);
         cell.getState().setIndividual(evacuee);
         
@@ -66,7 +71,7 @@ public class ReactionRuleOnePersonTest {
         rule.execute(cell);
         assertThat(ip.isAlarmed(), is(false));
         
-        eca.setAbsoluteMaxSpeed(0.41);
+        //eca.setAbsoluteMaxSpeed(0.41);
         
         context.checking(new Expectations() {{
                 exactly(1).of(es).getTimeStep();

@@ -167,11 +167,6 @@ public class MutableEvacuationState implements EvacuationState {
         markedForRemoval.clear();
     }
 
-    //@Override
-//    public ParameterSet getParameterSet() {
-//        return parameterSet;
-//    }
-
     /**
      * Returns the number of initialIndividuals that were in the cellular automaton when the simulation starts.
      *

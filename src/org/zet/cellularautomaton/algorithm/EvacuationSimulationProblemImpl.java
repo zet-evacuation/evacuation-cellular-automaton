@@ -29,7 +29,7 @@ import org.zet.cellularautomaton.Individual;
  * @author Jan-Philipp Kappmeier
  */
 public class EvacuationSimulationProblemImpl implements EvacuationSimulationProblem {
-    double seconds = 300;
+    int seconds = 300;
 
     private final MultiFloorEvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
@@ -48,7 +48,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
 
         parameterSet = AbstractParameterSet.createParameterSet(props.getAsString("algo.ca.parameterSet"));
 
-        ca.setAbsoluteMaxSpeed(parameterSet.getAbsoluteMaxSpeed());
+        //ca.setAbsoluteMaxSpeed(parameterSet.getAbsoluteMaxSpeed());
     }
 
     @Override
@@ -73,10 +73,10 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
 
     @Override
     public int getEvacuationStepLimit() {
-        return (int)Math.ceil(seconds * getCellularAutomaton().getStepsPerSecond());
+        return seconds;
     }
 
-    public void setEvacuationTimeLimit(double seconds) {
+    public void setEvacuationTimeLimit(int seconds) {
         this.seconds = seconds;
     }
 

@@ -63,7 +63,8 @@ public class TestEvacuationCellularAutomatonRun {
             PotentialAlgorithm pa = new PotentialAlgorithm();
             pa.setProblem(cells);
             StaticPotential sp = pa.call();
-            eca.addStaticPotential(sp);
+            
+            //eca.addStaticPotential(sp);
             // Bestimme die angrenzenden Save-Cells
             //saveCellSearch(cells, sp);
         }

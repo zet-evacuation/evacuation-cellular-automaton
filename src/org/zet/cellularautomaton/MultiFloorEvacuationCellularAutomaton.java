@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import org.zet.cellularautomaton.potential.Potential;
@@ -39,8 +40,6 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  * @author Matthias Woste
  */
 public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellularAutomaton {
-
-    private static final double CELL_SIZE = 0.4;
 
     /**
      * The room collection for each floor.
@@ -73,16 +72,11 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     /**
      * A {@code TreeMap} of all exits.
      */
-    private final Map<Integer, Potential> staticPotentials;
+    private final Map<Exit, Potential> staticPotentials;
     /**
      * The safe potential
      */
     private StaticPotential safePotential;
-
-    // Move this to algorithm
-    private double absoluteMaxSpeed;
-    private double secondsPerStep;
-    private double stepsPerSecond;
 
     /**
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
@@ -94,9 +88,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
 
         exits = new ArrayList<>();
         rooms = new HashMap<>();
-        absoluteMaxSpeed = 1;
-        secondsPerStep = 1;
-        stepsPerSecond = 1;
 
         staticPotentials = new HashMap<>();
         safePotential = new StaticPotential();
@@ -126,11 +117,11 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
             }
         }
 
-        for (Potential staticPot : initialConfiguration.getStaticPotentials()) {
-            addStaticPotential(staticPot);
+        for (Entry<Exit, Potential> e : initialConfiguration.getStaticPotentials().entrySet()) {
+            staticPotentials.put(e.getKey(), e.getValue());
         }
 
-        setAbsoluteMaxSpeed(initialConfiguration.getAbsoluteMaxSpeed());
+        //setAbsoluteMaxSpeed(initialConfiguration.getAbsoluteMaxSpeed());
     }
 
     @Override
@@ -221,9 +212,9 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     }
 
     /**
-     * Returns an ArrayList of all exists of the building.
+     * Returns all exits of the building.
      *
-     * @return the ArrayList of exits
+     * @return the exits
      */
     @Override
     public List<Exit> getExits() {
@@ -251,15 +242,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         return Collections.unmodifiableCollection(rooms.values());
     }
 
-//    @Override
-//    public Map<Potential, Double> getExitToCapacityMapping() {
-//        return exitToCapacityMapping;
-//    }
-
-//    public void setExitToCapacityMapping(Map<Potential, Double> exitToCapacityMapping) {
-//        this.exitToCapacityMapping = exitToCapacityMapping;
-//    }
-
     @Override
     public Potential minPotentialFor(EvacCellInterface c) {
         // assign shortest path potential to individual, so it is not null.
@@ -276,73 +258,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
             throw new IllegalArgumentException("No valid potential for cell " + c);
         }
         return ret;
-    }
-
-    public double getAbsoluteMaxSpeed() {
-        return absoluteMaxSpeed;
-    }
-
-    /**
-     * Sets the maximal speed that any individual can walk. That means an individual with speed = 1 moves with 100
-     * percent of the absolute max speed.
-     *
-     * @param absoluteMaxSpeed
-     * @throws java.lang.IllegalArgumentException if absoluteMaxSpeed is less or equal to zero
-     */
-    public final void setAbsoluteMaxSpeed(double absoluteMaxSpeed) {
-        if (absoluteMaxSpeed <= 0) {
-            throw new java.lang.IllegalArgumentException("Maximal speed must be greater than zero!");
-        }
-        this.absoluteMaxSpeed = absoluteMaxSpeed;
-        this.stepsPerSecond = absoluteMaxSpeed / CELL_SIZE;
-        this.secondsPerStep = CELL_SIZE / absoluteMaxSpeed;
-    }
-
-    /**
-     * Returns the seconds one step needs.
-     *
-     * @return the seconds one step needs
-     */
-    @Override
-    public double getSecondsPerStep() {
-        return secondsPerStep;
-    }
-
-    /**
-     * Returns the number of steps performed by the cellular automaton within one second. The time depends of the
-     * absolute max speed and is set if {@link #setAbsoluteMaxSpeed(double)} is called.
-     *
-     * @return the number of steps performed by the cellular automaton within one second.
-     */
-    @Override
-    public double getStepsPerSecond() {
-        return stepsPerSecond;
-    }
-
-    /**
-     * Returns the absolute speed of an individual in meter per second depending on its relative speed which is a
-     * fraction between zero and one of the absolute max speed.
-     *
-     * @param relativeSpeed
-     * @return the absolute speed in meter per seconds for a given relative speed.
-     */
-    @Override
-    public double absoluteSpeed(double relativeSpeed) {
-        return absoluteMaxSpeed * relativeSpeed;
-    }
-
-    /**
-     * Removes a room from the list of all rooms of the building
-     *
-     * @param room specifies the Room object which has to be removed from the list
-     * @throws IllegalArgumentException Is thrown if the the specific room does not exist in the list rooms
-     */
-    public void removeRoom(Room room) {
-        if (rooms.remove(room.getID()) == null) {
-            throw new IllegalArgumentException("Specified room is not in list rooms.");
-        }
-        rooms.remove(room.getID());
-        throw new UnsupportedOperationException("Rooms not removed from floor!");
     }
 
     /**
@@ -401,31 +316,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
             representation.append(formatter.graphicalToString(aRoom)).append("\n\n");
         }
         return representation.toString();
-    }
-
-    /**
-     * Get a Collection of all staticPotentials.
-     *
-     * @return The Collection of all staticPotentials
-     */
-//    @Override
-//    public Collection<Exit> getExits() {
-//        return staticPotentials.values();
-//    }
-
-    /**
-     * Adds the StaticPotential into the List of staticPotentials. The method throws {@code IllegalArgumentException} if
-     * the StaticPtential already exists.
-     *
-     * @param potential The StaticPotential you want to add to the List.
-     * @throws IllegalArgumentException if the {@code StaticPotential} already exists
-     */
-    public void addStaticPotential(Potential potential) {
-//        if (staticPotentials.containsKey(potential.getID())) {
-//            throw new IllegalArgumentException("The StaticPtential already exists!");
-//        }
-//        Integer i = potential.getID();
-//        staticPotentials.put(i, potential);
     }
 
     /**
@@ -502,6 +392,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
 
     @Override
     public Potential getPotentialFor(Exit exit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return staticPotentials.get(exit);
     }
 }

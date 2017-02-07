@@ -29,6 +29,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -45,17 +46,19 @@ import org.zetool.common.util.Direction8;
     private EvacuationStateControllerInterface ec;
     private IndividualProperty ip;
     private EvacuationCellularAutomaton ca;
-    static final double STEPS_PER_SECOND = 10.0;
+    static final double STEPS_PER_SECOND = 8.75;
     private final int TIME_STEP = 13;
     private final double STEP_END_TIME_CURRENTLY_MOVING = TIME_STEP + 2;
     public final double STEP_END_TIME_CAN_MOVE = TIME_STEP - 0.8;
     private final double STEP_START_TIME = 12.5;
     final double OCCUPIED_UNTIL = 3.0;
     static final double RELATIVE_SPEED = 0.7;
-    static final double ABSOLUTE_SPEED = 3.5;
+    static final double ABSOLUTE_MAX_SPEED = 3.5;
+    static final double ABSOLUTE_SPEED = 2.45;
     static final double SPEED_FACTOR_TARGET_CELL = 0.85;
     private final Mockery context;
     private EvacCellInterface targetCell;
+    private EvacuationSimulationSpeed sp;
 
     public MovementRuleTestHelper(Mockery context) {
         this.context = context;
@@ -66,6 +69,7 @@ import org.zetool.common.util.Direction8;
         room = context.mock(Room.class);
         es = context.mock(EvacuationState.class);
         ec = context.mock(EvacuationStateControllerInterface.class);
+        sp = new EvacuationSimulationSpeed(ABSOLUTE_MAX_SPEED);
         ip = new IndividualProperty(individual);
         testCell = context.mock(EvacCellInterface.class, "testStartCell");
         ca = context.mock(EvacuationCellularAutomaton.class);
@@ -88,10 +92,6 @@ import org.zetool.common.util.Direction8;
                 will(returnValue(false));
                 allowing(es).getCellularAutomaton();
                 will(returnValue(ca));
-                allowing(ca).getStepsPerSecond();
-                will(returnValue(STEPS_PER_SECOND));
-                allowing(ca).getSecondsPerStep();
-                will(returnValue(1 / STEPS_PER_SECOND));
             }
         });
         ip.setCell(testCell);
@@ -113,6 +113,8 @@ import org.zetool.common.util.Direction8;
 
     /**
      * Executeable when filled.
+     * 
+     * @param rule verifies that the rule is executeable
      */
     public void executeableIfNotEmpty(EvacuationRule rule) {
         assertThat(rule, is(executeableOn(testCell)));
@@ -151,7 +153,6 @@ import org.zetool.common.util.Direction8;
         rule.setEvacuationState(es);
         rule.setComputation(c);
 
-        //rule.execute(testCell);
         EvacCellInterface selectedCell = rule.selectTargetCell(testCell, Collections.singletonList(testCell));
 
         assertThat(selectedCell, is(same(testCell)));
@@ -164,8 +165,6 @@ import org.zetool.common.util.Direction8;
                 will(returnValue(TIME_STEP));
                 ip.setStepStartTime(STEP_START_TIME);
                 ip.setRelativeSpeed(RELATIVE_SPEED);
-                allowing(ca).absoluteSpeed(RELATIVE_SPEED);
-                will(returnValue(ABSOLUTE_SPEED));
 
                 ruleUnderTest.individual = individual;
                 switch (step) {
@@ -199,6 +198,7 @@ import org.zetool.common.util.Direction8;
         });
         ruleUnderTest.setEvacuationState(es);
         ruleUnderTest.setEvacuationStateController(ec);
+        ruleUnderTest.setEvacuationSimulationSpeed(sp);
     }
 
     /**

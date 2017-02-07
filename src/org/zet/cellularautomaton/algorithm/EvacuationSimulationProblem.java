@@ -21,7 +21,8 @@ public interface EvacuationSimulationProblem extends CellularAutomatonSimulation
     public EvacuationRuleSet getRuleSet();
     
     /**
-     * The maximal time linit in steps
+     * The maximal time linit in seconds.
+     * 
      * @return the maximal time linit in seconds
      */
     public int getEvacuationStepLimit();

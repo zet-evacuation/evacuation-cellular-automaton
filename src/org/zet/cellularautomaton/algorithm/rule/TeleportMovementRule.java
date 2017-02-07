@@ -3,6 +3,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.List;
 import org.zet.cellularautomaton.TeleportCell;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -94,6 +95,11 @@ public class TeleportMovementRule implements MovementRule {
     @Override
     public void setComputation(Computation c) {
         movementRule.setComputation(c);
+    }
+
+    @Override
+    public void setEvacuationSimulationSpeed(EvacuationSimulationSpeed sp) {
+        movementRule.setEvacuationSimulationSpeed(sp);
     }
 
 }

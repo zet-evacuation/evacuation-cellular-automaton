@@ -13,7 +13,6 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.DeathCause;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
@@ -27,7 +26,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
- * cellular automaton are populized by {@link Individual}s and the simulation is rulebased performed only on these
+ * cellular automaton are populized by {@link Individual}s and the simulation is based on rules executed only on these
  * populated cells. The algorithm is itself abstract and implementations have to specify the order in which the rules
  * are executed for the populating individuals.
  *
@@ -61,7 +60,6 @@ public class EvacuationCellularAutomatonAlgorithm
     protected void initialize() {
         initRulesAndState();
 
-        setMaxSteps(getProblem().getEvacuationStepLimit());
         log.log(Level.INFO, "{0} is executed. ", toString());
 
         Individual[] individualsCopy = es.getInitialIndividuals().toArray(
@@ -89,11 +87,14 @@ public class EvacuationCellularAutomatonAlgorithm
             es.propertyFor(e.getKey()).setCell(e.getValue());
             es.propertyFor(e.getKey()).setStaticPotential(eca.minPotentialFor(e.getValue()));
         }
+        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(getProblem().getParameterSet().getAbsoluteMaxSpeed());
         ec = new EvacuationStateController((MutableEvacuationState) es);
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationState(es);
             r.setEvacuationStateController(ec);
+            r.setEvacuationSimulationSpeed(sp);
         }
+        setMaxSteps((int)(getProblem().getEvacuationStepLimit() * sp.getStepsPerSecond()));
     }
 
     @Override
@@ -219,7 +220,7 @@ public class EvacuationCellularAutomatonAlgorithm
     public EvacuationState getEvacuationState() {
         return es;
     }
-    
+
     protected EvacuationStateControllerInterface getEvacuationController() {
         return ec;
     }

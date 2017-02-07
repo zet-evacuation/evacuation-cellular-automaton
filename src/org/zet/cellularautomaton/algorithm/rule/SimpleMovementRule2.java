@@ -125,17 +125,17 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
         // We need to use a special individual here, because it is called from swap with different start cells
         Individual fromIndividual = from.getState().getIndividual();
 
-        if (es.getCellularAutomaton().absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed()) < 0.0001) { // if individual moves, update times
+        if (sp.absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed()) < 0.0001) { // if individual moves, update times
             throw new IllegalStateException("Individuum has no speed.");
         }
 
         ec.increaseDynamicPotential(targetCell);
 
         if (from instanceof DoorCell && targetCell instanceof DoorCell) {
-            speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed());
+            speed = sp.absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed());
             speed *= targetCell.getSpeedFactor() * 1;
             es.propertyFor(fromIndividual).setStepStartTime(Math.max(es.propertyFor(fromIndividual).getCell().getOccupiedUntil(), es.propertyFor(fromIndividual).getStepEndTime()));
-            setStepEndTime(fromIndividual, es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + 0);
+            setStepEndTime(fromIndividual, es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond() + 0);
             es.propertyFor(fromIndividual).setDirection(es.propertyFor(fromIndividual).getDirection());
 
         } else {
@@ -144,12 +144,11 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             double stairSpeedFactor = targetCell instanceof Stairs ? ((Stairs) targetCell).getStairSpeedFactor(direction) * 1.1 : 1;
             dist = direction.distance() * 0.4; // calculate distance
             double add = getSwayDelay(fromIndividual, direction); // add a delay if the person is changing direction
-
-            speed = es.getCellularAutomaton().absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed());
+            speed = sp.absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed());
             double factor = targetCell.getSpeedFactor() * stairSpeedFactor;
             speed *= factor;
             es.propertyFor(fromIndividual).setStepStartTime(Math.max(from.getOccupiedUntil(), es.propertyFor(fromIndividual).getStepEndTime()));
-            setStepEndTime(fromIndividual, es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * es.getCellularAutomaton().getStepsPerSecond() + add * es.getCellularAutomaton().getStepsPerSecond());
+            setStepEndTime(fromIndividual, es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond() + add * sp.getStepsPerSecond());
             es.propertyFor(fromIndividual).setDirection(direction);
         }
     }
@@ -164,7 +163,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
     protected void performMove(EvacCellInterface from, EvacCellInterface targetCell) {
         from.setOccupiedUntil(es.propertyFor(individual).getStepEndTime());
         ec.move(from, targetCell);
-        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), speed * es.getCellularAutomaton().getSecondsPerStep());
+        es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), speed * sp.getSecondsPerStep());
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(individual, (int) Math.ceil(es.propertyFor(individual).getStepEndTime()), dist);
     }
 

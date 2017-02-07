@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.results;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -27,6 +26,9 @@ import org.zet.cellularautomaton.InitialConfiguration;
 import org.zet.cellularautomaton.Room;
 
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
+import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.RoomImpl;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.potential.Potential;
@@ -259,14 +261,14 @@ public class VisualResultsRecorder {
         // all cells and all potentials. The cells are iterated room
         // by room
         //PotentialManager globals = orig.getPotentialManager();
-        Collection<Potential> statics = orig.getStaticPotentials();
+        Map<Exit, Potential> statics = orig.getStaticPotentials();
         //PotentialManager clonedGlobals = new PotentialManager();
-        Collection<Potential> staticClone = new LinkedList<>();
+        Map<Exit, Potential> staticClone = new HashMap<>();
         if (statics != null) {
-            for (Potential pot : statics) {
+            for (Entry<Exit, Potential> entry : statics.entrySet()) {
                 StaticPotential clone = new StaticPotential();
-                staticClone.add(clone);
-                potentialMapping.put(pot, clone);
+                staticClone.put(entry.getKey(), clone);
+                potentialMapping.put(entry.getValue(), clone);
 
                 for (Room room : orig.getRooms()) {
                     // For every room do:
@@ -274,8 +276,8 @@ public class VisualResultsRecorder {
                         for (int y = 0; y < room.getHeight(); y++) {
                             // For every cell in the room do:
                             EvacCell cell = room.getCell(x, y);
-                            if (cell != null && pot.hasValidPotential(cell)) {
-                                clone.setPotential(cellMapping.get(cell), pot.getPotentialDouble(cell));
+                            if (cell != null && entry.getValue().hasValidPotential(cell)) {
+                                clone.setPotential(cellMapping.get(cell), entry.getValue().getPotentialDouble(cell));
                             }
                         }
                     }

@@ -21,6 +21,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -36,6 +37,7 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     protected EvacuationState es;
     protected EvacuationStateControllerInterface ec;
     protected Computation c;
+    protected EvacuationSimulationSpeed sp;
 
     /**
      * Returns if the rule is executable on the cell. The default behavior is, that a rule is
@@ -83,6 +85,16 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     @Override
     public void setComputation(Computation c) {
         this.c = c;
+    }
+
+    @Override
+    public void setEvacuationSimulationSpeed(EvacuationSimulationSpeed sp) {
+        if (this.sp != null) {
+            throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
+                    "algo.ca.rule.RuleAlreadyHasTimingInformation"));
+        }
+        this.sp = Objects.requireNonNull(sp, CellularAutomatonLocalization.LOC.getString(
+                "algo.ca.rule.TimingInformationNullException"));
     }
 
     protected static Exit getNearestExit(EvacuationCellularAutomaton ca, EvacCellInterface cell) {

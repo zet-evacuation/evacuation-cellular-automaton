@@ -39,7 +39,7 @@ public class ReactionRuleCompleteRoom extends AbstractReactionRule {
         if (!es.propertyFor(individual).isAlarmed()) {
             if (es.propertyFor(individual).getCell().getRoom().isAlarmed()) {
                 es.propertyFor(individual).setAlarmed();
-            } else if (es.getTimeStep() >= individual.getReactionTime() * es.getCellularAutomaton().getStepsPerSecond()) {
+            } else if (es.getTimeStep() >= individual.getReactionTime() * sp.getStepsPerSecond()) {
                 es.propertyFor(individual).setAlarmed();
                 cell.getRoom().setAlarmstatus(true);
             }
