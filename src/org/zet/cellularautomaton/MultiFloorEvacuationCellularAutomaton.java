@@ -28,6 +28,7 @@ import java.util.Queue;
 import java.util.Set;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zetool.simulation.cellularautomaton.CompositeCellMatrix;
 import org.zetool.simulation.cellularautomaton.Neighborhood;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
 
@@ -44,7 +45,8 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     /**
      * The room collection for each floor.
      */
-    private final Map<Integer, RoomCollection> roomCollections;
+    private final Map<Integer, RoomCollection> floorRoomMapping;
+
     /**
      * The neighborhood.
      */
@@ -59,15 +61,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      * An ArrayList of all ExitCell objects (i.e. all exits) of the building.
      */
     private List<Exit> exits;
-    /**
-     * A map of rooms to identification numbers.
-     */
-    private Map<Integer, Room> rooms;
-
-    /**
-     * A mapping that maps exits to their capacity.
-     */
-    //private Map<Potential, Double> exitToCapacityMapping;
 
     /**
      * A {@code TreeMap} of all exits.
@@ -77,20 +70,33 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      * The safe potential
      */
     private StaticPotential safePotential;
+    private final Collection<Room> rooms = new LinkedList<>();
 
     /**
      * Constructs a EvacuationCellularAutomaton object with empty default objects.
      */
     public MultiFloorEvacuationCellularAutomaton() {
-        this.roomCollections = new HashMap<>();
+        this.floorRoomMapping = new HashMap<>();
         neighborhood = null;
         floorNames = new HashMap<>();
 
         exits = new ArrayList<>();
-        rooms = new HashMap<>();
 
         staticPotentials = new HashMap<>();
         safePotential = new StaticPotential();
+    }
+
+    private MultiFloorEvacuationCellularAutomaton(Map<Integer, RoomCollection> floorRoomMapping, Map<Integer, String> floorNames,
+            List<Exit> exits) {
+        this.floorRoomMapping = floorRoomMapping;
+        this.floorNames = floorNames;
+        this.exits = exits;
+        neighborhood = null;
+        staticPotentials = new HashMap<>();
+        safePotential = new StaticPotential();
+        for (RoomCollection fr : floorRoomMapping.values()) {
+            rooms.addAll(fr.getRooms());
+        }
     }
 
     /**
@@ -105,23 +111,13 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         // set up floors and rooms
         int i = 0;
         for (String floor : initialConfiguration.getFloors()) {
-            addFloor(i++, floor);
+            //addFloor(i++, floor);
         }
-        initialConfiguration.getRooms().stream().forEach(room -> addRoom(0, (Room) room));
-
-        for (Room room : initialConfiguration.getRooms()) {
-            for (EvacCell cell : room.getAllCells()) {
-                if (!cell.getState().isEmpty()) {
-                    //addIndividual(cell, cell.getState().getIndividual());
-                }
-            }
-        }
+        //initialConfiguration.getRooms().stream().forEach(room -> addRoom(0, (Room) room));
 
         for (Entry<Exit, Potential> e : initialConfiguration.getStaticPotentials().entrySet()) {
             staticPotentials.put(e.getKey(), e.getValue());
         }
-
-        //setAbsoluteMaxSpeed(initialConfiguration.getAbsoluteMaxSpeed());
     }
 
     @Override
@@ -133,84 +129,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     public int getDimension() {
         return 2;
     }
-
-    /**
-     * Adds a new floor.
-     *
-     * @param index the floor's index
-     * @param name the floor name
-     */
-    public final void addFloor(int index, String name) {
-        if (roomCollections.containsKey(index)) {
-            throw new IllegalArgumentException("Floor " + name + " already exists.");
-        }
-        floorNames.put(index, name);
-        roomCollections.put(index, new RoomCollection());
-    }
-
-    /**
-     * Adds a room to the List of all rooms of the building.
-     *
-     * @param floor the floor to which the room is added
-     * @param room the Room object to be added
-     * @throws IllegalArgumentException if the the specific room exists already in the list rooms
-     */
-    public final void addRoom(int floor, Room room) {
-        if (rooms.containsKey(room.getID())) {
-            throw new IllegalArgumentException("Specified room exists already in list rooms.");
-        } else {
-            rooms.put(room.getID(), room);
-            if (!roomCollections.containsKey(floor)) {
-                throw new IllegalStateException("No Floor with id " + floor + " has been added before.");
-            }
-            roomCollections.get(floor).addMatrix(room);
-            computeAndAddExits(room);
-        }
-    }
-
-    /**
-     * Adds the in the given room into the list of exits. Throws an exception if any of the exits is already known, as
-     * any exit can only be in one room.
-     *
-     * @param room
-     */
-    private void computeAndAddExits(Room room) {
-        Set<EvacCellInterface> seen = new HashSet<>(room.getCellCount(false));
-        
-        for (EvacCell cell : room.getAllCells()) {
-            if (cell instanceof ExitCell) {
-                if (seen.contains(cell)) {
-                    continue;
-                }
-                Exit exit = getExitOfCell((ExitCell)cell, seen);
-                exits.add(exit);
-            } else {
-                seen.add(cell);
-            }
-        }
-    }
     
-    private Exit getExitOfCell(ExitCell cell, Set<EvacCellInterface> seen) {
-        List<ExitCell> exitCluster = new LinkedList<>();
-        Queue<ExitCell> d = new LinkedList<>();
-        d.add(cell);
-        while(!d.isEmpty()) {
-            ExitCell c = d.poll();
-            for (EvacCellInterface n : c.getNeighbours()) {
-                if (n instanceof ExitCell) {
-                    ExitCell newExitCell = (ExitCell) n;
-                    if (!seen.contains(newExitCell)) {
-                        seen.add(newExitCell);
-                        d.add(newExitCell);
-                    }
-                }
-                exitCluster.add(c);
-            }
-        }
-        Exit exit = new Exit(exitCluster);
-        return exit;
-    }
-
     /**
      * Returns all exits of the building.
      *
@@ -239,7 +158,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      */
     @Override
     public Collection<Room> getRooms() {
-        return Collections.unmodifiableCollection(rooms.values());
+        return Collections.unmodifiableCollection(rooms);
     }
 
     @Override
@@ -266,19 +185,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      *
      * @return a list of exit clusters
      */
-//    public List<List<ExitCell>> clusterExitCells() {
-//        Set<ExitCell> alreadySeen = new HashSet<>();
-//        List<List<ExitCell>> allClusters = new ArrayList<>();
-//        List<Exit> allExitCells = this.getExitCluster();
-//        for (ExitCell e : allExitCells) {
-//            if (!alreadySeen.contains(e)) {
-//                List<ExitCell> singleCluster = new ArrayList<>();
-//                singleCluster = this.findExitCellCluster(e, singleCluster, alreadySeen);
-//                allClusters.add(singleCluster);
-//            }
-//        }
-//        return allClusters;
-//    }
 
     /**
      * Private sub-method for finding a Cluster of neighboring ExitCells recursively.
@@ -289,30 +195,13 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      * time.
      * @return Returns one Cluster of neighboring ExitCells as an ArrayList.
      */
-    private List<ExitCell> findExitCellCluster(ExitCell currentCell, List<ExitCell> cluster, Set<ExitCell> alreadySeen) {
-        if (!alreadySeen.contains(currentCell)) {
-            cluster.add(currentCell);
-            alreadySeen.add(currentCell);
-            Collection<EvacCellInterface> cellNeighbours = currentCell.getDirectNeighbors();
-            List<ExitCell> neighbours = new ArrayList<>();
-            for (EvacCellInterface c : cellNeighbours) {
-                if (c instanceof ExitCell) {
-                    neighbours.add((ExitCell) c);
-                }
-            }
-            for (ExitCell c : neighbours) {
-                cluster = this.findExitCellCluster(c, cluster, alreadySeen);
-            }
-        }
-        return cluster;
-    }
 
     public String graphicalToString() {
         StringBuilder representation = new StringBuilder();
 
         CellMatrixFormatter formatter = new CellMatrixFormatter();
         formatter.registerFormatter(EvacCell.class, new EvacuationCellularAutomatonCellFormatter());
-        for (Room aRoom : rooms.values()) {
+        for (Room aRoom : rooms) {
             representation.append(formatter.graphicalToString(aRoom)).append("\n\n");
         }
         return representation.toString();
@@ -338,12 +227,14 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         return safePotential;
     }
 
+    // TBD
     public void setsafePotential(StaticPotential potential) {
         safePotential = potential;
     }
 
     public Room getRoom(int id) {
-        return rooms.get(id);
+        //return rooms.get(id);
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -372,7 +263,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      * @return the collection of rooms
      */
     public Collection<Room> getRoomsOnFloor(int floor) {
-        return roomCollections.get(floor).getRooms();
+        return floorRoomMapping.get(floor).getRooms();
     }
 
     /**
@@ -382,7 +273,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      * @return the id of the floor
      */
     public int getFloorId(Room room) {
-        for (int i : roomCollections.keySet()) {
+        for (int i : floorRoomMapping.keySet()) {
             if (getRoomsOnFloor(i).contains(room)) {
                 return i;
             }
@@ -394,4 +285,153 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     public Potential getPotentialFor(Exit exit) {
         return staticPotentials.get(exit);
     }
+
+    public static class EvacuationCellularAutomatonBuilder {
+
+        private final Map<Integer, RoomCollection> floorRoomMapping = new HashMap<>();
+        private final Map<Integer, String> floorNames = new HashMap<>();
+        private final List<Exit> exits = new LinkedList<>();
+
+        /**
+         * Adds a new floor.
+         *
+         * @param level the floor's level
+         * @param name the floor name
+         * @throws IllegalArgumentException if a floor for the given level already exists
+         */
+        public final void addFloor(int level, String name) {
+            if (floorRoomMapping.containsKey(level)) {
+                throw new IllegalArgumentException("A floor on level " + level + " already exists with name " + floorNames.get(level));
+            }
+            floorNames.put(level, name);
+            floorRoomMapping.put(level, new RoomCollection());
+        }
+
+        /**
+         * Adds a room to the List of all rooms of the building.
+         *
+         * @param floor the floor to which the room is added
+         * @param room the Room object to be added
+         * @throws IllegalArgumentException if the the specific room exists already in the list rooms
+         */
+        public final Collection<Exit> addRoom(int floor, Room room) {
+            checkValidity(floor, room);
+            floorRoomMapping.get(floor).addMatrix(room);
+            Collection<Exit> newExits = computeAndAddExits(room);
+            exits.addAll(newExits);
+            return newExits;
+        }
+
+        public final void addRoom(int floor, Room room, Collection<Exit> exits) {
+            checkValidity(floor, room);
+            floorRoomMapping.get(floor).addMatrix(room);
+            checkValidity(room, exits);
+            this.exits.addAll(exits);
+        }
+
+        private void checkValidity(int floor, Room room) {
+            if (room.getCellCount(false) == 0) {
+                throw new IllegalArgumentException("Room contains no cells.");
+            }
+            if (!floorRoomMapping.containsKey(floor)) {
+                throw new IllegalArgumentException("No Floor with id " + floor + " has been added before.");
+            }
+            checkOverlapping(floorRoomMapping.get(floor).getRooms(), room);
+        }
+
+        private void checkOverlapping(List<Room> rooms, Room newRoom) {
+            // Simple implementation
+            for (Room room : rooms) {
+                int roomBottom = room.getYOffset() + room.getHeight() - 1;
+                int roomTop = room.getYOffset();
+                int roomLeft = room.getXOffset();
+                int roomRight = room.getXOffset() + room.getWidth() - 1;
+                boolean above = roomBottom < newRoom.getYOffset();
+                boolean below = roomTop > newRoom.getYOffset() + newRoom.getHeight() - 1;
+                boolean right = roomLeft > newRoom.getXOffset() + newRoom.getWidth() - 1;
+                boolean left = roomRight < newRoom.getXOffset();
+                if (!(above || below || right || left)) {
+                    throw new IllegalArgumentException("Intersects with " + room);
+                }
+            }
+        }
+
+        /**
+         * Checks that all cells of the exit cluster are contained in the room.
+         *
+         * @param room the new room to be added
+         * @param exitCluster the list of exit clusters in the room
+         */
+        private void checkValidity(Room room, Collection<Exit> exits) {
+            for (Exit e : exits) {
+                Collection<ExitCell> exitCluster = e.getExitCluster();
+                for (ExitCell cell : exitCluster) {
+                    if (!room.existsCellAt(cell.getX(), cell.getY()) || !room.getCell(cell.getX(), cell.getY()).equals(cell)) {
+                        throw new IllegalArgumentException("Exit cell " + cell + " not contained in " + room);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Adds the in the given room into the list of exits. Throws an exception if any of the exits is already known,
+         * as any exit can only be in one room.
+         *
+         * @param room
+         */
+        private Collection<Exit> computeAndAddExits(Room room) {
+            Set<EvacCellInterface> seen = new HashSet<>(room.getCellCount(false));
+            LinkedList<Exit> newExits = new LinkedList<>();
+
+            for (EvacCell cell : room.getAllCells()) {
+                if (cell instanceof ExitCell) {
+                    if (seen.contains(cell)) {
+                        continue;
+                    }
+                    Exit exit = getExitOfCell((ExitCell) cell, seen);
+                    newExits.add(exit);
+                } else {
+                    seen.add(cell);
+                }
+            }
+            
+            return newExits;
+        }
+
+        private Exit getExitOfCell(ExitCell cell, Set<EvacCellInterface> seen) {
+            List<ExitCell> exitCluster = new LinkedList<>();
+            Queue<ExitCell> d = new LinkedList<>();
+            d.add(cell);
+            seen.add(cell);
+            while (!d.isEmpty()) {
+                ExitCell c = d.poll();
+                for (EvacCellInterface n : c.getNeighbours()) {
+                    if (n instanceof ExitCell) {
+                        ExitCell newExitCell = (ExitCell) n;
+                        if (!seen.contains(newExitCell)) {
+                            seen.add(newExitCell);
+                            d.add(newExitCell);
+                        }
+                    }
+                }
+                exitCluster.add(c);
+            }
+            Exit exit = new Exit(exitCluster);
+            return exit;
+        }
+
+        public MultiFloorEvacuationCellularAutomaton build() {
+            return new MultiFloorEvacuationCellularAutomaton(floorRoomMapping, floorNames, exits);
+        }
+
+    }
+
+    private static class RoomCollection extends CompositeCellMatrix<Room, EvacCell> {
+
+        List<Room> getRooms() {
+            return super.getMatrices();
+        }
+
+    }
+
 }

@@ -10,12 +10,14 @@ import java.util.Collections;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton.EvacuationCellularAutomatonBuilder;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class MultiFloorEvacuationCellularAutomatonTest {
+
     private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
     private final Mockery context = new Mockery();
 
@@ -28,35 +30,31 @@ public class MultiFloorEvacuationCellularAutomatonTest {
         assertThat(ca.getRooms(), is(empty()));
         assertThat(ca.graphicalToString(), is(equalTo("")));
     }
-    
+
     @Test
     public void testSingleRoom() {
-        MultiFloorEvacuationCellularAutomaton ca = new MultiFloorEvacuationCellularAutomaton();
-        ca.addFloor(0, "floor1");
+        EvacuationCellularAutomatonBuilder builder = new EvacuationCellularAutomatonBuilder();
+
+        builder.addFloor(0, "floor1");
+        
 
         Room room = context.mock(Room.class, "room1");
         roomExpectations(room, 1, 3);
         Room room2 = context.mock(Room.class, "room2");
         roomExpectations(room2, 2, 2);
 
-        ca.addRoom(0, room);
+        builder.addRoom(0, room);
+        MultiFloorEvacuationCellularAutomaton ca = builder.build();
         assertThat(ca.getCellCount(), is(equalTo(3)));
-        
-        ca.addRoom(0, room2);
+
+        builder.addRoom(0, room2);
+        ca = builder.build();
         assertThat(ca.getCellCount(), is(equalTo(5)));
     }
-    
-    @Test(expected = IllegalStateException.class)
-    public void addWithoutFloorFails() {
-        MultiFloorEvacuationCellularAutomaton ca = new MultiFloorEvacuationCellularAutomaton();
-        ca.addFloor(0, "floor1");
-        Room room = context.mock(Room.class);
-        roomExpectations(room, 1, 1);
-        ca.addRoom(1, room);
-    }
-    
+
     private void roomExpectations(Room room, int id, int cells) {
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
                 atLeast(1).of(room).getCellCount(false);
                 will(returnValue(cells));
                 allowing(room).getXOffset();
@@ -69,6 +67,7 @@ public class MultiFloorEvacuationCellularAutomatonTest {
                 will(returnValue(0));
                 allowing(room).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));
-        }});
+            }
+        });
     }
 }

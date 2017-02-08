@@ -143,9 +143,9 @@ public class FiniteCellMatrix<E extends Cell> implements CellMatrix<E> {
     }
 
     /**
-     * Returns the number of cells contained in this room. The parameter {@code allCells} indicates wheather the number
-     * of all cells is returned or the number of all cells that are not {@code null}. These cells can occur if there are
-     * "holes" in the room.
+     * Returns the number of cells contained in this cell matrix. The parameter {@code allCells} indicates wheather the
+     * number of all cells is returned or the number of all cells that are not {@code null}. These cells can occur if
+     * there are "holes" in the room.
      *
      * @param allCells indicates wheather all cells are counted, or not
      * @return the number of cells

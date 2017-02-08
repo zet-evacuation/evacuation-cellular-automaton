@@ -16,6 +16,7 @@ import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton.EvacuationCellularAutomatonBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.RoomImpl;
 import org.zet.cellularautomaton.algorithm.rule.EvacuateIndividualsRule;
@@ -38,9 +39,10 @@ public class TestEvacuationCellularAutomatonRun {
     
     @Test
     public void run() {
-        MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
+        EvacuationCellularAutomatonBuilder builder = new EvacuationCellularAutomatonBuilder();
+
         
-        eca.addFloor(0, "floor");
+        builder.addFloor(0, "floor");
         
         RoomImpl r = new RoomImpl(3, 1, 0, 0, 0);
         
@@ -50,8 +52,10 @@ public class TestEvacuationCellularAutomatonRun {
         r.setCell(middleCell);
         RoomCell rightCell = new RoomCell(1, 2, 0, r);
         r.setCell(rightCell);
-        eca.addRoom(0, r);
+        builder.addRoom(0, r);
         
+        MultiFloorEvacuationCellularAutomaton eca = builder.build();
+
         List<Exit> exitClusters = eca.getExits();
         assertThat(exitClusters, hasSize(1));
         Exit exitCluster = exitClusters.get(0);

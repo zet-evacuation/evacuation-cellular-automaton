@@ -22,6 +22,12 @@ public interface Room extends LocatedCellMatrix<EvacCell> {
     
     // necessary, but probably bad name?
     public List<DoorCell> getDoors();
+    /**
+     * Returns the number of cells in the room.
+     * 
+     * @param allCells
+     * @return 
+     */
     public int getCellCount(boolean allCells);
     
     // special parameters for evacuation simulation
