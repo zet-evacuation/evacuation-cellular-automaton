@@ -183,30 +183,15 @@ public class EvacuationCellularAutomatonBuilderTest {
     }
 
     @Test
-    public void roomWithTwoExits() {
-        RoomImpl r = new RoomImpl(4, 4, 0, 0, 0);
-        r.setCell(new ExitCell(0, 0)); // A single cell exit
-        r.setCell(new RoomCell(0, 1));
-        r.setCell(new RoomCell(0, 2));
-        r.setCell(new RoomCell(0, 3));
-        r.setCell(new RoomCell(1, 0));
-        r.setCell(new RoomCell(1, 1));
-        r.setCell(new RoomCell(1, 2));
-        r.setCell(new RoomCell(1, 3));
-        r.setCell(new RoomCell(2, 0));
-        r.setCell(new RoomCell(2, 1));
-        r.setCell(new ExitCell(2, 2)); // A 4 cell exit
-        r.setCell(new ExitCell(2, 3)); // A 4 cell exit
-        r.setCell(new RoomCell(3, 0));
-        r.setCell(new RoomCell(3, 1));
-        r.setCell(new ExitCell(3, 2)); // A 4 cell exit
-        r.setCell(new ExitCell(3, 3)); // A 4 cell exit
-
+    public void exitComputation() {
         EvacuationCellularAutomatonBuilder builder = new EvacuationCellularAutomatonBuilder();
 
         builder.addFloor(0, "floor");
 
+        Room r = roomWithTwoExits();
+        
         Collection<Exit> newExits = builder.addRoom(0, r);
+
         assertThat(newExits, hasSize(2));
         Iterator<Exit> ei = newExits.iterator();
         Exit e1 = ei.next();
@@ -228,6 +213,39 @@ public class EvacuationCellularAutomatonBuilderTest {
                 r.getCell(3, 2),
                 r.getCell(3, 3)
         ));
+    }
+
+    /**
+     * Returns a 4 x 4 room with two exits and the following layout:
+     * 
+     *   0 1 2 3
+     * 0 E
+     * 1
+     * 2     E E
+     * 3     E E
+     * 
+     * @return 
+     */
+    static Room roomWithTwoExits() {
+        RoomImpl r = new RoomImpl(4, 4, 0, 0, 0);
+        r.setCell(new ExitCell(0, 0)); // A single cell exit
+        r.setCell(new RoomCell(0, 1));
+        r.setCell(new RoomCell(0, 2));
+        r.setCell(new RoomCell(0, 3));
+        r.setCell(new RoomCell(1, 0));
+        r.setCell(new RoomCell(1, 1));
+        r.setCell(new RoomCell(1, 2));
+        r.setCell(new RoomCell(1, 3));
+        r.setCell(new RoomCell(2, 0));
+        r.setCell(new RoomCell(2, 1));
+        r.setCell(new ExitCell(2, 2)); // A 4 cell exit
+        r.setCell(new ExitCell(2, 3)); // A 4 cell exit
+        r.setCell(new RoomCell(3, 0));
+        r.setCell(new RoomCell(3, 1));
+        r.setCell(new ExitCell(3, 2)); // A 4 cell exit
+        r.setCell(new ExitCell(3, 3)); // A 4 cell exit
+
+        return r;
     }
 
     private void roomExpectations(Room room, int id, int cells) {

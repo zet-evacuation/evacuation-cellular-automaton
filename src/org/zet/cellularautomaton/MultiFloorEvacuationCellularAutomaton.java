@@ -87,12 +87,12 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     }
 
     private MultiFloorEvacuationCellularAutomaton(Map<Integer, RoomCollection> floorRoomMapping, Map<Integer, String> floorNames,
-            List<Exit> exits) {
+            List<Exit> exits, Map<Exit, Potential> potentials) {
         this.floorRoomMapping = floorRoomMapping;
         this.floorNames = floorNames;
         this.exits = exits;
         neighborhood = null;
-        staticPotentials = new HashMap<>();
+        staticPotentials = potentials;
         safePotential = new StaticPotential();
         for (RoomCollection fr : floorRoomMapping.values()) {
             rooms.addAll(fr.getRooms());
@@ -129,7 +129,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     public int getDimension() {
         return 2;
     }
-    
+
     /**
      * Returns all exits of the building.
      *
@@ -164,43 +164,28 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     @Override
     public Potential minPotentialFor(EvacCellInterface c) {
         // assign shortest path potential to individual, so it is not null.
-        int currentMin = -1;
+        int currentMin = Integer.MAX_VALUE;
         Potential ret = null;
         for (Exit exit : getExits()) {
             Potential sp = getPotentialFor(exit);
-            if (sp.getPotential(c) > -1 && sp.getPotential(c) < currentMin) {
+            if (sp.hasValidPotential(c) && sp.getPotential(c) < currentMin) {
                 currentMin = sp.getPotential(c);
                 ret = sp;
             }
         }
-        if (ret != null) {
+        if (ret == null) {
             throw new IllegalArgumentException("No valid potential for cell " + c);
         }
         return ret;
     }
 
-    /**
-     * This method recognizes clusters of neighbouring ExitCells (that means ExitCells lying next to another ExitCell)
-     * and returns a list containing another list of {@link ExitCell}s for each cluster of {@link ExitCell}s.
-     *
-     * @return a list of exit clusters
-     */
-
-    /**
-     * Private sub-method for finding a Cluster of neighboring ExitCells recursively.
-     *
-     * @param currentCell The cell from which the algorithm starts searching neighboring ExitCells.
-     * @param cluster An empty ArrayList, in which the cluster will be created.
-     * @param alreadySeen A HashSet storing all already clustered ExitCells to prevent them of being clustered a second
-     * time.
-     * @return Returns one Cluster of neighboring ExitCells as an ArrayList.
-     */
-
     public String graphicalToString() {
         StringBuilder representation = new StringBuilder();
 
         CellMatrixFormatter formatter = new CellMatrixFormatter();
-        formatter.registerFormatter(EvacCell.class, new EvacuationCellularAutomatonCellFormatter());
+        EvacuationCellularAutomatonCellFormatter cellFormatter = new EvacuationCellularAutomatonCellFormatter();
+        formatter.registerFormatter(EvacCell.class, cellFormatter);
+        formatter.registerFormatter(ExitCell.class, cellFormatter);
         for (Room aRoom : rooms) {
             representation.append(formatter.graphicalToString(aRoom)).append("\n\n");
         }
@@ -225,11 +210,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     @Override
     public Potential getSafePotential() {
         return safePotential;
-    }
-
-    // TBD
-    public void setsafePotential(StaticPotential potential) {
-        safePotential = potential;
     }
 
     public Room getRoom(int id) {
@@ -291,6 +271,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         private final Map<Integer, RoomCollection> floorRoomMapping = new HashMap<>();
         private final Map<Integer, String> floorNames = new HashMap<>();
         private final List<Exit> exits = new LinkedList<>();
+        private final Map<Exit, Potential> potentials = new HashMap<>();
 
         /**
          * Adds a new floor.
@@ -378,6 +359,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
          * as any exit can only be in one room.
          *
          * @param room
+         * @return a list of exits
          */
         private Collection<Exit> computeAndAddExits(Room room) {
             Set<EvacCellInterface> seen = new HashSet<>(room.getCellCount(false));
@@ -394,10 +376,18 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
                     seen.add(cell);
                 }
             }
-            
+
             return newExits;
         }
 
+        /**
+         * Computes the cluster of exit cells that contains a given {@link ExitCell}. The method continues a breadth
+         * first search through all cells.
+         *
+         * @param cell the cell from which the algorithm starts searching neighboring {@link ExitCell}s.
+         * @param seen a set of all cells that have been seein in the current search process
+         * @return Returns one Cluster of neighboring ExitCells as an ArrayList.
+         */
         private Exit getExitOfCell(ExitCell cell, Set<EvacCellInterface> seen) {
             List<ExitCell> exitCluster = new LinkedList<>();
             Queue<ExitCell> d = new LinkedList<>();
@@ -421,9 +411,12 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         }
 
         public MultiFloorEvacuationCellularAutomaton build() {
-            return new MultiFloorEvacuationCellularAutomaton(floorRoomMapping, floorNames, exits);
+            return new MultiFloorEvacuationCellularAutomaton(floorRoomMapping, floorNames, exits, potentials);
         }
 
+        void setPotentialFor(Exit exit, Potential potential) {
+            potentials.put(exit, potential);
+        }
     }
 
     private static class RoomCollection extends CompositeCellMatrix<Room, EvacCell> {
