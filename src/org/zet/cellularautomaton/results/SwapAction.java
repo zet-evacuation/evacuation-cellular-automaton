@@ -15,8 +15,8 @@
  */
 package org.zet.cellularautomaton.results;
 
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
+import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
@@ -25,21 +25,21 @@ import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
  */
 public class SwapAction extends Action {
 
-    /** The cell from where individual 1 moves */
-    protected EvacCell cell1;
-    /** The cell from where individual 2 moves */
-    protected EvacCell cell2;
-    /** The (exact) time, when individual 1 will arrive at cell 2*/
+    /** The cell from where individual 1 moves. */
+    protected EvacCellInterface cell1;
+    /** The cell from where individual 2 moves. */
+    protected EvacCellInterface cell2;
+    /** The (exact) time, when individual 1 will arrive at cell 2. */
     protected double arrivalTime1;
-    /** The (exact) time, when individual 2 will arrive at cell 1*/
+    /** The (exact) time, when individual 2 will arrive at cell 1. */
     protected double arrivalTime2;
-    /** The (exact) time, when individual 1 starts moving to cell 2*/
+    /** The (exact) time, when individual 1 starts moving to cell 2. */
     protected double startTime1;
-    /** The (exact) time, when individual 2 starts moving to cell 1*/
+    /** The (exact) time, when individual 2 starts moving to cell 1. */
     protected double startTime2;
-    /** The number of individual 1 that is moved */
+    /** The number of individual 1 that is moved. */
     private int individualNumber1;
-    /** The number of individual 2 that is moved */
+    /** The number of individual 2 that is moved. */
     private int individualNumber2;
 
     /**
@@ -50,7 +50,7 @@ public class SwapAction extends Action {
      * @param cell1 The cell from where one individual starts to move
      * @param cell2 The cell from where the other individual starts to move
      */
-    public SwapAction(EvacCell cell1, EvacCell cell2, PropertyAccess es) {
+    public SwapAction(EvacCellInterface cell1, EvacCellInterface cell2, PropertyAccess es) {
         this(cell1, cell2, es.propertyFor(cell1.getState().getIndividual()).getStepEndTime(), es.propertyFor(cell1.getState().getIndividual()).getStepStartTime(),
                 cell1.getState().getIndividual().getNumber(),
                 es.propertyFor(cell2.getState().getIndividual()).getStepEndTime(),
@@ -65,8 +65,8 @@ public class SwapAction extends Action {
     }
 
     private SwapAction(
-            EvacCell cell1,
-            EvacCell cell2,
+            EvacCellInterface cell1,
+            EvacCellInterface cell2,
             double getStepEndTime1,
             double getStepStartTime1,
             int getNumber1,
@@ -83,11 +83,11 @@ public class SwapAction extends Action {
         this.individualNumber2 = getNumber2;
     }
 
-    public EvacCell cell1() {
+    public EvacCellInterface cell1() {
         return cell1;
     }
 
-    public EvacCell cell2() {
+    public EvacCellInterface cell2() {
         return cell2;
     }
 
@@ -116,7 +116,7 @@ public class SwapAction extends Action {
     }
 
     @Override
-    public void execute(org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (cell1.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(-1, this, "There is no Individual on cell 1.");
         }
@@ -143,12 +143,12 @@ public class SwapAction extends Action {
     }
 
     @Override
-    public Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        EvacCell newCell1 = adoptCell(cell1, targetCA);
+    public Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+        EvacCellInterface newCell1 = adoptCell(cell1, targetCA);
         if (newCell1 == null) {
             throw new CADoesNotMatchException(this, "Could not find cell 1 " + cell1 + " in the new CA.");
         }
-        EvacCell newCell2 = adoptCell(cell2, targetCA);
+        EvacCellInterface newCell2 = adoptCell(cell2, targetCA);
         if (cell2 == null) {
             throw new CADoesNotMatchException(this, "Could not find cell 2 " + cell2 + " in the new CA.");
         }

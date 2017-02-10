@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * A rule that activates all individuals in a room if the reaction time of all of them is over. Before that, people stay
@@ -33,14 +34,16 @@ public class ReactionRuleAllPersonsInRoom extends AbstractReactionRule {
      * the same room, they are all alarmed at the same time.
      *
      * @param cell the cell, whose individuals reaction time is reduced
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         for (Individual individual : cell.getRoom().getIndividuals()) {
             if (es.getTimeStep() < individual.getReactionTime() * sp.getStepsPerSecond()) {
-                return;
+                return VoidAction.VOID_ACTION;
             }
         }
         cell.getRoom().getIndividuals().stream().forEach(individual -> es.propertyFor(individual).setAlarmed());
+        return VoidAction.VOID_ACTION;
     }
 }

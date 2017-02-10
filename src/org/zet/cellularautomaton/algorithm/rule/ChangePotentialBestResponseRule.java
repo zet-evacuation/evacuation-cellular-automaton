@@ -23,6 +23,7 @@ import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -107,9 +108,10 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
     /**
      *
      * @param cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
 
         //ArrayList<Potential> exits = new ArrayList<>();
         //exits.addAll(es.getCellularAutomaton().getExits());
@@ -124,6 +126,6 @@ public class ChangePotentialBestResponseRule extends AbstractPotentialChangeRule
             }
         }
         es.propertyFor(cell.getState().getIndividual()).setStaticPotential(newPot);
-
+        return VoidAction.VOID_ACTION;
     }
 }

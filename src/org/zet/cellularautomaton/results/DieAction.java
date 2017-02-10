@@ -15,9 +15,9 @@
  */
 package org.zet.cellularautomaton.results;
 
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.DeathCause;
+import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
 
 /**
@@ -27,7 +27,7 @@ import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
 public class DieAction extends Action {
 
     /** The cell on which the individual stood when it died. */
-    private final EvacCell placeOfDeath;
+    private final EvacCellInterface placeOfDeath;
     /** The cause which caused the individuals dead */
     private final DeathCause cause;
     /** The number of the individual. Is needed for visualization. */
@@ -40,7 +40,7 @@ public class DieAction extends Action {
      * @param cause the cause of the death
      * @param individualNumber the individuals number
      */
-    public DieAction(EvacCell placeOfDeath, DeathCause cause, int individualNumber) {
+    public DieAction(EvacCellInterface placeOfDeath, DeathCause cause, int individualNumber) {
         this.placeOfDeath = placeOfDeath;
         this.cause = cause;
         this.individualNumber = individualNumber;
@@ -51,7 +51,7 @@ public class DieAction extends Action {
      *
      * @return the cell on which the individual stood
      */
-    public EvacCell placeOfDeath() {
+    public EvacCellInterface placeOfDeath() {
         return placeOfDeath;
     }
 
@@ -70,8 +70,8 @@ public class DieAction extends Action {
      * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        EvacCell newCell = adoptCell(placeOfDeath, targetCA);
+    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+        EvacCellInterface newCell = adoptCell(placeOfDeath, targetCA);
         if (newCell == null) {
             throw new CADoesNotMatchException(
                     this,
@@ -89,7 +89,7 @@ public class DieAction extends Action {
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    public void execute(MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         if (placeOfDeath.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     "I could not mark the individual on cell "

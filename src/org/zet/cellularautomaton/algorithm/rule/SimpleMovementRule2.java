@@ -65,6 +65,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
     /**
      * A function called if the individual is not moving. The individual will stand on the cell for exactly one time
      * step bevore it can move again. But, even if the individual does not move, the view direction may be changed.
+     * @param cell
      */
     @Override
     protected void noMove(EvacCellInterface cell) {

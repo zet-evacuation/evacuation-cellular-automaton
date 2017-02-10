@@ -41,11 +41,11 @@ public class TestEvacuationRuleSet {
         for( EvacuationRule _unused : ruleSet) {
             throw new AssertionError("Should be empty!");
         }
-        for (Iterator<EvacuationRule> it = ruleSet.loopIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.loopIterator(); it.hasNext();) {
             it.next();
             throw new AssertionError("Should be empty!");
         }
-        for (Iterator<EvacuationRule> it = ruleSet.primaryIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.primaryIterator(); it.hasNext();) {
             it.next();
             throw new AssertionError("Should be empty!");
         }
@@ -70,10 +70,10 @@ public class TestEvacuationRuleSet {
         for( EvacuationRule rule : ruleSet ) {
             all.add(rule);
         }
-        for (Iterator<EvacuationRule> it = ruleSet.loopIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.loopIterator(); it.hasNext();) {
             loop.add(it.next());
         }
-        for (Iterator<EvacuationRule> it = ruleSet.primaryIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.primaryIterator(); it.hasNext();) {
             primary.add(it.next());
         }
         
@@ -95,10 +95,10 @@ public class TestEvacuationRuleSet {
         for( EvacuationRule rule : ruleSet ) {
             all.add(rule);
         }
-        for (Iterator<EvacuationRule> it = ruleSet.loopIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.loopIterator(); it.hasNext();) {
             loop.add(it.next());
         }
-        for (Iterator<EvacuationRule> it = ruleSet.primaryIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.primaryIterator(); it.hasNext();) {
             primary.add(it.next());
         }
         assertThat(all, contains(mockRule));

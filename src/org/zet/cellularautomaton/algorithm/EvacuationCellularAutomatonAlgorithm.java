@@ -14,15 +14,16 @@ import java.util.logging.Level;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.results.Action;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 
 /**
  * An implementation of a general cellular automaton algorithm specialized for evacuation simulation. The cells of the
@@ -47,6 +48,8 @@ public class EvacuationCellularAutomatonAlgorithm
     protected MutableEvacuationState es = new MutableEvacuationState(new MultiFloorEvacuationCellularAutomaton(),
             Collections.emptyList());
     protected EvacuationStateController ec = null;
+    
+    private ActionExecutor actionExecutor = new ActionExecutor();
 
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
@@ -65,11 +68,12 @@ public class EvacuationCellularAutomatonAlgorithm
         Individual[] individualsCopy = es.getInitialIndividuals().toArray(
                 new Individual[es.getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
-            Iterator<EvacuationRule> primary = getProblem().getRuleSet().primaryIterator();
+            Iterator<EvacuationRule<?>> primary = getProblem().getRuleSet().primaryIterator();
             EvacCellInterface c = es.propertyFor(i).getCell();
             while (primary.hasNext()) {
                 EvacuationRule r = primary.next();
-                r.execute(c);
+                Action a = r.execute(c);
+                handleAction(a);
             }
         }
         es.removeMarkedIndividuals();
@@ -116,7 +120,8 @@ public class EvacuationCellularAutomatonAlgorithm
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
         for (EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
-            r.execute(es.propertyFor(i).getCell());
+            Action a = r.execute(es.propertyFor(i).getCell());
+            handleAction(a);
         }
     }
 
@@ -180,6 +185,10 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     public final Iterator<EvacCellInterface> iterator() {
         return new CellIterator(reorder.apply(es.getRemainingIndividuals()), es);
+    }
+
+    private void handleAction(Action a) {
+        actionExecutor.execute(a);
     }
 
     /**

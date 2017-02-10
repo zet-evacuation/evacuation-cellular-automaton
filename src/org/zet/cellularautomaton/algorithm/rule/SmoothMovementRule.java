@@ -4,6 +4,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * A movement rule that supports movement at non integral points in time. Generally, movement is
@@ -41,7 +42,7 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         individual = cell.getState().getIndividual();
         if (isActive()) {
             if (canMove(individual)) {
@@ -60,6 +61,7 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
         }
 
         recordAction(new IndividualStateChangeAction(individual, es));
+        return VoidAction.VOID_ACTION;
     }
 
     /**

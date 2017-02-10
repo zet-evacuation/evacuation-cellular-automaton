@@ -29,6 +29,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -58,8 +59,9 @@ public class AbstractEvacuationRuleTest {
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCellInterface cell) {
+            protected VoidAction onExecute(EvacCellInterface cell) {
                 executedOn.add(cell);
+                return VoidAction.VOID_ACTION;
             }
 
             @Override
@@ -78,7 +80,7 @@ public class AbstractEvacuationRuleTest {
         AbstractEvacuationRule rule = new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCellInterface cell) {
+            protected VoidAction onExecute(EvacCellInterface cell) {
                 throw new AssertionError("onExecute called!");
             }
 
@@ -199,7 +201,8 @@ public class AbstractEvacuationRuleTest {
         return new AbstractEvacuationRule() {
 
             @Override
-            protected void onExecute(EvacCellInterface cell) {
+            protected VoidAction onExecute(EvacCellInterface cell) {
+                return VoidAction.VOID_ACTION;
             }
         };
 

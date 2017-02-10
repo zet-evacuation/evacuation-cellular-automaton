@@ -7,6 +7,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * A special implementation of a {@link MovementRule} that supports teleportation. When the rule is
@@ -43,8 +44,9 @@ public class TeleportMovementRule implements MovementRule {
     }
 
     @Override
-    public void execute(EvacCellInterface cell) {
+    public VoidAction execute(EvacCellInterface cell) {
         movementRule.execute(cell);
+        return VoidAction.VOID_ACTION;
     }
 
     @Override

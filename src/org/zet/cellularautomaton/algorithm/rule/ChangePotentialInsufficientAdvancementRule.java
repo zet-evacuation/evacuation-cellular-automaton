@@ -16,7 +16,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.potential.PotentialMemory;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -119,9 +119,10 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
     /**
      *
      * @param cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         // Get the potential of the individual on the {@code cell} as well as some other concerning constants of the individual
         Individual individual = cell.getState().getIndividual();
         Potential sp = es.propertyFor(individual).getStaticPotential();
@@ -169,5 +170,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, es.getTimeStep());
             }
         }
+
+        return VoidAction.VOID_ACTION;
     }
 }

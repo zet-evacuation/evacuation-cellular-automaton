@@ -2,13 +2,14 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * The base rule for all rules indicating movement.
  *
  * @author Jan-Philipp Kappmeier
  */
-public abstract class AbstractMoveRule extends AbstractEvacuationRule {
+public abstract class AbstractMoveRule extends AbstractEvacuationRule<VoidAction> {
 
     /**
      * Decides, if an individual can move in individual step. This is possible, when the last move

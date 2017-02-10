@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.SaveCell;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * The save rule must be executed before the evacuation rule is executed.
@@ -31,7 +32,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     }
 
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         Individual savedIndividual = cell.getState().getIndividual();
         if (!(es.propertyFor(savedIndividual).isSafe())) {
             ec.setSafe(savedIndividual);
@@ -42,6 +43,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
             }
             //es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
+        return VoidAction.VOID_ACTION;
     }
 
     private void setExitPotential(SaveCell cell, Individual savedIndividual) {

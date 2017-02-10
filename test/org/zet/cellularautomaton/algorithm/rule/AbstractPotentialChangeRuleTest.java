@@ -17,6 +17,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -49,8 +50,8 @@ public class AbstractPotentialChangeRuleTest {
         }
 
         @Override
-        protected void onExecute(EvacCellInterface cell) {
-
+        protected VoidAction onExecute(EvacCellInterface cell) {
+            return VoidAction.VOID_ACTION;
         }
     };
 

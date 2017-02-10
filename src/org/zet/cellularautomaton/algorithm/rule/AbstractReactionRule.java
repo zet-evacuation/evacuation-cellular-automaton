@@ -16,12 +16,13 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * @author Daniel R. Schmidt
  *
  */
-public abstract class AbstractReactionRule extends AbstractEvacuationRule {
+public abstract class AbstractReactionRule extends AbstractEvacuationRule<VoidAction> {
 
     @Override
     public boolean executableOn(EvacCellInterface cell) {

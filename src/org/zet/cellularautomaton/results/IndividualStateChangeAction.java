@@ -15,7 +15,7 @@
  */
 package org.zet.cellularautomaton.results;
 
-import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
@@ -52,7 +52,7 @@ public class IndividualStateChangeAction extends Action {
      * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    Action adoptToCA(MultiFloorEvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
+    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
         Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(es.propertyFor(individual).getNumber());
         if (adaptedIndividual == null) {
             throw new CADoesNotMatchException(this, "Could not find the individual with the unique id " + individual.getNumber());
@@ -68,7 +68,7 @@ public class IndividualStateChangeAction extends Action {
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    public void execute(MultiFloorEvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
         es.propertyFor(individual).setPanic(panic);
         es.propertyFor(individual).setExhaustion(exhaustion);
         es.propertyFor(individual).setRelativeSpeed(currentSpeed);

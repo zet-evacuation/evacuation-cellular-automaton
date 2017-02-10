@@ -25,6 +25,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.VoidAction;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -115,7 +116,8 @@ public class AbstractMovementRuleTest {
             }
 
             @Override
-            protected void onExecute(EvacCellInterface cell) {
+            protected VoidAction onExecute(EvacCellInterface cell) {
+                return VoidAction.VOID_ACTION;
             }
         };
         EvacuationState es = context.mock(EvacuationState.class);

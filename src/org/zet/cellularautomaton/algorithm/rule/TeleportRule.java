@@ -2,6 +2,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.TeleportCell;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -18,11 +19,12 @@ public class TeleportRule extends AbstractMoveRule {
     }
 
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         final TeleportCell tc = (TeleportCell) cell;
         if (tc.targetCount() > 0) {
             performTeleport(tc);
         }
+        return VoidAction.VOID_ACTION;
     }
 
     private void performTeleport(TeleportCell teleportCell) {

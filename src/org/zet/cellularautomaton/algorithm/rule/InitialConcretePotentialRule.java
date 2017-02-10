@@ -25,6 +25,7 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * This rule chooses an {@link Individual}'s initial {@link StaticPotential} according to the attractivity value of
@@ -44,9 +45,10 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
      * because there is now passable way to an ExitCell), this Individual has to die because it cannot be evacuated.
      *
      * @param cell the cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         Individual individual = cell.getState().getIndividual();
         List<Exit> potentialToLengthOfWayMapper = new ArrayList<>();
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
@@ -103,5 +105,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, es.propertyFor(individual).getExhaustion());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, es.propertyFor(individual).getPanic());
         }
+        
+        return VoidAction.VOID_ACTION;
     }
 }

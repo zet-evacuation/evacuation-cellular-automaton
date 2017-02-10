@@ -18,13 +18,14 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * A rule that evacuates the individuals.
  *
  * @author Jan-Philipp Kappmeier
  */
-public class EvacuateIndividualsRule extends AbstractEvacuationRule {
+public class EvacuateIndividualsRule extends AbstractEvacuationRule<VoidAction> {
 
     public EvacuateIndividualsRule() {
     }
@@ -33,14 +34,16 @@ public class EvacuateIndividualsRule extends AbstractEvacuationRule {
      * Marks individuals standing on an exit to be removed. All actions on the state are executed after all rules are
      * evaluated.
      * @param cell the cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         es.markIndividualForRemoval(cell.getState().getIndividual());
         // Potential needed for statistics:
         Exit exit = getNearestExit(es.getCellularAutomaton(), cell);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(cell.getState().getIndividual(), exit);
         // safetyTime etc will be set in the SaveIndividualsRule
+        return VoidAction.VOID_ACTION;
     }
 
     /**

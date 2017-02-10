@@ -6,6 +6,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -14,13 +15,14 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
 @Ignore
 public class MockRule {
 
-    public static class TestInitRule implements EvacuationRule {
+    public static class TestInitRule implements EvacuationRule<VoidAction> {
 
         public TestInitRule() {
         }
 
         @Override
-        public void execute(EvacCellInterface cell) {
+        public VoidAction execute(EvacCellInterface cell) {
+            return VoidAction.VOID_ACTION;
         }
 
         @Override
@@ -48,13 +50,14 @@ public class MockRule {
 
     }
 
-    public static class TestLoopRule implements EvacuationRule {
+    public static class TestLoopRule implements EvacuationRule<VoidAction> {
 
         public TestLoopRule() {
         }
 
         @Override
-        public void execute(EvacCellInterface cell) {
+        public VoidAction execute(EvacCellInterface cell) {
+            return VoidAction.VOID_ACTION;
         }
 
         @Override

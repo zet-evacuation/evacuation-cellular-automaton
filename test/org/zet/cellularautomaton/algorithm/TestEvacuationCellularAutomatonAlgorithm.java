@@ -39,6 +39,8 @@ import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
 import org.zetool.common.algorithm.AlgorithmProgressEvent;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.results.VoidAction;
+import org.zetool.simulation.cellularautomaton.Cell;
 
 /**
  *
@@ -213,15 +215,16 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         int[] counter = new int[]{0};
         
-        EvacuationRule initDynamicPotential = new EvacuationRule() {
+        EvacuationRule initDynamicPotential = new EvacuationRule<VoidAction>() {
             private EvacuationStateControllerInterface ec;
             private EvacuationState es;
             private EvacuationSimulationSpeed sp;
             @Override
-            public void execute(EvacCellInterface cell) {
+            public VoidAction execute(EvacCellInterface cell) {
                 ec.increaseDynamicPotential(cell);
                 counter[0]++;
                 assertThat(es.getDynamicPotential(cell), is(equalTo(1.0)));
+                return VoidAction.VOID_ACTION;
             }
 
             @Override
@@ -678,11 +681,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             index++;            
         }
         
-        EvacuationRule rule = new EvacuationRule() {
+        EvacuationRule rule = new EvacuationRule<VoidAction>() {
 
             @Override
-            public void execute(EvacCellInterface cell) {
+            public VoidAction execute(EvacCellInterface cell) {
                 resultList.add(cell.getState().getIndividual());
+                return VoidAction.VOID_ACTION;
             }
 
             @Override

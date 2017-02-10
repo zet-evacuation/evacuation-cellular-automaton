@@ -18,13 +18,14 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * Abstract class for changing {@link Individual}s' static potentials.
  * @author Marcel Preuß
  *
  */
-public abstract class AbstractPotentialChangeRule extends AbstractEvacuationRule {
+public abstract class AbstractPotentialChangeRule extends AbstractEvacuationRule<VoidAction> {
     /**
      *
      * @param cell

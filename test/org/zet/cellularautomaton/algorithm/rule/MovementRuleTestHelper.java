@@ -30,6 +30,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
+import org.zet.cellularautomaton.results.VoidAction;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -47,11 +48,11 @@ import org.zetool.common.util.Direction8;
     private IndividualProperty ip;
     private EvacuationCellularAutomaton ca;
     static final double STEPS_PER_SECOND = 8.75;
-    private final int TIME_STEP = 13;
-    private final double STEP_END_TIME_CURRENTLY_MOVING = TIME_STEP + 2;
-    public final double STEP_END_TIME_CAN_MOVE = TIME_STEP - 0.8;
+    private static final int TIME_STEP = 13;
+    private static final double STEP_END_TIME_CURRENTLY_MOVING = TIME_STEP + 2;
+    public static final double STEP_END_TIME_CAN_MOVE = TIME_STEP - 0.8;
     private final double STEP_START_TIME = 12.5;
-    final double OCCUPIED_UNTIL = 3.0;
+    static final double OCCUPIED_UNTIL = 3.0;
     static final double RELATIVE_SPEED = 0.7;
     static final double ABSOLUTE_MAX_SPEED = 3.5;
     static final double ABSOLUTE_SPEED = 2.45;
@@ -323,7 +324,7 @@ import org.zetool.common.util.Direction8;
         abstract void verify(SmoothMovementRule ruleUnderTest);
     }
 
-    public static interface TestableMovementRule extends EvacuationRule {
+    public static interface TestableMovementRule extends EvacuationRule<VoidAction> {
 
         int methodCalled(MovementRuleStep step);
 

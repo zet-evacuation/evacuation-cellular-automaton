@@ -9,13 +9,13 @@ import static org.junit.Assert.assertThat;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
 import org.junit.Test;
-import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -27,7 +27,8 @@ public class AbstractReactionRuleTest {
         AbstractReactionRule rule = new AbstractReactionRule() {
 
             @Override
-            protected void onExecute(EvacCellInterface cell) {
+            protected VoidAction onExecute(EvacCellInterface cell) {
+                return VoidAction.VOID_ACTION;
             }
         };
         

@@ -21,8 +21,7 @@ import java.util.stream.Stream;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Exit;
-import org.zet.cellularautomaton.potential.Potential;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * This rule changes the Individuals StaticPotential. It chooses the admissible StaticPotential with the highest
@@ -40,9 +39,10 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      * description above.
      *
      * @param cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         List<Exit> staticPotentials = new ArrayList<>(es.getCellularAutomaton().getExits());
         Exit initialPotential = initialPotential(staticPotentials.stream(), cell);
         if (initialPotential == null) {
@@ -50,6 +50,7 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
         } else {
             assignMostAttractivePotential(staticPotentials, initialPotential, cell);
         }
+        return VoidAction.VOID_ACTION;
     }
 
     /**

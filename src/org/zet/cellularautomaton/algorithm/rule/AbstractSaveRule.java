@@ -18,12 +18,13 @@ package org.zet.cellularautomaton.algorithm.rule;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.SaveCell;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * @author Daniel R. Schmidt
  *
  */
-public abstract class AbstractSaveRule extends AbstractEvacuationRule {
+public abstract class AbstractSaveRule extends AbstractEvacuationRule<VoidAction> {
     /**
      * The rule is applicable if it is an exit or save cell and is occupied by an individual.
      * 

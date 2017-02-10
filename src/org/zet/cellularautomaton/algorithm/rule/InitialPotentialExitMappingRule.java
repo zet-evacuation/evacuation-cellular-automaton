@@ -22,6 +22,7 @@ import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.TargetCell;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * This rule applies the exit mapping to the cellular automaton. It is explicitly allowed to have individuals with no
@@ -50,10 +51,11 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
      * Assignes an exit (more precisely: the potential) for an individual.
      *
      * @param cell the cell on which the individual stands
+     * @return 
      * @throws java.lang.IllegalArgumentException if an individual has not been mapped to an exit.
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         if (potentialMapping == null) {
             init();
         }
@@ -65,6 +67,7 @@ public class InitialPotentialExitMappingRule extends AbstractInitialRule {
         } else {
             handleWithoutTarget(cell);
         }
+        return VoidAction.VOID_ACTION;
     }
 
     /**

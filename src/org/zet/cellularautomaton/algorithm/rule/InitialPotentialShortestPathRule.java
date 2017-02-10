@@ -15,8 +15,6 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Exit;
@@ -25,6 +23,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * This rule chooses an Individual's (the one standing on the current cell) initial StaticPotential according to the
@@ -43,10 +42,12 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
      * the building, because there is now passable way to an exit, it dies.
      *
      * @param cell the cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         assignShortestPathPotential(cell, this.es, this.ec);
+        return VoidAction.VOID_ACTION;
     }
 
     public static void assignShortestPathPotential(EvacCellInterface cell, EvacuationState es, EvacuationStateControllerInterface ec) {

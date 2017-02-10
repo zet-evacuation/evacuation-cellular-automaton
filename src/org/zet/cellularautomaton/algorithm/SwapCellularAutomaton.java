@@ -64,7 +64,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
         HashSet<Individual> individualSwapped = new HashSet<>();
 
         for (EvacCellInterface cell : this) {
-            Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
+            Iterator<EvacuationRule<?>> loop = getProblem().getRuleSet().loopIterator();
 
             while (loop.hasNext()) {
                 EvacuationRule r = loop.next();
@@ -157,7 +157,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
                                 if (unfinished2.contains(i2)) {
                                     unfinished2.remove(i2); // perform last rules for them
                                 }
-                                Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
+                                Iterator<EvacuationRule<?>> loop = getProblem().getRuleSet().loopIterator();
                                 boolean movementFound = false;
                                 while (loop.hasNext()) {
                                     EvacuationRule r = loop.next();
@@ -190,7 +190,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
 
         // Führe alle übrigen Individuals aus (Individuen, die nicht geswappt haben
         for (Individual i : unfinished2) {
-            Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
+            Iterator<EvacuationRule<?>> loop = getProblem().getRuleSet().loopIterator();
             boolean movementFound = false;
             while (loop.hasNext()) {
                 EvacuationRule r = loop.next();
@@ -210,7 +210,7 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
     }
 
     private void setDirectExecute(boolean val) {
-        Iterator<EvacuationRule> loop = getProblem().getRuleSet().loopIterator();
+        Iterator<EvacuationRule<?>> loop = getProblem().getRuleSet().loopIterator();
         while (loop.hasNext()) {
             EvacuationRule r = loop.next();
             if (r instanceof AbstractMovementRule) {

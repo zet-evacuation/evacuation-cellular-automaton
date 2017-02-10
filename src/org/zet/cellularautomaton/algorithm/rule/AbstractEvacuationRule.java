@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.Collection;
 import java.util.Objects;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
@@ -31,8 +30,9 @@ import org.zet.cellularautomaton.results.Action;
 
 /**
  * @author Daniel R. Schmidt
+ * @param <R>
  */
-public abstract class AbstractEvacuationRule implements EvacuationRule {
+public abstract class AbstractEvacuationRule<R extends Action> implements EvacuationRule<R> {
 
     protected EvacuationState es;
     protected EvacuationStateControllerInterface ec;
@@ -52,15 +52,15 @@ public abstract class AbstractEvacuationRule implements EvacuationRule {
     }
 
     @Override
-    public final void execute(EvacCellInterface cell) {
+    public final R execute(EvacCellInterface cell) {
         if (!executableOn(cell)) {
-            return;
+            throw new IllegalStateException("Rule " + this.toString() + " not applicable on " + cell );
         }
 
-        onExecute(cell);
+        return onExecute(cell);
     }
 
-    protected abstract void onExecute(EvacCellInterface cell);
+    protected abstract R onExecute(EvacCellInterface cell);
 
     @Override
     public void setEvacuationState(EvacuationState es) {

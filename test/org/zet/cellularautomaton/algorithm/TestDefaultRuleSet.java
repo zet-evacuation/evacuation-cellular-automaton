@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.algorithm.rule.MockRule;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  *
@@ -59,10 +60,10 @@ public class TestDefaultRuleSet {
         for (EvacuationRule rule : ruleSet) {
             all.add(rule);
         }
-        for (Iterator<EvacuationRule> it = ruleSet.loopIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.loopIterator(); it.hasNext();) {
             loop.add(it.next());
         }
-        for (Iterator<EvacuationRule> it = ruleSet.primaryIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.primaryIterator(); it.hasNext();) {
             primary.add(it.next());
         }
 
@@ -89,10 +90,10 @@ public class TestDefaultRuleSet {
         for( EvacuationRule rule : ruleSet ) {
             all.add(rule);
         }
-        for (Iterator<EvacuationRule> it = ruleSet.loopIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.loopIterator(); it.hasNext();) {
             loop.add(it.next());
         }
-        for (Iterator<EvacuationRule> it = ruleSet.primaryIterator(); it.hasNext();) {
+        for (Iterator<EvacuationRule<?>> it = ruleSet.primaryIterator(); it.hasNext();) {
             primary.add(it.next());
         }
         assertThat(ruleSet.getMovementRule(), is(equalTo(movementRule)));
@@ -138,7 +139,8 @@ public class TestDefaultRuleSet {
         }
 
         @Override
-        protected void onExecute(EvacCellInterface cell) {
+        protected VoidAction onExecute(EvacCellInterface cell) {
+            return VoidAction.VOID_ACTION;
         }
         
     }

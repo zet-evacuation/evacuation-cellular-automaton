@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
+import org.zet.cellularautomaton.results.Action;
 import org.zetool.algorithm.simulation.cellularautomaton.RuleSet;
 
 /**
@@ -31,14 +32,14 @@ import org.zetool.algorithm.simulation.cellularautomaton.RuleSet;
  *
  * @author Jan-Philipp Kappmeier
  */
-public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
+public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule<? extends Action>> {
 
     /** The {@code ArrayList} containing all rules in only one instance. */
-    private final List<EvacuationRule> allRules;
+    private final List<EvacuationRule<?>> allRules;
     /** The {@code ArrayList} containing all initialization rules, maybe twice or more often. */
-    private final List<EvacuationRule> primaryRules;
+    private final List<EvacuationRule<?>> primaryRules;
     /** The {@code ArrayList} containing all loop rules, maybe twice or more often. */
-    private final List<EvacuationRule> loopRules;
+    private final List<EvacuationRule<?>> loopRules;
 
     /**
      * Creates a new instance of {@code RuleSet} and initializes the container.
@@ -55,7 +56,7 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      * @return the iterator
      */
     @Override
-    public Iterator<EvacuationRule> iterator() {
+    public Iterator<EvacuationRule<? extends Action>> iterator() {
         return allRules.iterator();
     }
 
@@ -98,7 +99,7 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      *
      * @return the iterator
      */
-    public Iterator<EvacuationRule> loopIterator() {
+    public Iterator<EvacuationRule<?>> loopIterator() {
         return loopRules.iterator();
     }
 
@@ -107,7 +108,7 @@ public abstract class EvacuationRuleSet implements RuleSet<EvacuationRule> {
      *
      * @return the iterator
      */
-    public Iterator<EvacuationRule> primaryIterator() {
+    public Iterator<EvacuationRule<?>> primaryIterator() {
         return primaryRules.iterator();
     }
 

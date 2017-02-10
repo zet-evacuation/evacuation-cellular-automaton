@@ -20,6 +20,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
+import org.zet.cellularautomaton.results.VoidAction;
 import org.zetool.common.util.Direction8;
 import org.zetool.common.util.Level;
 import org.zetool.rndutils.RandomUtils;
@@ -48,7 +49,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         Individual ind = cell.getState().getIndividual();
 
         if (canMove(ind)) {
@@ -65,6 +66,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             setMoveRuleCompleted(false);
         }
         recordAction(new IndividualStateChangeAction(ind, es));
+        return VoidAction.VOID_ACTION;
     }
 
     @Override

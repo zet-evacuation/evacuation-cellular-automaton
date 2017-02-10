@@ -28,6 +28,12 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.Stairs;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
+import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.ABSOLUTE_SPEED;
+import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.OCCUPIED_UNTIL;
+import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.RELATIVE_SPEED;
+import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.SPEED_FACTOR_TARGET_CELL;
+import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.STEPS_PER_SECOND;
+import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.STEP_END_TIME_CAN_MOVE;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.util.Direction8;
@@ -129,7 +135,7 @@ public class SimpleMovementRule2Test {
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
         helper.getIndividualProperties().setDirection(Direction8.Top);
 
-        assertMovePaarameters(ruleUnderTest, helper.ABSOLUTE_SPEED, helper.SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, 1.0);
+        assertMovePaarameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, 1.0);
     }
 
     @Test
@@ -140,7 +146,7 @@ public class SimpleMovementRule2Test {
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
         helper.getIndividualProperties().setDirection(Direction8.Top);
 
-        assertMovePaarameters(ruleUnderTest, helper.ABSOLUTE_SPEED, helper.SPEED_FACTOR_TARGET_CELL, Direction8.TopRight, 45, 1.0);
+        assertMovePaarameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.TopRight, 45, 1.0);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -177,7 +183,7 @@ public class SimpleMovementRule2Test {
                 will(returnValue(stairSpeedFactor));
             }
         });
-        assertMovePaarameters(ruleUnderTest, helper.ABSOLUTE_SPEED, helper.SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, stairSpeedFactor * 1.1);
+        assertMovePaarameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, stairSpeedFactor * 1.1);
     }
 
     @Test
@@ -189,7 +195,7 @@ public class SimpleMovementRule2Test {
         helper.injectTargetCell(doorTarget);
         helper.prepareFor(rule, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
 
-        assertRest(rule, helper.getTestCell(), helper.ABSOLUTE_SPEED, helper.SPEED_FACTOR_TARGET_CELL, direction, 0, 1);
+        assertRest(rule, helper.getTestCell(), ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, direction, 0, 1);
     }
 
     @Test
@@ -221,7 +227,7 @@ public class SimpleMovementRule2Test {
 
         Direction8 direction = Direction8.Top;
 
-        assertRest(rule, doorStart, helper.ABSOLUTE_SPEED, helper.SPEED_FACTOR_TARGET_CELL, direction, 0, 1);
+        assertRest(rule, doorStart, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, direction, 0, 1);
     }
 
     /**
@@ -233,7 +239,7 @@ public class SimpleMovementRule2Test {
         // Directly above
         DoorCell doorTarget = new DoorCell(1, 3);
 
-        doorTarget.setSpeedFactor(helper.SPEED_FACTOR_TARGET_CELL);
+        doorTarget.setSpeedFactor(SPEED_FACTOR_TARGET_CELL);
 
         FakeSimpleMovementRule2 rule = getMovementRule(doorTarget);
 
@@ -252,7 +258,7 @@ public class SimpleMovementRule2Test {
 
         Direction8 direction = Direction8.Top;
 
-        assertRest(rule, doorStart, helper.ABSOLUTE_SPEED, helper.SPEED_FACTOR_TARGET_CELL, direction, 0, Double.POSITIVE_INFINITY);
+        assertRest(rule, doorStart, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, direction, 0, Double.POSITIVE_INFINITY);
     }
 
     private static FakeSimpleMovementRule2 getMovementRule(EvacCellInterface targetCell) {
@@ -296,7 +302,7 @@ public class SimpleMovementRule2Test {
         // Step start and end time
         final double sway = swayFromDegree(degree);
         final double timeToWalk = (stepLength /* dist */ / (absoluteSpeed * speedFactor * additionalSpeedFactor));
-        double expectedStepEndTime = helper.STEP_END_TIME_CAN_MOVE + timeToWalk * helper.STEPS_PER_SECOND + sway * helper.STEPS_PER_SECOND;
+        double expectedStepEndTime = STEP_END_TIME_CAN_MOVE + timeToWalk * STEPS_PER_SECOND + sway * STEPS_PER_SECOND;
         assertThat(helper.getIndividualProperties().getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
     }
 
@@ -521,20 +527,20 @@ public class SimpleMovementRule2Test {
                 oneOf(helper.getEc()).increaseDynamicPotential(with(helper.getTestCell()));
 
                 allowing(helper.getTestCell()).getSpeedFactor();
-                will(returnValue(helper.SPEED_FACTOR_TARGET_CELL));
+                will(returnValue(SPEED_FACTOR_TARGET_CELL));
                 allowing(targetCell).getOccupiedUntil();
-                will(returnValue(helper.OCCUPIED_UNTIL));
+                will(returnValue(OCCUPIED_UNTIL));
             }
         });
         helper.getIndividualProperties().setDirection(Direction8.Top);
         targetCellIndividualProperties.setDirection(Direction8.Top);
-        targetCellIndividualProperties.setRelativeSpeed(helper.RELATIVE_SPEED);
+        targetCellIndividualProperties.setRelativeSpeed(RELATIVE_SPEED);
 
         rule.swap(helper.getTestCell(), targetCell);
 
         // Simple test case only, different move-properties are tested within other tests. Only for swap here
-        final double timeToWalk = (0.4 /* dist */ / (helper.ABSOLUTE_SPEED * helper.SPEED_FACTOR_TARGET_CELL));
-        double expectedStepEndTime = helper.STEP_END_TIME_CAN_MOVE + timeToWalk * helper.STEPS_PER_SECOND;
+        final double timeToWalk = (0.4 /* dist */ / (ABSOLUTE_SPEED * SPEED_FACTOR_TARGET_CELL));
+        double expectedStepEndTime = helper.STEP_END_TIME_CAN_MOVE + timeToWalk * STEPS_PER_SECOND;
         assertThat(helper.getIndividualProperties().getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
         assertThat(targetCellIndividualProperties.getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
     }

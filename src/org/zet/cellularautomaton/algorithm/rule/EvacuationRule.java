@@ -20,15 +20,17 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
+import org.zet.cellularautomaton.results.Action;
 import org.zetool.algorithm.simulation.cellularautomaton.Rule;
 
 /**
+ * @param <R> the result action
  * @author Daniel R. Schmidt
  */
-public interface EvacuationRule extends Rule<EvacCellInterface> {
+public interface EvacuationRule<R extends Action> extends Rule<R, EvacCellInterface> {
 
     @Override
-    void execute(EvacCellInterface cell);
+    R execute(EvacCellInterface cell);
 
     @Override
     boolean executableOn(EvacCellInterface cell);

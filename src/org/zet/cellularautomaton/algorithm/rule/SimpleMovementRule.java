@@ -22,6 +22,7 @@ import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.results.VoidAction;
 
 /**
  * A simple movement rule that does not care about anything like slack, speed, panic or anything else. Steps are always
@@ -46,15 +47,17 @@ public class SimpleMovementRule extends AbstractMovementRule {
     /**
      *
      * @param cell
+     * @return 
      */
     @Override
-    protected void onExecute(EvacCellInterface cell) {
+    protected VoidAction onExecute(EvacCellInterface cell) {
         EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
         Logger.getGlobal().log(Level.INFO, "Target cell: {0}", targetCell);
         if (cell.equals(targetCell)) {
-            return;
+            return VoidAction.VOID_ACTION;
         }
         move(cell, targetCell);
+        return VoidAction.VOID_ACTION;
     }
 
     @Override
