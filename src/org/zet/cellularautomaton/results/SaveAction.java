@@ -17,7 +17,6 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
-import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -30,10 +29,10 @@ import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
  *
  * @author Daniel R. Schmidt
  */
-public class ExitAction extends Action {
+public class SaveAction extends Action {
 
     /** The cell where an individual leaves the simulation. */
-    protected ExitCell exit;
+    protected EvacCellInterface cell;
     private final int timeStep;
 
     /**
@@ -41,38 +40,34 @@ public class ExitAction extends Action {
      *
      * @param exit The cell from where the individual leaves the system.
      */
-    public ExitAction(ExitCell exit, int timeStep) {
-        this.exit = exit;
+    public SaveAction(EvacCellInterface exit, int timeStep) {
+        this.cell = exit;
         this.timeStep = timeStep;
     }
 
     @Override
     public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
-        if (exit.getState().isEmpty()) {
-            throw new InconsistentPlaybackStateException("Could not evacuate an individual from cell " + exit + "(" + exit.hashCode() + ") because there was none.");
+        if (cell.getState().isEmpty()) {
+            throw new InconsistentPlaybackStateException("Could not evacuate an individual from cell " + cell + "(" + cell.hashCode() + ") because there was none.");
         }
+        Individual savedIndividual = cell.getState().getIndividual();
+        ec.setSafe(savedIndividual);
+        es.propertyFor(savedIndividual).setPanic(0);
+        
         //onCA.setIndividualEvacuated(exit.getState().getIndividual());
     }
 
     @Override
     public void executeDelayed(EvacuationState es) {
-        Individual individual = exit.getState().getIndividual();
-        es.propertyFor(individual).setEvacuationTime(timeStep);
     }
 
     @Override
     public String toString() {
-        String representation = "An individual leaves the simulation from cell " + exit;
-        return representation;
+        return "An individual becomes save on cell " + cell;
     }
 
     @Override
     Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        EvacCellInterface newExit = adoptCell(exit, targetCA);
-        if (newExit == null) {
-            throw new CADoesNotMatchException(this, "Could not find the exit " + exit + " that this action uses in the new CA.");
-        }
-        //return new ExitAction((ExitCell) newExit);
         return VoidAction.VOID_ACTION;
     }
 }

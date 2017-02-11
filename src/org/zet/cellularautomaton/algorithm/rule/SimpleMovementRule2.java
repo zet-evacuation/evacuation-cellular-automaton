@@ -25,6 +25,8 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Stairs;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
 
 /**
  *
@@ -34,7 +36,7 @@ import org.zet.cellularautomaton.potential.Potential;
 public class SimpleMovementRule2 extends SmoothMovementRule {
 
     @Override
-    public void move(EvacCellInterface from, EvacCellInterface targetCell) {
+    public MoveAction move(EvacCellInterface from, EvacCellInterface targetCell) {
         if (es.propertyFor(individual).getCell().equals(targetCell)) {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
                     .addWaitedTimeToStatistic(individual, es.getTimeStep());
@@ -50,6 +52,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             performMove(from, targetCell);
             setMoveRuleCompleted(false);
         }
+        return MoveAction.NO_MOVE;
     }
 
     /**
@@ -191,7 +194,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
     }
 
     @Override
-    public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+    public SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2) {
         if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell #1!");
         }
@@ -206,6 +209,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
         individual = cell2.getState().getIndividual();
         initializeMove(cell2, cell1); // do not actually move!
         ec.swap(cell1, cell2);
+        return SwapAction.NO_MOVE;
     }
 
     /**

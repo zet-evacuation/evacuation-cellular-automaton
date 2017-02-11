@@ -1,13 +1,15 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.List;
+import java.util.Optional;
 import org.zet.cellularautomaton.TeleportCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
 
 /**
  * A special implementation of a {@link MovementRule} that supports teleportation. When the rule is
@@ -44,9 +46,8 @@ public class TeleportMovementRule implements MovementRule {
     }
 
     @Override
-    public VoidAction execute(EvacCellInterface cell) {
-        movementRule.execute(cell);
-        return VoidAction.VOID_ACTION;
+    public Optional<MoveAction> execute(EvacCellInterface cell) {
+        return movementRule.execute(cell);
     }
 
     @Override
@@ -75,13 +76,13 @@ public class TeleportMovementRule implements MovementRule {
     }
 
     @Override
-    public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
-        movementRule.swap(cell1, cell2);
+    public SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+        return movementRule.swap(cell1, cell2);
     }
 
     @Override
-    public void move(EvacCellInterface from, EvacCellInterface target) {
-        movementRule.move(from, target);
+    public MoveAction move(EvacCellInterface from, EvacCellInterface target) {
+        return movementRule.move(from, target);
     }
 
     @Override

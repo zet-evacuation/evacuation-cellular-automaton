@@ -19,7 +19,8 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.rule.AbstractMovementRule;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
 import org.zet.cellularautomaton.algorithm.rule.MockRule;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
 
 /**
  *
@@ -131,16 +132,18 @@ public class TestDefaultRuleSet {
     private static class MockAbstractMovementRule extends AbstractMovementRule {
 
         @Override
-        public void move(EvacCellInterface from, EvacCellInterface target) {
+        public MoveAction move(EvacCellInterface from, EvacCellInterface target) {
+            return MoveAction.NO_MOVE;
         }
 
         @Override
-        public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+        public SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+            return SwapAction.NO_MOVE;
         }
 
         @Override
-        protected VoidAction onExecute(EvacCellInterface cell) {
-            return VoidAction.VOID_ACTION;
+        protected MoveAction onExecute(EvacCellInterface cell) {
+            return MoveAction.NO_MOVE;
         }
         
     }

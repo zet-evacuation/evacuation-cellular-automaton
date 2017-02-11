@@ -185,6 +185,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         CellMatrixFormatter formatter = new CellMatrixFormatter();
         EvacuationCellularAutomatonCellFormatter cellFormatter = new EvacuationCellularAutomatonCellFormatter();
         formatter.registerFormatter(EvacCell.class, cellFormatter);
+        formatter.registerFormatter(RoomCell.class, cellFormatter);
         formatter.registerFormatter(ExitCell.class, cellFormatter);
         for (Room aRoom : rooms) {
             representation.append(formatter.graphicalToString(aRoom)).append("\n\n");
@@ -414,7 +415,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
             return new MultiFloorEvacuationCellularAutomaton(floorRoomMapping, floorNames, exits, potentials);
         }
 
-        void setPotentialFor(Exit exit, Potential potential) {
+        public void setPotentialFor(Exit exit, Potential potential) {
             potentials.put(exit, potential);
         }
     }

@@ -15,7 +15,6 @@ import org.zet.cellularautomaton.TeleportCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
 /**

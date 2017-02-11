@@ -17,6 +17,8 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
@@ -68,13 +70,17 @@ public class IndividualStateChangeAction extends Action {
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         es.propertyFor(individual).setPanic(panic);
         es.propertyFor(individual).setExhaustion(exhaustion);
         es.propertyFor(individual).setRelativeSpeed(currentSpeed);
         if (isAlarmed && !es.propertyFor(individual).isAlarmed()) {
             es.propertyFor(individual).setAlarmed();
         }
+    }
+
+    @Override
+    public void executeDelayed(EvacuationState es) {
     }
 
     /**

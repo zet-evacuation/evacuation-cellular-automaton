@@ -45,7 +45,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
         if (cell.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell " + cell);
         }
-        return cell.getState().getIndividual();        
+        return cell.getState().getIndividual();
     }
 
     void add(Individual i, EvacCellInterface cell) {

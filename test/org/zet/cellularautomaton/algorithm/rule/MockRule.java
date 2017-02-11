@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Optional;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.junit.Ignore;
 import org.zet.cellularautomaton.EvacCellInterface;
@@ -21,8 +22,8 @@ public class MockRule {
         }
 
         @Override
-        public VoidAction execute(EvacCellInterface cell) {
-            return VoidAction.VOID_ACTION;
+        public Optional<VoidAction> execute(EvacCellInterface cell) {
+            return Optional.of(VoidAction.VOID_ACTION);
         }
 
         @Override
@@ -56,8 +57,8 @@ public class MockRule {
         }
 
         @Override
-        public VoidAction execute(EvacCellInterface cell) {
-            return VoidAction.VOID_ACTION;
+        public Optional<VoidAction> execute(EvacCellInterface cell) {
+            return Optional.of(VoidAction.VOID_ACTION);
         }
 
         @Override

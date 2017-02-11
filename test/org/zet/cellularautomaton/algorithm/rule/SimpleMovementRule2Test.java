@@ -36,6 +36,7 @@ import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.ST
 import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.STEP_END_TIME_CAN_MOVE;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.MoveAction;
 import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
@@ -507,7 +508,7 @@ public class SimpleMovementRule2Test {
 
         Individual targetCellIndividual = new Individual(1, 0, 0, 0, 0, 0, 1, 0);
         IndividualProperty targetCellIndividualProperties = new IndividualProperty(targetCellIndividual);
-        targetCellIndividualProperties.setStepEndTime(helper.STEP_END_TIME_CAN_MOVE);
+        targetCellIndividualProperties.setStepEndTime(STEP_END_TIME_CAN_MOVE);
         context.checking(new Expectations() {
             {
                 allowing(targetCell).getState();
@@ -540,7 +541,7 @@ public class SimpleMovementRule2Test {
 
         // Simple test case only, different move-properties are tested within other tests. Only for swap here
         final double timeToWalk = (0.4 /* dist */ / (ABSOLUTE_SPEED * SPEED_FACTOR_TARGET_CELL));
-        double expectedStepEndTime = helper.STEP_END_TIME_CAN_MOVE + timeToWalk * STEPS_PER_SECOND;
+        double expectedStepEndTime = STEP_END_TIME_CAN_MOVE + timeToWalk * STEPS_PER_SECOND;
         assertThat(helper.getIndividualProperties().getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
         assertThat(targetCellIndividualProperties.getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
     }
@@ -589,7 +590,7 @@ public class SimpleMovementRule2Test {
         return new FakeSimpleMovementRule2(helper.getTestCell(), Direction8.Top) {
 
             @Override
-            public void move(EvacCellInterface from, EvacCellInterface targetCell) {
+            public MoveAction move(EvacCellInterface from, EvacCellInterface targetCell) {
                 throw new AssertionError("Move should not be called!");
             }
         };

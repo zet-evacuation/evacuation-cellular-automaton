@@ -3,7 +3,8 @@ package org.zet.cellularautomaton.algorithm.rule;
 import java.util.List;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
 
 /**
  * A {@code MovementRule} is a rule that moves an {@link Individual} from one cell to another. The {@code Rule}
@@ -11,7 +12,7 @@ import org.zet.cellularautomaton.results.VoidAction;
  * 
  * @author Jan-Philipp Kappmeier
  */
-public interface MovementRule extends EvacuationRule<VoidAction> {
+public interface MovementRule extends EvacuationRule<MoveAction> {
 
     /**
      * Returns the possible targets already sorted by priority. The possible targets either have been set before using {@link #setPossibleTargets(java.util.ArrayList)
@@ -43,8 +44,8 @@ public interface MovementRule extends EvacuationRule<VoidAction> {
      */
     EvacCellInterface selectTargetCell(EvacCellInterface cell, List<EvacCellInterface> targets);
 
-    void move(EvacCellInterface from, EvacCellInterface target);
+    MoveAction move(EvacCellInterface from, EvacCellInterface target);
 
-    void swap(EvacCellInterface cell1, EvacCellInterface cell2);
+    SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2);
     
 }

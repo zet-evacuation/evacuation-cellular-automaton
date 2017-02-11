@@ -23,6 +23,7 @@ import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.results.MoveAction;
 
 /**
  * Waiting movement rule that allows individuals to wait when they are not able to walk in a direction nearer to an
@@ -55,11 +56,11 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
     }
 
     @Override
-    public void move(EvacCellInterface from, EvacCellInterface targetCell) {
+    public MoveAction move(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual ind = from.getState().getIndividual();
         updatePanic(ind, targetCell);
         updateExhaustion(ind, targetCell);
-        super.move(from, targetCell);
+        return super.move(from, targetCell);
     }
 
     protected void updatePanic(Individual individual, EvacCellInterface targetCell) {

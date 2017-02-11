@@ -17,8 +17,8 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
-import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
 /**
  * Represents the fact that an individual moves from one cell to another.
@@ -26,6 +26,8 @@ import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
  *
  */
 public class MoveAction extends Action {
+
+    public static MoveAction NO_MOVE;
 
     /** The cell from where the individual moves */
     protected EvacCellInterface from;
@@ -50,9 +52,11 @@ public class MoveAction extends Action {
      * @param from The cell from where the individual starts to move
      * @param to The cell where the individual arrives
      * @param individual the individual that is moved
+     * @param arrivalTime
+     * @param startTime
      */
-    public MoveAction(EvacCellInterface from, EvacCellInterface to, Individual individual, PropertyAccess es) {
-        this(from, to, es.propertyFor(individual).getStepEndTime(), es.propertyFor(individual).getStepStartTime(), individual.getNumber());
+    public MoveAction(EvacCellInterface from, EvacCellInterface to, double arrivalTime, double startTime) {
+        this(from, to, arrivalTime, startTime, from.getState().getIndividual().getNumber());
         if (from.getState().isEmpty()) {
             throw new IllegalArgumentException("The starting cell must not be empty!");
         }
@@ -91,7 +95,7 @@ public class MoveAction extends Action {
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         if (from.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     -1,
@@ -105,9 +109,11 @@ public class MoveAction extends Action {
                     this,
                     "Cannot move individual because there is an individual on the target cell.");
         }
+        ec.move(from, to);        
+    }
 
-        //from.getRoom().moveIndividual( from, to );
-        //onCA.moveIndividual(from, to);
+    @Override
+    public void executeDelayed(EvacuationState es) {
     }
 
     @Override

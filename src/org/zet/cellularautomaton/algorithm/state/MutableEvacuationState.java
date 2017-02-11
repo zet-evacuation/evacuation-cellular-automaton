@@ -76,7 +76,8 @@ public class MutableEvacuationState implements EvacuationState {
         individualProperties = new HashMap<>();
         individuals.stream().forEach(individual -> addIndividualInt(individual));
         dynamicPotential = new DynamicPotential();
-    }
+        caStatisticWriter = new CAStatisticWriter(this);
+        }
     
     @Override
     public IndividualProperty propertyFor(Individual i) {

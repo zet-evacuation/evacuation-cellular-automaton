@@ -20,8 +20,9 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.MoveAction;
 
 /**
  *
@@ -71,7 +72,7 @@ public class SimpleMovementRuleTest {
         FakeSimpleMovementRule rule = new FakeSimpleMovementRule(testCell) {
 
             @Override
-            public void move(EvacCellInterface from, EvacCellInterface targetCell) {
+            public MoveAction move(EvacCellInterface from, EvacCellInterface targetCell) {
                 throw new AssertionError("Move should not be called!");
             }
         };
@@ -86,9 +87,10 @@ public class SimpleMovementRuleTest {
         FakeSimpleMovementRule rule = new FakeSimpleMovementRule(expectedTargetCell) {
 
             @Override
-            public void move(EvacCellInterface from, EvacCellInterface to) {
+            public MoveAction move(EvacCellInterface from, EvacCellInterface to) {
                 assertThat(from, is(same(startCell)));
                 assertThat(to, is(same(expectedTargetCell)));
+                return MoveAction.NO_MOVE;
             }
         };
         rule.execute(startCell);
@@ -98,21 +100,29 @@ public class SimpleMovementRuleTest {
     @Test
     public void moveCallsCellularAutomaton() {
         Mockery context = new Mockery();
-        EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
+        EvacuationState es = context.mock(EvacuationState.class);
         EvacCell startCell = new RoomCell(0, 0);
         EvacCell targetCell = new RoomCell(0, 0);
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        IndividualProperty ip = new IndividualProperty(i);
+        ip.setStepEndTime(4);
+        ip.setStepStartTime(2.4);
 
+        startCell.getState().setIndividual(i);
         context.checking(new Expectations() {
             {
-                exactly(1).of(ec).move(with(startCell), with(targetCell));
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
             }
         });
         SimpleMovementRule rule = new SimpleMovementRule();
 
-        rule.setEvacuationStateController(ec);
-        rule.move(startCell, targetCell);
+        rule.setEvacuationState(es);
+        MoveAction action = rule.move(startCell, targetCell);
 
-        context.assertIsSatisfied();
+        assertThat(action.getIndividualNumber(), is(equalTo(0)));
+        assertThat(action.startTime(), is(equalTo(2.4)));
+        assertThat(action.arrivalTime(), is(equalTo(4.0)));
     }
 
     @Test

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 import org.zet.cellularautomaton.algorithm.rule.EvacuationRule;
@@ -17,11 +18,14 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.computation.Computation;
+import org.zet.cellularautomaton.algorithm.computation.DefaultComputation;
 import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateController;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.InconsistentPlaybackStateException;
 import org.zet.cellularautomaton.statistic.results.StoredCAStatisticResults;
 import org.zetool.algorithm.simulation.cellularautomaton.AbstractCellularAutomatonSimulationAlgorithm;
 
@@ -49,8 +53,6 @@ public class EvacuationCellularAutomatonAlgorithm
             Collections.emptyList());
     protected EvacuationStateController ec = null;
     
-    private ActionExecutor actionExecutor = new ActionExecutor();
-
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
     }
@@ -70,13 +72,16 @@ public class EvacuationCellularAutomatonAlgorithm
         for (Individual i : individualsCopy) {
             Iterator<EvacuationRule<?>> primary = getProblem().getRuleSet().primaryIterator();
             EvacCellInterface c = es.propertyFor(i).getCell();
+            c.getState().setIndividual(i);
+            c.getRoom().addIndividual(c, i);
             while (primary.hasNext()) {
                 EvacuationRule r = primary.next();
-                Action a = r.execute(c);
-                handleAction(a);
+                Optional<Action> a = r.execute(c);
+                a.ifPresent(this::handleAction);
             }
         }
         es.removeMarkedIndividuals();
+        fireEvent(new EvacuationInitializationCompleteEvent(this));
     }
 
     public void setNeededTime(int i) {
@@ -84,19 +89,20 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private void initRulesAndState() {
-        es = new MutableEvacuationState(getProblem().getCellularAutomaton(),
-                getProblem().getIndividuals());
+        es = new MutableEvacuationState(getProblem().getCellularAutomaton(), getProblem().getIndividuals());
         EvacuationCellularAutomaton eca = getProblem().getCellularAutomaton();
         for (Map.Entry<Individual, ? extends EvacCellInterface> e : getProblem().individualStartPositions().entrySet()) {
             es.propertyFor(e.getKey()).setCell(e.getValue());
             es.propertyFor(e.getKey()).setStaticPotential(eca.minPotentialFor(e.getValue()));
         }
-        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(getProblem().getParameterSet().getAbsoluteMaxSpeed());
         ec = new EvacuationStateController((MutableEvacuationState) es);
+        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(getProblem().getParameterSet().getAbsoluteMaxSpeed());
+        Computation c = new DefaultComputation(es, getProblem().getParameterSet());
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationState(es);
             r.setEvacuationStateController(ec);
             r.setEvacuationSimulationSpeed(sp);
+            r.setComputation(c);
         }
         setMaxSteps((int)(getProblem().getEvacuationStepLimit() * sp.getStepsPerSecond()));
     }
@@ -105,14 +111,17 @@ public class EvacuationCellularAutomatonAlgorithm
     protected void performStep() {
         super.performStep();
         super.increaseStep();
+        es.increaseStep();
 
         es.removeMarkedIndividuals();
         ec.updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());
 
+        
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
                 es.getInitialIndividualCount() - es.getRemainingIndividualCount(),
                 es.getInitialIndividualCount()));
+        fireEvent(new EvacuationStepCompleteEvent(this, getProgress()));
     }
 
     @Override
@@ -120,8 +129,8 @@ public class EvacuationCellularAutomatonAlgorithm
         Individual i = Objects.requireNonNull(cell.getState().getIndividual(),
                 "Execute called on EvacCell that does not contain an individual!");
         for (EvacuationRule r : in(getProblem().getRuleSet().loopIterator())) {
-            Action a = r.execute(es.propertyFor(i).getCell());
-            handleAction(a);
+            Optional<Action> a = r.execute(es.propertyFor(i).getCell());
+            a.ifPresent(this::handleAction);
         }
     }
 
@@ -188,7 +197,11 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private void handleAction(Action a) {
-        actionExecutor.execute(a);
+        try {
+            a.execute (es.getCellularAutomaton(), ec);
+        } catch (InconsistentPlaybackStateException ex) {
+            throw new AssertionError("Actions must always be directly executeable", ex);
+        }
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Optional;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
@@ -30,7 +31,7 @@ import org.zetool.algorithm.simulation.cellularautomaton.Rule;
 public interface EvacuationRule<R extends Action> extends Rule<R, EvacCellInterface> {
 
     @Override
-    R execute(EvacCellInterface cell);
+    Optional<R> execute(EvacCellInterface cell);
 
     @Override
     boolean executableOn(EvacCellInterface cell);

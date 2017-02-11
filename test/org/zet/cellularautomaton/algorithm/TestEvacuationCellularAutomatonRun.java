@@ -1,10 +1,12 @@
 package org.zet.cellularautomaton.algorithm;
 
-import java.util.Collection;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,8 @@ import org.zet.cellularautomaton.algorithm.rule.EvacuateIndividualsRule;
 import org.zet.cellularautomaton.algorithm.rule.SimpleMovementRule;
 import org.zet.cellularautomaton.potential.PotentialAlgorithm;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zetool.common.algorithm.AbstractAlgorithmEvent;
+import org.zetool.common.algorithm.AlgorithmListener;
 
 /**
  * Sets up a simple evacuation scenario and runs the algorithm.
@@ -41,7 +45,6 @@ public class TestEvacuationCellularAutomatonRun {
     public void run() {
         EvacuationCellularAutomatonBuilder builder = new EvacuationCellularAutomatonBuilder();
 
-        
         builder.addFloor(0, "floor");
         
         RoomImpl r = new RoomImpl(3, 1, 0, 0, 0);
@@ -67,8 +70,8 @@ public class TestEvacuationCellularAutomatonRun {
             PotentialAlgorithm pa = new PotentialAlgorithm();
             pa.setProblem(cells);
             StaticPotential sp = pa.call();
-            
-            //eca.addStaticPotential(sp);
+            builder.setPotentialFor(e, sp);
+
             // Bestimme die angrenzenden Save-Cells
             //saveCellSearch(cells, sp);
         }
@@ -89,9 +92,25 @@ public class TestEvacuationCellularAutomatonRun {
         
         caAlgorithm.setProblem(esp);
         
+        AlgorithmListener listener = new AlgorithmListener() {
+            @Override
+            public void eventOccurred(AbstractAlgorithmEvent event) {
+                
+                System.out.println(caAlgorithm.getEvacuationState().getTimeStep() + ": Event: " + event);
+                if (event instanceof EvacuationStepCompleteEvent || event instanceof EvacuationInitializationCompleteEvent) {
+                    System.out.println(eca.graphicalToString());
+                }
+            }
+        };
+        
+        caAlgorithm.addAlgorithmListener(listener);
+        
         caAlgorithm.runAlgorithm();
         
-        //EvacuationSimulationResult result = caAlgorithm.getSolution();
-        //assertThat(result.getSteps(), is(equalTo(2)));
+        EvacuationSimulationResult result = caAlgorithm.getSolution();
+        assertThat(result.getSteps(), is(equalTo(2)));
+        assertThat(caAlgorithm.isFinished(), is(true));
+        
+
     }
 }

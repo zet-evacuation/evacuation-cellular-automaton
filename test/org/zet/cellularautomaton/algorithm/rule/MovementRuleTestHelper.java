@@ -30,7 +30,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -324,7 +324,7 @@ import org.zetool.common.util.Direction8;
         abstract void verify(SmoothMovementRule ruleUnderTest);
     }
 
-    public static interface TestableMovementRule extends EvacuationRule<VoidAction> {
+    public static interface TestableMovementRule extends EvacuationRule<MoveAction> {
 
         int methodCalled(MovementRuleStep step);
 

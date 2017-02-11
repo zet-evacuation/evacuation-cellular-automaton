@@ -25,7 +25,8 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
 import org.zetool.common.util.Direction8;
 
 /**
@@ -108,16 +109,18 @@ public class AbstractMovementRuleTest {
         rule = new AbstractMovementRule() {
 
             @Override
-            public void move(EvacCellInterface from, EvacCellInterface target) {
+            public MoveAction move(EvacCellInterface from, EvacCellInterface target) {
+                return MoveAction.NO_MOVE;
             }
 
             @Override
-            public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+            public SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+                return SwapAction.NO_MOVE;
             }
 
             @Override
-            protected VoidAction onExecute(EvacCellInterface cell) {
-                return VoidAction.VOID_ACTION;
+            protected MoveAction onExecute(EvacCellInterface cell) {
+                return MoveAction.NO_MOVE;
             }
         };
         EvacuationState es = context.mock(EvacuationState.class);

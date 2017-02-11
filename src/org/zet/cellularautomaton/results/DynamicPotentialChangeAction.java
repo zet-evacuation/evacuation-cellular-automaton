@@ -17,6 +17,8 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
 /**
  * @author Daniel R. Schmidt
@@ -39,9 +41,12 @@ public class DynamicPotentialChangeAction extends Action {
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA)
-            throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         //onCA.setDynamicPotential(affectedCell, newPotential);
+    }
+
+    @Override
+    public void executeDelayed(EvacuationState es) {
     }
 
     @Override

@@ -19,6 +19,8 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.SaveCell;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.SaveAction;
 import org.zet.cellularautomaton.results.VoidAction;
 
 /**
@@ -32,15 +34,14 @@ public class SaveIndividualsRule extends AbstractSaveRule {
     }
 
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected Action onExecute(EvacCellInterface cell) {
         Individual savedIndividual = cell.getState().getIndividual();
         if (!(es.propertyFor(savedIndividual).isSafe())) {
-            ec.setSafe(savedIndividual);
-            es.propertyFor(savedIndividual).setPanic(0);
 
             if (cell instanceof SaveCell) {
                 setExitPotential((SaveCell) cell, savedIndividual);
             }
+            return new SaveAction(cell, es.getTimeStep());
             //es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
         return VoidAction.VOID_ACTION;

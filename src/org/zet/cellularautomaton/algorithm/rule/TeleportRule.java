@@ -2,7 +2,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.TeleportCell;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
 
 /**
  *
@@ -19,32 +19,29 @@ public class TeleportRule extends AbstractMoveRule {
     }
 
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected MoveAction onExecute(EvacCellInterface cell) {
         final TeleportCell tc = (TeleportCell) cell;
         if (tc.targetCount() > 0) {
-            performTeleport(tc);
+            return performTeleport(tc);
         }
-        return VoidAction.VOID_ACTION;
+        return MoveAction.NO_MOVE;
     }
 
-    private void performTeleport(TeleportCell teleportCell) {
-        double targetFreeAt = teleportCell.getTarget(0).getOccupiedUntil();
-
+    private MoveAction performTeleport(TeleportCell teleportCell) {
         if (teleportCell.getTarget(0).getState().getIndividual() == null && teleportCell.getTarget(0).getUsedInTimeStep() < es.getTimeStep()) {
-            double moveTime = Math.max(targetFreeAt, es.propertyFor(teleportCell.getState().getIndividual()).getStepEndTime());
-            es.propertyFor(teleportCell.getState().getIndividual()).setStepStartTime(moveTime);
-            es.propertyFor(teleportCell.getState().getIndividual()).setStepEndTime(moveTime);
-
-            move(teleportCell, teleportCell.getTarget(0));
             teleportCell.setTeleportFailed(false);
             teleportCell.getTarget(0).setUsedInTimeStep(es.getTimeStep());
+            return move(teleportCell, teleportCell.getTarget(0));
         } else {
             teleportCell.setTeleportFailed(true);
+            return MoveAction.NO_MOVE;
         }
     }
 
     @Override
-    public void move(EvacCellInterface from, EvacCellInterface target) {
-        ec.move(from, target);
+    public MoveAction move(EvacCellInterface teleportCell, EvacCellInterface target) {
+        double targetFreeAt = target.getOccupiedUntil();
+        double moveTime = Math.max(targetFreeAt, es.propertyFor(teleportCell.getState().getIndividual()).getStepEndTime());
+        return new MoveAction(teleportCell, target, moveTime, moveTime);
     }
 }

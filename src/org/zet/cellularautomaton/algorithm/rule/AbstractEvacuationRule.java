@@ -16,6 +16,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.Objects;
+import java.util.Optional;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Exit;
@@ -52,12 +53,12 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
     }
 
     @Override
-    public final R execute(EvacCellInterface cell) {
-        if (!executableOn(cell)) {
-            throw new IllegalStateException("Rule " + this.toString() + " not applicable on " + cell );
+    public final Optional<R> execute(EvacCellInterface cell) {
+        if (executableOn(cell)) {
+            return Optional.of(onExecute(cell));
         }
 
-        return onExecute(cell);
+        return Optional.empty();
     }
 
     protected abstract R onExecute(EvacCellInterface cell);

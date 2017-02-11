@@ -17,13 +17,16 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
-public class SwapAction extends Action {
+public class SwapAction extends MoveAction {
+    public static SwapAction NO_MOVE;
 
     /** The cell from where individual 1 moves. */
     protected EvacCellInterface cell1;
@@ -73,6 +76,7 @@ public class SwapAction extends Action {
             double getStepEndTime2,
             double getStepStartTime2,
             int getNumber2) {
+        super(cell1, cell2, getStepEndTime1, getStepEndTime2);
         this.cell1 = cell1;
         this.cell2 = cell2;
         this.arrivalTime1 = getStepEndTime1;
@@ -116,7 +120,7 @@ public class SwapAction extends Action {
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         if (cell1.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(-1, this, "There is no Individual on cell 1.");
         }
@@ -126,6 +130,10 @@ public class SwapAction extends Action {
 
         //cell1.getRoom().swapIndividuals( cell1, cell2 );
         //onCA.swapIndividuals(cell1, cell2);
+    }
+
+    @Override
+    public void executeDelayed(EvacuationState es) {
     }
 
     @Override

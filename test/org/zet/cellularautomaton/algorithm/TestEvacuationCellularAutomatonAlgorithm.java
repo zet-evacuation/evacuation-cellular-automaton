@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.jmock.Expectations;
@@ -37,10 +38,8 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
-import org.zetool.common.algorithm.AlgorithmProgressEvent;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.results.VoidAction;
-import org.zetool.simulation.cellularautomaton.Cell;
 
 /**
  *
@@ -51,6 +50,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
     private Mockery context = new Mockery();
     private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
     private StaticPotential sp = new StaticPotential();
+    private Room defaultRoom = context.mock(Room.class);
 
     public static class MockEvacCell extends EvacCell {
         
@@ -161,6 +161,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(primary1).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(primary2).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(loop).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
+                allowing(primary1).setComputation(with(any(Computation.class)));
+                allowing(primary2).setComputation(with(any(Computation.class)));
+                allowing(loop).setComputation(with(any(Computation.class)));
 
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
@@ -177,10 +180,16 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 // primary rules are allowed to be called exactly once for each of the cells
                 exactly(1).of(primary1).execute(with(isp.get(individuals.get(0))));
+                will(returnValue(Optional.empty()));
                 exactly(1).of(primary1).execute(with(isp.get(individuals.get(1))));
+                will(returnValue(Optional.empty()));
                 exactly(1).of(primary2).execute(with(isp.get(individuals.get(0))));
+                will(returnValue(Optional.empty()));
                 exactly(1).of(primary2).execute(with(isp.get(individuals.get(1))));
+                will(returnValue(Optional.empty()));
                 never(loop).execute(with(any(EvacCell.class)));
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
             }});
 
         algorithm.setProblem(esp);
@@ -219,12 +228,13 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             private EvacuationStateControllerInterface ec;
             private EvacuationState es;
             private EvacuationSimulationSpeed sp;
+            private Computation c;
             @Override
-            public VoidAction execute(EvacCellInterface cell) {
+            public Optional<VoidAction> execute(EvacCellInterface cell) {
                 ec.increaseDynamicPotential(cell);
                 counter[0]++;
                 assertThat(es.getDynamicPotential(cell), is(equalTo(1.0)));
-                return VoidAction.VOID_ACTION;
+                return Optional.of(VoidAction.VOID_ACTION);
             }
 
             @Override
@@ -244,7 +254,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
             @Override
             public void setComputation(Computation c) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                this.c = c;
             }
 
             @Override
@@ -299,18 +309,30 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(primary1).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(primary2).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(loop).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
+                allowing(primary1).setComputation(with(any(Computation.class)));
+                allowing(primary2).setComputation(with(any(Computation.class)));
+                allowing(loop).setComputation(with(any(Computation.class)));
                 
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
 
                 // loop rules are allowed to be called exactly once for each of the cells
                 exactly(1).of(primary1).execute(with(isp.get(individuals.get(0))));
+                will(returnValue(Optional.empty()));
                 exactly(1).of(primary1).execute(with(isp.get(individuals.get(1))));
+                will(returnValue(Optional.empty()));
                 never(primary1).execute(with(any(EvacCell.class)));
                 exactly(2).of(primary2).execute(with(isp.get(individuals.get(0))));
+                will(returnValue(Optional.empty()));
                 exactly(2).of(primary2).execute(with(isp.get(individuals.get(1))));
+                will(returnValue(Optional.empty()));
                 exactly(1).of(loop).execute(with(isp.get(individuals.get(0))));
-                exactly(1).of(loop).execute(with(isp.get(individuals.get(1))));                
+                will(returnValue(Optional.empty()));
+                exactly(1).of(loop).execute(with(isp.get(individuals.get(1))));
+                will(returnValue(Optional.empty()));
+
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
             }});
 
         
@@ -349,7 +371,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(Collections.EMPTY_MAP));
             }});
         algorithm.addAlgorithmListener(event -> {
-            if (event instanceof AlgorithmProgressEvent) {
+            if (event instanceof AlgorithmDetailedProgressEvent) {
                 assertThat(((AlgorithmDetailedProgressEvent) event).getProgress(), is(closeTo(1.0, 10e-6)));
             }
         });
@@ -366,8 +388,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         List<Individual> individuals = getTwoIndividuals();
         Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
 
-        Room room = context.mock(Room.class);
-        isp.get(individuals.get(0)).setRoom(room);
+        isp.get(individuals.get(0)).setRoom(defaultRoom);
 
         EvacuationSimulationProblem esp = context.mock(EvacuationSimulationProblem.class);
         EvacuationCellularAutomaton eca = context.mock(EvacuationCellularAutomaton.class);
@@ -395,7 +416,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(ps).getAbsoluteMaxSpeed();
                 will(returnValue(0.4)); // 1 step per second
 
-                allowing(room).removeIndividual(individuals.get(0));
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
+                allowing(defaultRoom).removeIndividual(individuals.get(0));
             }});
         algorithm.setProblem(esp);
         algorithm.initialize();
@@ -411,13 +434,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         assertThat(ip.isDead(), is(false));
     }
 
-    private List<EvacCell> getCells() {
-        List<EvacCell> cells = new LinkedList<>();
-        cells.add(new MockEvacCell(0, 0));
-        cells.add( new MockEvacCell(1, 1));
-        return cells;
-    }
-    
     /**
      * Returns a list of two individuals including cell information.
      *
@@ -434,7 +450,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         Map<Individual, MockEvacCell> isp = new HashMap<>();
         for( int i = 0; i < individuals.size(); ++i) {
             MockEvacCell cell = new MockEvacCell(i, 0);
-            cell.getState().setIndividual(individuals.get(i));
+            cell.setRoom(defaultRoom);
             isp.put(individuals.get(i), cell);
         }
         return isp;
@@ -549,7 +565,11 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
                 allowing(esp).individualStartPositions();
-                will(returnValue(getIndividualPositions(individuals)));
+                Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
+                will(returnValue(isp));
+
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
             }});
         algorithm.setProblem(esp);
         algorithm.initialize();
@@ -590,8 +610,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
+                Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
                 allowing(esp).individualStartPositions();
-                will(returnValue(getIndividualPositions(individuals)));
+                will(returnValue(isp));
+
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
                 
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
@@ -635,8 +659,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
+                Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
                 allowing(esp).individualStartPositions();
-                will(returnValue(getIndividualPositions(individuals)));
+                will(returnValue(isp));
+
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
                 
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
@@ -684,9 +712,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         EvacuationRule rule = new EvacuationRule<VoidAction>() {
 
             @Override
-            public VoidAction execute(EvacCellInterface cell) {
+            public Optional<VoidAction> execute(EvacCellInterface cell) {
                 resultList.add(cell.getState().getIndividual());
-                return VoidAction.VOID_ACTION;
+                return Optional.of(VoidAction.VOID_ACTION);
             }
 
             @Override
@@ -736,8 +764,8 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         final Individual dead = individuals.get(0);
         
         Individual i2 = individuals.get(1);
-        EvacCell cell1 = new MockEvacCell(0, 0);
-        cell1.getState().setIndividual(i2);
+        MockEvacCell cell1 = new MockEvacCell(0, 0);
+        cell1.setRoom(defaultRoom);
         
         MockEvacuationCellularAutomatonAlgorithm algorithm = new MockEvacuationCellularAutomatonAlgorithm(true) {
 
@@ -769,8 +797,12 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(300));
                 allowing(esp).getIndividuals();
                 will(returnValue(individuals));
+                Map<Individual, MockEvacCell> isp = getIndividualPositions(individuals);
                 allowing(esp).individualStartPositions();
-                will(returnValue(getIndividualPositions(individuals)));
+                will(returnValue(isp));
+
+                isp.entrySet().forEach(cellIndividual
+                        -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
 
                 allowing(esp).getParameterSet();
                 will(returnValue(ps));
@@ -778,11 +810,13 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(ps).probabilityDynamicIncrease();
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(new StaticPotential()));
+                
+                allowing(defaultRoom).addIndividual(cell1, i2);
             }});
 
         Double d[] = new Double[1];
         algorithm.addAlgorithmListener(event -> {
-            if (event instanceof AlgorithmProgressEvent) {
+            if (event instanceof AlgorithmDetailedProgressEvent) {
                 d[0] = ((AlgorithmDetailedProgressEvent) event).getProgress();
             }
         });

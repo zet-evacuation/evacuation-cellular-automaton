@@ -20,7 +20,8 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.StairCell;
 import org.zet.cellularautomaton.results.IndividualStateChangeAction;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.MoveAction;
+import org.zet.cellularautomaton.results.SwapAction;
 import org.zetool.common.util.Direction8;
 import org.zetool.common.util.Level;
 import org.zetool.rndutils.RandomUtils;
@@ -49,7 +50,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected MoveAction onExecute(EvacCellInterface cell) {
         Individual ind = cell.getState().getIndividual();
 
         if (canMove(ind)) {
@@ -66,11 +67,11 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             setMoveRuleCompleted(false);
         }
         recordAction(new IndividualStateChangeAction(ind, es));
-        return VoidAction.VOID_ACTION;
+        return MoveAction.NO_MOVE;
     }
 
     @Override
-    public void move(EvacCellInterface from, EvacCellInterface currentTargetCell) {
+    public MoveAction move(EvacCellInterface from, EvacCellInterface currentTargetCell) {
         EvacCellInterface targetCell = currentTargetCell;
         Individual ind = from.getState().getIndividual();
         if (es.propertyFor(ind).isSafe() && !((targetCell instanceof org.zet.cellularautomaton.SaveCell) || (targetCell instanceof org.zet.cellularautomaton.ExitCell))) // Rauslaufen aus sicheren Bereichen ist nicht erlaubt
@@ -85,6 +86,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells().addCellToUtilizationStatistic(targetCell, es.getTimeStep());
         this.doMove(ind, targetCell);
         setMoveRuleCompleted(false);
+        return MoveAction.NO_MOVE;
     }
 
     private void doMove(Individual i, EvacCellInterface targetCell) {
@@ -201,7 +203,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
     }
 
     @Override
-    public void swap(EvacCellInterface cell1, EvacCellInterface cell2) {
+    public SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2) {
         if (cell1.getState().isEmpty()) {
             throw new IllegalArgumentException("No Individual standing on cell #1!");
         }
@@ -214,6 +216,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         doMoveWithDecision(cell1.getState().getIndividual(), cell2, false);
         doMoveWithDecision(cell2.getState().getIndividual(), cell1, false);
         ec.swap(cell1, cell2);
+        return SwapAction.NO_MOVE;
     }
 
     /**

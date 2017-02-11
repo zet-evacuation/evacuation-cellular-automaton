@@ -1,5 +1,6 @@
 package org.zetool.algorithm.simulation.cellularautomaton;
 
+import java.util.Optional;
 import org.zetool.simulation.cellularautomaton.Cell;
 
 /**
@@ -10,7 +11,7 @@ import org.zetool.simulation.cellularautomaton.Cell;
  */
 public interface Rule<R, S extends Cell> {
 
-    public R execute(S cell);
+    public Optional<R> execute(S cell);
 
     public boolean executableOn(S cell);
 }

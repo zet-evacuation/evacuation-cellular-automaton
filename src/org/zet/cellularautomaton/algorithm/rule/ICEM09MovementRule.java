@@ -20,6 +20,7 @@ import org.zetool.rndutils.RandomUtils;
 import java.util.List;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.results.MoveAction;
 import org.zet.cellularautomaton.results.VoidAction;
 
 /**
@@ -36,16 +37,17 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
      * alarm people.
      *
      * @param cell
+     * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected MoveAction onExecute(EvacCellInterface cell) {
         individual = cell.getState().getIndividual();
 
         if (canMove(individual)) {
             if (isDirectExecute()) {
                 EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
                 setMoveRuleCompleted(true);
-                move(cell, targetCell);
+                return move(cell, targetCell);
             } else {
                 computePossibleTargets(cell, false);
                 setMoveRuleCompleted(true);
@@ -54,7 +56,7 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
             setMoveRuleCompleted(false);
         }
         recordAction(new IndividualStateChangeAction(individual, es));
-        return VoidAction.VOID_ACTION;
+        return MoveAction.NO_MOVE;
     }
 
     /**

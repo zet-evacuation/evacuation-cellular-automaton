@@ -17,6 +17,8 @@ package org.zet.cellularautomaton.results;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
+import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
@@ -62,8 +64,10 @@ public abstract class Action {
      * @param onCA
      * @throws InconsistentPlaybackStateException
      */
-    public abstract void execute(EvacuationCellularAutomaton onCA) throws InconsistentPlaybackStateException;
+    public abstract void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException;
 
+    public abstract void executeDelayed(EvacuationState es);
+    
     /**
      * Every subclass of this class should override the {@code toString()}.
      * 
