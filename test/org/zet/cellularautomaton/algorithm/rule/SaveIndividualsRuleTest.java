@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -21,6 +22,9 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.SaveAction;
+import org.zet.cellularautomaton.results.VoidAction;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -29,6 +33,7 @@ import org.zet.cellularautomaton.statistic.CAStatisticWriter;
  */
 public class SaveIndividualsRuleTest {
 
+    private static final int TIME_STEP = 7;
     private final Mockery context = new Mockery();
     private final States test = context.states("normal-test");
     private SaveIndividualsRule rule;
@@ -59,6 +64,8 @@ public class SaveIndividualsRuleTest {
                 will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).propertyFor(i);
                 will(returnValue(ip)); when(test.is("normal-test"));
+                allowing(es).getTimeStep();
+                will(returnValue(TIME_STEP));
             }
         });
         
@@ -92,13 +99,8 @@ public class SaveIndividualsRuleTest {
 
     @Test
     public void unsaveIndividualsSaved() {
-        context.checking(new Expectations() {{
-                allowing(es).propertyFor(i);
-                will(returnValue(ip));
-                exactly(1).of(ec).setSafe(with(i));
-            }});
-        rule.execute(cell);
-        context.assertIsSatisfied();
+        SaveAction a = (SaveAction) rule.execute(cell).get();
+        assertThat(a.getSavedIndividual(), is(equalTo(i)));
     }
 
     @Test
@@ -114,11 +116,11 @@ public class SaveIndividualsRuleTest {
         test.become("special-property");
         context.checking(new Expectations() {{
                 allowing(es).propertyFor(i);
-                will(returnValue(safeIndividualProperty)); when(test.is("special-property"));
-                never(ec).setSafe(with(any(Individual.class)));
+                will(returnValue(safeIndividualProperty));
+                when(test.is("special-property"));
             }});
-        rule.execute(cell);
-        context.assertIsSatisfied();
+        Action a = rule.execute(cell).get();
+        assertThat(a, is(equalTo(VoidAction.VOID_ACTION)));
     }
     
     @Test
@@ -128,28 +130,20 @@ public class SaveIndividualsRuleTest {
         StaticPotential exitPotential = new StaticPotential();
         cell.setExitPotential(exitPotential);
         
-        context.checking(new Expectations() {{
-                allowing(es).getTimeStep();
-                will(returnValue(3));
-                exactly(1).of(ec).setSafe(with(i));
-            }});
-        rule.execute(cell);
+        SaveAction a = (SaveAction) rule.execute(cell).get();
         assertThat(ip.getStaticPotential(), is(sameInstance(exitPotential)));
-        context.assertIsSatisfied();
+        assertThat(a.getSavedIndividual(), is(equalTo(i)));
     }
-    
+
     @Test
     public void exitPotentialNotSetOnExitCell() {
         ExitCell exitCell = new ExitCell(0, 0);
         exitCell.getState().setIndividual(i);
-        
+
         StaticPotential sp = new StaticPotential();
         ip.setStaticPotential(sp);
         
-        context.checking(new Expectations() {{
-                exactly(1).of(ec).setSafe(with(i));
-            }});
-        rule.execute(exitCell);
-        context.assertIsSatisfied();
+        SaveAction a = (SaveAction) rule.execute(exitCell).get();
+        assertThat(a.getSavedIndividual(), is(equalTo(i)));
     }
 }

@@ -41,7 +41,7 @@ public class SaveIndividualsRule extends AbstractSaveRule {
             if (cell instanceof SaveCell) {
                 setExitPotential((SaveCell) cell, savedIndividual);
             }
-            return new SaveAction(cell, es.getTimeStep());
+            return new SaveAction(savedIndividual, es.getTimeStep());
             //es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
         }
         return VoidAction.VOID_ACTION;
