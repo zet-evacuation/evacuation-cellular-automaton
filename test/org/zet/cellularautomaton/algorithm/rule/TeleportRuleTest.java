@@ -20,6 +20,7 @@ import org.zet.cellularautomaton.TeleportCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.MoveAction;
 
 /**
  *
@@ -30,9 +31,8 @@ public class TeleportRuleTest {
     private final Mockery context = new Mockery();
     private TeleportCell testCell;
     private TeleportRule rule;
-    private Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+    private final Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
     private EvacuationState es;
-    private EvacuationStateControllerInterface ec;
     private IndividualProperty ip;
     private static final double STEP_END_TIME = 3.5;
     private static final int CURRENT_TIME_STEP = 4;
@@ -40,7 +40,6 @@ public class TeleportRuleTest {
     @Before
     public void initState() {
         es = context.mock(EvacuationState.class);
-        ec = context.mock(EvacuationStateControllerInterface.class);
         ip = new IndividualProperty(i);
         testCell = new TeleportCell(0, 0);
 
@@ -54,7 +53,6 @@ public class TeleportRuleTest {
         });
         rule = new TeleportRule();
         rule.setEvacuationState(es);
-        rule.setEvacuationStateController(ec);
         ip.setStepEndTime(STEP_END_TIME);
         prepareCell(testCell);
     }
@@ -90,42 +88,39 @@ public class TeleportRuleTest {
 
     @Test
     public void noMoveIfTargetListEmpty() {
-        moveNotCalled();
-        rule.execute(testCell);
-        context.assertIsSatisfied();
+        MoveAction a = rule.execute(testCell).get();
+        assertThat(a, is(equalTo(MoveAction.NO_MOVE)));
     }
 
     @Test
     public void noMoveIfTargetOccupied() {
-        moveNotCalled();
         TeleportCell targetCell = new TeleportCell(0, 1);
         targetCell.getState().setIndividual(new Individual(1, 0, 0, 0, 0, 0, 1, 0));
         testCell.addTarget(targetCell);
-        rule.execute(testCell);
-        context.assertIsSatisfied();
+        MoveAction a = rule.execute(testCell).get();
+        assertThat(a, is(equalTo(MoveAction.NO_MOVE)));
         assertThat(testCell.isTeleportFailed(), is(true));
     }
 
     @Test
     public void noMoveIfAlreadyMovedInCurrentStep() {
-        moveNotCalled();
         TeleportCell targetCell = new TeleportCell(0, 1);
         targetCell.setUsedInTimeStep(CURRENT_TIME_STEP);
         testCell.addTarget(targetCell);
-        rule.execute(testCell);
+        MoveAction a = rule.execute(testCell).get();
+        assertThat(a, is(equalTo(MoveAction.NO_MOVE)));
         context.assertIsSatisfied();
         assertThat(testCell.isTeleportFailed(), is(true));
     }
 
     @Test
     public void noMoveIfFullAndUsed() {
-        moveNotCalled();
         TeleportCell targetCell = new TeleportCell(0, 1);
         targetCell.getState().setIndividual(new Individual(1, 0, 0, 0, 0, 0, 1, 0));
         targetCell.setUsedInTimeStep(CURRENT_TIME_STEP);
         testCell.addTarget(targetCell);
-        rule.execute(testCell);
-        context.assertIsSatisfied();
+        MoveAction a = rule.execute(testCell).get();
+        assertThat(a, is(equalTo(MoveAction.NO_MOVE)));
         assertThat(testCell.isTeleportFailed(), is(true));
     }
 
@@ -141,26 +136,12 @@ public class TeleportRuleTest {
 
         targetCell.setOccupiedUntil(occupiedUntil);
 
-        context.checking(new Expectations() {
-            {
-                oneOf(ec).move(with(testCell), with(targetCell));
-            }
-        });
+        MoveAction a = rule.execute(testCell).get();
 
-        rule.execute(testCell);
+        assertThat(a.getStartTime(), is(equalTo(occupiedUntil)));
+        assertThat(a.getArrivalTime(), is(equalTo(occupiedUntil)));
 
-        assertThat(ip.getStepEndTime(), is(equalTo(occupiedUntil)));
-        assertThat(ip.getStepStartTime(), is(equalTo(occupiedUntil)));
-        assertThat(testCell.isTeleportFailed(), is(false));
-
-        context.assertIsSatisfied();
+        assertThat(testCell.isTeleportFailed(), is(false));        
     }
 
-    private void moveNotCalled() {
-        context.checking(new Expectations() {
-            {
-                never(ec).move(with(any(EvacCellInterface.class)), with(any(EvacCellInterface.class)));
-            }
-        });
-    }
 }

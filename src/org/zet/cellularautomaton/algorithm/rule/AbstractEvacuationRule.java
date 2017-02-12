@@ -55,7 +55,8 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
     @Override
     public final Optional<R> execute(EvacCellInterface cell) {
         if (executableOn(cell)) {
-            return Optional.of(onExecute(cell));
+            R a = onExecute(cell);
+            return Optional.of(a);
         }
 
         return Optional.empty();

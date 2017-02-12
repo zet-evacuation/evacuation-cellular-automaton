@@ -27,7 +27,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
  */
 public class MoveAction extends Action {
 
-    public static MoveAction NO_MOVE;
+    public static final MoveAction NO_MOVE = new MoveAction(null, null, 0, 0, 0);
 
     /** The cell from where the individual moves */
     protected EvacCellInterface from;
@@ -144,5 +144,21 @@ public class MoveAction extends Action {
         }
 
         return new MoveAction(newFrom, newTo, this.arrivalTime, this.startTime, this.individualNumber);
+    }
+
+    public EvacCellInterface getFrom() {
+        return from;
+    }
+
+    public EvacCellInterface getTo() {
+        return to;
+    }
+
+    public double getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public double getStartTime() {
+        return startTime;
     }
 }
