@@ -22,6 +22,8 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
+import org.zet.cellularautomaton.results.MoveAction;
+import static org.zet.cellularautomaton.results.MoveAction.NO_MOVE;
 import static org.zetool.common.datastructure.SimpleTuple.asTuple;
 import org.zetool.common.datastructure.Tuple;
 import org.zetool.common.util.Direction8;
@@ -341,9 +343,10 @@ public class WaitingMovementRuleTest {
         }
 
         @Override
-        protected void remainInactive(EvacCellInterface cell) {
+        protected MoveAction remainInactive(EvacCellInterface cell) {
             counter.put(MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE,
                     counter.getOrDefault(MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE, 0) + 1);
+            return NO_MOVE;
         }
 
         @Override

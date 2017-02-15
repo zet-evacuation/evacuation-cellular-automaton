@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.results;
 
+import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -120,7 +121,7 @@ public class SwapAction extends MoveAction {
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         if (cell1.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(-1, this, "There is no Individual on cell 1.");
         }
@@ -129,7 +130,7 @@ public class SwapAction extends MoveAction {
         }
 
         //cell1.getRoom().swapIndividuals( cell1, cell2 );
-        //onCA.swapIndividuals(cell1, cell2);
+        ec.swap(cell1, cell2);
     }
 
     @Override
@@ -151,20 +152,21 @@ public class SwapAction extends MoveAction {
     }
 
     @Override
-    public Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        EvacCellInterface newCell1 = adoptCell(cell1, targetCA);
-        if (newCell1 == null) {
-            throw new CADoesNotMatchException(this, "Could not find cell 1 " + cell1 + " in the new CA.");
-        }
-        EvacCellInterface newCell2 = adoptCell(cell2, targetCA);
-        if (cell2 == null) {
-            throw new CADoesNotMatchException(this, "Could not find cell 2 " + cell2 + " in the new CA.");
-        }
-
-        return new SwapAction(newCell1, newCell2, this.arrivalTime1, this.startTime1,
-                this.individualNumber1,
-                this.arrivalTime2,
-                this.startTime1,
-                this.individualNumber2);
+    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
+        this.selfMap = selfMap;
+//        EvacCellInterface newCell1 = adoptCell(cell1, targetCA);
+//        if (newCell1 == null) {
+//            throw new CADoesNotMatchException(this, "Could not find cell 1 " + cell1 + " in the new CA.");
+//        }
+//        EvacCellInterface newCell2 = adoptCell(cell2, targetCA);
+//        if (cell2 == null) {
+//            throw new CADoesNotMatchException(this, "Could not find cell 2 " + cell2 + " in the new CA.");
+//        }
+//
+//        return new SwapAction(newCell1, newCell2, this.arrivalTime1, this.startTime1,
+//                this.individualNumber1,
+//                this.arrivalTime2,
+//                this.startTime1,
+//                this.individualNumber2);
     }
 }

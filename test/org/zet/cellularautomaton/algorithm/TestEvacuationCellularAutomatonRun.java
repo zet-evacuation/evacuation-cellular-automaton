@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.hasSize;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -30,9 +31,11 @@ import org.zetool.common.algorithm.AlgorithmListener;
 
 /**
  * Sets up a simple evacuation scenario and runs the algorithm.
+ *
  * @author Jan-Philipp Kappmeier
  */
 public class TestEvacuationCellularAutomatonRun {
+
     private static class TestEvacuationRuleSet extends EvacuationRuleSet {
 
         public TestEvacuationRuleSet() {
@@ -40,24 +43,59 @@ public class TestEvacuationCellularAutomatonRun {
             this.add(new EvacuateIndividualsRule());
         }
     }
-    
-    @Test
-    public void run() {
+
+    private static ExitCell exit;
+    private static RoomCell middleCell;
+    private static RoomCell rightCell;
+
+    public static MultiFloorEvacuationCellularAutomaton getSmallExampleAutomaton() {
         EvacuationCellularAutomatonBuilder builder = new EvacuationCellularAutomatonBuilder();
 
         builder.addFloor(0, "floor");
-        
+
         RoomImpl r = new RoomImpl(3, 1, 0, 0, 0);
-        
-        ExitCell exit = new ExitCell(1, 0, 0);
+
+        exit = new ExitCell(1, 0, 0);
         r.setCell(exit);
-        RoomCell middleCell = new RoomCell(1, 1, 0, r);
+        middleCell = new RoomCell(1, 1, 0, r);
         r.setCell(middleCell);
-        RoomCell rightCell = new RoomCell(1, 2, 0, r);
+        rightCell = new RoomCell(1, 2, 0, r);
         r.setCell(rightCell);
-        builder.addRoom(0, r);
-        
-        MultiFloorEvacuationCellularAutomaton eca = builder.build();
+        Collection<Exit> newExits = builder.addRoom(0, r);
+
+        Iterator<Exit> exitIteraterator = newExits.iterator();
+        Exit e = exitIteraterator.next();
+        Collection<ExitCell> cells = e.getExitCluster();
+        PotentialAlgorithm pa = new PotentialAlgorithm();
+        pa.setProblem(cells);
+        StaticPotential sp = pa.call();
+        builder.setPotentialFor(e, sp);
+
+        // Bestimme die angrenzenden Save-Cells
+        //saveCellSearch(cells, sp);
+        return builder.build();
+    }
+
+    public static EvacuationSimulationProblem getSmallProblem(MultiFloorEvacuationCellularAutomaton eca) {
+        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+
+        String ruleSet = "TestEvacuationCellularAutomatonRun$TestEvacuationRuleSet";
+        try {
+            ds.PropertyContainer.getGlobal().define("algo.ca.ruleSet", String.class, ruleSet);
+            ds.PropertyContainer.getGlobal().define("algo.ca.parameterSet", String.class, "SimpleParameterSet");
+        } catch (IllegalArgumentException ex) {
+            // called twice. ok.
+        }
+
+        Map<Individual, EvacCellInterface> individualStartPositions = new HashMap<>();
+        individualStartPositions.put(i, rightCell);
+
+        return new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i), individualStartPositions);
+    }
+
+    @Test
+    public void run() {
+        MultiFloorEvacuationCellularAutomaton eca = getSmallExampleAutomaton();
 
         List<Exit> exitClusters = eca.getExits();
         assertThat(exitClusters, hasSize(1));
@@ -65,52 +103,30 @@ public class TestEvacuationCellularAutomatonRun {
         assertThat(exitCluster.getExitCluster(), hasSize(1));
         assertThat(exitCluster.getExitCluster(), contains(exit));
 
-        for (Exit e : exitClusters) {
-            Collection<ExitCell> cells = e.getExitCluster();
-            PotentialAlgorithm pa = new PotentialAlgorithm();
-            pa.setProblem(cells);
-            StaticPotential sp = pa.call();
-            builder.setPotentialFor(e, sp);
-
-            // Bestimme die angrenzenden Save-Cells
-            //saveCellSearch(cells, sp);
-        }
-        
-        Individual i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
-        
         EvacuationCellularAutomatonAlgorithm caAlgorithm = new EvacuationCellularAutomatonAlgorithm();
 
-        
-        String ruleSet = "TestEvacuationCellularAutomatonRun$TestEvacuationRuleSet";
-        ds.PropertyContainer.getGlobal().define("algo.ca.ruleSet", String.class, ruleSet);
-        ds.PropertyContainer.getGlobal().define("algo.ca.parameterSet", String.class, "SimpleParameterSet");
-        
-        Map<Individual, EvacCellInterface> individualStartPositions = new HashMap<>();
-        individualStartPositions.put(i, rightCell);
-        
-        EvacuationSimulationProblem esp = new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i), individualStartPositions);
-        
+        EvacuationSimulationProblem esp = getSmallProblem(eca);
+
         caAlgorithm.setProblem(esp);
-        
+
         AlgorithmListener listener = new AlgorithmListener() {
             @Override
             public void eventOccurred(AbstractAlgorithmEvent event) {
-                
+
                 System.out.println(caAlgorithm.getEvacuationState().getTimeStep() + ": Event: " + event);
                 if (event instanceof EvacuationStepCompleteEvent || event instanceof EvacuationInitializationCompleteEvent) {
                     System.out.println(eca.graphicalToString());
                 }
             }
         };
-        
+
         caAlgorithm.addAlgorithmListener(listener);
-        
+
         caAlgorithm.runAlgorithm();
-        
+
         EvacuationSimulationResult result = caAlgorithm.getSolution();
         assertThat(result.getSteps(), is(equalTo(2)));
         assertThat(caAlgorithm.isFinished(), is(true));
-        
 
     }
 }

@@ -338,6 +338,7 @@ public class MutableEvacuationState implements EvacuationState {
      *
      * @param individualToExitMapping the mapping
      */
+    @Override
     public void setIndividualToExitMapping(IndividualToExitMapping individualToExitMapping) {
         this.individualToExitMapping = individualToExitMapping;
     }}

@@ -238,6 +238,18 @@ import org.zetool.common.util.Direction8;
         return ec;
     }
 
+    void assertDefaultResults(MovementRuleStep movementRuleStep, MoveAction a) {
+        switch (movementRuleStep) {
+            case REMAIN_INACTIVE:
+                // Assert that one time step is used for not doing anything
+                assertThat(a.getStartTime(), is(closeTo(STEP_END_TIME_CAN_MOVE, 0.0001)));
+                assertThat(a.getArrivalTime(), is(closeTo(STEP_END_TIME_CAN_MOVE + 1, 0.0001)));
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+    
     void assertDefaultResults(MovementRuleStep movementRuleStep) {
         switch (movementRuleStep) {
             case REMAIN_INACTIVE:

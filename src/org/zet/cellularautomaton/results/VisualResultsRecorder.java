@@ -153,8 +153,8 @@ public class VisualResultsRecorder {
         //@//if( !ZETLoader.useVisualization )
         //@//    return;
         if (doRecord) {
-            Action adoptedAction = action.adoptToCA(this.clonedCA);
-            actions.get(timeStep).add(adoptedAction);
+            //Action adoptedAction = action.adoptToCA(this.clonedCA);
+            //actions.get(timeStep).add(adoptedAction);
         }
     }
 

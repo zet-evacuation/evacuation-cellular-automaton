@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,6 +53,7 @@ public class EvacuationCellularAutomatonAlgorithm
     protected MutableEvacuationState es = new MutableEvacuationState(new MultiFloorEvacuationCellularAutomaton(),
             Collections.emptyList());
     protected EvacuationStateController ec = null;
+    private List<Action> lastStepActions = new LinkedList<>();
     
     public EvacuationCellularAutomatonAlgorithm() {
         this(DEFAULT_ORDER);
@@ -81,7 +83,8 @@ public class EvacuationCellularAutomatonAlgorithm
             }
         }
         es.removeMarkedIndividuals();
-        fireEvent(new EvacuationInitializationCompleteEvent(this));
+        fireEvent(new EvacuationInitializationCompleteEvent(this, lastStepActions));
+        lastStepActions = new LinkedList<>();
     }
 
     public void setNeededTime(int i) {
@@ -121,7 +124,8 @@ public class EvacuationCellularAutomatonAlgorithm
         fireProgressEvent(getProgress(), String.format("%1$s von %2$s individuals evacuated.",
                 es.getInitialIndividualCount() - es.getRemainingIndividualCount(),
                 es.getInitialIndividualCount()));
-        fireEvent(new EvacuationStepCompleteEvent(this, getProgress()));
+        fireEvent(new EvacuationStepCompleteEvent(this, getProgress(), lastStepActions));
+        lastStepActions = new LinkedList<>();
     }
 
     @Override
@@ -197,8 +201,9 @@ public class EvacuationCellularAutomatonAlgorithm
     }
 
     private void handleAction(Action a) {
+        lastStepActions.add(a);
         try {
-            a.execute (es.getCellularAutomaton(), ec);
+            a.execute (es, ec);
         } catch (InconsistentPlaybackStateException ex) {
             throw new AssertionError("Actions must always be directly executeable", ex);
         }

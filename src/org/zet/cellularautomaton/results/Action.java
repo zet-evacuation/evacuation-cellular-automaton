@@ -15,11 +15,11 @@
  */
 package org.zet.cellularautomaton.results;
 
+import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 
 /**
  * This abstract class represents an action on the cellular automaton. The action is performed by an individual and
@@ -30,8 +30,6 @@ import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
  */
 public abstract class Action {
 
-    protected PropertyAccess es;
-    
     protected class CADoesNotMatchException extends RuntimeException {
 
         
@@ -57,14 +55,15 @@ public abstract class Action {
      * @param targetCa The cellular automaton to which this action should be adopted.
      * @return The adopted action
      */
-    abstract Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException;
+    abstract void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException;
 
     /**
      * Executes the action with respect to the starting and ending cell of the action.
-     * @param onCA
+     * @param es
+     * @param ec 
      * @throws InconsistentPlaybackStateException
      */
-    public abstract void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException;
+    public abstract void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException;
 
     public abstract void executeDelayed(EvacuationState es);
     
@@ -77,8 +76,6 @@ public abstract class Action {
     public abstract String toString();
 
     protected EvacCellInterface adoptCell(EvacCellInterface cell, EvacuationCellularAutomaton targetCA) {
-        //org.zet.cellularautomaton.Room newRoom = targetCA.getRoom(cell.getRoom().getID());
-        //org.zet.cellularautomaton.EvacCell newCell = newRoom.getCell(cell.getX(), cell.getY());
         return cell;
     }
 }

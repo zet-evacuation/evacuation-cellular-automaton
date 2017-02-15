@@ -15,6 +15,8 @@
  */
 package org.zet.cellularautomaton.results;
 
+import java.util.Map;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -33,6 +35,7 @@ public class SaveAction extends Action {
     /** The cell where an individual leaves the simulation. */
     protected Individual savedIndividual;
     private final int timeStep;
+    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     /**
      * Creates a new Exit action.
@@ -46,7 +49,7 @@ public class SaveAction extends Action {
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         ec.setSafe(savedIndividual);
         es.propertyFor(savedIndividual).setPanic(0);
     }
@@ -61,8 +64,8 @@ public class SaveAction extends Action {
     }
 
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        return VoidAction.VOID_ACTION;
+    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
+        this.selfMap = selfMap;
     }
 
     public Individual getSavedIndividual() {

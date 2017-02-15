@@ -15,7 +15,8 @@
  */
 package org.zet.cellularautomaton.results;
 
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import java.util.Map;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -31,6 +32,7 @@ public class IndividualStateChangeAction extends Action {
     private double exhaustion;
     private double currentSpeed;
     private boolean isAlarmed;
+    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     public IndividualStateChangeAction(Individual individual, PropertyAccess es) {
         this(individual,
@@ -54,23 +56,24 @@ public class IndividualStateChangeAction extends Action {
      * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(es.propertyFor(individual).getNumber());
-        if (adaptedIndividual == null) {
-            throw new CADoesNotMatchException(this, "Could not find the individual with the unique id " + individual.getNumber());
-        }
-        return new IndividualStateChangeAction(adaptedIndividual, panic, exhaustion, currentSpeed, isAlarmed);
+    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
+        this.selfMap = selfMap;
+//        Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(es.propertyFor(individual).getNumber());
+//        if (adaptedIndividual == null) {
+//            throw new CADoesNotMatchException(this, "Could not find the individual with the unique id " + individual.getNumber());
+//        }
+//        return new IndividualStateChangeAction(adaptedIndividual, panic, exhaustion, currentSpeed, isAlarmed);
     }
 
     /**
      * {@inheritDoc }
      *
-     * @param onCA
+     * @param es
      * @throws InconsistentPlaybackStateException
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         es.propertyFor(individual).setPanic(panic);
         es.propertyFor(individual).setExhaustion(exhaustion);
         es.propertyFor(individual).setRelativeSpeed(currentSpeed);

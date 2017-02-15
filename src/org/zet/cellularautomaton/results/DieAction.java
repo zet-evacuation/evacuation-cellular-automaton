@@ -15,9 +15,10 @@
  */
 package org.zet.cellularautomaton.results;
 
+import java.util.Map;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
@@ -33,19 +34,20 @@ public class DieAction extends Action {
     /** The cause which caused the individuals dead */
     private final DeathCause cause;
     /** The number of the individual. Is needed for visualization. */
-    private final int individualNumber;
+    private final Individual individual;
+    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     /**
      * Creates a new instance of the DyingAction which represents the dead of an individual during the evacuation.
      *
      * @param placeOfDeath the cell on which the individual stands
      * @param cause the cause of the death
-     * @param individualNumber the individuals number
+     * @param individual the individual
      */
-    public DieAction(EvacCellInterface placeOfDeath, DeathCause cause, int individualNumber) {
+    public DieAction(EvacCellInterface placeOfDeath, DeathCause cause, Individual individual) {
         this.placeOfDeath = placeOfDeath;
         this.cause = cause;
-        this.individualNumber = individualNumber;
+        this.individual = individual;
     }
 
     /**
@@ -63,7 +65,7 @@ public class DieAction extends Action {
      * @return the number of the individual
      */
     public int getIndividualNumber() {
-        return individualNumber;
+        return individual.id();
     }
 
     /**
@@ -72,33 +74,34 @@ public class DieAction extends Action {
      * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        EvacCellInterface newCell = adoptCell(placeOfDeath, targetCA);
-        if (newCell == null) {
-            throw new CADoesNotMatchException(
-                    this,
-                    "Could not find the cell " + placeOfDeath + " that this action uses in the new CA.");
-        }
-
-        return new DieAction(newCell, cause, individualNumber);
+    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
+        this.selfMap = selfMap;
+//        EvacCellInterface newCell = adoptCell(placeOfDeath, targetCA);
+//        if (newCell == null) {
+//            throw new CADoesNotMatchException(
+//                    this,
+//                    "Could not find the cell " + placeOfDeath + " that this action uses in the new CA.");
+//        }
+//
+//        return new DieAction(newCell, cause, individual);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param onCA the cellular automaton on which the action is replayed
+     * @param es the evacuation state
      * @throws InconsistentPlaybackStateException if the individual that is to die is not on the cell
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
      */
     @Override
-    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         if (placeOfDeath.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
                     "I could not mark the individual on cell "
                     + "as dead because it was not there (someone was lucky there, hu?)");
         }
 
-        //onCA.setIndividualDead(placeOfDeath.getState().getIndividual(), cause);
+        ec.die(individual, cause);
     }
 
     @Override

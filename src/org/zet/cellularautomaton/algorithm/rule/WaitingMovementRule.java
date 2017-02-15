@@ -48,11 +48,11 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
     }
 
     @Override
-    protected void noMove(EvacCellInterface cell) {
+    protected MoveAction noMove(EvacCellInterface cell) {
         if (es.propertyFor(individual).isAlarmed()) {
             updateExhaustion(individual, cell);
         }
-        super.noMove(cell);
+        return super.noMove(cell);
     }
 
     @Override

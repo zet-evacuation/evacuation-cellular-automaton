@@ -37,6 +37,7 @@ import static org.zet.cellularautomaton.algorithm.rule.MovementRuleTestHelper.ST
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.MoveAction;
+import static org.zet.cellularautomaton.results.MoveAction.NO_MOVE;
 import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
@@ -105,10 +106,10 @@ public class SimpleMovementRule2Test {
 
         helper.prepareFor(rule, MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE);
 
-        rule.execute(helper.getTestCell());
+        MoveAction a = rule.execute(helper.getTestCell()).get();
         assertThat(rule.counter, is(equalTo(0)));
 
-        helper.assertDefaultResults(MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE);
+        helper.assertDefaultResults(MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE, a);
     }
 
     /**
@@ -404,8 +405,9 @@ public class SimpleMovementRule2Test {
 
         FakeSimpleMovementRule2 rule = new FakeSimpleMovementRule2(helper.getTestCell()) {
             @Override
-            protected void noMove(EvacCellInterface cell) {
+            protected MoveAction noMove(EvacCellInterface cell) {
                 // Nothing
+                return NO_MOVE;
             }
         };
 
@@ -569,9 +571,10 @@ public class SimpleMovementRule2Test {
         }
 
         @Override
-        protected void remainInactive(EvacCellInterface cell) {
+        protected MoveAction remainInactive(EvacCellInterface cell) {
             counter.put(MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE,
                     counter.getOrDefault(MovementRuleTestHelper.MovementRuleStep.REMAIN_INACTIVE, 0) + 1);
+            return NO_MOVE;
         }
 
         @Override

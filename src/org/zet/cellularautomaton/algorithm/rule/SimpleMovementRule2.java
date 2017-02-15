@@ -24,6 +24,8 @@ import org.zet.cellularautomaton.DoorCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Stairs;
+import org.zet.cellularautomaton.algorithm.state.PropertyUpdate;
+import org.zet.cellularautomaton.algorithm.state.PropertyUpdate.PropertyUpdateBuilder;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.results.MoveAction;
 import org.zet.cellularautomaton.results.SwapAction;
@@ -38,21 +40,23 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
     @Override
     public MoveAction move(EvacCellInterface from, EvacCellInterface targetCell) {
         if (es.propertyFor(individual).getCell().equals(targetCell)) {
+            // We do not actually move
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals()
                     .addWaitedTimeToStatistic(individual, es.getTimeStep());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
                     .addCellToWaitingStatistic(targetCell, es.getTimeStep());
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
                     .addCellToUtilizationStatistic(targetCell, es.getTimeStep());
-            noMove(from);
+            return noMove(from);
         } else {
+            // We actually move
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
                     .addCellToUtilizationStatistic(targetCell, es.getTimeStep());
             initializeMove(from, targetCell);
             performMove(from, targetCell);
             setMoveRuleCompleted(false);
+            return MoveAction.NO_MOVE;
         }
-        return MoveAction.NO_MOVE;
     }
 
     /**
@@ -69,16 +73,16 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
      * A function called if the individual is not moving. The individual will stand on the cell for exactly one time
      * step bevore it can move again. But, even if the individual does not move, the view direction may be changed.
      * @param cell
+     * @return 
      */
     @Override
-    protected void noMove(EvacCellInterface cell) {
-        es.propertyFor(individual).setStepStartTime(es.propertyFor(individual).getStepEndTime());
-        setStepEndTime(individual, es.propertyFor(individual).getStepEndTime() + 1);
-        ec.move(es.propertyFor(individual).getCell(), es.propertyFor(individual).getCell());
-
-        es.propertyFor(individual).setDirection(getDirection());
+    protected MoveAction noMove(EvacCellInterface cell) {
         setMoveRuleCompleted(false);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), 0);
+        final double stepStartTime = es.propertyFor(individual).getStepEndTime();
+        final double stepEndTime = stepStartTime + 1;
+        PropertyUpdate update = new PropertyUpdateBuilder().withDirection(getDirection()).createUpdate();
+        return new MoveAction(cell, cell, stepEndTime, stepStartTime, update);
     }
 
     /**

@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 
@@ -47,18 +48,25 @@ public class MoveActionTest {
     @Test
     public void execute() throws InconsistentPlaybackStateException {
         EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
+        EvacuationState es = context.mock(EvacuationState.class);
         from.getState().setIndividual(i);
+        IndividualProperty ip = new IndividualProperty(i);
 
-        MoveAction action = new MoveAction(from, to, 3, 4);
+        MoveAction action = new MoveAction(from, to, 4, 3);
 
         context.checking(new Expectations() {
             {
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
                 exactly(1).of(ec).move(with(from), with(to));
             }
         });
 
-        action.execute(null, ec);
+        action.execute(es, ec);
 
+        assertThat(ip.getStepStartTime(), is(equalTo(3d)));
+        assertThat(ip.getStepEndTime(), is(equalTo(4d)));
+        
         context.assertIsSatisfied();
     }
 

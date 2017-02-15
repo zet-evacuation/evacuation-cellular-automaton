@@ -47,8 +47,6 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
     protected Set<Direction8> bounds;
     /** Tells whether the surrounding squares are higher, equal or lower. */
     protected Map<Direction8, Level> levels;
-    /** Stores the hashCode of this cell. */
-    protected int hash;
     /** The time up to which the cell is blocked by an individuum (even if it is no longer set to the cell). */
     protected double occupiedUntil = 0;
 
@@ -203,7 +201,7 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         this.room = room;
 
         String s = ((room != null) ? room.getID() : "") + "-" + y + "-" + x;
-        hash = s.hashCode();
+        //hash = s.hashCode();
     }
 
     /**
@@ -311,23 +309,27 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
 
         EvacCell c = (EvacCell) obj;
 
-        if (c.getRoom() == null && this.getRoom() == null) {
-            return c == this;
-        }
+//        if (c.getRoom() == null && this.getRoom() == null) {
+//            return c == this;
+//        }
+//
+//        if (c.getRoom() == null || this.getRoom() == null) {
+//            return false;
+//        }
 
-        if (c.getRoom() == null || this.getRoom() == null) {
-            return false;
-        }
-
-        return this.room.equals(c.getRoom()) && this.x == c.getX() && this.y == c.getY();
+        //return this.room.equals(c.getRoom()) && this.x == c.getX() && this.y == c.getY();
+        return this.x == c.getX() && this.y == c.getY();
     }
 
     @Override
     public int hashCode() {
-        // This result must be brought independently of the current value of the
-        // room variable because this obejct must be able to be serialized using
-        // XStream, and this causes an error because it invokes this method before
-        // the room field is filled with its former content again.
+//        // This result must be brought independently of the current value of the
+//        // room variable because this obejct must be able to be serialized using
+//        // XStream, and this causes an error because it invokes this method before
+//        // the room field is filled with its former content again.
+        int hash = 7;
+        hash = 23 * hash + x;
+        hash = 23 * hash + y;
         return hash;
     }
 

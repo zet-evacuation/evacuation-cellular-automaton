@@ -294,6 +294,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
          *
          * @param floor the floor to which the room is added
          * @param room the Room object to be added
+         * @return 
          * @throws IllegalArgumentException if the the specific room exists already in the list rooms
          */
         public final Collection<Exit> addRoom(int floor, Room room) {

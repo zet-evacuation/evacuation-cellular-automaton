@@ -57,7 +57,7 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
             }
         } else {
             // Individual is not alarmed, that means it remains standing on the cell
-            remainInactive(cell);
+            return remainInactive(cell);
         }
 
         recordAction(new IndividualStateChangeAction(individual, es));
@@ -89,9 +89,9 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
      *
      * @param cell the cell on which the rule is executed
      */
-    protected void remainInactive(EvacCellInterface cell) {
+    protected MoveAction remainInactive(EvacCellInterface cell) {
         setMoveRuleCompleted(true);
-        noMove(cell);
+        return noMove(cell);
     }
 
     /**
@@ -129,6 +129,6 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
         }
     }
 
-    abstract void noMove(EvacCellInterface cell);
+    abstract MoveAction noMove(EvacCellInterface cell);
 
 }

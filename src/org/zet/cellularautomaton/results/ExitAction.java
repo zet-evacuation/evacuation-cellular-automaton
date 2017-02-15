@@ -15,8 +15,8 @@
  */
 package org.zet.cellularautomaton.results;
 
+import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -35,6 +35,8 @@ public class ExitAction extends Action {
     /** The cell where an individual leaves the simulation. */
     protected ExitCell exit;
     private final int timeStep;
+    private final Individual individual;
+    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     /**
      * Creates a new Exit action.
@@ -44,19 +46,20 @@ public class ExitAction extends Action {
     public ExitAction(ExitCell exit, int timeStep) {
         this.exit = exit;
         this.timeStep = timeStep;
+        this.individual = exit.getState().getIndividual();
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         if (exit.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException("Could not evacuate an individual from cell " + exit + "(" + exit.hashCode() + ") because there was none.");
         }
+        //ec.evacuate(individual);
         //onCA.setIndividualEvacuated(exit.getState().getIndividual());
     }
 
     @Override
     public void executeDelayed(EvacuationState es) {
-        Individual individual = exit.getState().getIndividual();
         es.propertyFor(individual).setEvacuationTime(timeStep);
     }
 
@@ -67,12 +70,13 @@ public class ExitAction extends Action {
     }
 
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        EvacCellInterface newExit = adoptCell(exit, targetCA);
-        if (newExit == null) {
-            throw new CADoesNotMatchException(this, "Could not find the exit " + exit + " that this action uses in the new CA.");
-        }
-        //return new ExitAction((ExitCell) newExit);
-        return VoidAction.VOID_ACTION;
+    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
+        this.selfMap = selfMap;
+//        EvacCellInterface newExit = adoptCell(exit, targetCA);
+//        if (newExit == null) {
+//            throw new CADoesNotMatchException(this, "Could not find the exit " + exit + " that this action uses in the new CA.");
+//        }
+//        //return new ExitAction((ExitCell) newExit);
+//        return VoidAction.VOID_ACTION;
     }
 }

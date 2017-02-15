@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.results;
 
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import java.util.Map;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
@@ -15,12 +16,11 @@ public class VoidAction extends Action {
     }
 
     @Override
-    Action adoptToCA(EvacuationCellularAutomaton targetCA) throws CADoesNotMatchException {
-        return this;
+    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
     }
 
     @Override
-    public void execute(EvacuationCellularAutomaton onCA, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
+    public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
     }
 
     @Override
