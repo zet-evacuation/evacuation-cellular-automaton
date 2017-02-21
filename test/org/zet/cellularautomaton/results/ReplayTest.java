@@ -1,6 +1,5 @@
 package org.zet.cellularautomaton.results;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,7 +69,7 @@ public class ReplayTest {
             es.propertyFor(e.getKey()).setStaticPotential(otherAutomaton.minPotentialFor(e.getValue()));
             e.getValue().getState().setIndividual(e.getKey());
             e.getValue().getRoom().addIndividual(e.getValue(), e.getKey());
-            
+
         }
         EvacuationStateController ec = new EvacuationStateController((MutableEvacuationState) es);
 
@@ -79,7 +78,7 @@ public class ReplayTest {
             a.adoptToCA(selfMap);
             System.out.println("Replaying: " + a);
             a.execute(es, ec);
-            a.executeDelayed(es);
+            a.executeDelayed(es, ec);
             System.out.println(otherAutomaton.graphicalToString());
 
         }

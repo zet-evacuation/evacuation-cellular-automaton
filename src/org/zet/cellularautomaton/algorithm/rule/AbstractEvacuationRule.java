@@ -36,7 +36,6 @@ import org.zet.cellularautomaton.results.Action;
 public abstract class AbstractEvacuationRule<R extends Action> implements EvacuationRule<R> {
 
     protected EvacuationState es;
-    protected EvacuationStateControllerInterface ec;
     protected Computation c;
     protected EvacuationSimulationSpeed sp;
 
@@ -56,7 +55,7 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
     public final Optional<R> execute(EvacCellInterface cell) {
         if (executableOn(cell)) {
             R a = onExecute(cell);
-            return Optional.of(a);
+            return Optional.ofNullable(a);
         }
 
         return Optional.empty();
@@ -71,16 +70,6 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
                     "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
         }
         this.es = Objects.requireNonNull(es, CellularAutomatonLocalization.LOC.getString(
-                "algo.ca.rule.CAControllerIsNullException"));
-    }
-
-    @Override
-    public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
-        if (this.ec != null) {
-            throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
-                    "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
-        }
-        this.ec = Objects.requireNonNull(ec, CellularAutomatonLocalization.LOC.getString(
                 "algo.ca.rule.CAControllerIsNullException"));
     }
 
@@ -118,9 +107,5 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
     
     protected static Potential getNearestExitStaticPotential(EvacuationCellularAutomaton ec, EvacCellInterface cell) {
         return ec.getPotentialFor(getNearestExit(ec, cell));
-    }
-
-    protected void recordAction(Action a) {
-        // ignore publishing
     }
 }

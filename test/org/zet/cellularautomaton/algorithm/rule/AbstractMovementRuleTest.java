@@ -35,7 +35,7 @@ import org.zetool.common.util.Direction8;
  */
 public class AbstractMovementRuleTest {
     private final static Direction8 DEFAULT_DIRECTION = Direction8.Top;
-    private final static IndividualBuilder builder = new IndividualBuilder();
+    private final static IndividualBuilder INDIVIDUAL_BUILDER = new IndividualBuilder();
     private Mockery context = new Mockery();
     private Individual individual;
     private FakeIndividualProperty ip;
@@ -124,7 +124,7 @@ public class AbstractMovementRuleTest {
             }
         };
         EvacuationState es = context.mock(EvacuationState.class);
-        individual = builder.build();
+        individual = INDIVIDUAL_BUILDER.build();
         ip = new FakeIndividualProperty(individual);
         context.checking(new Expectations() {
             {

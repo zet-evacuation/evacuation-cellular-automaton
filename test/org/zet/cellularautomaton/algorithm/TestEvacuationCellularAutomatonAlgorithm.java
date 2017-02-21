@@ -39,6 +39,7 @@ import org.zet.cellularautomaton.algorithm.state.MutableEvacuationState;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zetool.common.algorithm.AlgorithmDetailedProgressEvent;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.results.DynamicPotentialChangeAction;
 import org.zet.cellularautomaton.results.VoidAction;
 
 /**
@@ -155,9 +156,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(primary1).setEvacuationState(with(any(EvacuationState.class)));
                 allowing(primary2).setEvacuationState(with(any(EvacuationState.class)));
                 allowing(loop).setEvacuationState(with(any(EvacuationState.class)));
-                allowing(primary1).setEvacuationStateController(with(any(EvacuationStateControllerInterface.class)));
-                allowing(primary2).setEvacuationStateController(with(any(EvacuationStateControllerInterface.class)));
-                allowing(loop).setEvacuationStateController(with(any(EvacuationStateControllerInterface.class)));
                 allowing(primary1).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(primary2).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(loop).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
@@ -169,6 +167,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(individuals));
                 allowing(esp).individualStartPositions();
                 will(returnValue(isp));
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
 
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
@@ -224,17 +225,14 @@ public class TestEvacuationCellularAutomatonAlgorithm {
         
         int[] counter = new int[]{0};
         
-        EvacuationRule initDynamicPotential = new EvacuationRule<VoidAction>() {
-            private EvacuationStateControllerInterface ec;
+        EvacuationRule initDynamicPotential = new EvacuationRule<DynamicPotentialChangeAction>() {
             private EvacuationState es;
             private EvacuationSimulationSpeed sp;
             private Computation c;
             @Override
-            public Optional<VoidAction> execute(EvacCellInterface cell) {
-                ec.increaseDynamicPotential(cell);
+            public Optional<DynamicPotentialChangeAction> execute(EvacCellInterface cell) {
                 counter[0]++;
-                assertThat(es.getDynamicPotential(cell), is(equalTo(1.0)));
-                return Optional.of(VoidAction.VOID_ACTION);
+                return Optional.of(new DynamicPotentialChangeAction(cell, 0));
             }
 
             @Override
@@ -245,11 +243,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
             @Override
             public void setEvacuationState(EvacuationState es) {
                 this.es = es;
-            }
-
-            @Override
-            public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
-                this.ec = ec;
             }
 
             @Override
@@ -303,9 +296,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 allowing(primary1).setEvacuationState(with(any(EvacuationState.class)));
                 allowing(primary2).setEvacuationState(with(any(EvacuationState.class)));
                 allowing(loop).setEvacuationState(with(any(EvacuationState.class)));
-                allowing(primary1).setEvacuationStateController(with(any(EvacuationStateControllerInterface.class)));
-                allowing(primary2).setEvacuationStateController(with(any(EvacuationStateControllerInterface.class)));
-                allowing(loop).setEvacuationStateController(with(any(EvacuationStateControllerInterface.class)));
                 allowing(primary1).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(primary2).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
                 allowing(loop).setEvacuationSimulationSpeed(with(any(EvacuationSimulationSpeed.class)));
@@ -315,6 +305,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 
                 allowing(eca).minPotentialFor(with(any(EvacCell.class)));
                 will(returnValue(sp));
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
 
                 // loop rules are allowed to be called exactly once for each of the cells
                 exactly(1).of(primary1).execute(with(isp.get(individuals.get(0))));
@@ -342,6 +335,7 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
         // check for updated dynamic potential
         assertThat(counter[0], is(equalTo(2)));
+        
         assertThat(algorithm.getEvacuationState().getDynamicPotential(dynamicPotentialCheckCell), is(lessThan(0.5)));
         
         context.assertIsSatisfied();
@@ -419,6 +413,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 isp.entrySet().forEach(cellIndividual
                         -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
                 allowing(defaultRoom).removeIndividual(individuals.get(0));
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
             }});
         algorithm.setProblem(esp);
         algorithm.initialize();
@@ -570,6 +567,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 isp.entrySet().forEach(cellIndividual
                         -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
             }});
         algorithm.setProblem(esp);
         algorithm.initialize();
@@ -616,6 +616,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 isp.entrySet().forEach(cellIndividual
                         -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
                 
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
@@ -665,7 +668,10 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
                 isp.entrySet().forEach(cellIndividual
                         -> allowing(defaultRoom).addIndividual(cellIndividual.getValue(), cellIndividual.getKey()));
-                
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
+
                 allowing(ps).probabilityDynamicDecrease();
                 allowing(ps).probabilityDynamicIncrease();
                 
@@ -724,11 +730,6 @@ public class TestEvacuationCellularAutomatonAlgorithm {
 
             @Override
             public void setEvacuationState(EvacuationState es) {
-                
-            }
-
-            @Override
-            public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
                 
             }
 
@@ -812,6 +813,9 @@ public class TestEvacuationCellularAutomatonAlgorithm {
                 will(returnValue(new StaticPotential()));
                 
                 allowing(defaultRoom).addIndividual(cell1, i2);
+                allowing(defaultRoom).getXOffset();
+                allowing(defaultRoom).getYOffset();
+                allowing(defaultRoom).getFloor();
             }});
 
         Double d[] = new Double[1];

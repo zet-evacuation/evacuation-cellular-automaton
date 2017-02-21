@@ -36,10 +36,6 @@ public class MockRule {
         }
 
         @Override
-        public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
-        }
-
-        @Override
         public void setComputation(Computation c) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -68,10 +64,6 @@ public class MockRule {
 
         @Override
         public void setEvacuationState(EvacuationState esp) {
-        }
-
-        @Override
-        public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
         }
 
         @Override

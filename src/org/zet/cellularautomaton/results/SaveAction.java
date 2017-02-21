@@ -17,16 +17,14 @@ package org.zet.cellularautomaton.results;
 
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
 
 /**
- * Represents the fact that an individual leaves the simulation. Note that this
- * action starts and ends on the same cell. The performing individual is the
- * individual that occupies the exit cell.
+ * Represents the fact that an individual leaves the simulation. Note that this action starts and ends on the same cell.
+ * The performing individual is the individual that occupies the exit cell.
  *
  * @author Daniel R. Schmidt
  */
@@ -35,7 +33,6 @@ public class SaveAction extends Action {
     /** The cell where an individual leaves the simulation. */
     protected Individual savedIndividual;
     private final int timeStep;
-    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     /**
      * Creates a new Exit action.
@@ -55,17 +52,12 @@ public class SaveAction extends Action {
     }
 
     @Override
-    public void executeDelayed(EvacuationState es) {
+    public void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec) {
     }
 
     @Override
     public String toString() {
         return "Individual " + savedIndividual + " is saved.";
-    }
-
-    @Override
-    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
-        this.selfMap = selfMap;
     }
 
     public Individual getSavedIndividual() {

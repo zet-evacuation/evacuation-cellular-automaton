@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.results;
 
-import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -28,7 +27,6 @@ public class DynamicPotentialChangeAction extends Action {
 
     protected double newPotential;
     protected EvacCellInterface affectedCell;
-    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     public DynamicPotentialChangeAction(EvacCellInterface affectedCell, double newPotential) {
         this.affectedCell = affectedCell;
@@ -36,19 +34,13 @@ public class DynamicPotentialChangeAction extends Action {
     }
 
     @Override
-    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
-        this.selfMap = selfMap;
-//        EvacCellInterface newAffectedCell = adoptCell(affectedCell, targetCA);
-//        return new DynamicPotentialChangeAction(newAffectedCell, newPotential);
-    }
-
-    @Override
     public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         //onCA.setDynamicPotential(affectedCell, newPotential);
+        ec.increaseDynamicPotential(affectedCell);
     }
 
     @Override
-    public void executeDelayed(EvacuationState es) {
+    public void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec) {
     }
 
     @Override

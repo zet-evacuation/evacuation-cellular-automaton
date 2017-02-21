@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
 
 import java.util.Objects;
+import static org.hamcrest.Matchers.contains;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.ReactionAction;
 
 /**
  *
@@ -41,8 +43,8 @@ public class ReactionRuleCompleteRoomTest {
                 allowing(es).propertyFor(i);
                 will(returnValue(ip));
         }});
-        rule.execute(cell);
-        assertThat(ip.isAlarmed(), is(true));
+        ReactionAction a = (ReactionAction)rule.execute(cell).get();
+        assertThat(a.getIndividuals(), contains(i));
     }
     
     @Test
@@ -76,8 +78,8 @@ public class ReactionRuleCompleteRoomTest {
                 will(returnValue(ip));
         }});
 
-        rule.execute(cell);
-        assertThat(ip.isAlarmed(), is(true));
+        ReactionAction a = rule.execute(cell).get();
+        assertThat(a.getIndividuals(), contains(i));
     }
 
     private ReactionRuleCompleteRoom generateReactionRule() {

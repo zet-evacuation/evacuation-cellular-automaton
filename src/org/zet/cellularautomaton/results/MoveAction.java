@@ -15,7 +15,6 @@
  */
 package org.zet.cellularautomaton.results;
 
-import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -31,23 +30,18 @@ public class MoveAction extends Action {
 
     public static final MoveAction NO_MOVE = new MoveAction(null, null, 0, 0, 0);
 
-    /** The cell from where the individual moves */
+    /** The cell from where the individual moves. */
     protected EvacCellInterface from;
-    /** The cell to where the individual moves */
+    /** The cell to where the individual moves. */
     protected EvacCellInterface to;
-    /** The (exact) time, when the individual will arrive at the 
-     *  target cell
-     */
+    /** The (exact) time, when the individual will arrive at the target cell. */
     protected double arrivalTime;
-    /** The (exact) time, when the individual starts moving to the
-     *  target cell
-     */
+    /** The (exact) time, when the individual starts moving to the target cell. */
     protected double startTime;
-    /** The number of the individual that is moved */
+    /** The number of the individual that is moved. */
     private int individualNumber;
     private Individual individual;
     private PropertyUpdate update;
-    Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     /**
      * Creates a new instance of a move action. This action starts at the cell from where the individual leaves and ends
@@ -56,7 +50,28 @@ public class MoveAction extends Action {
      *
      * @param from The cell from where the individual starts to move
      * @param to The cell where the individual arrives
-     * @param individual the individual that is moved
+     * @param update
+     */
+    public MoveAction(EvacCellInterface from, EvacCellInterface to, PropertyUpdate update) {
+        this(from, to, update.getStepEndTime().get(), update.getStepStartTime().get(), from.getState().getIndividual().getNumber());
+        if (from.getState().isEmpty()) {
+            throw new IllegalArgumentException("The starting cell must not be empty!");
+        }
+
+        if (!to.getState().isEmpty() && !(to == from)) {
+            throw new IllegalArgumentException("The taget cell is not empty!");
+        }
+        this.individual = from.getState().getIndividual();
+        this.update = update;
+    }
+
+    /**
+     * Creates a new instance of a move action. This action starts at the cell from where the individual leaves and ends
+     * at the final point of the individual's movement. The action is performed by the individual standing on the start
+     * cell.
+     *
+     * @param from The cell from where the individual starts to move
+     * @param to The cell where the individual arrives
      * @param arrivalTime
      * @param startTime
      */
@@ -97,6 +112,20 @@ public class MoveAction extends Action {
         }
     }
 
+    public MoveAction(MoveAction a, PropertyUpdate update) {
+        this.from = a.from;
+        this.to = a.to;
+        this.arrivalTime = a.arrivalTime;
+        this.startTime = a.startTime;
+        this.individualNumber = a.individualNumber;
+        if (!update.getStepEndTime().isPresent() || update.getStepEndTime().get() != arrivalTime
+                || !update.getStepStartTime().isPresent() || update.getStepStartTime().get() != startTime) {
+            this.update = PropertyUpdate.extend(update).withStepStartTime(startTime).withStepEndTime(arrivalTime).createUpdate();
+        } else {
+            this.update = update;
+        }
+    }
+
     public EvacCellInterface from() {
         return from;
     }
@@ -119,15 +148,8 @@ public class MoveAction extends Action {
 
     @Override
     public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
-        EvacCellInterface newFrom;
-        EvacCellInterface newTo;
-        if (selfMap != null) {
-            newFrom = selfMap.get(from);
-            newTo = selfMap.get(to);
-        } else {            
-            newFrom = from;
-            newTo = to;
-        }
+        EvacCellInterface newFrom = adoptCell(from);
+        EvacCellInterface newTo = adoptCell(to);
 
         if (newFrom.getState().isEmpty()) {
             throw new InconsistentPlaybackStateException(
@@ -143,52 +165,28 @@ public class MoveAction extends Action {
                     "Cannot move individual because there is an individual on the target cell.");
         }
         update.apply(es.propertyFor(individual));
+
+        ec.increaseDynamicPotential(newTo);
+
         ec.move(newFrom, newTo);
     }
 
     @Override
-    public void executeDelayed(EvacuationState es) {
+    public void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec) {
     }
 
     @Override
     public String toString() {
         String representation = "";
 
-        EvacCellInterface newFrom;
-        EvacCellInterface newTo;
-        if (selfMap != null) {
-            newFrom = selfMap.get(from);
-            newTo = selfMap.get(to);
-        } else {            
-            newFrom = from;
-            newTo = to;
-        }
+        EvacCellInterface newFrom = adoptCell(from);
+        EvacCellInterface newTo = adoptCell(to);
         
         representation += newFrom.getState().getIndividual() + " moves from ";
         representation += newFrom + " to ";
         representation += newTo + ".";
 
         return representation;
-    }
-
-    @Override
-    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
-        this.selfMap = selfMap;
-//        EvacCellInterface newFrom = adoptCell(from, targetCA);
-//        if (newFrom == null) {
-//            throw new CADoesNotMatchException(
-//                    this,
-//                    "Could not find the starting cell " + from + " in the new CA.");
-//        }
-//
-//        EvacCellInterface newTo = adoptCell(to, targetCA);
-//        if (to == null) {
-//            throw new CADoesNotMatchException(
-//                    this,
-//                    "Could not find the ending cell " + to + " in the new CA.");
-//        }
-//
-//        return new MoveAction(newFrom, newTo, this.arrivalTime, this.startTime, this.individualNumber);
     }
 
     public EvacCellInterface getFrom() {
@@ -205,5 +203,9 @@ public class MoveAction extends Action {
 
     public double getStartTime() {
         return startTime;
+    }
+
+    public PropertyUpdate getPropertyUpdate() {
+        return update;
     }
 }

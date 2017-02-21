@@ -149,24 +149,24 @@ public class MutableEvacuationState implements EvacuationState {
         return ca;
     }
 
-    @Override
-    public void markIndividualForRemoval(Individual i) {
-        if (!getRemainingIndividuals().contains(i)) {
-            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
-        }
-        markedForRemoval.add(i);
-    }
+//    @Override
+//    public void markIndividualForRemoval(Individual i) {
+//        if (!getRemainingIndividuals().contains(i)) {
+//            throw new IllegalArgumentException(ERROR_NOT_IN_LIST.format(new Object[] {i}));
+//        }
+//        markedForRemoval.add(i);
+//    }
 
-    @Override
-    public void removeMarkedIndividuals() {
-        markedForRemoval.stream().forEach(individual -> {
-            if(!propertyFor(individual).isEvacuated()) {
-                propertyFor(individual).setEvacuationTime(currentStep);
-            }
-            addToEvacuated(individual);
-        });
-        markedForRemoval.clear();
-    }
+//    @Override
+//    public void removeMarkedIndividuals() {
+//        markedForRemoval.stream().forEach(individual -> {
+//            if(!propertyFor(individual).isEvacuated()) {
+//                propertyFor(individual).setEvacuationTime(currentStep);
+//            }
+//            addToEvacuated(individual);
+//        });
+//        markedForRemoval.clear();
+//    }
 
     /**
      * Returns the number of initialIndividuals that were in the cellular automaton when the simulation starts.

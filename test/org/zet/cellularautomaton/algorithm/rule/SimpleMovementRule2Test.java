@@ -38,6 +38,7 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.MoveAction;
 import static org.zet.cellularautomaton.results.MoveAction.NO_MOVE;
+import org.zet.cellularautomaton.results.SwapAction;
 import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
@@ -287,7 +288,7 @@ public class SimpleMovementRule2Test {
 
     private void assertRest(FakeSimpleMovementRule2 rule, EvacCellInterface testCell, double absoluteSpeed,
             double speedFactor, Direction8 newDirection, int degree, double additionalSpeedFactor) {
-        rule.execute(testCell);
+        MoveAction a = rule.execute(testCell).get();
 
         double stepLength = degree == 0 || degree == 90 ? 0.4 : Math.sqrt(0.4 * 0.4 + 0.4 * 0.4);
 
@@ -299,13 +300,13 @@ public class SimpleMovementRule2Test {
         assertThat(rule.counter, is(equalTo(1)));
 
         // New view direction
-        assertThat(helper.getIndividualProperties().getDirection(), is(equalTo(newDirection)));
+        assertThat(a.getPropertyUpdate().getDir().get(), is(equalTo(newDirection)));
 
         // Step start and end time
         final double sway = swayFromDegree(degree);
         final double timeToWalk = (stepLength /* dist */ / (absoluteSpeed * speedFactor * additionalSpeedFactor));
         double expectedStepEndTime = STEP_END_TIME_CAN_MOVE + timeToWalk * STEPS_PER_SECOND + sway * STEPS_PER_SECOND;
-        assertThat(helper.getIndividualProperties().getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
+        assertThat(a.getArrivalTime(), is(closeTo(expectedStepEndTime, 10e-6)));
     }
 
     private double swayFromDegree(int degree) {
@@ -539,13 +540,13 @@ public class SimpleMovementRule2Test {
         targetCellIndividualProperties.setDirection(Direction8.Top);
         targetCellIndividualProperties.setRelativeSpeed(RELATIVE_SPEED);
 
-        rule.swap(helper.getTestCell(), targetCell);
+        SwapAction a = rule.swap(helper.getTestCell(), targetCell);
 
         // Simple test case only, different move-properties are tested within other tests. Only for swap here
         final double timeToWalk = (0.4 /* dist */ / (ABSOLUTE_SPEED * SPEED_FACTOR_TARGET_CELL));
         double expectedStepEndTime = STEP_END_TIME_CAN_MOVE + timeToWalk * STEPS_PER_SECOND;
-        assertThat(helper.getIndividualProperties().getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
-        assertThat(targetCellIndividualProperties.getStepEndTime(), is(closeTo(expectedStepEndTime, 10e-6)));
+        assertThat(a.arrivalTime1(), is(closeTo(expectedStepEndTime, 10e-6)));
+        assertThat(a.arrivalTime2(), is(closeTo(expectedStepEndTime, 10e-6)));
     }
 
     private static class SimpleMovementRule2Spy extends SimpleMovementRule2 implements MovementRuleTestHelper.TestableMovementRule {
@@ -553,15 +554,17 @@ public class SimpleMovementRule2Test {
         Map<MovementRuleTestHelper.MovementRuleStep, Integer> counter = new EnumMap<>(MovementRuleTestHelper.MovementRuleStep.class);
 
         @Override
-        protected void performMove(EvacCellInterface cell) {
+        protected MoveAction performMove(EvacCellInterface cell) {
             counter.put(MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE,
                     counter.getOrDefault(MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE, 0) + 1);
+            return null;
         }
 
         @Override
-        protected void skipStep(EvacCellInterface cell) {
+        protected MoveAction skipStep(EvacCellInterface cell) {
             counter.put(MovementRuleTestHelper.MovementRuleStep.SKIP_STEP,
                     counter.getOrDefault(MovementRuleTestHelper.MovementRuleStep.SKIP_STEP, 0) + 1);
+            return null;
         }
 
         @Override

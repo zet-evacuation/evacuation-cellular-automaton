@@ -38,7 +38,7 @@ public class EvacuateIndividualsRule extends AbstractEvacuationRule<ExitAction> 
      */
     @Override
     protected ExitAction onExecute(EvacCellInterface cell) {
-        es.markIndividualForRemoval(cell.getState().getIndividual());
+        //es.markIndividualForRemoval(cell.getState().getIndividual());
         // Potential needed for statistics:
         Exit exit = getNearestExit(es.getCellularAutomaton(), cell);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExitToStatistic(cell.getState().getIndividual(), exit);

@@ -164,7 +164,7 @@ public class TestEvacuationStateController {
                 allowing(room).getHeight();
                 allowing(room).getID();
                 will(returnValue(id));
-                allowing(room).getFloorID();
+                allowing(room).getFloor();
                 will(returnValue(0));
                 allowing(room).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));

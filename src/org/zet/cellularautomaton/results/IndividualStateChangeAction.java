@@ -15,8 +15,6 @@
  */
 package org.zet.cellularautomaton.results;
 
-import java.util.Map;
-import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
@@ -32,7 +30,6 @@ public class IndividualStateChangeAction extends Action {
     private double exhaustion;
     private double currentSpeed;
     private boolean isAlarmed;
-    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     public IndividualStateChangeAction(Individual individual, PropertyAccess es) {
         this(individual,
@@ -53,21 +50,6 @@ public class IndividualStateChangeAction extends Action {
     /**
      * {@inheritDoc }
      *
-     * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
-     */
-    @Override
-    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
-        this.selfMap = selfMap;
-//        Individual adaptedIndividual = null;// unsupported targetCA.getIndividual(es.propertyFor(individual).getNumber());
-//        if (adaptedIndividual == null) {
-//            throw new CADoesNotMatchException(this, "Could not find the individual with the unique id " + individual.getNumber());
-//        }
-//        return new IndividualStateChangeAction(adaptedIndividual, panic, exhaustion, currentSpeed, isAlarmed);
-    }
-
-    /**
-     * {@inheritDoc }
-     *
      * @param es
      * @throws InconsistentPlaybackStateException
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
@@ -83,7 +65,7 @@ public class IndividualStateChangeAction extends Action {
     }
 
     @Override
-    public void executeDelayed(EvacuationState es) {
+    public void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec) {
     }
 
     /**

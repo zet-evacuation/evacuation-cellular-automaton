@@ -297,17 +297,17 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
          * @return 
          * @throws IllegalArgumentException if the the specific room exists already in the list rooms
          */
-        public final Collection<Exit> addRoom(int floor, Room room) {
-            checkValidity(floor, room);
-            floorRoomMapping.get(floor).addMatrix(room);
+        public final Collection<Exit> addRoom(Room room) {
+            checkValidity(room.getFloor(), room);
+            floorRoomMapping.get(room.getFloor()).addMatrix(room);
             Collection<Exit> newExits = computeAndAddExits(room);
             exits.addAll(newExits);
             return newExits;
         }
 
-        public final void addRoom(int floor, Room room, Collection<Exit> exits) {
-            checkValidity(floor, room);
-            floorRoomMapping.get(floor).addMatrix(room);
+        public final void addRoom(Room room, Collection<Exit> exits) {
+            checkValidity(room.getFloor(), room);
+            floorRoomMapping.get(room.getFloor()).addMatrix(room);
             checkValidity(room, exits);
             this.exits.addAll(exits);
         }
@@ -349,7 +349,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
             for (Exit e : exits) {
                 Collection<ExitCell> exitCluster = e.getExitCluster();
                 for (ExitCell cell : exitCluster) {
-                    if (!room.existsCellAt(cell.getX(), cell.getY()) || !room.getCell(cell.getX(), cell.getY()).equals(cell)) {
+                    if (!room.existsCellAt(cell.getX(), cell.getY()) || room.getCell(cell.getX(), cell.getY()) != cell) {
                         throw new IllegalArgumentException("Exit cell " + cell + " not contained in " + room);
                     }
                 }

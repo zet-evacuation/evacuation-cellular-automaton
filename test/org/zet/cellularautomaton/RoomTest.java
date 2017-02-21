@@ -26,7 +26,7 @@ public class RoomTest {
     public void initRoom() {
         Room room = new RoomImpl(4, 5, 3, 12, -3, 1);
         assertThat(room.getID(), is(equalTo(12)));
-        assertThat(room.getFloorID(), is(equalTo(3)));
+        assertThat(room.getFloor(), is(equalTo(3)));
         assertThat(room.getXOffset(), is(equalTo(-3)));
         assertThat(room.getYOffset(), is(equalTo(1)));
         assertThat(room.getWidth(), is(equalTo(4)));
@@ -116,6 +116,13 @@ public class RoomTest {
 
         room.addIndividual(cell, i);
         room.addIndividual(cell, i);
+    }
+    
+    @Test
+    public void equalsSelf() {
+        RoomImpl r = new RoomImpl(0, 0, 0, 0, 0);
+        assertThat(r.equals(r), is(true));
+        assertThat(r.equals(null), is(false));
     }
 
 }

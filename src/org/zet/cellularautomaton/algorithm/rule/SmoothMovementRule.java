@@ -47,21 +47,19 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
         if (isActive()) {
             if (canMove(individual)) {
                 if (wishToMove()) {
-                    performMove(cell);
+                    return performMove(cell);
                 } else {
-                    skipStep(cell);
+                    return skipStep(cell);
                 }
             } else {
                 // Individual can't move, it is already moving
                 currentlyMoving(cell);
+                return null;
             }
         } else {
             // Individual is not alarmed, that means it remains standing on the cell
             return remainInactive(cell);
         }
-
-        recordAction(new IndividualStateChangeAction(individual, es));
-        return MoveAction.NO_MOVE;
     }
 
     /**
@@ -107,26 +105,29 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
      * Handles status updates when the {@link Individual} skips the step.
      *
      * @param cell the cell on which the rule is executed
+     * @return 
      */
-    protected void skipStep(EvacCellInterface cell) {
+    protected MoveAction skipStep(EvacCellInterface cell) {
         setMoveRuleCompleted(true);
-        noMove(cell);
+        return noMove(cell);
     }
 
     /**
      * Handles the {@link Individual}'s wish to move.
      *
      * @param cell the cell on which the rule is executed
+     * @return 
      */
-    protected void performMove(EvacCellInterface cell) {
+    protected MoveAction performMove(EvacCellInterface cell) {
         if (isDirectExecute()) { // we are in a "normal" simulation
             EvacCellInterface targetCell = selectTargetCell(cell, computePossibleTargets(cell, true));
             setMoveRuleCompleted(true);
-            move(cell, targetCell);
+            return move(cell, targetCell);
         } else { // only calculate possible movements, used for swap cellular automaton
             computePossibleTargets(cell, false);
             setMoveRuleCompleted(true);
         }
+        return MoveAction.NO_MOVE;
     }
 
     abstract MoveAction noMove(EvacCellInterface cell);

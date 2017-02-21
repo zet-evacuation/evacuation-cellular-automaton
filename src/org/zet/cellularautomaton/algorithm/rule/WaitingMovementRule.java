@@ -23,6 +23,7 @@ import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.algorithm.state.PropertyUpdate;
 import org.zet.cellularautomaton.results.MoveAction;
 
 /**
@@ -49,30 +50,37 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
 
     @Override
     protected MoveAction noMove(EvacCellInterface cell) {
+        MoveAction a = super.noMove(cell);
+
         if (es.propertyFor(individual).isAlarmed()) {
-            updateExhaustion(individual, cell);
+            double newExhaustion = updateExhaustion(individual, cell);
+            PropertyUpdate update = PropertyUpdate.extend(a.getPropertyUpdate()).withExhaustion(newExhaustion).createUpdate();
+            return new MoveAction(a, update);
         }
-        return super.noMove(cell);
+        return a;
     }
 
     @Override
     public MoveAction move(EvacCellInterface from, EvacCellInterface targetCell) {
         Individual ind = from.getState().getIndividual();
-        updatePanic(ind, targetCell);
-        updateExhaustion(ind, targetCell);
-        return super.move(from, targetCell);
+        double newPanic = updatePanic(ind, targetCell);
+        double newExhaustion = updateExhaustion(ind, targetCell);
+        MoveAction a = super.move(from, targetCell);
+        PropertyUpdate update = PropertyUpdate.extend(a.getPropertyUpdate()).withPanic(newPanic).withExhaustion(newExhaustion).createUpdate();
+        return new MoveAction(a, update);
     }
 
-    protected void updatePanic(Individual individual, EvacCellInterface targetCell) {
+    protected double updatePanic(Individual individual, EvacCellInterface targetCell) {
         double oldPanic = es.propertyFor(individual).getPanic();
-        c.updatePanic(individual, targetCell, this.neighboursByPriority(es.propertyFor(individual).getCell()));
-        if (oldPanic != es.propertyFor(individual).getPanic()) {
+        double newPanic = c.updatePanic(individual, targetCell, this.neighboursByPriority(es.propertyFor(individual).getCell()));
+        if (oldPanic != newPanic) {
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, es.getTimeStep(), es.propertyFor(individual).getPanic());
         }
+        return newPanic;
     }
 
-    protected void updateSpeed(Individual i) {
-        c.updatePreferredSpeed(i);
+    protected double updateSpeed(Individual i) {
+        return c.updatePreferredSpeed(i);
     }
 
     /**
@@ -183,13 +191,15 @@ public class WaitingMovementRule extends SimpleMovementRule2 {
      *
      * @param individual
      * @param targetCell
+     * @return 
      */
-    protected void updateExhaustion(Individual individual, EvacCellInterface targetCell) {
+    protected double updateExhaustion(Individual individual, EvacCellInterface targetCell) {
         double oldExhaustion = es.propertyFor(individual).getExhaustion();
-        c.updateExhaustion(individual, targetCell);
-        if (oldExhaustion != es.propertyFor(individual).getExhaustion()) {
-            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, es.getTimeStep(), es.propertyFor(individual).getExhaustion());
+        double newExhaustion = c.updateExhaustion(individual, targetCell);
+        if (oldExhaustion != newExhaustion) {
+            es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, es.getTimeStep(), newExhaustion);
         }
+        return newExhaustion;
     }
 
 }

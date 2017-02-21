@@ -17,6 +17,7 @@ package org.zet.cellularautomaton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.zetool.simulation.cellularautomaton.GeometricCellMatrix;
 
 /**
@@ -59,7 +60,7 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
      * @param room 
      */
     public RoomImpl(Room room) {
-        this(room.getWidth(), room.getHeight(), room.getFloorID(), room.getID(), room.getXOffset(), room.getYOffset());
+        this(room.getWidth(), room.getHeight(), room.getFloor(), room.getID(), room.getXOffset(), room.getYOffset());
 
         isAlarmed = room.isAlarmed();
 
@@ -166,13 +167,50 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
         return id;
     }
 
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (!(obj instanceof Room)) {
+//            return false;
+//        }
+//        Room room = (Room) obj;
+//
+//    }
+
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Room)) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Room room = (Room) obj;
-        return room.getID() == id;
+        if (!(obj instanceof RoomImpl)) {
+            return false;
+        }
+        RoomImpl other = (RoomImpl) obj;
+        if (this.floorID != other.floorID) {
+            return false;
+        }
+        if (this.getXOffset() != other.getXOffset()) {
+            return false;
+        }
+        if (this.getYOffset() != other.getYOffset()) {
+            return false;
+        }
+        for( int x = 0; x < getWidth(); ++x) {
+            for (int y = 0; y<  getHeight(); ++y) {
+                if (existsCellAt(x, y) != other.existsCellAt(x, y)) {
+                   return false; 
+                } else {
+                    if (existsCellAt(x, y)) {
+                        if (!getCell(x, y).getClass().equals(other.getCell(x, y).getClass()) ) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -181,7 +219,7 @@ public class RoomImpl extends GeometricCellMatrix<EvacCell> implements Room {
     }
 
     @Override
-    public int getFloorID() {
+    public int getFloor() {
         return floorID;
     }
 

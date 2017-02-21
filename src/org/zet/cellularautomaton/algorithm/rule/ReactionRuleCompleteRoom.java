@@ -15,9 +15,10 @@
  */
 package org.zet.cellularautomaton.algorithm.rule;
 
+import java.util.Collections;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.ReactionAction;
 
 /**
  * A rule that alarms an individual if its reaction time is over. After that the room of the individual is alarmed, too.
@@ -36,16 +37,16 @@ public class ReactionRuleCompleteRoom extends AbstractReactionRule {
      * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected ReactionAction onExecute(EvacCellInterface cell) {
         final Individual individual = cell.getState().getIndividual();
         if (!es.propertyFor(individual).isAlarmed()) {
             if (es.propertyFor(individual).getCell().getRoom().isAlarmed()) {
-                es.propertyFor(individual).setAlarmed();
+                return new ReactionAction(Collections.singleton(individual));
             } else if (es.getTimeStep() >= individual.getReactionTime() * sp.getStepsPerSecond()) {
-                es.propertyFor(individual).setAlarmed();
                 cell.getRoom().setAlarmstatus(true);
+                return new ReactionAction(Collections.singleton(individual));
             }
         }
-        return VoidAction.VOID_ACTION;
+        return null;
     }
 }

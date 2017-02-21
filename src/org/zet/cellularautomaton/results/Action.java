@@ -16,8 +16,8 @@
 package org.zet.cellularautomaton.results;
 
 import java.util.Map;
+import java.util.Objects;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
@@ -30,9 +30,47 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
  */
 public abstract class Action {
 
+    private Map<EvacCellInterface, EvacCellInterface> selfMap;
+
+    /**
+     * Executes the action with respect to the starting and ending cell of the action.
+     *
+     * @param es
+     * @param ec
+     * @throws InconsistentPlaybackStateException
+     */
+    public abstract void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException;
+
+    public abstract void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec);
+
+    /**
+     * Every subclass of this class should override the {@code toString()}.
+     *
+     * @return string representation
+     */
+    @Override
+    public abstract String toString();
+
+    /**
+     * Updates all references in this action in a way that allows it to be replayed based on the given cellular
+     * automaton.
+     *
+     * @param selfMap the cellular automaton to which this action should be adopted.
+     */
+    public void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) {
+        this.selfMap = selfMap;
+    }
+
+    protected EvacCellInterface adoptCell(EvacCellInterface cell) {
+        if (selfMap != null) {
+            return Objects.requireNonNull(selfMap.get(cell), "No mapping for " + cell);
+        } else {
+            return cell;
+        }
+    }
+
     protected class CADoesNotMatchException extends RuntimeException {
 
-        
         private static final long serialVersionUID = 1L;
 
         public CADoesNotMatchException() {
@@ -48,34 +86,4 @@ public abstract class Action {
         }
     }
 
-    /**
-     * Updates all references in this action in a way that allows it to be replayed based on the given cellular
-     * automaton.
-     *
-     * @param targetCa The cellular automaton to which this action should be adopted.
-     * @return The adopted action
-     */
-    abstract void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException;
-
-    /**
-     * Executes the action with respect to the starting and ending cell of the action.
-     * @param es
-     * @param ec 
-     * @throws InconsistentPlaybackStateException
-     */
-    public abstract void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException;
-
-    public abstract void executeDelayed(EvacuationState es);
-    
-    /**
-     * Every subclass of this class should override the {@code toString()}.
-     * 
-     * @return string representation
-     */
-    @Override
-    public abstract String toString();
-
-    protected EvacCellInterface adoptCell(EvacCellInterface cell, EvacuationCellularAutomaton targetCA) {
-        return cell;
-    }
 }

@@ -15,13 +15,11 @@
  */
 package org.zet.cellularautomaton.results;
 
-import java.util.Map;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.results.Action.CADoesNotMatchException;
 
 /**
  * Represents the fact that an individual died.
@@ -31,11 +29,10 @@ public class DieAction extends Action {
 
     /** The cell on which the individual stood when it died. */
     private final EvacCellInterface placeOfDeath;
-    /** The cause which caused the individuals dead */
+    /** The cause which caused the individuals dead. */
     private final DeathCause cause;
     /** The number of the individual. Is needed for visualization. */
     private final Individual individual;
-    private Map<EvacCellInterface, EvacCellInterface> selfMap;
 
     /**
      * Creates a new instance of the DyingAction which represents the dead of an individual during the evacuation.
@@ -71,24 +68,6 @@ public class DieAction extends Action {
     /**
      * {@inheritDoc}
      *
-     * @see ds.ca.results.Action#adoptToCA(ds.ca.EvacuationCellularAutomaton)
-     */
-    @Override
-    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
-        this.selfMap = selfMap;
-//        EvacCellInterface newCell = adoptCell(placeOfDeath, targetCA);
-//        if (newCell == null) {
-//            throw new CADoesNotMatchException(
-//                    this,
-//                    "Could not find the cell " + placeOfDeath + " that this action uses in the new CA.");
-//        }
-//
-//        return new DieAction(newCell, cause, individual);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param es the evacuation state
      * @throws InconsistentPlaybackStateException if the individual that is to die is not on the cell
      * @see ds.ca.results.Action#execute(ds.ca.EvacuationCellularAutomaton)
@@ -105,7 +84,7 @@ public class DieAction extends Action {
     }
 
     @Override
-    public void executeDelayed(EvacuationState es) {
+    public void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec) {
     }
 
     /**
@@ -125,4 +104,18 @@ public class DieAction extends Action {
 
         return representation;
     }
+
+    public DeathCause getDeathCause() {
+        return cause;
+    }
+
+    public Individual getIndividual() {
+        return individual;
+    }
+
+    public EvacCellInterface getPlaceOfDeath() {
+        return placeOfDeath;
+    }
+    
+    
 }

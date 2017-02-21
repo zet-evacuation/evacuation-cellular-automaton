@@ -1,6 +1,7 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import java.util.Collections;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,6 +22,7 @@ import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.FakePotential;
+import org.zet.cellularautomaton.results.ExitAction;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -92,8 +94,6 @@ public class EvacuateIndividualsRuleTest {
                 allowing(es).getCellularAutomaton();
                 will(returnValue(eca));
 
-                exactly(1).of(es).markIndividualForRemoval(with(toEvacuate));
-
                 allowing(eca).getExits();
                 will(returnValue(Collections.singletonList(exit)));
                 allowing(eca).getPotentialFor(exit);
@@ -107,7 +107,7 @@ public class EvacuateIndividualsRuleTest {
         ExitCell exitCell = new ExitCell(0, 0);
         exitCell.getState().setIndividual(toEvacuate);
 
-        rule.onExecute(exitCell);
-        context.assertIsSatisfied();
+        ExitAction a = rule.onExecute(exitCell);
+        assertThat(a.getIndividual(), is(equalTo(toEvacuate)));
     }
 }

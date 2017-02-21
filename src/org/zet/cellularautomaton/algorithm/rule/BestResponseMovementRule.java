@@ -57,17 +57,16 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             if (this.isDirectExecute()) {
                 EvacCellInterface targetCell = this.selectTargetCell(cell, computePossibleTargets(cell, true));
                 setMoveRuleCompleted(true);
-                move(cell, targetCell);
+                return move(cell, targetCell);
             } else {
                 computePossibleTargets(cell, false);
                 setMoveRuleCompleted(true);
+                return MoveAction.NO_MOVE;
             }
-        } else // Individual can't move, it is already moving
-        {
+        } else { // Individual can't move, it is already moving
             setMoveRuleCompleted(false);
+            return null;
         }
-        recordAction(new IndividualStateChangeAction(ind, es));
-        return MoveAction.NO_MOVE;
     }
 
     @Override
@@ -84,26 +83,24 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         }
         //set statistic for targetCell and timestep
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells().addCellToUtilizationStatistic(targetCell, es.getTimeStep());
-        this.doMove(ind, targetCell);
         setMoveRuleCompleted(false);
-        return MoveAction.NO_MOVE;
+        return this.doMove(ind, targetCell);
     }
 
-    private void doMove(Individual i, EvacCellInterface targetCell) {
+    private MoveAction doMove(Individual i, EvacCellInterface targetCell) {
         if (es.propertyFor(i).getCell().equals(targetCell)) {
-            setStepEndTime(i, es.propertyFor(i).getStepEndTime() + 1);
-            ec.move(es.propertyFor(i).getCell(), targetCell);
             setMoveRuleCompleted(false);
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), 0);
-            return;
+            double oldStepEndTime = es.propertyFor(i).getStepEndTime();
+            return new MoveAction(es.propertyFor(i).getCell(), targetCell, oldStepEndTime + 1, oldStepEndTime);
         }
 
         doMoveWithDecision(i, targetCell, true);
         setMoveRuleCompleted(false);
+        return null;
     }
 
     private void doMoveWithDecision(Individual i, EvacCellInterface targetCell, boolean performMove) {
-        ec.increaseDynamicPotential(targetCell);
         // Calculate a factor that is later multiplied with the speed,
         // this factor is only != 1 for stair cells to
         // give different velocities for going a stair up or down.
@@ -155,7 +152,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
             es.propertyFor(i).setStepStartTime(es.propertyFor(i).getStepEndTime());
             setStepEndTime(i, es.propertyFor(i).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond());
             if (performMove) {
-                ec.move(es.propertyFor(i).getCell(), targetCell);
+                //ec.move(es.propertyFor(i).getCell(), targetCell);
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(i, es.getTimeStep(), speed * sp.getSecondsPerStep());
                 es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(i, (int) Math.ceil(es.propertyFor(i).getStepEndTime()), dist);
             }
@@ -195,11 +192,9 @@ public class BestResponseMovementRule extends AbstractMovementRule {
      * @return {@code true} if the individual moves or {@code false} otherwise.
      */
     //gibt true wieder, wenn geschwindigkeit von zelle und individuel (wkeit darueber) bewegung bedeuten
+    @Override
     protected boolean canMove(Individual i) {
-        if (es.getTimeStep() >= es.propertyFor(i).getStepEndTime()) {
-            return true;
-        }
-        return false;
+        return es.getTimeStep() >= es.propertyFor(i).getStepEndTime();
     }
 
     @Override
@@ -215,8 +210,7 @@ public class BestResponseMovementRule extends AbstractMovementRule {
         }
         doMoveWithDecision(cell1.getState().getIndividual(), cell2, false);
         doMoveWithDecision(cell2.getState().getIndividual(), cell1, false);
-        ec.swap(cell1, cell2);
-        return SwapAction.NO_MOVE;
+        return new SwapAction(cell1, cell2, es);
     }
 
     /**

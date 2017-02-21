@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Exit;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.results.VoidAction;
 
 /**
@@ -42,11 +44,11 @@ public class InitialPotentialAttractivityOfExitRule extends AbstractInitialRule 
      * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected Action onExecute(EvacCellInterface cell) {
         List<Exit> staticPotentials = new ArrayList<>(es.getCellularAutomaton().getExits());
         Exit initialPotential = initialPotential(staticPotentials.stream(), cell);
         if (initialPotential == null) {
-            ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
+            return new DieAction(cell, DeathCause.EXIT_UNREACHABLE, cell.getState().getIndividual());
         } else {
             assignMostAttractivePotential(staticPotentials, initialPotential, cell);
         }

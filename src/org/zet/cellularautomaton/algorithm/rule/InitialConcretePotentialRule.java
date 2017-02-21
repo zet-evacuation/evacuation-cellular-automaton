@@ -25,6 +25,8 @@ import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.results.VoidAction;
 
 /**
@@ -48,7 +50,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
      * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected Action onExecute(EvacCellInterface cell) {
         Individual individual = cell.getState().getIndividual();
         List<Exit> potentialToLengthOfWayMapper = new ArrayList<>();
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
@@ -61,7 +63,6 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
                     minDistanceToEvacArea = distanceToEvacArea;
                 }
                 potentialToLengthOfWayMapper.add(exit);
-
             }
         }
 
@@ -84,7 +85,7 @@ public class InitialConcretePotentialRule extends AbstractInitialRule {
         Collections.sort(potentialToLengthOfWayMapper, distanceComparator);
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (potentialToLengthOfWayMapper.isEmpty()) {
-            ec.die(individual, DeathCause.EXIT_UNREACHABLE);
+            return new DieAction(cell, DeathCause.EXIT_UNREACHABLE, individual);
         } else {
             int nrOfPossiblePotentials = (int) (Math.round((1 - individual.getFamiliarity()) * potentialToLengthOfWayMapper.size()));
             if (nrOfPossiblePotentials < 1) {

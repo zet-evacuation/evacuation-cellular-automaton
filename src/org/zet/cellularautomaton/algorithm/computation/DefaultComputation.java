@@ -110,8 +110,6 @@ public class DefaultComputation implements Computation {
         } else if (newExhaustion > MAX_EXHAUSTION) {
             newExhaustion = MAX_EXHAUSTION;
         }
-        
-        es.propertyFor(individual).setExhaustion(newExhaustion);
 
         return newExhaustion;
     }
@@ -131,8 +129,8 @@ public class DefaultComputation implements Computation {
         double speedDecreaseFromExhaustion = es.propertyFor(i).getExhaustion() * parameterSet.exhaustionWeightOnSpeed();
         double newSpeed = i.getMaxSpeed() + speedIncreaseFromPanic - speedDecreaseFromExhaustion;
 
-        es.propertyFor(i).setRelativeSpeed(Math.max(0.0001, Math.min(i.getMaxSpeed(), newSpeed)));
-        return es.propertyFor(i).getRelativeSpeed();
+        //es.propertyFor(i).setRelativeSpeed(Math.max(0.0001, Math.min(i.getMaxSpeed(), newSpeed)));
+        return Math.max(0.0001, Math.min(i.getMaxSpeed(), newSpeed));
     }
 
     @Override

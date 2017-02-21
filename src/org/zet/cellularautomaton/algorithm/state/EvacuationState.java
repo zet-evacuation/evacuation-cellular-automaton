@@ -33,11 +33,6 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual> {
 
     public double getDynamicPotential(EvacCellInterface cell);
 
-    // only necessary in concrete implementation?
-    public void markIndividualForRemoval(Individual individual);
-
-    public void removeMarkedIndividuals();
-
     // To be removed from the interface completely:
     public CAStatisticWriter getStatisticWriter();
 

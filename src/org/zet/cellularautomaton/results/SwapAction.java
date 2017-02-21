@@ -15,18 +15,17 @@
  */
 package org.zet.cellularautomaton.results;
 
-import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
+import org.zet.cellularautomaton.algorithm.state.PropertyUpdate;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
-public class SwapAction extends MoveAction {
+public class SwapAction extends Action {
     public static SwapAction NO_MOVE;
 
     /** The cell from where individual 1 moves. */
@@ -45,6 +44,8 @@ public class SwapAction extends MoveAction {
     private int individualNumber1;
     /** The number of individual 2 that is moved. */
     private int individualNumber2;
+    private PropertyUpdate cell1Update;
+    private PropertyUpdate cell2Update;
 
     /**
      * Creates a new instance of a move action. This action starts at the cell from where the individual leaves and ends
@@ -77,7 +78,7 @@ public class SwapAction extends MoveAction {
             double getStepEndTime2,
             double getStepStartTime2,
             int getNumber2) {
-        super(cell1, cell2, getStepEndTime1, getStepEndTime2);
+
         this.cell1 = cell1;
         this.cell2 = cell2;
         this.arrivalTime1 = getStepEndTime1;
@@ -86,6 +87,13 @@ public class SwapAction extends MoveAction {
         this.arrivalTime2 = getStepEndTime2;
         this.startTime2 = getStepStartTime2;
         this.individualNumber2 = getNumber2;
+    }
+
+    public SwapAction(EvacCellInterface cell1, EvacCellInterface cell2, PropertyUpdate c1update, PropertyUpdate c2update) {
+        this(cell1, cell2, c1update.getStepEndTime().get(), c1update.getStepStartTime().get(), cell1.getState().getIndividual().getNumber(),
+                c2update.getStepEndTime().get(), c2update.getStepStartTime().get(), cell2.getState().getIndividual().getNumber());
+        this.cell1Update = c1update;
+        this.cell2Update = c2update;
     }
 
     public EvacCellInterface cell1() {
@@ -120,6 +128,14 @@ public class SwapAction extends MoveAction {
         return startTime2;
     }
 
+    public PropertyUpdate getCell1Update() {
+        return cell1Update;
+    }
+
+    public PropertyUpdate getCell2Update() {
+        return cell2Update;
+    }
+
     @Override
     public void execute(EvacuationState es, EvacuationStateControllerInterface ec) throws InconsistentPlaybackStateException {
         if (cell1.getState().isEmpty()) {
@@ -134,7 +150,7 @@ public class SwapAction extends MoveAction {
     }
 
     @Override
-    public void executeDelayed(EvacuationState es) {
+    public void executeDelayed(EvacuationState es, EvacuationStateControllerInterface ec) {
     }
 
     @Override
@@ -151,22 +167,4 @@ public class SwapAction extends MoveAction {
         return representation;
     }
 
-    @Override
-    void adoptToCA(Map<EvacCellInterface, EvacCellInterface> selfMap) throws CADoesNotMatchException {
-        this.selfMap = selfMap;
-//        EvacCellInterface newCell1 = adoptCell(cell1, targetCA);
-//        if (newCell1 == null) {
-//            throw new CADoesNotMatchException(this, "Could not find cell 1 " + cell1 + " in the new CA.");
-//        }
-//        EvacCellInterface newCell2 = adoptCell(cell2, targetCA);
-//        if (cell2 == null) {
-//            throw new CADoesNotMatchException(this, "Could not find cell 2 " + cell2 + " in the new CA.");
-//        }
-//
-//        return new SwapAction(newCell1, newCell2, this.arrivalTime1, this.startTime1,
-//                this.individualNumber1,
-//                this.arrivalTime2,
-//                this.startTime1,
-//                this.individualNumber2);
-    }
 }

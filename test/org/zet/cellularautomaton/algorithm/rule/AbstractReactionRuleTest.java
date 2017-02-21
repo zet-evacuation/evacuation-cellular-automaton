@@ -15,7 +15,7 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.ReactionAction;
 
 /**
  *
@@ -27,8 +27,8 @@ public class AbstractReactionRuleTest {
         AbstractReactionRule rule = new AbstractReactionRule() {
 
             @Override
-            protected VoidAction onExecute(EvacCellInterface cell) {
-                return VoidAction.VOID_ACTION;
+            protected ReactionAction onExecute(EvacCellInterface cell) {
+                return null;
             }
         };
         

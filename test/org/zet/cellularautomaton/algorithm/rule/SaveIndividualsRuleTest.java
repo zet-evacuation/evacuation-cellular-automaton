@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
+import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.States;
@@ -24,7 +25,6 @@ import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.Action;
 import org.zet.cellularautomaton.results.SaveAction;
-import org.zet.cellularautomaton.results.VoidAction;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -48,7 +48,6 @@ public class SaveIndividualsRuleTest {
         MultiFloorEvacuationCellularAutomaton eca = new MultiFloorEvacuationCellularAutomaton();
         rule = new SaveIndividualsRule();
         ec = context.mock(EvacuationStateControllerInterface.class);
-        rule.setEvacuationStateController(ec);
         es = context.mock(EvacuationState.class);
         rule.setEvacuationState(es);
         i = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
@@ -119,8 +118,8 @@ public class SaveIndividualsRuleTest {
                 will(returnValue(safeIndividualProperty));
                 when(test.is("special-property"));
             }});
-        Action a = rule.execute(cell).get();
-        assertThat(a, is(equalTo(VoidAction.VOID_ACTION)));
+        Optional<Action> noAction = rule.execute(cell);
+        assertThat(noAction.isPresent(), is(false));
     }
     
     @Test

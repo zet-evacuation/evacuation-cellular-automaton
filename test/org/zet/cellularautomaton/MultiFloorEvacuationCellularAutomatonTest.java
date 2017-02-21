@@ -49,11 +49,11 @@ public class MultiFloorEvacuationCellularAutomatonTest {
         Room room2 = context.mock(Room.class, "room2");
         roomExpectations(room2, 2, 2);
 
-        builder.addRoom(0, room);
+        builder.addRoom(room);
         MultiFloorEvacuationCellularAutomaton ca = builder.build();
         assertThat(ca.getCellCount(), is(equalTo(3)));
 
-        builder.addRoom(0, room2);
+        builder.addRoom(room2);
         ca = builder.build();
         assertThat(ca.getCellCount(), is(equalTo(5)));
     }
@@ -69,7 +69,7 @@ public class MultiFloorEvacuationCellularAutomatonTest {
                 allowing(room).getHeight();
                 allowing(room).getID();
                 will(returnValue(id));
-                allowing(room).getFloorID();
+                allowing(room).getFloor();
                 will(returnValue(0));
                 allowing(room).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));
@@ -83,7 +83,7 @@ public class MultiFloorEvacuationCellularAutomatonTest {
 
         builder.addFloor(0, "floor1");
         Room r = roomWithTwoExits();
-        Collection<Exit> newExits = builder.addRoom(0, r);
+        Collection<Exit> newExits = builder.addRoom(r);
 
         StaticPotential p = new StaticPotential();
 
@@ -148,7 +148,7 @@ public class MultiFloorEvacuationCellularAutomatonTest {
 
         builder.addFloor(0, "floor1");
         Room r = roomWithTwoExits();
-        Collection<Exit> newExits = builder.addRoom(0, r);
+        Collection<Exit> newExits = builder.addRoom(r);
 
         newExits.forEach(exit -> builder.setPotentialFor(exit, new StaticPotential()));
 
@@ -163,7 +163,7 @@ public class MultiFloorEvacuationCellularAutomatonTest {
         builder.addFloor(0, "floor1");
         Room r = roomWithTwoExits();
 
-        builder.addRoom(0, r);
+        builder.addRoom(r);
 
         MultiFloorEvacuationCellularAutomaton ca = builder.build();
         String result = ca.graphicalToString();

@@ -1,10 +1,11 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.jmock.AbstractExpectations.returnValue;
 
+import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -14,7 +15,9 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
+import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.ReactionAction;
 
 /**
  *
@@ -44,8 +47,8 @@ public class ReactionRuleOnePersonTest {
                 allowing(es).propertyFor(i);
                 will(returnValue(ip));
         }});
-        rule.execute(cell);
-        assertThat(ip.isAlarmed(), is(true));
+        ReactionAction a = rule.execute(cell).get();
+        assertThat(a.getIndividuals(), contains(i));
     }
     
     @Test
@@ -53,6 +56,7 @@ public class ReactionRuleOnePersonTest {
         ReactionRuleOnePerson rule = new ReactionRuleOnePerson();
         rule.setEvacuationState(es);
 
+        // We need an absolute max speed of 0.41 to pass the following assertions, i.e. after 7 steps the individual is activated
         EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(0.41);
         rule.setEvacuationSimulationSpeed(sp);
 
@@ -68,10 +72,8 @@ public class ReactionRuleOnePersonTest {
                 allowing(es).propertyFor(evacuee);
                 will(returnValue(ip));
         }});
-        rule.execute(cell);
-        assertThat(ip.isAlarmed(), is(false));
-        
-        //eca.setAbsoluteMaxSpeed(0.41);
+        Optional<ReactionAction> noAction = rule.execute(cell);
+        assertThat(noAction.isPresent(), is(false));
         
         context.checking(new Expectations() {{
                 exactly(1).of(es).getTimeStep();
@@ -84,8 +86,8 @@ public class ReactionRuleOnePersonTest {
                     exactly(1).of(es).getTimeStep();
                     will(returnValue(result));
             }});
-            rule.execute(cell);
-            assertThat(ip.isAlarmed(), is(false));        
+            noAction = rule.execute(cell);
+            assertThat(noAction.isPresent(), is(false));
         }
         // Individuals reaction time is 7 
         // one additional time steps sets time to 7.175
@@ -93,8 +95,8 @@ public class ReactionRuleOnePersonTest {
                 exactly(1).of(es).getTimeStep();
                 will(returnValue(8));
         }});
-        rule.execute(cell);
-        assertThat(ip.isAlarmed(), is(true));
+        ReactionAction a = rule.execute(cell).get();
+        assertThat(a.getIndividuals(), contains(evacuee));
     }
 
     @Before

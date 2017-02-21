@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.potential.Potential;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.results.VoidAction;
 import org.zetool.rndutils.RandomUtils;
 
@@ -32,13 +34,13 @@ public class InitialPotentialRandomRule extends AbstractInitialRule {
      * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected Action onExecute(EvacCellInterface cell) {
         ArrayList<Potential> exits = new ArrayList<>();
         es.getCellularAutomaton().getExits().stream().filter(
                 exit -> (es.getCellularAutomaton().getPotentialFor(exit).hasValidPotential(cell) && es.getCellularAutomaton().getPotentialFor(exit).getPotential(cell) >= 0)).forEach(exit -> exits.add(es.getCellularAutomaton().getPotentialFor(exit)));
         
         if( exits.isEmpty() ) {
-            ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);            
+            return new DieAction(cell, DeathCause.EXIT_UNREACHABLE, cell.getState().getIndividual());
         } else {
             int numberOfExits = exits.size();
             RandomUtils random = RandomUtils.getInstance();

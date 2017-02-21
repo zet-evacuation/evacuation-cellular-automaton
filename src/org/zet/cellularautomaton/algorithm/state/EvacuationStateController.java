@@ -70,8 +70,9 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     @Override
     public void evacuate(Individual i) {
         evacuationState.propertyFor(i).setEvacuationTime(evacuationState.getStep());
-        evacuationState.addToEvacuated(i);
+        System.out.println("Evacuate " + i);
         remove(i);
+        evacuationState.addToEvacuated(i);
     }
 
     /**
@@ -80,9 +81,16 @@ public class EvacuationStateController implements EvacuationStateControllerInter
      */
     void remove(Individual i) {
         EvacCellInterface from = evacuationState.propertyFor(i).getCell();
+        System.out.println("Remove " + i + " from " + from);
         from.getRoom().removeIndividual(i);
         evacuationState.propertyFor(i).setCell(null);
         from.getState().removeIndividual();
+//        
+//            if(!propertyFor(i).isEvacuated()) {
+//                propertyFor(i).setEvacuationTime(evacuationState.getStep());
+//            }
+//            addToEvacuated(individual);
+        
     }
 
     @Override

@@ -1,9 +1,9 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
@@ -27,6 +27,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -67,8 +68,9 @@ public class InitialConcretePotentialRuleTest {
                 will(returnValue(exitList));
                 allowing(room).getID();
                 will(returnValue(1));
-                allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
-                allowing(room).removeIndividual(with(i));
+                allowing(room).getXOffset();
+                allowing(room).getYOffset();
+                allowing(room).getFloor();
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).propertyFor(i);
@@ -80,7 +82,6 @@ public class InitialConcretePotentialRuleTest {
         cell.getState().setIndividual(i);
 
         rule.setEvacuationState(es);
-        rule.setEvacuationStateController(ec);
     }
 
     @Test
@@ -104,13 +105,11 @@ public class InitialConcretePotentialRuleTest {
     @Test
     public void testDeadIfNoPotentials() {
         init();
-        context.checking(new Expectations() {
-            {
-                exactly(1).of(ec).die(i, DeathCause.EXIT_UNREACHABLE);
-            }
-        });
-        rule.execute(cell);
-        context.assertIsSatisfied();
+
+        DieAction a = (DieAction)rule.execute(cell).get();
+
+        assertThat(a.getDeathCause(), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        assertThat(a.getIndividual(), is(equalTo(i)));
     }
 
     @Test
@@ -119,13 +118,10 @@ public class InitialConcretePotentialRuleTest {
         StaticPotential sp = new StaticPotential();
         addStaticPotential(sp, 0);
 
-        context.checking(new Expectations() {
-            {
-                exactly(1).of(ec).die(i, DeathCause.EXIT_UNREACHABLE);
-            }
-        });
-        rule.execute(cell);
-        context.assertIsSatisfied();
+        DieAction a = (DieAction)rule.execute(cell).get();
+
+        assertThat(a.getDeathCause(), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        assertThat(a.getIndividual(), is(equalTo(i)));
     }
 
     @Test

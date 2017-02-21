@@ -27,7 +27,6 @@ import org.zet.cellularautomaton.IndividualBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationProblem;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.results.VoidAction;
 
@@ -90,22 +89,6 @@ public class AbstractEvacuationRuleTest {
             }
         };
         rule.execute(new RoomCell(0, 0));
-    }
-
-    @Test
-    public void setEvacuationController() {
-        EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
-        AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
-        rule.setEvacuationStateController(ec);
-        assertThat(rule.ec, is(sameInstance(ec)));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void doubleSettingEvacuationStateControllerFails() {
-        EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
-        AbstractEvacuationRule rule = simpleConcreteAbstractEvacuationRule();
-        rule.setEvacuationStateController(ec);
-        rule.setEvacuationStateController(ec);
     }
 
     @Test

@@ -79,8 +79,9 @@ public class InitialPotentialExitMappingRuleTest {
                 will(returnValue(exitList));
                 allowing(room).getID();
                 will(returnValue(1));
-                allowing(room).addIndividual(with(any(EvacCell.class)), with(i));
-                allowing(room).removeIndividual(with(i));
+                allowing(room).getXOffset();
+                allowing(room).getYOffset();
+                allowing(room).getFloor();
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).propertyFor(i);

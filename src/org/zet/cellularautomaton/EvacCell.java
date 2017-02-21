@@ -292,44 +292,45 @@ public abstract class EvacCell extends SquareCell<EvacuationCellState> implement
         return clone();
     }
 
-    // TODO?
-//  HashCode und Equals auskommentiert: Wenn zwei Zellen schon gleich sind,
-//  wenn sie im gleichen Raum liegen und die gleichen Koordinaten haben,
-//  verlieren wir die MÃ¶glichkeit, Zellen zu Klonen und in einer HashMap
-//  Klone auf ihre Originale abzubilden. Dies wird an mehreren Stellen
-//  benoetigt. Die oben beschriebene Gleichheit wird nirgendwo benutzt und
-//  war fuer mehrere Bugs verantwortlich.
-//
-//
+    private int absx;
+    private int absy;
+    private int floor;
+
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof EvacCell)) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-
-        EvacCell c = (EvacCell) obj;
-
-//        if (c.getRoom() == null && this.getRoom() == null) {
-//            return c == this;
-//        }
-//
-//        if (c.getRoom() == null || this.getRoom() == null) {
-//            return false;
-//        }
-
-        //return this.room.equals(c.getRoom()) && this.x == c.getX() && this.y == c.getY();
-        return this.x == c.getX() && this.y == c.getY();
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EvacCell other = (EvacCell) obj;
+        if (this.getRoom() == null && other.getRoom() == null) {
+            return getX() == other.getX() && getY() == other.getY();
+        } else if (this.getRoom() != null && other.getRoom() != null) {
+            if (this.getAbsoluteX() != other.getAbsoluteX()) {
+                return false;
+            }
+            if (this.getAbsoluteY() != other.getAbsoluteY()) {
+                return false;
+            }
+            if (this.getRoom().getFloor() != other.getRoom().getFloor()) {
+                return false;
+            }
+            return true;            
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-//        // This result must be brought independently of the current value of the
-//        // room variable because this obejct must be able to be serialized using
-//        // XStream, and this causes an error because it invokes this method before
-//        // the room field is filled with its former content again.
         int hash = 7;
-        hash = 23 * hash + x;
-        hash = 23 * hash + y;
+        hash = 71 * hash + getAbsoluteX();
+        hash = 71 * hash + getAbsoluteY();
+        hash = 71 * hash + (getRoom() == null ? 0 : getRoom().getFloor());
         return hash;
     }
 

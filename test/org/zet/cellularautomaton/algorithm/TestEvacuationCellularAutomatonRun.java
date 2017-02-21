@@ -61,7 +61,7 @@ public class TestEvacuationCellularAutomatonRun {
         r.setCell(middleCell);
         rightCell = new RoomCell(1, 2, 0, r);
         r.setCell(rightCell);
-        Collection<Exit> newExits = builder.addRoom(0, r);
+        Collection<Exit> newExits = builder.addRoom(r);
 
         Iterator<Exit> exitIteraterator = newExits.iterator();
         Exit e = exitIteraterator.next();

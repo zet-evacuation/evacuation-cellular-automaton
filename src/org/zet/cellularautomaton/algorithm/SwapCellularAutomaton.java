@@ -204,7 +204,6 @@ public class SwapCellularAutomaton extends EvacuationCellularAutomatonAlgorithm 
         }
 
         //setDirectExecute( true );
-        es.removeMarkedIndividuals();
         ec.updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());
     }

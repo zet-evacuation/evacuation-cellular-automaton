@@ -17,7 +17,7 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.SaveAction;
 
 /**
  * Sets an individual save. The time is stored in the cellular automaton statistic. This rule is supposed to be called
@@ -32,12 +32,12 @@ public class ICEM09SaveIndividualsRule extends AbstractSaveRule {
     }
 
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected SaveAction onExecute(EvacCellInterface cell) {
         Individual savedIndividual = cell.getState().getIndividual();
-        if (!(es.propertyFor(savedIndividual).isSafe())) {
-            ec.setSafe(savedIndividual);
+        if (!(es.propertyFor(savedIndividual).isSafe())) {            
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addSafeIndividualToStatistic(savedIndividual);
+            return new SaveAction(savedIndividual, es.getTimeStep());
         }
-        return VoidAction.VOID_ACTION;
+        return null;
     }
 }

@@ -1,11 +1,13 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.Collections;
-import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
+
+import java.util.Collections;
+import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -13,7 +15,6 @@ import org.junit.Test;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.TeleportCell;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
-import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 
@@ -113,7 +114,6 @@ public class TeleportMovementRuleTest {
                 exactly(1).of(mr).setComputation(c);
                 exactly(1).of(mr).setDirectExecute(true);
                 exactly(1).of(mr).setEvacuationState(es);
-                exactly(1).of(mr).setEvacuationStateController(ec);
                 exactly(1).of(mr).swap(cell, cell2);
             }
         });
@@ -127,7 +127,6 @@ public class TeleportMovementRuleTest {
         rule.setComputation(c);
         rule.setDirectExecute(true);
         rule.setEvacuationState(es);
-        rule.setEvacuationStateController(ec);
         rule.swap(cell, cell2);
         
         context.assertIsSatisfied();

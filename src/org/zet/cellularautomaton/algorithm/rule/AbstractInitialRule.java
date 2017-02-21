@@ -16,14 +16,14 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
 import org.zet.cellularautomaton.EvacCellInterface;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.Action;
 
 /**
  * Abstract class rules only used during initialization.
  *
  * @author Jan-Philipp Kappmeier
  */
-public abstract class AbstractInitialRule extends AbstractEvacuationRule<VoidAction> {
+public abstract class AbstractInitialRule extends AbstractEvacuationRule<Action> {
     /**
      * Checks, whether the rule is executable or not. The rule is applicable if there is an individual standing on the
      * cell and if the individual has not yet a potential assigned.

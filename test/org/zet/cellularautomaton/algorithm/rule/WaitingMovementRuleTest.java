@@ -1,5 +1,15 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.jmock.AbstractExpectations.any;
+import static org.jmock.AbstractExpectations.returnValue;
+import static org.jmock.AbstractExpectations.same;
+import static org.zet.cellularautomaton.results.MoveAction.NO_MOVE;
+import static org.zetool.common.datastructure.SimpleTuple.asTuple;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,12 +18,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.jmock.AbstractExpectations.any;
-import static org.jmock.AbstractExpectations.returnValue;
-import static org.jmock.AbstractExpectations.same;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -23,8 +27,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.results.MoveAction;
-import static org.zet.cellularautomaton.results.MoveAction.NO_MOVE;
-import static org.zetool.common.datastructure.SimpleTuple.asTuple;
 import org.zetool.common.datastructure.Tuple;
 import org.zetool.common.util.Direction8;
 import org.zetool.rndutils.RandomUtils;
@@ -35,6 +37,9 @@ import org.zetool.rndutils.generators.GeneralRandom;
  * @author Jan-Philipp Kappmeier
  */
 public class WaitingMovementRuleTest {
+
+    private static final double NEW_PANIC = 0.7;
+    private static final double NEW_EXHAUSTION = 0.24;
 
     private Mockery context;
     private MovementRuleTestHelper helper;
@@ -264,13 +269,16 @@ public class WaitingMovementRuleTest {
         context.checking(new Expectations() {
             {
                 atLeast(1).of(c).updatePanic(with(helper.getIndividual()), with(targetCell), with(cells));
+                will(returnValue(NEW_PANIC));
                 atLeast(1).of(c).updateExhaustion(helper.getIndividual(), targetCell);
+                will(returnValue(NEW_EXHAUSTION));
                 allowing(c).idleThreshold(helper.getIndividual());
             }
         });
 
-        ruleUnderTest.execute(helper.getTestCell());
-
+        MoveAction a = ruleUnderTest.execute(helper.getTestCell()).get();
+        assertThat(Double.doubleToLongBits(a.getPropertyUpdate().getExhaustion().get()), is(equalTo(Double.doubleToLongBits(NEW_EXHAUSTION))));
+        assertThat(Double.doubleToLongBits(a.getPropertyUpdate().getPanic().get()), is(equalTo(Double.doubleToLongBits(NEW_PANIC))));
         context.assertIsSatisfied();
     }
 
@@ -325,15 +333,17 @@ public class WaitingMovementRuleTest {
         Map<MovementRuleTestHelper.MovementRuleStep, Integer> counter = new EnumMap<>(MovementRuleTestHelper.MovementRuleStep.class);
 
         @Override
-        protected void performMove(EvacCellInterface cell) {
+        protected MoveAction performMove(EvacCellInterface cell) {
             counter.put(MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE,
                     counter.getOrDefault(MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE, 0) + 1);
+            return null;
         }
 
         @Override
-        protected void skipStep(EvacCellInterface cell) {
+        protected MoveAction skipStep(EvacCellInterface cell) {
             counter.put(MovementRuleTestHelper.MovementRuleStep.SKIP_STEP,
                     counter.getOrDefault(MovementRuleTestHelper.MovementRuleStep.SKIP_STEP, 0) + 1);
+            return null;
         }
 
         @Override

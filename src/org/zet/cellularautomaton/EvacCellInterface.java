@@ -82,11 +82,11 @@ public interface EvacCellInterface extends Cell<EvacuationCellState> {
     Room getRoom();
 
     default int getAbsoluteX() {
-        return getX() + getRoom().getXOffset();
+        return getX() + (getRoom() == null ? 0 : getRoom().getXOffset());
     }
 
     default int getAbsoluteY() {
-        return getY() + getRoom().getYOffset();
+        return getY() + (getRoom() == null ? 0 : getRoom().getYOffset());
     }
 
     /**

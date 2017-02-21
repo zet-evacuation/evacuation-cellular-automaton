@@ -1,16 +1,16 @@
 package org.zet.cellularautomaton.algorithm.rule;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.jmock.AbstractExpectations.any;
 import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.AbstractExpectations.same;
 import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executeableOn;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -28,6 +28,7 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterf
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
 
 /**
@@ -63,8 +64,9 @@ public class InitialPotentialFamiliarityRuleTest {
                 will(returnValue(eca));
                 allowing(room).getID();
                 will(returnValue(1));
-                allowing(room).addIndividual(with(any(EvacCell.class)), with(individual));
-                allowing(room).removeIndividual(with(individual));
+                allowing(room).getXOffset();
+                allowing(room).getYOffset();
+                allowing(room).getFloor();
                 allowing(es).getStatisticWriter();
                 will(returnValue(new CAStatisticWriter(es)));
                 allowing(es).propertyFor(individual);
@@ -78,7 +80,6 @@ public class InitialPotentialFamiliarityRuleTest {
         cell.getState().setIndividual(individual);
 
         rule.setEvacuationState(es);
-        rule.setEvacuationStateController(ec);
     }
 
     @Test
@@ -106,13 +107,10 @@ public class InitialPotentialFamiliarityRuleTest {
 
     @Test
     public void testDeadIfNoPotentials() {
-        context.checking(new Expectations() {
-            {
-                exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
-            }
-        });
-        rule.execute(cell);
-        context.assertIsSatisfied();
+        DieAction a = (DieAction) rule.execute(cell).get();
+
+        assertThat(a.getDeathCause(), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        assertThat(a.getIndividual(), is(equalTo(individual)));
     }
 
     @Test
@@ -120,13 +118,10 @@ public class InitialPotentialFamiliarityRuleTest {
         StaticPotential sp = new StaticPotential();
         addStaticPotential(sp);
 
-        context.checking(new Expectations() {
-            {
-                exactly(1).of(ec).die(individual, DeathCause.EXIT_UNREACHABLE);
-            }
-        });
-        rule.execute(cell);
-        context.assertIsSatisfied();
+        DieAction a = (DieAction) rule.execute(cell).get();
+
+        assertThat(a.getDeathCause(), is(equalTo(DeathCause.EXIT_UNREACHABLE)));
+        assertThat(a.getIndividual(), is(equalTo(individual)));
     }
 
     @Test

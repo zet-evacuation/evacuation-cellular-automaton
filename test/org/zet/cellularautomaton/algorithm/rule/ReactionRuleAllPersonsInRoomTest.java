@@ -2,10 +2,13 @@ package org.zet.cellularautomaton.algorithm.rule;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jmock.AbstractExpectations.returnValue;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -18,6 +21,7 @@ import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
+import org.zet.cellularautomaton.results.ReactionAction;
 
 /**
  *
@@ -42,8 +46,9 @@ public class ReactionRuleAllPersonsInRoomTest {
                 allowing(es).propertyFor(i);
                 will(returnValue(ip));
         }});
-        rule.execute(cell);
-        assertThat(ip.isAlarmed(), is(true));
+        ReactionAction action = rule.execute(cell).get();
+        assertThat(action.getIndividuals(), contains(i));
+        assertThat(ip.isAlarmed(), is(false));
     }
 
     @Test
@@ -70,10 +75,11 @@ public class ReactionRuleAllPersonsInRoomTest {
                 allowing(es).propertyFor(i3);
                 will(returnValue(ip3));
         }});
-        rule.execute(cell);
-        assertThat(ip1.isAlarmed(), is(true));
-        assertThat(ip2.isAlarmed(), is(true));
-        assertThat(ip3.isAlarmed(), is(true));
+        ReactionAction a = rule.execute(cell).get();
+        assertThat(a.getIndividuals(), containsInAnyOrder(i1, i2, i3));
+        assertThat(ip1.isAlarmed(), is(false));
+        assertThat(ip2.isAlarmed(), is(false));
+        assertThat(ip3.isAlarmed(), is(false));
     }
     
     @Test
@@ -100,7 +106,8 @@ public class ReactionRuleAllPersonsInRoomTest {
                 allowing(es).propertyFor(i3);
                 will(returnValue(ip3));
         }});
-        rule.execute(cell);
+        Optional<ReactionAction> noAction = rule.execute(cell);
+        assertThat(noAction.isPresent(), is(false));
         assertThat(ip1.isAlarmed(), is(false));
         assertThat(ip2.isAlarmed(), is(false));
         assertThat(ip3.isAlarmed(), is(false));

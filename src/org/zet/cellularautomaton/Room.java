@@ -37,7 +37,7 @@ public interface Room extends LocatedCellMatrix<EvacCell> {
 
     public void setAlarmstatus(boolean status);
 
-    public int getFloorID();
+    public int getFloor();
 
 
     // status-related, probably to be moved somewhere else!

@@ -91,11 +91,6 @@ public class TeleportMovementRule implements MovementRule {
     }
 
     @Override
-    public void setEvacuationStateController(EvacuationStateControllerInterface ec) {
-        movementRule.setEvacuationStateController(ec);
-    }
-
-    @Override
     public void setComputation(Computation c) {
         movementRule.setComputation(c);
     }

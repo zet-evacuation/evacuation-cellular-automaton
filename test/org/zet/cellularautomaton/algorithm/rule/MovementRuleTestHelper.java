@@ -167,6 +167,8 @@ import org.zetool.common.util.Direction8;
                 ip.setStepStartTime(STEP_START_TIME);
                 ip.setRelativeSpeed(RELATIVE_SPEED);
 
+                never(ec).move(with(any(EvacCell.class)), with(any(EvacCell.class)));
+
                 ruleUnderTest.individual = individual;
                 switch (step) {
                     case REMAIN_INACTIVE:
@@ -175,7 +177,6 @@ import org.zetool.common.util.Direction8;
                     case CURRENTLY_MOVING:
                         es.propertyFor(individual).setAlarmed();
                         ip.setStepEndTime(STEP_END_TIME_CURRENTLY_MOVING);
-                        never(ec).move(with(any(EvacCell.class)), with(any(EvacCell.class)));
                         break;
                     case PERFORM_MOVE:
                         es.propertyFor(individual).setAlarmed();
@@ -186,11 +187,9 @@ import org.zetool.common.util.Direction8;
                             allowing(testCell).getOccupiedUntil();
                             will(returnValue(OCCUPIED_UNTIL));
                         }
-                        //oneOf(ec).move(testCell, targetCell);
                         allowing(testCell).setOccupiedUntil(with(any(Double.class)));
                         break;
                     case SKIP_STEP:
-                        allowing(ec).move(testCell, testCell);
                         es.propertyFor(individual).setAlarmed();
                         ip.setStepEndTime(STEP_END_TIME_CAN_MOVE);
                         break;
@@ -198,7 +197,6 @@ import org.zetool.common.util.Direction8;
             }
         });
         ruleUnderTest.setEvacuationState(es);
-        ruleUnderTest.setEvacuationStateController(ec);
         ruleUnderTest.setEvacuationSimulationSpeed(sp);
     }
 
@@ -276,11 +274,7 @@ import org.zetool.common.util.Direction8;
         this.targetCell = targetCell;
         context.checking(new Expectations() {
             {
-                // Assert that the move is actually called within the controller
-                oneOf(ec).move(with(testCell), with(targetCell));
-
                 // Assert that the dynamic potential for target Cell is increased
-                oneOf(ec).increaseDynamicPotential(with(targetCell));
                 if (targetCell instanceof EvacCell) {
                     ((EvacCell) targetCell).setSpeedFactor(SPEED_FACTOR_TARGET_CELL);
                 } else {

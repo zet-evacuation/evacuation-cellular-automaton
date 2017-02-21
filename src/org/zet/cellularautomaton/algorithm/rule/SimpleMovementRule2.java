@@ -52,10 +52,10 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             // We actually move
             es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForCells()
                     .addCellToUtilizationStatistic(targetCell, es.getTimeStep());
-            initializeMove(from, targetCell);
+            PropertyUpdate update = initializeMove(from, targetCell);
             performMove(from, targetCell);
             setMoveRuleCompleted(false);
-            return MoveAction.NO_MOVE;
+            return new MoveAction(from, from, update);
         }
     }
 
@@ -129,7 +129,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
      * @param performMove decides if the move is actually performed. If swapping is active, only values have to be
      * updated.
      */
-    private void initializeMove(EvacCellInterface from, EvacCellInterface targetCell) {
+    private PropertyUpdate initializeMove(EvacCellInterface from, EvacCellInterface targetCell) {
         // We need to use a special individual here, because it is called from swap with different start cells
         Individual fromIndividual = from.getState().getIndividual();
 
@@ -137,15 +137,14 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             throw new IllegalStateException("Individuum has no speed.");
         }
 
-        ec.increaseDynamicPotential(targetCell);
-
         if (from instanceof DoorCell && targetCell instanceof DoorCell) {
             speed = sp.absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed());
             speed *= targetCell.getSpeedFactor() * 1;
-            es.propertyFor(fromIndividual).setStepStartTime(Math.max(es.propertyFor(fromIndividual).getCell().getOccupiedUntil(), es.propertyFor(fromIndividual).getStepEndTime()));
-            setStepEndTime(fromIndividual, es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond() + 0);
-            es.propertyFor(fromIndividual).setDirection(es.propertyFor(fromIndividual).getDirection());
-
+            
+            final double startTime = Math.max(es.propertyFor(fromIndividual).getCell().getOccupiedUntil(), es.propertyFor(fromIndividual).getStepEndTime());
+            final double endTime = es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond() + 0;
+            
+            return PropertyUpdate.forMove(startTime, endTime).withDirection(es.propertyFor(fromIndividual).getDirection()).createUpdate();
         } else {
             Direction8 direction = from.getRelative(targetCell);
 
@@ -155,9 +154,11 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             speed = sp.absoluteSpeed(es.propertyFor(fromIndividual).getRelativeSpeed());
             double factor = targetCell.getSpeedFactor() * stairSpeedFactor;
             speed *= factor;
-            es.propertyFor(fromIndividual).setStepStartTime(Math.max(from.getOccupiedUntil(), es.propertyFor(fromIndividual).getStepEndTime()));
-            setStepEndTime(fromIndividual, es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond() + add * sp.getStepsPerSecond());
-            es.propertyFor(fromIndividual).setDirection(direction);
+            
+            final double endTime = es.propertyFor(fromIndividual).getStepEndTime() + (dist / speed) * sp.getStepsPerSecond() + add * sp.getStepsPerSecond();
+            final double startTime = Math.max(from.getOccupiedUntil(), es.propertyFor(fromIndividual).getStepEndTime());
+            
+            return PropertyUpdate.forMove(startTime, endTime).withDirection(direction).createUpdate();
         }
     }
 
@@ -170,7 +171,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
      */
     protected void performMove(EvacCellInterface from, EvacCellInterface targetCell) {
         from.setOccupiedUntil(es.propertyFor(individual).getStepEndTime());
-        ec.move(from, targetCell);
+        //ec.move(from, targetCell);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCurrentSpeedToStatistic(individual, es.getTimeStep(), speed * sp.getSecondsPerStep());
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addCoveredDistanceToStatistic(individual, (int) Math.ceil(es.propertyFor(individual).getStepEndTime()), dist);
     }
@@ -209,11 +210,11 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             throw new IllegalArgumentException("The cells are equal. Can't swap on equal cells.");
         }
         individual = cell1.getState().getIndividual();
-        initializeMove(cell1, cell2);
+        PropertyUpdate c1update = initializeMove(cell1, cell2);
         individual = cell2.getState().getIndividual();
-        initializeMove(cell2, cell1); // do not actually move!
-        ec.swap(cell1, cell2);
-        return SwapAction.NO_MOVE;
+        PropertyUpdate c2update = initializeMove(cell2, cell1); // do not actually move!
+        //ec.swap(cell1, cell2);
+        return new SwapAction(cell1, cell2, c1update, c2update);
     }
 
     /**

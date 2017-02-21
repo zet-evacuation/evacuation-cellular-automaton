@@ -54,8 +54,8 @@ public class ICEM09MovementRule extends SimpleMovementRule2 {
             }
         } else { // Individual can't move, it is already moving
             setMoveRuleCompleted(false);
+            return null;
         }
-        recordAction(new IndividualStateChangeAction(individual, es));
         return MoveAction.NO_MOVE;
     }
 

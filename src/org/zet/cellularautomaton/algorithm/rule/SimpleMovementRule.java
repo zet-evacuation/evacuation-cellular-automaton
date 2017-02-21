@@ -84,7 +84,6 @@ public class SimpleMovementRule extends AbstractMovementRule {
 
     @Override
     public SwapAction swap(EvacCellInterface cell1, EvacCellInterface cell2) {
-        ec.swap(cell1, cell2);
-        return SwapAction.NO_MOVE;
+        return new SwapAction(cell1, cell2, es);
     }
 }

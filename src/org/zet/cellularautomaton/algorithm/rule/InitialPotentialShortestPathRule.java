@@ -20,10 +20,10 @@ import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
-import org.zet.cellularautomaton.results.VoidAction;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.DieAction;
 
 /**
  * This rule chooses an Individual's (the one standing on the current cell) initial StaticPotential according to the
@@ -45,12 +45,11 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
      * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
-        assignShortestPathPotential(cell, this.es, this.ec);
-        return VoidAction.VOID_ACTION;
+    protected Action onExecute(EvacCellInterface cell) {
+        return assignShortestPathPotential(cell, this.es);
     }
 
-    public static void assignShortestPathPotential(EvacCellInterface cell, EvacuationState es, EvacuationStateControllerInterface ec) {
+    public static Action assignShortestPathPotential(EvacCellInterface cell, EvacuationState es) {
         Individual individual = cell.getState().getIndividual();
         Potential initialPotential = new StaticPotential();
         double minDistanceToEvacArea = Double.POSITIVE_INFINITY;
@@ -69,7 +68,7 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
 
         // Check whether the individual is caged and cannot leave the building -> it has to die
         if (Double.isInfinite(minDistanceToEvacArea)) {
-            ec.die(individual, DeathCause.EXIT_UNREACHABLE);
+            return new DieAction(cell, DeathCause.EXIT_UNREACHABLE, individual);
         }
 
         es.propertyFor(individual).setStaticPotential(initialPotential);
@@ -77,5 +76,6 @@ public class InitialPotentialShortestPathRule extends AbstractInitialRule {
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addChangedPotentialToStatistic(individual, 0);
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addExhaustionToStatistic(individual, 0, es.propertyFor(individual).getExhaustion());
         es.getStatisticWriter().getStoredCAStatisticResults().getStoredCAStatisticResultsForIndividuals().addPanicToStatistic(individual, 0, es.propertyFor(individual).getPanic());
+        return null;
     }
 }

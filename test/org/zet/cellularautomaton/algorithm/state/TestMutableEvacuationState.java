@@ -11,7 +11,6 @@ import static org.zetool.common.util.Helper.in;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Rule;
@@ -98,13 +97,13 @@ public class TestMutableEvacuationState {
         
         MutableEvacuationState es = new MutableEvacuationState(eca, individuals);
 
-        es.markIndividualForRemoval(toEvacuate);
-        es.removeMarkedIndividuals();
-        
+        es.propertyFor(toEvacuate).setEvacuationTime(12);
+        es.addToEvacuated(toEvacuate);
+
         assertThat(es.getRemainingIndividuals(), not(hasItem(toEvacuate)));
         assertThat(es.getRemainingIndividuals(), hasItem(notToEvacuate));
     }
-    
+
     @Test
     public void remainingIndividuals() {
         Individual activeIndividual = builder.build();

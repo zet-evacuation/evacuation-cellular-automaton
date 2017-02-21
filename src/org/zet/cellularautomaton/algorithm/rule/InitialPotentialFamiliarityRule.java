@@ -25,6 +25,8 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.PotentialMemory;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zet.cellularautomaton.results.Action;
+import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.results.VoidAction;
 import org.zetool.rndutils.RandomUtils;
 import org.zetool.rndutils.generators.GeneralRandom;
@@ -47,10 +49,10 @@ public class InitialPotentialFamiliarityRule extends AbstractInitialRule {
      * @return 
      */
     @Override
-    protected VoidAction onExecute(EvacCellInterface cell) {
+    protected Action onExecute(EvacCellInterface cell) {
         List<PotentialMemory<Potential>> potentialDistanceMapping = computeDistanceMapping(cell);
         if (potentialDistanceMapping.isEmpty()) {
-            ec.die(cell.getState().getIndividual(), DeathCause.EXIT_UNREACHABLE);
+            return new DieAction(cell, DeathCause.EXIT_UNREACHABLE, cell.getState().getIndividual());
         } else {
             selectPotential(potentialDistanceMapping, cell.getState().getIndividual());
         }

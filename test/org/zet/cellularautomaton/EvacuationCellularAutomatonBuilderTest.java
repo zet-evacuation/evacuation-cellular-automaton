@@ -44,14 +44,15 @@ public class EvacuationCellularAutomatonBuilderTest {
     @Test
     public void addWithoutFloorFails() {
         EvacuationCellularAutomatonBuilder builder = new EvacuationCellularAutomatonBuilder();
-        builder.addFloor(0, "floor");
+        builder.addFloor(69, "floor");
 
+        // Create a room which will be on floor 0
         Room room = context.mock(Room.class);
-        roomExpectations(room, 1, 1);
+        roomExpectations(room, 0, 1);
 
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(containsString("69"));
-        builder.addRoom(69, room);
+        thrown.expectMessage(containsString("0"));
+        builder.addRoom(room);
     }
 
     @Test
@@ -64,10 +65,10 @@ public class EvacuationCellularAutomatonBuilderTest {
         Room r3 = getRoom(5, -2, 1, 6, "vertical right");
         Room r4 = getRoom(3, -1, 2, 2, "fill");
 
-        builder.addRoom(0, r1);
-        builder.addRoom(0, r2);
-        builder.addRoom(0, r3);
-        builder.addRoom(0, r4);
+        builder.addRoom(r1);
+        builder.addRoom(r2);
+        builder.addRoom(r3);
+        builder.addRoom(r4);
     }
 
     @Test
@@ -85,10 +86,10 @@ public class EvacuationCellularAutomatonBuilderTest {
 
         List<Room> rooms = Arrays.asList(r2, r3, r4, r5, r6, r7);
 
-        builder.addRoom(0, r1);
+        builder.addRoom(r1);
         for (Room r : rooms) {
             try {
-                builder.addRoom(0, r2);
+                builder.addRoom(r2);
             } catch (IllegalArgumentException ex) {
                 // expected
                 continue;
@@ -114,6 +115,8 @@ public class EvacuationCellularAutomatonBuilderTest {
                 will(returnValue(width * height));
                 allowing(r).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));
+                allowing(r).getFloor();
+                will(returnValue(0));
             }
         });
         return r;
@@ -126,7 +129,7 @@ public class EvacuationCellularAutomatonBuilderTest {
 
         Room r = getRoom(0, 0, 0, 0, "empty room");
 
-        builder.addRoom(0, r);
+        builder.addRoom(r);
     }
 
     @Test
@@ -144,7 +147,7 @@ public class EvacuationCellularAutomatonBuilderTest {
         Exit e = new Exit(exitCluster);
 
         thrown.expect(IllegalArgumentException.class);
-        builder.addRoom(0, r, Collections.singletonList(e));
+        builder.addRoom(r, Collections.singletonList(e));
     }
 
     @Test
@@ -162,7 +165,7 @@ public class EvacuationCellularAutomatonBuilderTest {
         Exit e = new Exit(exitCluster);
 
         thrown.expect(IllegalArgumentException.class);
-        builder.addRoom(0, r, Collections.singletonList(e));
+        builder.addRoom(r, Collections.singletonList(e));
     }
 
     @Test
@@ -179,7 +182,7 @@ public class EvacuationCellularAutomatonBuilderTest {
         Collection<ExitCell> exitCluster = Collections.singleton((ExitCell) r.getCell(1, 1));
         Exit e = new Exit(exitCluster);
 
-        builder.addRoom(0, r, Collections.singletonList(e));
+        builder.addRoom(r, Collections.singletonList(e));
     }
 
     @Test
@@ -190,7 +193,7 @@ public class EvacuationCellularAutomatonBuilderTest {
 
         Room r = roomWithTwoExits();
         
-        Collection<Exit> newExits = builder.addRoom(0, r);
+        Collection<Exit> newExits = builder.addRoom(r);
 
         assertThat(newExits, hasSize(2));
         Iterator<Exit> ei = newExits.iterator();
@@ -259,7 +262,7 @@ public class EvacuationCellularAutomatonBuilderTest {
                 allowing(room).getHeight();
                 allowing(room).getID();
                 will(returnValue(id));
-                allowing(room).getFloorID();
+                allowing(room).getFloor();
                 will(returnValue(0));
                 allowing(room).getAllCells();
                 will(returnValue(Collections.EMPTY_LIST));

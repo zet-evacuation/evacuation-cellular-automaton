@@ -82,7 +82,7 @@ public class EvacuationCellularAutomatonAlgorithm
                 a.ifPresent(this::handleAction);
             }
         }
-        es.removeMarkedIndividuals();
+
         fireEvent(new EvacuationInitializationCompleteEvent(this, lastStepActions));
         lastStepActions = new LinkedList<>();
     }
@@ -103,7 +103,6 @@ public class EvacuationCellularAutomatonAlgorithm
         Computation c = new DefaultComputation(es, getProblem().getParameterSet());
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationState(es);
-            r.setEvacuationStateController(ec);
             r.setEvacuationSimulationSpeed(sp);
             r.setComputation(c);
         }
@@ -113,10 +112,10 @@ public class EvacuationCellularAutomatonAlgorithm
     @Override
     protected void performStep() {
         super.performStep();
+        lastStepActions.forEach(a -> a.executeDelayed(es, ec));
         super.increaseStep();
         es.increaseStep();
 
-        es.removeMarkedIndividuals();
         ec.updateDynamicPotential(getProblem().getParameterSet().probabilityDynamicIncrease(),
                 getProblem().getParameterSet().probabilityDynamicDecrease());
 
