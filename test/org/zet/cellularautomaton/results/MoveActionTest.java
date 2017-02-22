@@ -59,6 +59,7 @@ public class MoveActionTest {
                 allowing(es).propertyFor(i);
                 will(returnValue(ip));
                 exactly(1).of(ec).move(with(from), with(to));
+                exactly(1).of(ec).increaseDynamicPotential(with(to));
             }
         });
 
@@ -69,6 +70,6 @@ public class MoveActionTest {
         
         context.assertIsSatisfied();
     }
-
+    
 
 }

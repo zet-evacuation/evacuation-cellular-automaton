@@ -21,7 +21,7 @@ public class TestStaticPotential {
     @Test
     public void storeDistance() {
         StaticPotential potential = new StaticPotential();
-        EvacCell c = new RoomCell(0,0);
+        EvacCell c = new RoomCell(0, 0);
         assertThat(potential.getDistance(c), is(closeTo(-1, 10e-8)));
         potential.setPotential(c, distance);
         assertThat(potential.getPotential(c), is(equalTo(2)));
@@ -43,10 +43,10 @@ public class TestStaticPotential {
         RoomCell r = new RoomCell(0, 0);
         potential.setPotential(r, 0);
         potential.setDistance(r, minDistance);
-        r = new RoomCell(0, 0);
+        r = new RoomCell(1, 0);
         potential.setPotential(r, 0);
         potential.setDistance(r, maxDistance);
-        r = new RoomCell(0, 0);
+        r = new RoomCell(2, 0);
         potential.setPotential(r, 0);
         potential.setDistance(r, distance);
         

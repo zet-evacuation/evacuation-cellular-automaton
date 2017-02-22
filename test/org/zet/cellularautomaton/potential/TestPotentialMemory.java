@@ -7,9 +7,9 @@ import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.jmock.AbstractExpectations.returnValue;
+import static org.junit.Assert.assertThat;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
 
@@ -32,7 +32,7 @@ public class TestPotentialMemory {
     @Test
     public void testMemoryInitialization() {
         Potential p = context.mock(Potential.class);
-        EvacCell c = TestAbstractPotential.getCell();
+        EvacCell c = TestAbstractPotential.getCell(0);
         expect(p, c, 13);
         PotentialMemory<Potential> m = new PotentialMemory<>(c, p);
         
@@ -45,8 +45,8 @@ public class TestPotentialMemory {
         Potential p1 = context.mock(Potential.class, "p1");
         Potential p2 = context.mock(Potential.class, "p2");
         
-        EvacCell c1 = TestAbstractPotential.getCell();
-        EvacCell c2 = TestAbstractPotential.getCell();
+        EvacCell c1 = TestAbstractPotential.getCell(0);
+        EvacCell c2 = TestAbstractPotential.getCell(1);
         expect(p1, c1, 5);
         expect(p1, c2, 13);
         expect(p2, c2, 13);
@@ -66,9 +66,9 @@ public class TestPotentialMemory {
     public void testComparableEqual() {
         Potential p1 = context.mock(Potential.class, "p1");
         Potential p2 = context.mock(Potential.class, "p2");
-        EvacCell c1 = TestAbstractPotential.getCell();
-        EvacCell c2 = TestAbstractPotential.getCell();
-        EvacCell c3 = TestAbstractPotential.getCell();
+        EvacCell c1 = TestAbstractPotential.getCell(0);
+        EvacCell c2 = TestAbstractPotential.getCell(1);
+        EvacCell c3 = TestAbstractPotential.getCell(2);
         expect(p1, c1, 5);
         expect(p1, c2, 13);
         expect(p2, c2, 13);

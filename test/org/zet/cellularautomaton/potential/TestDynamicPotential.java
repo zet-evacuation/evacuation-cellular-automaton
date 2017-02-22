@@ -23,7 +23,7 @@ public class TestDynamicPotential {
     public void testSetPlotential() {
         DynamicPotential potential = new DynamicPotential() {
         };
-        EvacCell c = getCell();
+        EvacCell c = getCell(0);
         potential.setPotential(c, 2.7);
         assertThat(potential.getPotential(c), is(equalTo(3)));
         assertThat(potential.getMappedCells(), contains(c));
@@ -35,7 +35,7 @@ public class TestDynamicPotential {
     public void testDelete() {
         DynamicPotential potential = new DynamicPotential() {
         };
-        EvacCell c = getCell();
+        EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         potential.deleteCell(c);
         assertThat(potential.getPotential(c), is(equalTo(0)));

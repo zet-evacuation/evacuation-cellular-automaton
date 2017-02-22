@@ -16,8 +16,8 @@ import org.zet.cellularautomaton.EvacuationCellState;
  * @author Jan-Philipp Kappmeier
  */
 public class TestAbstractPotential {
-    static EvacCell getCell() {
-        return new EvacCell(new EvacuationCellState(null), 1, 0, 0) {
+    static EvacCell getCell(int x) {
+        return new EvacCell(new EvacuationCellState(null), 1, x, 0) {
 
             @Override
             public EvacCell clone() {
@@ -33,28 +33,28 @@ public class TestAbstractPotential {
         assertThat(AbstractPotential.INVALID, is(equalTo(-1)));
         assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INVALID)));
         assertThat(potential.getMappedCells(), is(empty()));
-        assertThat(potential.hasValidPotential(getCell()), is(false));
+        assertThat(potential.hasValidPotential(getCell(0)), is(false));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void initializedPotentialGetNonexistent() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        potential.getPotential(getCell());
+        potential.getPotential(getCell(0));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void initializedPotentialGetNonexistentDouble() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        potential.getPotentialDouble(getCell());
+        potential.getPotentialDouble(getCell(0));
     }
     
     @Test
     public void testContained() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        EvacCell c = getCell();
+        EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         assertThat(potential.hasValidPotential(c), is(true));
     }
@@ -63,7 +63,7 @@ public class TestAbstractPotential {
     public void setPotentialValue() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        EvacCell c = getCell();
+        EvacCell c = getCell(0);
         potential.setPotential(c, 4.3);
         assertThat(potential.getPotential(c), is(equalTo(4)));
         assertThat(potential.getPotentialDouble(c), is(closeTo(4.3, 10e-8)));
@@ -86,14 +86,14 @@ public class TestAbstractPotential {
     public void deleteEmptyFails() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        potential.deleteCell(getCell());
+        potential.deleteCell(getCell(0));
     }
     
     @Test
     public void testDelete() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        EvacCell c = getCell();
+        EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         potential.deleteCell(c);
         assertThat(potential.getMappedCells(), is(empty()));
@@ -104,13 +104,13 @@ public class TestAbstractPotential {
     public void updateMaxPotentialWhenAdding() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        EvacCell c1 = getCell();
+        EvacCell c1 = getCell(0);
         potential.setPotential(c1, 3);
         assertThat(potential.getMaxPotential(), is(equalTo(3)));
-        EvacCell c2 = getCell();
+        EvacCell c2 = getCell(1);
         potential.setPotential(c2, 4);
         assertThat(potential.getMaxPotential(), is(equalTo(4)));
-        EvacCell c3 = getCell();
+        EvacCell c3 = getCell(2);
         potential.setPotential(c3, 2);
         assertThat(potential.getMaxPotential(), is(equalTo(4)));
         
@@ -131,11 +131,11 @@ public class TestAbstractPotential {
     public void updateMaxPotentialWhenDeleting() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        EvacCell c1 = getCell();
+        EvacCell c1 = getCell(0);
         potential.setPotential(c1, 3);
-        EvacCell c2 = getCell();
+        EvacCell c2 = getCell(1);
         potential.setPotential(c2, 4);
-        EvacCell c3 = getCell();
+        EvacCell c3 = getCell(2);
         potential.setPotential(c3, 2);
         
         potential.deleteCell(c1);
@@ -149,7 +149,7 @@ public class TestAbstractPotential {
     public void updateMaxPotentialWhenResetting() {
         AbstractPotential potential = new AbstractPotential() {
         };
-        EvacCell c = getCell();
+        EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         potential.setPotential(c, 2);
         assertThat(potential.getMaxPotential(), is(equalTo(2)));
