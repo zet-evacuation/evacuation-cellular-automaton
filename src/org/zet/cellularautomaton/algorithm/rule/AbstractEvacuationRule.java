@@ -24,7 +24,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.EvacuationSimulationSpeed;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
-import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.results.Action;
@@ -67,10 +66,10 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
     public void setEvacuationState(EvacuationState es) {
         if (this.es != null) {
             throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
-                    "algo.ca.rule.RuleAlreadyHaveCAControllerException"));
+                    "zet.eca.rule.RuleAlreadyHasState"));
         }
-        this.es = Objects.requireNonNull(es, CellularAutomatonLocalization.LOC.getString(
-                "algo.ca.rule.CAControllerIsNullException"));
+        this.es = Objects.requireNonNull(es, () -> CellularAutomatonLocalization.LOC.getString(
+                "zet.eca.rule.StateIsNull"));
     }
 
     @Override
@@ -82,10 +81,10 @@ public abstract class AbstractEvacuationRule<R extends Action> implements Evacua
     public void setEvacuationSimulationSpeed(EvacuationSimulationSpeed sp) {
         if (this.sp != null) {
             throw new IllegalStateException(CellularAutomatonLocalization.LOC.getString(
-                    "algo.ca.rule.RuleAlreadyHasTimingInformation"));
+                    "zet.eca.rule.RuleAlreadyHasTimingInformation"));
         }
-        this.sp = Objects.requireNonNull(sp, CellularAutomatonLocalization.LOC.getString(
-                "algo.ca.rule.TimingInformationNullException"));
+        this.sp = Objects.requireNonNull(sp, () -> CellularAutomatonLocalization.LOC.getString(
+                "zet.eca.rule.TimingInformationNullException"));
     }
 
     protected static Exit getNearestExit(EvacuationCellularAutomaton ca, EvacCellInterface cell) {

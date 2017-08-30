@@ -51,4 +51,9 @@ public interface EvacuationState extends PropertyAccess, Iterable<Individual> {
      * @param individualToExitMapping the mapping
      */
     public void setIndividualToExitMapping(IndividualToExitMapping individualToExitMapping);
+    
+    public int getInitialIndividualCount();
+    
+    public int getRemainingIndividualCount();
+
 }

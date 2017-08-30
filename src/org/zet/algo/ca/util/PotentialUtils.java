@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.potential.Potential;
 
 /**
  * @author Daniel R. Schmidt
@@ -33,27 +34,30 @@ public class PotentialUtils {
     }
 
     /**
-     * This method merges {@link StaticPotential}s into a new one. The new potential is calculated for each cell by taking the
-     * minimum over all given static potentials. The attractivity of the new static potential is the average over all
-     * attractivity values given by the specified static potentials to merge.
+     * This method merges {@link StaticPotential}s into a new one. The new potential is calculated for each cell by
+     * taking the minimum over all given static potentials. The attractivity of the new static potential is the average
+     * over all attractivity values given by the specified static potentials to merge.
      *
      * @param potentialsToMerge Contains an ArrayList with the StaticPotential object to merge
      * @return the new potential
      */
-    public static StaticPotential mergePotentials(Collection<StaticPotential> potentialsToMerge) {
+    public static <T extends Potential> Potential mergePotentials(Collection<T> potentialsToMerge) {
         StaticPotential newStaticPotential = new StaticPotential();
         //stores the sum of all attractivity values
         int totalAttractivity = 0;
         // iterate over all mapped cells
-        for (StaticPotential sp : potentialsToMerge) {
-            totalAttractivity += sp.getAttractivity();
-            for (EvacCellInterface c : sp.getMappedCells()) {
+        for (Potential p : potentialsToMerge) {
+            for (EvacCellInterface c : p) {
                 int minPot = getMinPotential(c, potentialsToMerge);
                 //put the current cell along with minPot in newSP
                 newStaticPotential.setPotential(c, minPot);
             }
-            for (ExitCell c : sp.getAssociatedExitCells()) {
-                newStaticPotential.getAssociatedExitCells().add(c);
+            if (p instanceof StaticPotential) {
+                StaticPotential sp = (StaticPotential) p;
+                totalAttractivity += sp.getAttractivity();
+                for (ExitCell c : sp.getAssociatedExitCells()) {
+                    newStaticPotential.getAssociatedExitCells().add(c);
+                }
             }
         }
         if (!potentialsToMerge.isEmpty()) {// catch error if no exit is set!
@@ -64,14 +68,15 @@ public class PotentialUtils {
 
     /**
      * Computes the minimum potential for one cell over all potentials in potentialsToMerge.
+     *
      * @param c the cell
      * @param potentialsToMerge the list of potentials
      * @return the minimum potential
      */
-    private static int getMinPotential(EvacCellInterface c, Collection<StaticPotential> potentialsToMerge) {
+    private static <T extends Potential>int getMinPotential(EvacCellInterface c, Collection<T> potentialsToMerge) {
         int minPot = Integer.MAX_VALUE;
-        for (StaticPotential localSP : potentialsToMerge) {
-            if (localSP.getPotential(c) >= 0) { // if the potential is negative, it is invalid for the cell
+        for (Potential localSP : potentialsToMerge) {
+            if (localSP.hasValidPotential(c)) {
                 minPot = Math.min(minPot, localSP.getPotential(c));
             }
         }

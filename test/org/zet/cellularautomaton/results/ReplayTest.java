@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
+import static org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton.getCellCount;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.algorithm.EvacuationCellularAutomatonAlgorithm;
 import org.zet.cellularautomaton.algorithm.EvacuationInitializationCompleteEvent;
@@ -55,7 +56,7 @@ public class ReplayTest {
 
         MultiFloorEvacuationCellularAutomaton otherAutomaton = getSmallExampleAutomaton();
 
-        Map<EvacCellInterface, EvacCellInterface> selfMap = new HashMap<>(eca.getCellCount());
+        Map<EvacCellInterface, EvacCellInterface> selfMap = new HashMap<>(getCellCount(eca));
         for (Room r : otherAutomaton.getRooms()) {
             for (EvacCellInterface cell : r.getAllCells()) {
                 selfMap.put(cell, cell);

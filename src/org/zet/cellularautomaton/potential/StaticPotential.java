@@ -17,6 +17,7 @@ package org.zet.cellularautomaton.potential;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -159,5 +160,10 @@ public class StaticPotential extends AbstractPotential {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public Iterator<EvacCellInterface> iterator() {
+        return potential.keySet().iterator();
     }
 }

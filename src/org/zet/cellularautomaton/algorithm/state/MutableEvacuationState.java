@@ -173,6 +173,7 @@ public class MutableEvacuationState implements EvacuationState {
      *
      * @return the number of initialIndividuals
      */
+    @Override
     public int getInitialIndividualCount() {
         return initialIndividuals.size();
     }
@@ -197,6 +198,7 @@ public class MutableEvacuationState implements EvacuationState {
      *
      * @return the number of initialIndividuals in the cellular automaton
      */
+    @Override
     public int getRemainingIndividualCount() {
         return remainingIndividuals.size();
     }

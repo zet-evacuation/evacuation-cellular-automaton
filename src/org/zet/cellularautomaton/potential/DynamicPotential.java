@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.potential;
 
+import java.util.Iterator;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.localization.CellularAutomatonLocalization;
 import org.zet.cellularautomaton.results.Action;
@@ -155,5 +156,10 @@ public class DynamicPotential extends AbstractPotential {
             int newPotential = getPotential(cell) - 1;
             setPotential(cell, newPotential);
         }
+    }
+
+    @Override
+    public Iterator<EvacCellInterface> iterator() {
+        return potential.keySet().iterator();
     }
 }

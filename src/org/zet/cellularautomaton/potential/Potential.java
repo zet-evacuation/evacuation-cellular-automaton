@@ -9,7 +9,7 @@ import org.zet.cellularautomaton.EvacCellInterface;
  * 
  * @author Jan-Philipp Kappmeier
  */
-public interface Potential {
+public interface Potential extends Iterable<EvacCellInterface> {
 
     /**
      * Returns the potential of a specified {@link EvacCell}.

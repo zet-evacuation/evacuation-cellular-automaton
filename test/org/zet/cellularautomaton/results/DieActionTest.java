@@ -9,7 +9,6 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.algorithm.state.EvacuationStateControllerInterface;
-import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 
 /**
  *

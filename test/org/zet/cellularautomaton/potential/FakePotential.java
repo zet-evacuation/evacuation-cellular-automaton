@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.potential;
 
+import java.util.Iterator;
 import org.zet.cellularautomaton.EvacCellInterface;
 
 /**
@@ -26,6 +27,11 @@ public class FakePotential implements Potential {
     @Override
     public boolean hasValidPotential(EvacCellInterface cell) {
         return true;
+    }
+
+    @Override
+    public Iterator<EvacCellInterface> iterator() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

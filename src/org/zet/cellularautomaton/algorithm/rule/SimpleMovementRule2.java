@@ -55,7 +55,7 @@ public class SimpleMovementRule2 extends SmoothMovementRule {
             PropertyUpdate update = initializeMove(from, targetCell);
             performMove(from, targetCell);
             setMoveRuleCompleted(false);
-            return new MoveAction(from, from, update);
+            return new MoveAction(from, targetCell, update);
         }
     }
 

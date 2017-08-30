@@ -1,5 +1,6 @@
 package org.zet.cellularautomaton.potential;
 
+import java.util.Iterator;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.closeTo;
@@ -9,6 +10,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCell;
+import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
 
 /**
@@ -16,6 +18,13 @@ import org.zet.cellularautomaton.EvacuationCellState;
  * @author Jan-Philipp Kappmeier
  */
 public class TestAbstractPotential {
+    private static class NoIteratorAbstractPotential extends AbstractPotential {
+            @Override
+            public Iterator<EvacCellInterface> iterator() {
+                throw new UnsupportedOperationException("Unsupported.");
+            }
+        };
+
     static EvacCell getCell(int x) {
         return new EvacCell(new EvacuationCellState(null), 1, x, 0) {
 
@@ -28,8 +37,7 @@ public class TestAbstractPotential {
     
     @Test
     public void initializedPotential() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         assertThat(AbstractPotential.INVALID, is(equalTo(-1)));
         assertThat(potential.getMaxPotential(), is(equalTo(AbstractPotential.INVALID)));
         assertThat(potential.getMappedCells(), is(empty()));
@@ -38,22 +46,19 @@ public class TestAbstractPotential {
     
     @Test(expected = IllegalArgumentException.class)
     public void initializedPotentialGetNonexistent() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         potential.getPotential(getCell(0));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void initializedPotentialGetNonexistentDouble() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         potential.getPotentialDouble(getCell(0));
     }
     
     @Test
     public void testContained() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         assertThat(potential.hasValidPotential(c), is(true));
@@ -61,8 +66,7 @@ public class TestAbstractPotential {
     
     @Test
     public void setPotentialValue() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         EvacCell c = getCell(0);
         potential.setPotential(c, 4.3);
         assertThat(potential.getPotential(c), is(equalTo(4)));
@@ -77,22 +81,19 @@ public class TestAbstractPotential {
     
     @Test(expected = NullPointerException.class)
     public void setPotentialNullFails() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         potential.setPotential(null, 3);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void deleteEmptyFails() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         potential.deleteCell(getCell(0));
     }
     
     @Test
     public void testDelete() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         potential.deleteCell(c);
@@ -102,8 +103,7 @@ public class TestAbstractPotential {
     
     @Test
     public void updateMaxPotentialWhenAdding() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         EvacCell c1 = getCell(0);
         potential.setPotential(c1, 3);
         assertThat(potential.getMaxPotential(), is(equalTo(3)));
@@ -129,8 +129,7 @@ public class TestAbstractPotential {
     
     @Test
     public void updateMaxPotentialWhenDeleting() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         EvacCell c1 = getCell(0);
         potential.setPotential(c1, 3);
         EvacCell c2 = getCell(1);
@@ -147,8 +146,7 @@ public class TestAbstractPotential {
     
     @Test
     public void updateMaxPotentialWhenResetting() {
-        AbstractPotential potential = new AbstractPotential() {
-        };
+        AbstractPotential potential = new NoIteratorAbstractPotential();
         EvacCell c = getCell(0);
         potential.setPotential(c, 3);
         potential.setPotential(c, 2);

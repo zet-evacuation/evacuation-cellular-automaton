@@ -20,14 +20,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zetool.container.util.IterableIterator;
 import org.zetool.simulation.cellularautomaton.CompositeCellMatrix;
 import org.zetool.simulation.cellularautomaton.Neighborhood;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
@@ -69,7 +72,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     /**
      * The safe potential
      */
-    private StaticPotential safePotential;
+    private Potential safePotential;
     private final Collection<Room> rooms = new LinkedList<>();
 
     /**
@@ -87,13 +90,13 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
     }
 
     private MultiFloorEvacuationCellularAutomaton(Map<Integer, RoomCollection> floorRoomMapping, Map<Integer, String> floorNames,
-            List<Exit> exits, Map<Exit, Potential> potentials) {
+            List<Exit> exits, Map<Exit, Potential> potentials, Potential safePotential) {
         this.floorRoomMapping = floorRoomMapping;
         this.floorNames = floorNames;
         this.exits = exits;
         neighborhood = null;
         staticPotentials = potentials;
-        safePotential = new StaticPotential();
+        this.safePotential = Objects.requireNonNull(safePotential, "Safe potential must be present.");
         for (RoomCollection fr : floorRoomMapping.values()) {
             rooms.addAll(fr.getRooms());
         }
@@ -105,19 +108,9 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      *
      * @param initialConfiguration the initial configuration of the simulation.
      */
-    public MultiFloorEvacuationCellularAutomaton(InitialConfiguration initialConfiguration) {
+    public MultiFloorEvacuationCellularAutomaton(MultiFloorEvacuationCellularAutomaton initialConfiguration) {
         this();
-
-        // set up floors and rooms
-        int i = 0;
-        for (String floor : initialConfiguration.getFloors()) {
-            //addFloor(i++, floor);
-        }
-        //initialConfiguration.getRooms().stream().forEach(room -> addRoom(0, (Room) room));
-
-        for (Entry<Exit, Potential> e : initialConfiguration.getStaticPotentials().entrySet()) {
-            staticPotentials.put(e.getKey(), e.getValue());
-        }
+        throw new UnsupportedOperationException("Cloning the cellular automaton is not yet implemented");
     }
 
     @Override
@@ -145,9 +138,9 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
      *
      * @return the number of cells
      */
-    public int getCellCount() {
+    public static int getCellCount(EvacuationCellularAutomaton ca) {
         int count = 0;
-        count = getRooms().stream().map(room -> room.getCellCount(false)).reduce(count, Integer::sum);
+        count = ca.getRooms().stream().map(room -> room.getCellCount(false)).reduce(count, Integer::sum);
         return count;
     }
 
@@ -273,6 +266,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         private final Map<Integer, String> floorNames = new HashMap<>();
         private final List<Exit> exits = new LinkedList<>();
         private final Map<Exit, Potential> potentials = new HashMap<>();
+        private StaticPotential safePotential;
 
         /**
          * Adds a new floor.
@@ -292,7 +286,6 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         /**
          * Adds a room to the List of all rooms of the building.
          *
-         * @param floor the floor to which the room is added
          * @param room the Room object to be added
          * @return 
          * @throws IllegalArgumentException if the the specific room exists already in the list rooms
@@ -413,18 +406,32 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         }
 
         public MultiFloorEvacuationCellularAutomaton build() {
-            return new MultiFloorEvacuationCellularAutomaton(floorRoomMapping, floorNames, exits, potentials);
+            return new MultiFloorEvacuationCellularAutomaton(floorRoomMapping, floorNames, exits, potentials, safePotential);
         }
 
         public void setPotentialFor(Exit exit, Potential potential) {
             potentials.put(exit, potential);
         }
+
+        public Iterable<Room> getRooms() {
+            final Iterable<Iterable<Room>> cir = Collections.unmodifiableCollection(floorRoomMapping.values());
+            return () -> new IterableIterator<>(cir);
+        }
+
+        public void setSafePotential(StaticPotential safePotential) {
+            this.safePotential = Objects.requireNonNull(safePotential);
+        }
     }
 
-    private static class RoomCollection extends CompositeCellMatrix<Room, EvacCell> {
+    private static class RoomCollection extends CompositeCellMatrix<Room, EvacCell> implements Iterable<Room> {
 
         List<Room> getRooms() {
             return super.getMatrices();
+        }
+
+        @Override
+        public Iterator<Room> iterator() {
+            return super.getMatrices().iterator();
         }
 
     }

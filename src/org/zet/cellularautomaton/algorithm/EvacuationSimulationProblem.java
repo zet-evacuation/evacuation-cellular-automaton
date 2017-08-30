@@ -7,6 +7,7 @@ import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zetool.algorithm.simulation.cellularautomaton.CellularAutomatonSimulationProblem;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
+import org.zet.cellularautomaton.InitialConfiguration;
 
 /**
  *
@@ -29,4 +30,5 @@ public interface EvacuationSimulationProblem extends CellularAutomatonSimulation
     
     public Map<Individual, EvacCellInterface> individualStartPositions();
     
+    public InitialConfiguration getInitialConfiguration();
 }

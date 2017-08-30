@@ -71,5 +71,31 @@ public class MoveActionTest {
         context.assertIsSatisfied();
     }
     
+    @Test
+    public void executeOnOther() throws InconsistentPlaybackStateException {
+        EvacuationStateControllerInterface ec = context.mock(EvacuationStateControllerInterface.class);
+        from.getState().setIndividual(i);
+        MoveAction action = new MoveAction(from, to, 3, 4);
+        EvacuationState es = context.mock(EvacuationState.class);
+        IndividualProperty ip = new IndividualProperty(i);
+
+        // New set        
+        EvacCell otherFrom = new RoomCell(0, 0);
+        EvacCell otherTo = new RoomCell(1, 0);
+        Individual otheri = new Individual(0, 0, 0, 0, 0, 0, 1, 0);
+        
+        context.checking(new Expectations() {
+            {
+                allowing(es).propertyFor(i);
+                will(returnValue(ip));
+                exactly(1).of(ec).move(with(otherFrom), with(otherTo));
+                exactly(1).of(ec).increaseDynamicPotential(with(otherTo));
+            }
+        });
+
+        action.execute(es, ec);
+
+        context.assertIsSatisfied();
+    }
 
 }

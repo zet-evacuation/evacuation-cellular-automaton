@@ -18,6 +18,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton.EvacuationCellularAutomatonBuilder;
+import static org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton.getCellCount;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -31,7 +32,7 @@ public class MultiFloorEvacuationCellularAutomatonTest {
     @Test
     public void testInitialization() {
         MultiFloorEvacuationCellularAutomaton ca = new MultiFloorEvacuationCellularAutomaton();
-        assertThat(ca.getCellCount(), is(equalTo(0)));
+        assertThat(getCellCount(ca), is(equalTo(0)));
         assertThat(ca.getDimension(), is(equalTo(2)));
         assertThat(ca.getFloors(), is(empty()));
         assertThat(ca.getRooms(), is(empty()));
@@ -51,11 +52,11 @@ public class MultiFloorEvacuationCellularAutomatonTest {
 
         builder.addRoom(room);
         MultiFloorEvacuationCellularAutomaton ca = builder.build();
-        assertThat(ca.getCellCount(), is(equalTo(3)));
+        assertThat(getCellCount(ca), is(equalTo(3)));
 
         builder.addRoom(room2);
         ca = builder.build();
-        assertThat(ca.getCellCount(), is(equalTo(5)));
+        assertThat(getCellCount(ca), is(equalTo(5)));
     }
 
     private void roomExpectations(Room room, int id, int cells) {

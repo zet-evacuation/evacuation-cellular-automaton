@@ -16,6 +16,8 @@
 package org.zet.cellularautomaton.results;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import org.zet.cellularautomaton.InitialConfiguration;
 
@@ -42,7 +44,8 @@ public class EvacuationRecording {
     /** The initial configuration of a cellular automaton. */
     private InitialConfiguration initialConfig;
     /** A vector which stores a vector of actions for every time step. */
-    private Vector<Vector<Action>> actions;
+    //private Map<Integer, Vector<Action>> actions;
+    private Map<Integer, List<Action>> allActions;
     /** The current time step. */
     private int curTime;
     private long maxDynamicPotential = -1;
@@ -53,9 +56,13 @@ public class EvacuationRecording {
      * @param initialConfig The initial configuration of a cellular automaton
      * @param actions A vector which contains a vector of actions for every time step.
      */
-    public EvacuationRecording(InitialConfiguration initialConfig, Vector<Vector<Action>> actions) {
+    public EvacuationRecording(InitialConfiguration initialConfig, Map<Integer, List<Action>> allActions) {
         this.initialConfig = initialConfig;
-        this.actions = actions;
+        //this.actions = new HashMap<>();
+        this.allActions = allActions;
+        //for (Action action: allActions) {
+        //    int step = action.executeDelayed(es, ec);
+        //}
         this.curTime = -1;
     }
 
@@ -75,7 +82,7 @@ public class EvacuationRecording {
      * @return {@code true} if the recording extends to the next time step or {@code false} otherwise.
      */
     public boolean hasNext() {
-        return (curTime < actions.size() - 1);
+        return (curTime < allActions.size() - 1);
     }
 
     /**
@@ -107,7 +114,7 @@ public class EvacuationRecording {
      * Fast forwards the recording to its end, i.e. sets the current time step to {@code length-1}.
      */
     public void forward() {
-        curTime = Math.max(0, actions.size() - 1);
+        curTime = Math.max(0, allActions.size() - 1);
     }
 
     /**
@@ -116,7 +123,7 @@ public class EvacuationRecording {
      * @param time The time you want to jump to.
      */
     public void jumpToTime(int time) {
-        if (time >= actions.size() || time < 0) {
+        if (time >= allActions.size() || time < 0) {
             throw new IndexOutOfBoundsException("Index " + time + " is not a valid timestep.");
         }
 
@@ -129,13 +136,13 @@ public class EvacuationRecording {
      *
      * @return A vector with all actions at the next time step
      */
-    public Vector<Action> nextActions() {
-        if (curTime >= actions.size() - 1) {
+    public List<Action> nextActions() {
+        if (curTime >= allActions.size() - 1) {
             throw new IndexOutOfBoundsException("There is no next action (from Index" + curTime + ")");
         }
 
         curTime++;
-        return actions.get(curTime);
+        return allActions.get(curTime);
     }
 
     /**
@@ -145,12 +152,12 @@ public class EvacuationRecording {
      *
      * @return A vector with all actions recorded at the current time step.
      */
-    public Vector<Action> curActions() {
+    public List<Action> curActions() {
         if (curTime < 0) {
             throw new IndexOutOfBoundsException("Please call nextActions() once before calling this method.");
         }
 
-        return actions.get(curTime);
+        return allActions.get(curTime);
     }
 
     /**
@@ -158,13 +165,13 @@ public class EvacuationRecording {
      *
      * @return A vector with all actions recorded at the previous time step.
      */
-    public Vector<Action> prevActions() {
+    public List<Action> prevActions() {
         if (curTime <= 0) {
             throw new IndexOutOfBoundsException("There is no previous action (from Index " + curTime + ")");
         }
 
         curTime--;
-        return actions.get(curTime);
+        return allActions.get(curTime);
     }
 
     /**
@@ -194,7 +201,7 @@ public class EvacuationRecording {
     public <T extends Action> Vector<T> filterAllActions(Class<? extends T> actionType) {
         Vector<T> filteredActions = new Vector<T>();
 
-        for (Vector<Action> actionsForStep : this.actions) {
+        for (List<Action> actionsForStep : this.allActions.values()) {
             for (Action action : actionsForStep) {
                 if (actionType.isInstance(action)) {
                     filteredActions.add((T) action);
@@ -211,7 +218,7 @@ public class EvacuationRecording {
      * @return The length of the recording.
      */
     public int length() {
-        return actions.size();
+        return allActions.size();
     }
 
     public long getMaxDynamicPotential() {

@@ -19,10 +19,11 @@ import ds.PropertyContainer;
 import java.util.List;
 import java.util.Map;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.parameter.AbstractParameterSet;
 import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
-import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.InitialConfiguration;
 
 /**
  *
@@ -31,16 +32,18 @@ import org.zet.cellularautomaton.Individual;
 public class EvacuationSimulationProblemImpl implements EvacuationSimulationProblem {
     int seconds = 300;
 
-    private final MultiFloorEvacuationCellularAutomaton ca;
+    private final EvacuationCellularAutomaton ca;
     public EvacuationRuleSet ruleSet;
     public ParameterSet parameterSet;
     private final List<Individual> individuals;
     private final Map<Individual, EvacCellInterface> individualStartPositions;
+    private final InitialConfiguration initialConfiguration;
 
-    public EvacuationSimulationProblemImpl(MultiFloorEvacuationCellularAutomaton ca, List<Individual> individuals, Map<Individual,EvacCellInterface> individualStartPositions) {
-        this.ca = ca;
-        this.individuals = individuals;
-        this.individualStartPositions = individualStartPositions;
+    public EvacuationSimulationProblemImpl(InitialConfiguration initialConfiguration) {
+        this.initialConfiguration = initialConfiguration;
+        this.ca = initialConfiguration.getCellularAutomaton();
+        this.individuals = initialConfiguration.getIndividuals();
+        this.individualStartPositions = initialConfiguration.getIndividualStartPositions();
 
         PropertyContainer props = PropertyContainer.getGlobal();
 
@@ -52,7 +55,7 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     }
 
     @Override
-    public MultiFloorEvacuationCellularAutomaton getCellularAutomaton() {
+    public EvacuationCellularAutomaton getCellularAutomaton() {
         return ca;
     }
 
@@ -83,6 +86,11 @@ public class EvacuationSimulationProblemImpl implements EvacuationSimulationProb
     @Override
     public Map<Individual, EvacCellInterface> individualStartPositions() {
         return this.individualStartPositions;
+    }
+
+    @Override
+    public InitialConfiguration getInitialConfiguration() {
+        return this.initialConfiguration;
     }
     
     

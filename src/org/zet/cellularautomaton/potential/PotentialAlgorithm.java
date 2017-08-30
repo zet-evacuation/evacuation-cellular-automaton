@@ -71,12 +71,10 @@ public class PotentialAlgorithm extends AbstractAlgorithm<Collection<ExitCell>, 
                 } else {                    
                     updateTuple(childTuple.get(c), staticPotential, parent, c);
                 }
-            } else {
-                Logger.getGlobal().warning("Reached an exit cell that does not get a potential!");
             }
         }
     }
-    
+
     private SmoothingTuple createTuple(StaticPotential staticPotential, EvacCellInterface parent, EvacCellInterface c) {
         return new SmoothingTuple(c, staticPotential.getPotentialDouble(parent), calculateDistance(parent, c),
                 calculateRealDistance(parent, c) + staticPotential.getDistance(parent));

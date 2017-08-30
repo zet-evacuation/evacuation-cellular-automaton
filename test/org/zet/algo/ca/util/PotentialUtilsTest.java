@@ -15,6 +15,7 @@ import org.jmock.Mockery;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.ExitCell;
+import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 
 /**
@@ -26,7 +27,7 @@ public class PotentialUtilsTest {
 
     @Test
     public void minimumPotentialEmpty() {
-        StaticPotential sp = PotentialUtils.mergePotentials(Collections.emptyList());
+        Potential sp = PotentialUtils.mergePotentials(Collections.emptyList());
         assertThat(sp, is(notNullValue()));
     }
     
@@ -63,7 +64,7 @@ public class PotentialUtilsTest {
             }
         });
         
-        StaticPotential minimum = PotentialUtils.mergePotentials(potentials);
+        Potential minimum = PotentialUtils.mergePotentials(potentials);
         
         assertThat(minimum.getPotential(cell1), is(equalTo(1)));
         assertThat(minimum.getPotential(cell2), is(equalTo(2)));
@@ -100,7 +101,7 @@ public class PotentialUtilsTest {
             }
         });
 
-        StaticPotential minimum = PotentialUtils.mergePotentials(potentials);
+        Potential minimum = PotentialUtils.mergePotentials(potentials);
 
         assertThat(minimum.getPotential(cell1), is(equalTo(1)));
         assertThat(minimum.getPotential(cell2), is(equalTo(2)));
@@ -138,7 +139,7 @@ public class PotentialUtilsTest {
             }
         });
 
-        StaticPotential minimum = PotentialUtils.mergePotentials(potentials);
+        StaticPotential minimum = (StaticPotential)PotentialUtils.mergePotentials(potentials);
 
         assertThat(minimum.getAssociatedExitCells(), containsInAnyOrder(new ExitCell[] {cell1, cell2}));
     }

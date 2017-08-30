@@ -19,6 +19,7 @@ import org.zet.cellularautomaton.Exit;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.ExitCell;
 import org.zet.cellularautomaton.Individual;
+import org.zet.cellularautomaton.InitialConfiguration;
 import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton.EvacuationCellularAutomatonBuilder;
 import org.zet.cellularautomaton.RoomCell;
 import org.zet.cellularautomaton.RoomImpl;
@@ -90,7 +91,8 @@ public class TestEvacuationCellularAutomatonRun {
         Map<Individual, EvacCellInterface> individualStartPositions = new HashMap<>();
         individualStartPositions.put(i, rightCell);
 
-        return new EvacuationSimulationProblemImpl(eca, Collections.singletonList(i), individualStartPositions);
+        InitialConfiguration ic = new InitialConfiguration(eca, Collections.singletonList(i), individualStartPositions);
+        return new EvacuationSimulationProblemImpl(ic);
     }
 
     @Test

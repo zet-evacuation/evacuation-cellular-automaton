@@ -1,8 +1,11 @@
 package org.zet.cellularautomaton.algorithm.state;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
+import org.zetool.common.debug.Debug;
 
 /**
  * Provides actions to change the evacuation state. Alters the state of the simulation and of individuals and ensures
@@ -10,8 +13,12 @@ import org.zet.cellularautomaton.Individual;
  * 
  * @author Jan-Philipp Kappmeier
  */
-
 public class EvacuationStateController implements EvacuationStateControllerInterface {
+    /** The logger object of this algorithm. */
+    private static final Logger LOG = Debug.globalLogger;
+    static {
+        LOG.setLevel(Level.ALL);
+    }
     private final MutableEvacuationState evacuationState;
     
     public EvacuationStateController(MutableEvacuationState evacuationState) {
@@ -49,6 +56,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     }
 
     void add(Individual i, EvacCellInterface cell) {
+        LOG.fine("Add " + i + " to " + cell);
         evacuationState.propertyFor(i).setCell(cell);
         cell.getState().setIndividual(i);
         cell.getRoom().addIndividual(cell, i);
@@ -70,7 +78,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     @Override
     public void evacuate(Individual i) {
         evacuationState.propertyFor(i).setEvacuationTime(evacuationState.getStep());
-        System.out.println("Evacuate " + i);
+        LOG.fine("Evacuate " + i);
         remove(i);
         evacuationState.addToEvacuated(i);
     }
@@ -81,7 +89,7 @@ public class EvacuationStateController implements EvacuationStateControllerInter
      */
     void remove(Individual i) {
         EvacCellInterface from = evacuationState.propertyFor(i).getCell();
-        System.out.println("Remove " + i + " from " + from);
+        LOG.fine("Remove " + i + " from " + from);
         from.getRoom().removeIndividual(i);
         evacuationState.propertyFor(i).setCell(null);
         from.getState().removeIndividual();
@@ -102,7 +110,4 @@ public class EvacuationStateController implements EvacuationStateControllerInter
     public void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease) {
         evacuationState.updateDynamicPotential(probabilityDynamicIncrease, probabilityDynamicDecrease);
     }
-    
-    
-    
 }

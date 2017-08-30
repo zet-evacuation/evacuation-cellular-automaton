@@ -16,102 +16,88 @@
 package org.zet.cellularautomaton.results;
 
 import java.util.HashMap;
-import java.util.Vector;
-
-import org.zet.cellularautomaton.EvacCell;
-import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
-import org.zet.cellularautomaton.DoorCell;
-import org.zet.cellularautomaton.potential.DynamicPotential;
-import org.zet.cellularautomaton.InitialConfiguration;
-import org.zet.cellularautomaton.Room;
-
 import java.util.LinkedList;
+
+import org.zet.cellularautomaton.InitialConfiguration;
+
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import org.zet.cellularautomaton.Exit;
-import org.zet.cellularautomaton.RoomImpl;
+import org.zet.cellularautomaton.algorithm.EvacuationCellularAutomatonAlgorithm;
+import org.zet.cellularautomaton.algorithm.EvacuationInitializationCompleteEvent;
+import org.zet.cellularautomaton.algorithm.EvacuationStepCompleteEvent;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
-import org.zet.cellularautomaton.potential.Potential;
-import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zetool.common.algorithm.AbstractAlgorithmEvent;
+import org.zetool.common.algorithm.AlgorithmListener;
 
 /**
- * This class helps you to store all the parts of a simulation that are
- * needed to visualize the simulation at a later point. This is done by
- * recording {@code Action}s to a {@code EvacuationRecording}-Object.
- * The actions are stored together with a full deep clone of the initial configuration 
- * of your cellular automaton. The cloning is done in the constructor of this 
- * class, so the automaton is saved in the state that it has when you <b>create</b> 
- * the {@code  VisualResultsRecorder}. 
- * 
- * Usage: Build your initial configuration and THEN instantiate a new
- * VisualResultsRecorder with it. Call {@code startRecording()}. 
- * You can now record Actions by calling {@code recordAction}. 
- * The recorded actions are stored based on the simulation time when they occur, 
- * starting at time {@code t=0}. Every time your simulation time advances, 
- * call {@code nextTimeStep()}. Thus, all actions that are recorded 
- * afterwards will be stored at time {@code t+1}. 
- * All actions are stored in the order of their recording.
- * 
- * To replay the simulation, call {@code getRecording()} to get all 
- * recorded actions nicely packed in a {@code EvacuationRecording}.
- * 
+ * This class helps you to store all the parts of a simulation that are needed to visualize the simulation at a later
+ * point. This is done by recording {@code Action}s to a {@code EvacuationRecording}-Object. The actions are stored
+ * together with a full deep clone of the initial configuration of your cellular automaton. The cloning is done in the
+ * constructor of this class, so the automaton is saved in the state that it has when you <b>create</b>
+ * the {@code  VisualResultsRecorder}.
+ *
+ * Usage: Build your initial configuration and THEN instantiate a new VisualResultsRecorder with it. Call
+ * {@code startRecording()}. You can now record Actions by calling {@code recordAction}. The recorded actions are stored
+ * based on the simulation time when they occur, starting at time {@code t=0}. Every time your simulation time advances,
+ * call {@code nextTimeStep()}. Thus, all actions that are recorded afterwards will be stored at time {@code t+1}. All
+ * actions are stored in the order of their recording.
+ *
+ * To replay the simulation, call {@code getRecording()} to get all recorded actions nicely packed in a
+ * {@code EvacuationRecording}.
+ *
  * @author Daniel R. Schmidt
  *
  */
 public class VisualResultsRecorder {
-    static PropertyAccess es;
-    /** 
-     * The current simulation time. Serves as a time stamp for the
-     * storage of actions.
-     */
-    private int timeStep;
-    private static VisualResultsRecorder instance = null;
-    /**
-     * A clone of the initial configuration. All actions are stored
-     * based on this configuration. 
-     */
-    private InitialConfiguration clonedInitialConfig;
-    private MultiFloorEvacuationCellularAutomaton clonedCA;
-    /**
-     * Stores a vector of actions for every time step
-     * Each vector holds the actions for its time step in the
-     * order of occurrence.
-     */
-    private Vector<Vector<Action>> actions;
-    /**
-     * This maps the cells in the original initial configuration to the
-     * corresponding cells in the cloned initial configuration. 
-     * We need this to convert  the incoming actions (which are based on 
-     * the original configuration) to the stored actions (which are based 
-     * on the cloned configuration). 
-     * 
-     * This is bad design and must be changed!
-     */
-    private HashMap<EvacCell, EvacCell> cellMap;
-    private HashMap<Potential, Potential> staticPotentialMap;
-    private boolean doRecord;
 
-    protected VisualResultsRecorder() {
-        reset();
+    static PropertyAccess es;
+    /**
+     * The current simulation time. Serves as a time stamp for the storage of actions.
+     */
+    private int timeStep = 0;
+
+    /**
+     * Stores a vector of actions for every time step Each vector holds the actions for its time step in the order of
+     * occurrence.
+     */
+    private final Map<Integer, List<Action>> actions = new HashMap<>();
+
+    private boolean doRecord;
+    private final InitialConfiguration initialConfiguration;
+
+    public VisualResultsRecorder(InitialConfiguration initialConfiguration, EvacuationCellularAutomatonAlgorithm cellularAutomatonAlgorithm) {
+        this.initialConfiguration = initialConfiguration;
+        AlgorithmListener listener = createListener(actions);
+        cellularAutomatonAlgorithm.addAlgorithmListener(listener);
     }
 
-    /**
-     * Creates a new instance of the VisualResultsRecorder and does a deep copy of the initial configuration for
-     * storage. Sets current time step to zero.
-     *
-     * @param initialConfig The initial configuration of the cellular automaton. Will be cloned as is for storage.
-     */
-    public VisualResultsRecorder(InitialConfiguration initialConfig) {
-        this();
-        setInitialConfiguration(initialConfig);
+    private AlgorithmListener createListener(Map<Integer, List<Action>> allActions) {
+        return new AlgorithmListener() {
+            int step = 0;
+            @Override
+            public void eventOccurred(AbstractAlgorithmEvent event) {
+
+                //System.out.println(cellularAutomatonAlgorithm.getEvacuationState().getTimeStep() + ": Event: " + event);
+                //int timeStep = event.getEventTime(). .getEvacuationState().getTimeStep();
+                if (event instanceof EvacuationStepCompleteEvent) {
+                    List<Action> actions = getActionsFor(step++);
+                    actions.addAll(((EvacuationStepCompleteEvent) event).getInitializationActions());
+                } else if (event instanceof EvacuationInitializationCompleteEvent) {
+                    List<Action> actions = getActionsFor(step);
+                    actions.addAll(((EvacuationInitializationCompleteEvent) event).getInitializationActions());
+                }
+            }
+        };
+    }
+    
+    private List<Action> getActionsFor(int step) {
+        if (!actions.containsKey(step)) {
+            actions.put(step, new LinkedList<>());
+        }
+        return actions.get(step);
     }
 
     public void startRecording() {
-        if (clonedInitialConfig == null) {
-            throw new RuntimeException("The initial configuration has not yet been set. "
-                    + "Please call setInitialConfiguration() at least once before using this method.");
-
-        }
         this.doRecord = true;
     }
 
@@ -120,24 +106,7 @@ public class VisualResultsRecorder {
     }
 
     public final void reset() {
-        this.actions = new Vector<>();
-        this.actions.add(new Vector<>());
-        this.timeStep = 0;
-        this.cellMap = new HashMap<>();
-        this.staticPotentialMap = new HashMap<>();
-        this.clonedInitialConfig = null;
-        this.clonedCA = null;
         stopRecording();
-    }
-
-    public final void setInitialConfiguration(InitialConfiguration initialConfig) {
-        reset();
-        this.clonedInitialConfig = cloneConfig(initialConfig, cellMap, staticPotentialMap);
-        this.clonedCA = new MultiFloorEvacuationCellularAutomaton(clonedInitialConfig);
-    }
-
-    public InitialConfiguration getInitialConfiguration() {
-        return clonedInitialConfig;
     }
 
     /**
@@ -164,7 +133,6 @@ public class VisualResultsRecorder {
     public void nextTimestep() {
         if (doRecord) {
             timeStep++;
-            actions.add(new Vector<>());
         }
     }
 
@@ -186,181 +154,11 @@ public class VisualResultsRecorder {
      * @return A new {@code EvacuationRecording} containing all recorded actions and the corresponding configuration.
      */
     public EvacuationRecording getRecording() {
-        return new EvacuationRecording(clonedInitialConfig, actions);
+        return new EvacuationRecording(initialConfiguration, actions);
     }
 
-    public static VisualResultsRecorder getInstance() {
-        if (instance == null) {
-            instance = new VisualResultsRecorder();
-        }
-
-        return instance;
+    public int getRecordedCount() {
+        return actions.size();
     }
 
-    /**
-     * This does a deep copy of an initial configuration for storage. All objects contained in the configuration are
-     * copied. Also, all references are updated, so that they refer to the copies rather than to the original objects.
-     * Thus, the copy is completely independent of the original.
-     *
-     * @param orig The initial configuration that you want to clone
-     * @param cellMapping A HashMap mapping the cells in the original configuration to their copies. If this is
-     * {@code null}, a new HashMap will be created. Else, the mapping is added to the existing entries in the HashMap.
-     * Existing entries may be overwritten.
-     * @return A deep copy of {@code orig}.
-     */
-    private static InitialConfiguration cloneConfig(InitialConfiguration orig,
-            HashMap<EvacCell, EvacCell> cellMapping, HashMap<Potential, Potential> potentialMapping) {
-
-        if (cellMapping == null) {
-            cellMapping = new HashMap<>();
-        }
-
-        LinkedList<String> clonedFloors = new LinkedList<>();
-        for (String s : orig.getFloors()) {
-            clonedFloors.add(s);
-        }
-
-        // First of all, clone all rooms and update the door links
-        // Store cloned rooms in clonedRooms
-        Vector<Room> clonedRooms = new Vector<>();
-        // This maps the original rooms to the cloned ones
-        HashMap<Room, Room> roomMap = new HashMap<>();
-
-        // Clone the rooms and store the mapping between the
-        // original and the cloned cells
-        for (Room room : orig.getRooms()) {
-            HashMap<EvacCell, EvacCell> addMapping = new HashMap<>();
-            Room clone = cloneRoom(room, addMapping);
-            clonedRooms.add(clone);
-            roomMap.put(room, clone);
-            cellMapping.putAll(addMapping);
-        }
-
-        for (Room room : clonedRooms) {
-            for (DoorCell door : room.getDoors()) {
-                //door.removeAllTargets();
-                door.removeAllNextDoorsWithoutNotify();
-            }
-        }
-
-        // To update the door links, iterate over all doors and
-        // move the nextDoor-link of each cloned door to the clone of
-        // the original nextDoor
-        for (Room room : orig.getRooms()) {
-            for (DoorCell oldDoor : room.getDoors()) {
-                DoorCell clonedDoor = (DoorCell) cellMapping.get(oldDoor);
-                for (int i = 0; i < oldDoor.targetCount(); i++) {
-                    DoorCell oldNextDoor = oldDoor.getTarget(i);
-                    DoorCell newNextDoor = (DoorCell) cellMapping.get(oldNextDoor);
-                    clonedDoor.addTarget(newNextDoor);
-                }
-            }
-        }
-
-        // Now we can clone the potentials. To do so, iterate over
-        // all cells and all potentials. The cells are iterated room
-        // by room
-        //PotentialManager globals = orig.getPotentialManager();
-        Map<Exit, Potential> statics = orig.getStaticPotentials();
-        //PotentialManager clonedGlobals = new PotentialManager();
-        Map<Exit, Potential> staticClone = new HashMap<>();
-        if (statics != null) {
-            for (Entry<Exit, Potential> entry : statics.entrySet()) {
-                StaticPotential clone = new StaticPotential();
-                staticClone.put(entry.getKey(), clone);
-                potentialMapping.put(entry.getValue(), clone);
-
-                for (Room room : orig.getRooms()) {
-                    // For every room do:
-                    for (int x = 0; x < room.getWidth(); x++) {
-                        for (int y = 0; y < room.getHeight(); y++) {
-                            // For every cell in the room do:
-                            EvacCell cell = room.getCell(x, y);
-                            if (cell != null && entry.getValue().hasValidPotential(cell)) {
-                                clone.setPotential(cellMapping.get(cell), entry.getValue().getPotentialDouble(cell));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // At last we need to clone the dynamic potential. This is done by 
-        // iterating over all cells again.
-        DynamicPotential dynOrig = orig.getDynamicPotential();
-        DynamicPotential dynClone = new DynamicPotential();
-        if (dynOrig != null) {
-            for (Room room : orig.getRooms()) {
-                // For every room do:
-                for (int x = 0; x < room.getWidth(); x++) {
-                    for (int y = 0; y < room.getHeight(); y++) {
-                        // For every cell in the room do:
-                        EvacCell cell = room.getCell(x, y);
-                        if (cell != null && dynOrig.hasValidPotential(cell)) {
-                            dynClone.setPotential(cellMapping.get(cell), dynOrig.getPotential(cell));
-                        }
-                    }
-                }
-            }
-        }
-
-        //clonedGlobals.setDynamicPotential(dynClone);
-
-        // Now store the new potentials in the individuals:
-        for (Room room : orig.getRooms()) {
-            for (int x = 0; x < room.getWidth(); x++) {
-                for (int y = 0; y < room.getHeight(); y++) {
-                    EvacCell cell = room.getCell(x, y);
-                    if (cell != null && cell.getState().getIndividual() != null) {
-                        EvacCell clonedCell = cellMapping.get(cell);
-                        Potential origPot = es.propertyFor(cell.getState().getIndividual()).getStaticPotential();
-                        es.propertyFor(cell.getState().getIndividual()).setStaticPotential(potentialMapping.get(origPot));
-                    }
-                }
-            }
-        }
-
-        return new InitialConfiguration(clonedFloors, clonedRooms, staticClone, dynClone, orig.getAbsoluteMaxSpeed());
-    }
-
-    /**
-     * Does a deep copy of a room and updates all internal references.
-     *
-     * @param room The room you want to clone
-     * @param cellMapping A HashMap mapping the cells in {@code room} to those in its clone. If this is {@code null}, a
-     * new mapping is created. Else, existing entries may be overwritten.
-     * @return A deep copy of {@code room}
-     */
-    private static Room cloneRoom(Room room, HashMap<EvacCell, EvacCell> cellMapping) {
-        if (cellMapping == null) {
-            cellMapping = new HashMap<>();
-        }
-
-        
-        RoomImpl roomClone = new RoomImpl(room);
-        roomClone.clear();
-        for (int x = 0; x < room.getWidth(); x++) {
-            for (int y = 0; y < room.getHeight(); y++) {
-                EvacCell orig = room.getCell(x, y);
-                if (orig != null) {
-                    EvacCell cClone = cloneCell(orig);
-                    roomClone.setCell(cClone);
-                    cellMapping.put(orig, cClone);
-                }
-            }
-        }
-
-        return roomClone;
-    }
-
-    /**
-     * Copies a cell and sets a copy of the original cell's individual on the copied cell (if present).
-     *
-     * @param orig The original cell
-     * @return A cloned cell with a cloned individual
-     */
-    private static EvacCell cloneCell(EvacCell orig) {
-        EvacCell clone = orig.clone(true);
-        return clone;
-    }
 }

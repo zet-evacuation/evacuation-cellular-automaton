@@ -16,7 +16,10 @@
 package org.zet.cellularautomaton;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import static java.util.function.Function.identity;
+import java.util.stream.Collectors;
 import org.zet.cellularautomaton.potential.DynamicPotential;
 import org.zet.cellularautomaton.potential.Potential;
 import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
@@ -31,30 +34,34 @@ import org.zetool.simulation.cellularautomaton.tools.CellMatrixFormatter;
  */
 public class InitialConfiguration {
 
-    /** The rooms of the cellular automaton, including cells. */
-    private final Collection<Room> rooms;
-    private final Collection<String> floors;
-    /** A {@code TreeMap} of all StaticPotentials. */
-    private final Map<Exit, Potential> staticPotentials;
+    private final MultiFloorEvacuationCellularAutomaton cellularAutomaton;
     /** The single DynamicPotential. */
     private final DynamicPotential dynamicPotential;
 
     private double absoluteMaxSpeed;
+    private List<Individual> individuals;
+    private Map<Individual, EvacCellInterface> individualStartPositions;
 
+    public InitialConfiguration(MultiFloorEvacuationCellularAutomaton cellularAutomaton,
+            List<Individual> individuals, Map<Individual,EvacCellInterface> individualStartPositions) {
+        this.cellularAutomaton = cellularAutomaton;
+        this.individuals = individuals;
+        this.individualStartPositions = individualStartPositions;
+        dynamicPotential = null;
+    }
+    
     /**
      * Constructs a new initial configuration of a cellular automaton.
      *
-     * @param floors floors
-     * @param rooms The automaton's rooms, including cells and the initial placing of individuals
-     * @param staticPotentials
+     * @param cellularAutomaton
+     * @param individualMapping
      * @param absoluteMaxSpeed the maximal speed that any individual can have at maximum
      * @param dynamicPotential
      */
-    public InitialConfiguration(Collection<String> floors, Collection<Room> rooms, Map<Exit, Potential> staticPotentials,
-            DynamicPotential dynamicPotential, double absoluteMaxSpeed) {
-        this.rooms = rooms;
-        this.floors = floors;
-        this.staticPotentials = staticPotentials;
+    public InitialConfiguration(MultiFloorEvacuationCellularAutomaton cellularAutomaton,
+            Map<Individual, EvacCellInterface> individualMapping, DynamicPotential dynamicPotential,
+            double absoluteMaxSpeed) {
+        this.cellularAutomaton = cellularAutomaton;
         this.dynamicPotential = dynamicPotential;
         this.absoluteMaxSpeed = absoluteMaxSpeed;
     }
@@ -63,14 +70,9 @@ public class InitialConfiguration {
         return absoluteMaxSpeed;
     }
 
-    /**
-     * Get the global static potential layers of the automaton
-     *
-     * @return The initial static potentials
-     */
-//    public PotentialManager getPotentialManager() {
-//        return potentialManager;
-//    }
+    public MultiFloorEvacuationCellularAutomaton getCellularAutomaton() {
+        return cellularAutomaton;
+    }
 
     /**
      * Get all rooms, including all cells and the initial placing of individuals
@@ -78,7 +80,7 @@ public class InitialConfiguration {
      * @return The rooms of the automaton
      */
     public Collection<Room> getRooms() {
-        return rooms;
+        return cellularAutomaton.getRooms();
     }
 
     /**
@@ -87,7 +89,7 @@ public class InitialConfiguration {
      * @return
      */
     public Collection<String> getFloors() {
-        return floors;
+        return cellularAutomaton.getFloors();
     }
 
     /**
@@ -99,7 +101,7 @@ public class InitialConfiguration {
 
         CellMatrixFormatter formatter = new CellMatrixFormatter();
         formatter.registerFormatter(EvacCell.class, new EvacuationCellularAutomatonCellFormatter());
-        for (Room aRoom : rooms) {
+        for (Room aRoom : cellularAutomaton.getRooms()) {
             representation += "\n Room (" + aRoom + "):\n";
             representation += formatter.graphicalToString(aRoom);
         }
@@ -112,10 +114,19 @@ public class InitialConfiguration {
     }
 
     public Map<Exit, Potential> getStaticPotentials() {
-        return staticPotentials;
+        return cellularAutomaton.getExits().stream().collect(
+                Collectors.toMap(identity(), exit -> cellularAutomaton.getPotentialFor(exit)));
     }
 
     public DynamicPotential getDynamicPotential() {
         return dynamicPotential;
+    }
+
+    public List<Individual> getIndividuals() {
+        return individuals;
+    }
+
+    public Map<Individual, EvacCellInterface> getIndividualStartPositions() {
+        return individualStartPositions;
     }
 }

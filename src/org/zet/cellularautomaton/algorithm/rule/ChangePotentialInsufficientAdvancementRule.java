@@ -76,7 +76,7 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
      * @return
      */
     public int getMemoryIndex(Individual i) {
-        return memoryIndex.get(i);
+        return memoryIndex.getOrDefault(es, 0);
     }
 
     /**
@@ -87,9 +87,6 @@ public class ChangePotentialInsufficientAdvancementRule extends AbstractPotentia
     public void setMemoryIndex(Individual i, int index) {
         memoryIndex.put(i, index);
     }
-
-
-    
 
     /**
      * Change potential, if not enough advancement to the designated exit cell has been made

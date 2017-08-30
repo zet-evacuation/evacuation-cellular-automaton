@@ -7,7 +7,6 @@ package evacuationplan;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.zet.cellularautomaton.MultiFloorEvacuationCellularAutomaton;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.EvacCellInterface;
@@ -35,7 +34,7 @@ public class BestResponseDynamics {
 
     }
 
-    public void computeAssignmentBasedOnBestResponseDynamics(MultiFloorEvacuationCellularAutomaton ca, List<Individual> individuals) {
+    public void computeAssignmentBasedOnBestResponseDynamics(EvacuationCellularAutomaton ca, List<Individual> individuals) {
         int c = 0;
         while (true) {
             c++;

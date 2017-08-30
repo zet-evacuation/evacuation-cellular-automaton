@@ -15,6 +15,7 @@
  */
 package org.zet.cellularautomaton.results;
 
+import java.util.Objects;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.algorithm.state.EvacuationState;
@@ -61,7 +62,7 @@ public class MoveAction extends Action {
         if (!to.getState().isEmpty() && !(to == from)) {
             throw new IllegalArgumentException("The taget cell is not empty!");
         }
-        this.individual = from.getState().getIndividual();
+        this.individual = Objects.requireNonNull(from.getState().getIndividual());
         this.update = update;
     }
 
@@ -84,7 +85,7 @@ public class MoveAction extends Action {
         if (!to.getState().isEmpty() && !(to == from)) {
             throw new IllegalArgumentException("The taget cell is not empty!");
         }
-        this.individual = from.getState().getIndividual();
+        this.individual = Objects.requireNonNull(from.getState().getIndividual());
         this.update = PropertyUpdate.forMove(startTime, arrivalTime).createUpdate();
     }
     
@@ -97,7 +98,7 @@ public class MoveAction extends Action {
         if (!to.getState().isEmpty() && !(to == from)) {
             throw new IllegalArgumentException("The taget cell is not empty!");
         }
-        this.individual = from.getState().getIndividual();
+        this.individual = Objects.requireNonNull(from.getState().getIndividual());
         this.update = PropertyUpdate.extend(update).withStepStartTime(startTime).withStepEndTime(arrivalTime).createUpdate();
     }
 
@@ -108,7 +109,7 @@ public class MoveAction extends Action {
         this.startTime = startTime;
         this.individualNumber = individualNumber;
         if (from != null) {
-            this.individual = from.getState().getIndividual();
+            this.individual = Objects.requireNonNull(from.getState().getIndividual());
         }
     }
 
@@ -117,6 +118,7 @@ public class MoveAction extends Action {
         this.to = a.to;
         this.arrivalTime = a.arrivalTime;
         this.startTime = a.startTime;
+        this.individual = a.individual;
         this.individualNumber = a.individualNumber;
         if (!update.getStepEndTime().isPresent() || update.getStepEndTime().get() != arrivalTime
                 || !update.getStepStartTime().isPresent() || update.getStepStartTime().get() != startTime) {
@@ -182,7 +184,7 @@ public class MoveAction extends Action {
         EvacCellInterface newFrom = adoptCell(from);
         EvacCellInterface newTo = adoptCell(to);
         
-        representation += newFrom.getState().getIndividual() + " moves from ";
+        representation += individual + " moves from ";
         representation += newFrom + " to ";
         representation += newTo + ".";
 

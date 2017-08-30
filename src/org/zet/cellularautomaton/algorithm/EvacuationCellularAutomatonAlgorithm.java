@@ -67,11 +67,12 @@ public class EvacuationCellularAutomatonAlgorithm
     protected void initialize() {
         initRulesAndState();
 
-        log.log(Level.INFO, "{0} is executed. ", toString());
+        log.log(Level.INFO, "{0} is initialized. ", toString());
 
         Individual[] individualsCopy = es.getInitialIndividuals().toArray(
                 new Individual[es.getInitialIndividuals().size()]);
         for (Individual i : individualsCopy) {
+            log.fine("Initialize individual " + i);
             Iterator<EvacuationRule<?>> primary = getProblem().getRuleSet().primaryIterator();
             EvacCellInterface c = es.propertyFor(i).getCell();
             c.getState().setIndividual(i);
@@ -91,6 +92,8 @@ public class EvacuationCellularAutomatonAlgorithm
         es.setNecessaryTime(i);
     }
 
+    private EvacuationSimulationSpeed sp;
+
     private void initRulesAndState() {
         es = new MutableEvacuationState(getProblem().getCellularAutomaton(), getProblem().getIndividuals());
         EvacuationCellularAutomaton eca = getProblem().getCellularAutomaton();
@@ -99,7 +102,7 @@ public class EvacuationCellularAutomatonAlgorithm
             es.propertyFor(e.getKey()).setStaticPotential(eca.minPotentialFor(e.getValue()));
         }
         ec = new EvacuationStateController((MutableEvacuationState) es);
-        EvacuationSimulationSpeed sp = new EvacuationSimulationSpeed(getProblem().getParameterSet().getAbsoluteMaxSpeed());
+        sp = new EvacuationSimulationSpeed(getProblem().getParameterSet().getAbsoluteMaxSpeed());
         Computation c = new DefaultComputation(es, getProblem().getParameterSet());
         for (EvacuationRule r : getProblem().getRuleSet()) {
             r.setEvacuationState(es);
@@ -111,6 +114,7 @@ public class EvacuationCellularAutomatonAlgorithm
 
     @Override
     protected void performStep() {
+        log.info("Perform step " + es.getTimeStep());
         super.performStep();
         lastStepActions.forEach(a -> a.executeDelayed(es, ec));
         super.increaseStep();
@@ -247,6 +251,10 @@ public class EvacuationCellularAutomatonAlgorithm
         return es;
     }
 
+    public EvacuationSimulationSpeed getEvacuationSimulationSpeed() {
+        return sp;
+    }
+    
     protected EvacuationStateControllerInterface getEvacuationController() {
         return ec;
     }
