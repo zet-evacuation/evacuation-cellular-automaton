@@ -22,6 +22,7 @@ import org.jmock.api.Action;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.DoorCell;
+import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacCellInterface;
 import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.Individual;
@@ -134,22 +135,36 @@ public class SimpleMovementRule2Test {
         FakeSimpleMovementRule2 ruleUnderTest = getMovementRule(targetCell);
 
         helper.injectTargetCell(targetCell, Direction8.Right);
-
+        context.checking(new Expectations() {
+            {
+                allowing(targetCell).getState();
+                will(returnValue(new EvacuationCellState((null))));
+            }
+        });
+  
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
         helper.getIndividualProperties().setDirection(Direction8.Top);
 
-        assertMovePaarameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, 1.0);
+        assertMoveParameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, 1.0);
     }
 
     @Test
     public void normalMoveDiagonal() {
         EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "normalMoveTargetDiagonal");
         FakeSimpleMovementRule2 ruleUnderTest = getMovementRule(targetCell);
+        
         helper.injectTargetCell(targetCell, Direction8.TopRight);
+        context.checking(new Expectations() {
+            {
+                allowing(targetCell).getState();
+                will(returnValue(new EvacuationCellState((null))));
+            }
+        });
+        
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
         helper.getIndividualProperties().setDirection(Direction8.Top);
 
-        assertMovePaarameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.TopRight, 45, 1.0);
+        assertMoveParameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.TopRight, 45, 1.0);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -169,7 +184,7 @@ public class SimpleMovementRule2Test {
             }
         });
 
-        assertMovePaarameters(ruleUnderTest,
+        assertMoveParameters(ruleUnderTest,
                 0.0, arbitraryValue, Direction8.Right, 90, 1.0);
     }
 
@@ -186,7 +201,7 @@ public class SimpleMovementRule2Test {
                 will(returnValue(stairSpeedFactor));
             }
         });
-        assertMovePaarameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, stairSpeedFactor * 1.1);
+        assertMoveParameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, stairSpeedFactor * 1.1);
     }
 
     @Test
@@ -281,7 +296,7 @@ public class SimpleMovementRule2Test {
      * Checks that properties of individuals are set correctly during move depending on some
      * parameters.
      */
-    private void assertMovePaarameters(FakeSimpleMovementRule2 rule, double absoluteSpeed,
+    private void assertMoveParameters(FakeSimpleMovementRule2 rule, double absoluteSpeed,
             double speedFactor, Direction8 newDirection, int degree, double additionalSpeedFactor) {
         assertRest(rule, helper.getTestCell(), absoluteSpeed, speedFactor, newDirection, degree, additionalSpeedFactor);
     }
