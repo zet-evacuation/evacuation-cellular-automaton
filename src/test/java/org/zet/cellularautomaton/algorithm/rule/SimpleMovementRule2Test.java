@@ -141,7 +141,7 @@ public class SimpleMovementRule2Test {
                 will(returnValue(new EvacuationCellState((null))));
             }
         });
-  
+
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
         helper.getIndividualProperties().setDirection(Direction8.Top);
 
@@ -152,7 +152,7 @@ public class SimpleMovementRule2Test {
     public void normalMoveDiagonal() {
         EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "normalMoveTargetDiagonal");
         FakeSimpleMovementRule2 ruleUnderTest = getMovementRule(targetCell);
-        
+
         helper.injectTargetCell(targetCell, Direction8.TopRight);
         context.checking(new Expectations() {
             {
@@ -160,7 +160,7 @@ public class SimpleMovementRule2Test {
                 will(returnValue(new EvacuationCellState((null))));
             }
         });
-        
+
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
         helper.getIndividualProperties().setDirection(Direction8.Top);
 
@@ -199,6 +199,9 @@ public class SimpleMovementRule2Test {
             {
                 allowing(targetCell).getStairSpeedFactor(Direction8.Right);
                 will(returnValue(stairSpeedFactor));
+
+                allowing(targetCell);
+                will(returnValue(new EvacuationCellState(null)));
             }
         });
         assertMoveParameters(ruleUnderTest, ABSOLUTE_SPEED, SPEED_FACTOR_TARGET_CELL, Direction8.Right, 90, stairSpeedFactor * 1.1);
@@ -219,7 +222,7 @@ public class SimpleMovementRule2Test {
     @Test
     public void singleDoorStart() {
         DoorCell doorStart = new DoorCell(1, 1, 3, helper.getRoom());
-        EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "singleDoorStart");
+        EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "singleDoorStart-target");
         FakeSimpleMovementRule2 rule = getMovementRule(targetCell);
 
         helper.injectTargetCell(targetCell);
@@ -236,6 +239,10 @@ public class SimpleMovementRule2Test {
                 allowing(targetCell).getAbsoluteY();
                 will(returnValue(2));
                 oneOf(helper.getEc()).move(doorStart, targetCell);
+
+                // Set empty state for the mock cell.
+                allowing(targetCell).getState();
+                will(returnValue(new EvacuationCellState(null)));
             }
         });
 

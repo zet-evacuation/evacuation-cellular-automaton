@@ -72,6 +72,9 @@ public class TestEvacuationCellularAutomatonRun {
         StaticPotential sp = pa.call();
         builder.setPotentialFor(e, sp);
 
+        // TODO: set emtpy potential as default in the builder
+        builder.setSafePotential(new StaticPotential());
+
         // Bestimme die angrenzenden Save-Cells
         //saveCellSearch(cells, sp);
         return builder.build();

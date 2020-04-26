@@ -44,11 +44,9 @@ public abstract class SmoothMovementRule extends AbstractMovementRule {
     @Override
     protected MoveAction onExecute(EvacCellInterface cell) {
         individual = cell.getState().getIndividual();
-        if (1 != 2) {
-        //if (isActive()) {
+        if (isActive()) {
             if (canMove(individual)) {
-                if (1 != 2) {
-                //if (wishToMove()) {
+                if (wishToMove()) {
                     return performMove(cell);
                 } else {
                     return skipStep(cell);

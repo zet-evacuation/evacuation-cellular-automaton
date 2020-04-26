@@ -170,6 +170,7 @@ import org.zetool.common.util.Direction8;
                 never(ec).move(with(any(EvacCell.class)), with(any(EvacCell.class)));
 
                 ruleUnderTest.individual = individual;
+
                 switch (step) {
                     case REMAIN_INACTIVE:
                         ip.setStepEndTime(STEP_END_TIME_CAN_MOVE);
