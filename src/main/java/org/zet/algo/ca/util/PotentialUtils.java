@@ -76,7 +76,7 @@ public class PotentialUtils {
     private static <T extends Potential>int getMinPotential(EvacCellInterface c, Collection<T> potentialsToMerge) {
         int minPot = Integer.MAX_VALUE;
         for (Potential localSP : potentialsToMerge) {
-            if (localSP.hasValidPotential(c)) {
+            if (localSP.hasValidPotential(c) && localSP.getPotential(c) >= 0) {
                 minPot = Math.min(minPot, localSP.getPotential(c));
             }
         }
