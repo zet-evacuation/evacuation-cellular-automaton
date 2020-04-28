@@ -11,10 +11,12 @@ import static org.zet.cellularautomaton.algorithm.rule.RuleTestMatchers.executea
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.zet.cellularautomaton.DeathCause;
 import org.zet.cellularautomaton.EvacCell;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
@@ -30,6 +32,8 @@ import org.zet.cellularautomaton.potential.Potential;
 import org.zet.cellularautomaton.potential.StaticPotential;
 import org.zet.cellularautomaton.results.DieAction;
 import org.zet.cellularautomaton.statistic.CAStatisticWriter;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.generators.MersenneTwister;
 
 /**
  *
@@ -131,6 +135,7 @@ public class InitialPotentialFamiliarityRuleTest {
 
         addStaticPotential(sp);
 
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(same(sp)));
     }
@@ -149,6 +154,7 @@ public class InitialPotentialFamiliarityRuleTest {
         addStaticPotential(shortestPotential);
 
         //individual.setFamiliarity(0.667);
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
         rule.execute(cell);
         assertThat(ip.getStaticPotential(), is(same(shortestPotential)));
     }
