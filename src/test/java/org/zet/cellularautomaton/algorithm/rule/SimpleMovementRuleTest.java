@@ -23,6 +23,8 @@ import org.zet.cellularautomaton.algorithm.state.EvacuationState;
 import org.zet.cellularautomaton.EvacuationCellularAutomaton;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.results.MoveAction;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.generators.MersenneTwister;
 
 /**
  *
@@ -160,6 +162,9 @@ public class SimpleMovementRuleTest {
         rule.setEvacuationState(es);
         rule.setComputation(c);
 
+        
+        // TODO: inject mock instance
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
         EvacCellInterface selectedCell = rule.selectTargetCell(currentCell, targets);
 
         assertThat(selectedCell, is(same(targetCell)));

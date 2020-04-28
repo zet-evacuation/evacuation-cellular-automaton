@@ -18,11 +18,13 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import static org.jmock.AbstractExpectations.returnValue;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.EvacuationCellState;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.Room;
 import org.zet.cellularautomaton.algorithm.computation.Computation;
@@ -69,7 +71,7 @@ public class WaitingMovementRuleTest {
         WaitingMovementRuleSpy rule = new WaitingMovementRuleSpy();
         Computation c = context.mock(Computation.class);
         rule.setComputation(c);
-        GeneralRandom r = context.mock(GeneralRandom.class);
+        GeneralRandom r = context.mock(GeneralRandom.class, "moving");
         (RandomUtils.getInstance()).setRandomGenerator(r);
 
         double idleThreshold = 0.6;
@@ -95,7 +97,7 @@ public class WaitingMovementRuleTest {
         WaitingMovementRuleSpy rule = new WaitingMovementRuleSpy();
         Computation c = context.mock(Computation.class);
         rule.setComputation(c);
-        GeneralRandom r = context.mock(GeneralRandom.class);
+        GeneralRandom r = context.mock(GeneralRandom.class, "skipStep");
         (RandomUtils.getInstance()).setRandomGenerator(r);
 
         double idleThreshold = 0.6;
@@ -135,7 +137,7 @@ public class WaitingMovementRuleTest {
 
         // Array is: [20, 50, 30]]
         // Because the item with value 50 is in direction, 30 + 50 = 80 is the limit necessary for taking 20
-        List<EvacCellInterface> targetCells = prepare(rule, t, helper.getRoom(), 0.55);
+        List<EvacCellInterface> targetCells = prepare(rule, t, helper.getRoom(), 0.55, "targetsInSameRoomWithoutSway");
 
         EvacCellInterface selectedCell = rule.selectTargetCell(helper.getTestCell(), targetCells);
 
@@ -155,7 +157,7 @@ public class WaitingMovementRuleTest {
         // Original array would be: [20, 30, 50]]
         // After sway-boost: [20, 30 * x, 50]
         // When selecting something larger than 50, it should still be returned the second item if it is not too large!
-        List<EvacCellInterface> targetCells = prepare(rule, t, helper.getRoom(), 0.55);
+        List<EvacCellInterface> targetCells = prepare(rule, t, helper.getRoom(), 0.55, "targetsInSameRoomWhisSway");
 
         EvacCellInterface selectedCell = rule.selectTargetCell(helper.getTestCell(), targetCells);
 
@@ -177,21 +179,21 @@ public class WaitingMovementRuleTest {
         // Original array would be: [20, 30, 50]]
         // No swift boost
         // When selecting something larger than 20, it should still be returned the first item!
-        List<EvacCellInterface> targetCells = prepare(rule, t, theRoom, 0.55);
+        List<EvacCellInterface> targetCells = prepare(rule, t, theRoom, 0.55, "targetsInDifferentRooms");
 
         EvacCellInterface selectedCell = rule.selectTargetCell(helper.getTestCell(), targetCells);
 
         assertThat(selectedCell, is(same(targetCells.get(2))));
     }
 
-    private List<EvacCellInterface> prepare(WaitingMovementRule rule, List<Tuple<Double, Direction8>> t, Room room, double probability) {
+    private List<EvacCellInterface> prepare(WaitingMovementRule rule, List<Tuple<Double, Direction8>> t, Room room, double probability, String name) {
         List<EvacCellInterface> targetCells = new ArrayList<>(t.size());
         for (int i = 0; i < t.size(); ++i) {
             targetCells.add(context.mock(EvacCellInterface.class, "target" + i + t.get(i).toString()));
         }
 
         helper.prepareFor(rule, MovementRuleTestHelper.MovementRuleStep.PERFORM_MOVE);
-        GeneralRandom r = context.mock(GeneralRandom.class);
+        GeneralRandom r = context.mock(GeneralRandom.class, name);
         (RandomUtils.getInstance()).setRandomGenerator(r);
 
         Computation c = context.mock(Computation.class);
@@ -248,6 +250,9 @@ public class WaitingMovementRuleTest {
         Computation c = context.mock(Computation.class);
         context.checking(new Expectations() {
             {
+                allowing(targetCell).getState();
+                will(returnValue(new EvacuationCellState((null))));
+                
                 allowing(helper.getTestCell()).getNeighbours();
                 will(returnValue(Arrays.asList(targetCell, highPriorityCell, lowPriorityCell)));
 
@@ -311,7 +316,7 @@ public class WaitingMovementRuleTest {
         helper.prepareFor(ruleUnderTest, MovementRuleTestHelper.MovementRuleStep.SKIP_STEP);
         Computation c = context.mock(Computation.class);
         ruleUnderTest.setComputation(c);
-        GeneralRandom r = context.mock(GeneralRandom.class);
+        GeneralRandom r = context.mock(GeneralRandom.class, "panicUpdateIfSkips");
         (RandomUtils.getInstance()).setRandomGenerator(r);
         context.checking(new Expectations() {
             {

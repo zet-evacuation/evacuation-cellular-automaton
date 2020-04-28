@@ -7,15 +7,19 @@ import static org.zetool.common.util.Helper.in;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.junit.Test;
 import org.zet.cellularautomaton.Individual;
 import org.zet.cellularautomaton.IndividualBuilder;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.generators.MersenneTwister;
 
 /**
  *
  * @author Jan-Philipp Kappmeier
  */
 public class TestRandomOrdering {
+
     private final static IndividualBuilder builder = new IndividualBuilder();
 
     @Test
@@ -26,6 +30,7 @@ public class TestRandomOrdering {
             individuals.add(ind);
         }
 
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
         RandomOrdering d = new RandomOrdering();
         Iterator<Individual> individualIterator = d.apply(individuals);
 

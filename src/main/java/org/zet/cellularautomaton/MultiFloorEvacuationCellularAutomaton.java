@@ -266,7 +266,7 @@ public class MultiFloorEvacuationCellularAutomaton implements EvacuationCellular
         private final Map<Integer, String> floorNames = new HashMap<>();
         private final List<Exit> exits = new LinkedList<>();
         private final Map<Exit, Potential> potentials = new HashMap<>();
-        private StaticPotential safePotential;
+        private StaticPotential safePotential = new StaticPotential();
 
         /**
          * Adds a new floor.
