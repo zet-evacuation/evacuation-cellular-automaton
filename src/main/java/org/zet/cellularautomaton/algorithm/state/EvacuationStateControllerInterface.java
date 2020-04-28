@@ -1,0 +1,77 @@
+/* zet evacuation tool copyright (c) 2007-20 zet evacuation team
+ *
+ * This program is free software; you can redistribute it and/or
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+package org.zet.cellularautomaton.algorithm.state;
+
+import org.zet.cellularautomaton.DeathCause;
+import org.zet.cellularautomaton.EvacCellInterface;
+import org.zet.cellularautomaton.Individual;
+
+/**
+ * Performs actions in an evacuation run on a evacuation simulation. Each action that can be
+ * executed ensures that the evacuation state remains in a well-defined state.
+ * 
+ * @author Jan-Philipp Kappmeier
+ */
+public interface EvacuationStateControllerInterface {
+
+    /**
+     * Moves an individual from the origin cell to the target cell. When the method is called,
+     * there must be an individual standing on {@code from} and no individual must be standing on
+     * {@code to}.
+     * 
+     * @param from the origin cell
+     * @param to the target cell
+     */
+    void move(EvacCellInterface from, EvacCellInterface to);
+
+    /**
+     * Swaps the positions of two individuals between two cells. Both cells, {@code cell1} and
+     * {@code cell2} must be occupied with an individual when the method is called.
+     * 
+     * @param cell1 the first cell with an individual
+     * @param cell2 the second cell with an individual
+     */
+    void swap(EvacCellInterface cell1, EvacCellInterface cell2);
+
+    /**
+     * Sets an individual to be dead. The reason is stored and the individual is taken out of the
+     * simulation. A dead individual can never be saved or evacuated.
+     * 
+     * @param individual the individual that dies
+     * @param cause the reason
+     */
+    void die(Individual individual, DeathCause cause);
+
+    /**
+     * Sets an individual to be safe. An individual can be safe but not yet evacuated. It can not
+     * die any more.
+     * 
+     * @param individual the saved individual
+     */
+    void setSafe(Individual individual);
+
+    /**
+     * Sets an individual evacuated. This automatically also sets the individual safe. When an
+     * individual is evacuated it can not die any more.
+     * 
+     * @param individual the evacuated individual
+     */
+    void evacuate(Individual individual);
+    
+    void updateDynamicPotential(double probabilityDynamicIncrease, double probabilityDynamicDecrease);
+    
+    void increaseDynamicPotential(EvacCellInterface c);
+}
