@@ -1,4 +1,4 @@
-/* zet evacuawtion tool copyright (c) 2007-14 zet evacuation team
+/* zet evacuawtion tool copyright (c) 2007-20 zet evacuation team
  *
  * This program is free software; you can redistribute it and/or
  * as published by the Free Software Foundation; either version 2
