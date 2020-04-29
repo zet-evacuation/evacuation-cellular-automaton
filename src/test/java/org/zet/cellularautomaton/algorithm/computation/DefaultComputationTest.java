@@ -21,8 +21,10 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.jmock.AbstractExpectations.returnValue;
+
 import java.util.Collections;
 import java.util.function.Function;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -36,6 +38,8 @@ import org.zet.cellularautomaton.algorithm.parameter.ParameterSet;
 import org.zet.cellularautomaton.algorithm.state.IndividualProperty;
 import org.zet.cellularautomaton.algorithm.state.PropertyAccess;
 import org.zet.cellularautomaton.potential.StaticPotential;
+import org.zetool.rndutils.RandomUtils;
+import org.zetool.rndutils.generators.MersenneTwister;
 
 /**
  *
@@ -329,7 +333,7 @@ public class DefaultComputationTest {
     
     @Test
     public void panicForOneNeighborMoreThanThresholdFailures() {
-        DefaultComputation c = new DefaultComputation(es, ps);
+        DefaultComputation fixture = new DefaultComputation(es, ps);
         
         EvacCellInterface roomCell = pi.getCell();
         EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "targetCell");
@@ -362,12 +366,13 @@ public class DefaultComputationTest {
             }
         });
 
-        assertThat(c.updatePanic(individual, targetCell, Collections.emptyList()), is(closeTo(expectedPanic, 10e-7)));
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
+        assertThat(fixture.updatePanic(individual, targetCell, Collections.emptyList()), is(closeTo(expectedPanic, 10e-7)));
     }
 
     @Test
     public void panicForOneNeighborLessThanThresholdFailures() {
-        DefaultComputation c = new DefaultComputation(es, ps);
+        DefaultComputation fixture = new DefaultComputation(es, ps);
         
         EvacCellInterface roomCell = pi.getCell();
         EvacCellInterface targetCell = context.mock(EvacCellInterface.class, "targetCell");
@@ -401,7 +406,8 @@ public class DefaultComputationTest {
         final double panicDecrease = INDIVIDUAL_PANIC_FACTOR * 1.5 * (1 - 0.5);
         assertThat(panicDecrease, is(greaterThan(0.0)));
 
-        assertThat(c.updatePanic(individual, targetCell, Collections.emptyList()), is(closeTo(startPanic - panicDecrease, 10e-7)));
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
+        assertThat(fixture.updatePanic(individual, targetCell, Collections.emptyList()), is(closeTo(startPanic - panicDecrease, 10e-7)));
     }
 
     @Test
@@ -442,6 +448,7 @@ public class DefaultComputationTest {
         final double panicIncrease = INDIVIDUAL_PANIC_FACTOR * 1 * (1 - 0.5);
         assertThat(panicIncrease, is(greaterThan(0.0)));
 
+        RandomUtils.getInstance().setRandomGenerator(new MersenneTwister());
         assertThat(c.updatePanic(individual, targetCell, Collections.emptyList()), is(closeTo(startPanic + panicIncrease, 10e-7)));
     }
     
