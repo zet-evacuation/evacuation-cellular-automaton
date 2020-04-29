@@ -39,9 +39,7 @@ jobs:
         { "id": "github-zet", "username": "zet-bot", "password": "${GITHUB_TOKEN}" }
         ]'
     - name: Build with Maven
-      uses: GabrielBB/xvfb-action@v1.0
-      with:
-        run: mvn -B package --file pom.xml
+      run: mvn -B package --file pom.xml
     - name: Copy settings for release
       run: cp ~/.m2/settings.xml .
     - name: Publish to GitHub Packages
