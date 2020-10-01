@@ -1,18 +1,18 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Java CI with Maven
+name: Build
 
 on:
   push:
 
 jobs:
   build:
-
+    name: Java CI with Maven
     runs-on: ubuntu-latest
 
     env:
-      GITHUB_TOKEN: ${{ secrets. GH_RELEASE_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_PACKAGE_TOKEN }}
 
     steps:
     - name: Checkout source code
@@ -21,7 +21,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: maven-settings-xml-action
+    - name: Define custom repositories
       uses: whelk-io/maven-settings-xml-action@v4
       with:
         repositories: '[
@@ -32,5 +32,7 @@ jobs:
         { "id": "github-zetool", "username": "zet-bot", "password": "${GITHUB_TOKEN}" },
         { "id": "github-zet", "username": "zet-bot", "password": "${GITHUB_TOKEN}" }
         ]'
+    - name: Test with Maven
+      run: mvn -B test --file pom.xml
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package -DskipTests --file pom.xml
