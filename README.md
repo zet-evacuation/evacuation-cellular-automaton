@@ -1,6 +1,8 @@
 # evacuation-cellular-automaton
 
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20(%3E%3D%202)-blue.svg)][GPL 2.0 license]
+[![Build Status](https://travis-ci.org/zet-evacuation/evacuation-cellular-automaton.svg?branch=master)](https://travis-ci.org/zet-evacuation/evacuation-cellular-automaton)
+[![codecov](https://codecov.io/gh/zet-evacuation/evacuation-cellular-automaton/branch/master/graph/badge.svg)](https://codecov.io/gh/zet-evacuation/evacuation-cellular-automaton)
 
 Simulation evacuation cellular automaton.
 
