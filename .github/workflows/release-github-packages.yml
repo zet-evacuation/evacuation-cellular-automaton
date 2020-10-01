@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GITHUB_TOKEN: ${{ secrets. GH_RELEASE_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_PACKAGE_TOKEN }}
 
     steps:
     - name: Checkout source code
@@ -59,4 +59,4 @@ jobs:
         git-release-bot-name: "zet-bot"
         git-release-bot-email: "github@zet-evakuierung.de"
 
-        access-token: ${{ secrets.GH_RELEASE_TOKEN }}
+        access-token: ${{ secrets.GH_PACKAGE_DEPLOY_TOKEN }}
