@@ -13,8 +13,8 @@ on:
 
 jobs:
   release:
-    name: Maven Release
-    if: github.event.pull_request.merged == true
+    name: Release with Maven
+    if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.head_ref, 'release') ) || github.event_name != 'pull_request' }}
 
     runs-on: ubuntu-latest
 
